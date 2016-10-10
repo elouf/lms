@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="inscription_coh_c")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\Inscription_coh_cRepository")
  */
-class Inscription_coh_c
+class Inscription_coh_c extends Inscription_coh
 {
     /**
      * @var int

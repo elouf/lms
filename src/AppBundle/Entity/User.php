@@ -1,5 +1,4 @@
 <?php
-// src/AppBundle/Entity/User.php
 
 namespace AppBundle\Entity;
 
@@ -19,9 +18,39 @@ class User extends BaseUser
      */
     protected $id;
 
+    /**
+     * @var Institut
+     *
+     * @ORM\ManyToOne(targetEntity="Institut")
+     */
+    private $institut;
+
     public function __construct()
     {
         parent::__construct();
-        // your own logic
+    }
+
+    /**
+     * Set Institut
+     *
+     * @param Institut $institut
+     *
+     * @return User
+     */
+    public function setInstitut($institut)
+    {
+        $this->institut = $institut;
+
+        return $this;
+    }
+
+    /**
+     * Get institut
+     *
+     * @return Institut
+     */
+    public function getInstitut()
+    {
+        return $this->institut;
     }
 }

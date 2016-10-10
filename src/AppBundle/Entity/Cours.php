@@ -2,7 +2,6 @@
 
 namespace AppBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -25,7 +24,7 @@ class Cours
     /**
      * @var string
      *
-     * @ORM\Column(name="nom", type="string", length=255, unique=true)
+     * @ORM\Column(name="nom", type="string", length=255, unique=false)
      */
     private $nom;
 
@@ -56,30 +55,6 @@ class Cours
      * @ORM\ManyToOne(targetEntity="Discipline")
      */
     private $discipline;
-
-    /**
-     * @var ArrayCollection
-     *
-     * @ORM\Column(name="sections", type="array", nullable=true)
-     */
-    private $sections;
-
-    /**
-     * @var ArrayCollection
-     *
-     * @ORM\Column(name="ressources", type="array", nullable=true)
-     */
-    private $ressources;
-
-
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->sections = new ArrayCollection();
-        $this->ressources = new ArrayCollection();
-    }
 
     /**
      * Get id
@@ -211,85 +186,5 @@ class Cours
         return $this->discipline;
     }
 
-    /**
-     * Set sections
-     *
-     * @param array $sections
-     *
-     * @return Cours
-     */
-    public function setSections($sections)
-    {
-        $this->sections = $sections;
-
-        return $this;
-    }
-
-    /**
-     * Add section
-     *
-     * @param Section  $section
-     *
-     * @return Cours
-     */
-    public function addSection(Section $section)
-    {
-        if(!$this->sections->contains($section)){
-            $this->sections[] = $section;
-        }
-        return $this;
-    }
-    /**
-     * Remove section
-     *
-     * @param Section  $section
-     */
-    public function removeSection(Section  $section)
-    {
-        $this->sections->removeElement($section);
-    }
-    /**
-     * Get sections
-     *
-     * @return ArrayCollection
-     */
-    public function getSections()
-    {
-        return $this->sections;
-    }
-
-    /**
-     * Add ressource
-     *
-     * @param Ressource  $ressource
-     *
-     * @return Cours
-     */
-    public function addRessource(Ressource $ressource)
-    {
-        if(!$this->ressources->contains($ressource)){
-            $this->ressources[] = $ressource;
-        }
-        return $this;
-    }
-    /**
-     * Remove ressource
-     *
-     * @param Ressource  $ressource
-     */
-    public function removeRessource(Ressource  $ressource)
-    {
-        $this->ressources->removeElement($ressource);
-    }
-
-    /**
-     * Get ressources
-     *
-     * @return ArrayCollection
-     */
-    public function getRessources()
-    {
-        return $this->ressources;
-    }
 }
 

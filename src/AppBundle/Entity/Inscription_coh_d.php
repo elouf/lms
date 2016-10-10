@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="inscription_coh_d")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\Inscription_coh_dRepository")
  */
-class Inscription_coh_d
+class Inscription_coh_d extends Inscription_coh
 {
     /**
      * @var int
@@ -24,6 +24,7 @@ class Inscription_coh_d
     /**
      *
      * @var Discipline
+     *
      * @ORM\ManyToOne(targetEntity="Discipline")
      */
     private $discipline;

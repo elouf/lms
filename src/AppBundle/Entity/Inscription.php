@@ -6,34 +6,26 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Inscription
+ * @ORM\MappedSuperclass
  *
- * @ORM\Table(name="inscription")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\InscriptionRepository")
  */
 class Inscription
 {
     /**
-     * @var int
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
-
-    /**
      * @var Role
      *
-     * @ORM\ManyToOne(targetEntity="Role")
+     * @ORM\OneToOne(targetEntity="Role")
+     * @ORM\JoinColumn(name="role_id", referencedColumnName="id")
      */
-    private $role;
+    protected $role;
 
     /**
      * @var User
      *
-     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\OneToOne(targetEntity="User")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      */
-    private $user;
+    protected $user;
 
     /**
      * @var \DateTime
@@ -41,16 +33,6 @@ class Inscription
      * @ORM\Column(name="dateInscription", type="datetime")
      */
     private $dateInscription;
-
-    /**
-     * Get id
-     *
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
 
     /**
      * Set role
@@ -107,7 +89,7 @@ class Inscription
      *
      * @return Inscription
      */
-    public function setDateRendu($dateInscription)
+    public function setDateInscription($dateInscription)
     {
         $this->dateInscription = $dateInscription;
 
@@ -119,7 +101,7 @@ class Inscription
      *
      * @return \DateTime
      */
-    public function getDateRendu()
+    public function getDateInscription()
     {
         return $this->dateInscription;
     }

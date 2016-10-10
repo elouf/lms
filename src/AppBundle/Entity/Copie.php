@@ -35,6 +35,12 @@ class Copie
      */
     private $dateRendu;
 
+    /**
+     * @var Devoir
+     *
+     * @ORM\ManyToOne(targetEntity="Devoir")
+     */
+    private $devoir;
 
     /**
      * Get id
@@ -92,6 +98,30 @@ class Copie
     public function getDateRendu()
     {
         return $this->dateRendu;
+    }
+
+    /**
+     * Set devoir
+     *
+     * @param Devoir $devoir
+     *
+     * @return Copie
+     */
+    public function setDevoir($devoir)
+    {
+        $this->devoir = $devoir;
+
+        return $this;
+    }
+
+    /**
+     * Get devoir
+     *
+     * @return Devoir
+     */
+    public function getDevoir()
+    {
+        return $this->devoir;
     }
 }
 

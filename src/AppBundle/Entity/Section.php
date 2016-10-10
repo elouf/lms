@@ -56,6 +56,12 @@ class Section
      */
     private $isVisible;
 
+    /**
+     * @var Cours
+     *
+     * @ORM\ManyToOne(targetEntity="Cours")
+     */
+    private $cours;
 
     /**
      * Get id
@@ -185,6 +191,30 @@ class Section
     public function getIsVisible()
     {
         return $this->isVisible;
+    }
+
+    /**
+     * Set cours
+     *
+     * @param Cours $cours
+     *
+     * @return Section
+     */
+    public function setCours($cours)
+    {
+        $this->cours = $cours;
+
+        return $this;
+    }
+
+    /**
+     * Get cours
+     *
+     * @return Cours
+     */
+    public function getCours()
+    {
+        return $this->cours;
     }
 }
 

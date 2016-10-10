@@ -6,44 +6,32 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Ressource
+ * @ORM\MappedSuperclass
  *
- * @ORM\Table(name="ressource")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\RessourceRepository")
  */
 class Ressource
 {
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
 
     /**
      * @var string
      *
      * @ORM\Column(name="nom", type="string", length=255)
      */
-    private $nom;
+    protected $nom;
 
     /**
      * @var string
      *
      * @ORM\Column(name="description", type="blob", nullable=true)
      */
-    private $description;
+    protected $description;
 
     /**
-     * Get id
+     * @var Cours
      *
-     * @return int
+     * @ORM\ManyToOne(targetEntity="Cours")
      */
-    public function getId()
-    {
-        return $this->id;
-    }
+    private $cours;
 
     /**
      * Set nom
@@ -91,6 +79,30 @@ class Ressource
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * Set cours
+     *
+     * @param Cours $cours
+     *
+     * @return Section
+     */
+    public function setCours($cours)
+    {
+        $this->cours = $cours;
+
+        return $this;
+    }
+
+    /**
+     * Get cours
+     *
+     * @return Cours
+     */
+    public function getCours()
+    {
+        return $this->cours;
     }
 }
 

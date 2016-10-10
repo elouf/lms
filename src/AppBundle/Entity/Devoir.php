@@ -23,13 +23,6 @@ class Devoir extends Ressource
     private $id;
 
     /**
-     * @var ArrayCollection
-     *
-     * @ORM\Column(name="copies", type="array", nullable=true)
-     */
-    private $copies;
-
-    /**
      * @var \DateTime
      *
      * @ORM\Column(name="dateDebut", type="datetime")
@@ -50,11 +43,6 @@ class Devoir extends Ressource
      */
     private $duree;
 
-    public function __construct()
-    {
-        $this->copies = new ArrayCollection();
-    }
-
     /**
      * Get id
      *
@@ -63,40 +51,6 @@ class Devoir extends Ressource
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Add copie
-     *
-     * @param Copie $copie
-     *
-     * @return Devoir
-     */
-    public function addCopie(Copie $copie)
-    {
-        if(!$this->copies->contains($copie)){
-            $this->copies[] = $copie;
-        }
-        return $this;
-    }
-    /**
-     * Remove copie
-     *
-     * @param Copie  $copie
-     */
-    public function removeCopie(Copie $copie)
-    {
-        $this->copies->removeElement($copie);
-    }
-
-    /**
-     * Get copies
-     *
-     * @return ArrayCollection
-     */
-    public function getCopies()
-    {
-        return $this->copies;
     }
 
     /**
