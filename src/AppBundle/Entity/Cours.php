@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -55,6 +56,20 @@ class Cours
      * @ORM\ManyToOne(targetEntity="Discipline")
      */
     private $discipline;
+
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\ManyToMany(targetEntity="Cohorte", mappedBy="cours")
+     */
+    private $cohortes;
+
+    /**
+     * Constructor
+     */
+    public function __construct() {
+        $this->cohortes = new ArrayCollection();
+    }
 
     /**
      * Get id
@@ -186,5 +201,35 @@ class Cours
         return $this->discipline;
     }
 
+    /**
+     * Add a cohorte
+     *
+     * @param Cohorte $cohorte
+     * @return Cours
+     */
+    public function addCohorte(Cohorte $cohorte)
+    {
+        if(!$this->cohortes->contains($cohorte)){
+            $this->cohortes[] = $cohorte;
+        }
+        return $this;
+    }
+    /**
+     * Remove a cohorte
+     *
+     * @param Cohorte $cohorte
+     */
+    public function removeCohorte(Cohorte $cohorte)
+    {
+        $this->cohortes->removeElement($cohorte);
+    }
+    /**
+     * Get cohortes
+     *
+     * @return ArrayCollection
+     */
+    public function getCohortes()
+    {
+        return $this->cohortes;
+    }
 }
-

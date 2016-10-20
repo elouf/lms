@@ -6,15 +6,16 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Inscription_coh
- * @ORM\MappedSuperclass
  *
+ * @ORM\Table(name="inscription_coh")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\Inscription_cohRepository")
  */
 class Inscription_coh extends Inscription
 {
 
     /**
      * @var Cohorte
-     *
+     * @ORM\Id
      * @ORM\ManyToOne(targetEntity="Cohorte")
      * @ORM\JoinColumn(name="cohorte_id", referencedColumnName="id")
      */
@@ -44,4 +45,3 @@ class Inscription_coh extends Inscription
         return $this->cohorte;
     }
 }
-

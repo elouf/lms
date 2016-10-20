@@ -2,40 +2,40 @@
 
 namespace AppBundle\DataFixtures\ORM;
 
-use AppBundle\Entity\Inscription_c;
+use AppBundle\Entity\Inscription_d;
 use DateTime;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
-class LoadInscription_cData extends AbstractFixture implements OrderedFixtureInterface
+class LoadInscription_dData extends AbstractFixture implements OrderedFixtureInterface
 {
     public function load(ObjectManager $manager)
     {
         $this->createItem($manager,
             $this->getReference('role_etu'),
-            $this->getReference('user_etudiant_2'),
-            $this->getReference('cours_phy'));
+            $this->getReference('user_etudiant_4'),
+            $this->getReference('disc_phy'));
         $this->createItem($manager,
             $this->getReference('role_etu'),
-            $this->getReference('user_etudiant_2'),
-            $this->getReference('cours_bio'));
+            $this->getReference('user_etudiant_4'),
+            $this->getReference('disc_svt'));
         $this->createItem($manager,
             $this->getReference('role_etu'),
-            $this->getReference('user_etudiant_3'),
-            $this->getReference('cours_espTrad'));
+            $this->getReference('user_etudiant_5'),
+            $this->getReference('disc_crpe_maths'));
         $this->createItem($manager,
             $this->getReference('role_etu'),
-            $this->getReference('user_etudiant_3'),
-            $this->getReference('cours_anglTrad'));
+            $this->getReference('user_etudiant_5'),
+            $this->getReference('disc_crpe_fra'));
 
         $manager->flush();
     }
 
-    public function createItem(ObjectManager $manager, $role, $user, $cours){
-        $item = new Inscription_c();
+    public function createItem(ObjectManager $manager, $role, $user, $disc){
+        $item = new Inscription_d();
         $item->setUser($user);
-        $item->setCours($cours);
+        $item->setDiscipline($disc);
         $item->setDateInscription(new DateTime());
         $item->setRole($role);
         $manager->persist($item);

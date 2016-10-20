@@ -105,4 +105,3 @@ class Ressource
         return $this->cours;
     }
 }
-

@@ -14,16 +14,14 @@ class Inscription
     /**
      * @var Role
      *
-     * @ORM\OneToOne(targetEntity="Role")
-     * @ORM\JoinColumn(name="role_id", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity="Role")
      */
     protected $role;
 
     /**
      * @var User
-     *
-     * @ORM\OneToOne(targetEntity="User")
-     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
+     * @ORM\Id
+     * @ORM\ManyToOne(targetEntity="User")
      */
     protected $user;
 
@@ -106,4 +104,3 @@ class Inscription
         return $this->dateInscription;
     }
 }
-

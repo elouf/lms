@@ -2,40 +2,42 @@
 
 namespace AppBundle\DataFixtures\ORM;
 
-use AppBundle\Entity\Inscription_c;
+use AppBundle\Entity\Inscription_coh;
 use DateTime;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
-class LoadInscription_cData extends AbstractFixture implements OrderedFixtureInterface
+class LoadInscription_cohData extends AbstractFixture implements OrderedFixtureInterface
 {
     public function load(ObjectManager $manager)
     {
         $this->createItem($manager,
             $this->getReference('role_etu'),
-            $this->getReference('user_etudiant_2'),
-            $this->getReference('cours_phy'));
+            $this->getReference('user_etudiant_1'),
+            $this->getReference('coh_maths'));
         $this->createItem($manager,
             $this->getReference('role_etu'),
-            $this->getReference('user_etudiant_2'),
-            $this->getReference('cours_bio'));
+            $this->getReference('user_etudiant_1'),
+            $this->getReference('coh_phy'));
         $this->createItem($manager,
             $this->getReference('role_etu'),
-            $this->getReference('user_etudiant_3'),
-            $this->getReference('cours_espTrad'));
+            $this->getReference('user_etudiant_6'),
+            $this->getReference('coh_crpe'));
         $this->createItem($manager,
             $this->getReference('role_etu'),
-            $this->getReference('user_etudiant_3'),
-            $this->getReference('cours_anglTrad'));
+            $this->getReference('user_etudiant_6'),
+            $this->getReference('coh_esp'));
+
+
 
         $manager->flush();
     }
 
-    public function createItem(ObjectManager $manager, $role, $user, $cours){
-        $item = new Inscription_c();
+    public function createItem(ObjectManager $manager, $role, $user, $cohorte){
+        $item = new Inscription_coh();
         $item->setUser($user);
-        $item->setCours($cours);
+        $item->setCohorte($cohorte);
         $item->setDateInscription(new DateTime());
         $item->setRole($role);
         $manager->persist($item);
@@ -50,6 +52,6 @@ class LoadInscription_cData extends AbstractFixture implements OrderedFixtureInt
     {
         // the order in which fixtures will be loaded
         // the lower the number, the sooner that this fixture is loaded
-        return 9;
+        return 10;
     }
 }

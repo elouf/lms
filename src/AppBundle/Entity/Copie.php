@@ -124,4 +124,3 @@ class Copie
         return $this->devoir;
     }
 }
-

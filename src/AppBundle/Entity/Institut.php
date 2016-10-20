@@ -94,4 +94,3 @@ class Institut
         return $this->ville;
     }
 }
-

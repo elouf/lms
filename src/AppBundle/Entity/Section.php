@@ -217,4 +217,3 @@ class Section
         return $this->cours;
     }
 }
-

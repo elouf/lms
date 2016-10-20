@@ -22,12 +22,12 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
             'admin',
             'test',
             'erwannig.louf@gmail.com',
-            $this->getReference('inst_paris'));
+            $this->getReference('inst_paris'),
+            true);
 
         $this->boucleTypeUser($manager, "etudiant", 20, $tabInst);
         $this->boucleTypeUser($manager, "stagiaire", 10, $tabInst);
         $this->boucleTypeUser($manager, "enseignant", 10, $tabInst);
-
 
         $manager->flush();
     }
@@ -35,21 +35,26 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
     public function boucleTypeUser(ObjectManager $manager, $intituleUser, $nbUser, $tabInst){
         for($i=0; $i<$nbUser; $i++){
             $inst = $tabInst[mt_rand(0, count($tabInst)-1)];
-            $this->createItem($manager,
+            $user = $this->createItem($manager,
                 $intituleUser.$i,
                 'test',
                 $intituleUser.$i.'@test.com',
-                $inst);
+                $inst,
+                false);
+            $this->addReference('user_'.$intituleUser . '_'.$i, $user);
         }
     }
 
-    public function createItem(ObjectManager $manager, $username, $password, $email, $institut){
+    public function createItem(ObjectManager $manager, $username, $password, $email, $institut, $isSuperAdmin){
         $item = new User();
         $item->setUsername($username);
-        $item->setPassword($password);
+        $item->setPlainPassword($password);
         $item->setEmail($email);
         $item->setInstitut($institut);
+        $item->setEnabled(true);
+        $item->setSuperAdmin($isSuperAdmin);
         $manager->persist($item);
+        return $item;
     }
 
     /**

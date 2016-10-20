@@ -13,31 +13,11 @@ use Doctrine\ORM\Mapping as ORM;
 class Inscription_c extends Inscription
 {
     /**
-     * @var int
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
-
-    /**
      * @var Cours
-     *
+     * @ORM\Id
      * @ORM\ManyToOne(targetEntity="Cours")
      */
     private $cours;
-
-
-    /**
-     * Get id
-     *
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
 
     /**
      * Set cours
@@ -63,4 +43,3 @@ class Inscription_c extends Inscription
         return $this->cours;
     }
 }
-

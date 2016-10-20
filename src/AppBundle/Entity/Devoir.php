@@ -125,4 +125,3 @@ class Devoir extends Ressource
         return $this->duree;
     }
 }
-
