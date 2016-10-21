@@ -24,7 +24,7 @@ class Lien extends Ressource
     /**
      * @var string
      *
-     * @ORM\Column(name="url", type="blob")
+     * @ORM\Column(name="url", type="text")
      */
     private $url;
 

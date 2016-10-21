@@ -7,3 +7,23 @@ services:
 #    service_name:
 #        class: AppBundle\Directory\ClassName
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+    admin.user:
+        class: AppBundle\Admin\UserAdmin
+        arguments: [~, AppBundle\Entity\User, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: User }
+    admin.discipline:
+        class: AppBundle\Admin\DisciplineAdmin
+        arguments: [~, AppBundle\Entity\Discipline, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: Discipline }
+    admin.cours:
+        class: AppBundle\Admin\CoursAdmin
+        arguments: [~, AppBundle\Entity\Cours, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: Cours }
+    admin.cohorte:
+        class: AppBundle\Admin\CohorteAdmin
+        arguments: [~, AppBundle\Entity\Cohorte, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: Cohorte }

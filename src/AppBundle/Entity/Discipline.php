@@ -32,14 +32,14 @@ class Discipline
     /**
      * @var string
      *
-     * @ORM\Column(name="description", type="blob", nullable=true)
+     * @ORM\Column(name="description", type="text", nullable=true)
      */
     private $description;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="imgFilePath", type="blob", nullable=true)
+     * @ORM\Column(name="imgFilePath", type="text", nullable=true)
      */
     private $imgFilePath;
 
@@ -55,6 +55,14 @@ class Discipline
      */
     public function __construct() {
         $this->cohortes = new ArrayCollection();
+    }
+
+    /**
+     * __toString method
+     */
+    public function __toString()
+    {
+        return $this->getNom();
     }
 
     /**
@@ -170,4 +178,5 @@ class Discipline
     {
         return $this->cohortes;
     }
+
 }

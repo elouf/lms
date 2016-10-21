@@ -31,14 +31,14 @@ class Section
     /**
      * @var string
      *
-     * @ORM\Column(name="contentFilePath", type="blob")
+     * @ORM\Column(name="contentFilePath", type="text")
      */
     private $contentFilePath;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="pictoFilePath", type="blob")
+     * @ORM\Column(name="pictoFilePath", type="text")
      */
     private $pictoFilePath;
 

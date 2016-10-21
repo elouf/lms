@@ -54,6 +54,14 @@ class Cohorte
     }
 
     /**
+     * __toString method
+     */
+    public function __toString()
+    {
+        return $this->getNom();
+    }
+
+    /**
      * Get id
      *
      * @return int

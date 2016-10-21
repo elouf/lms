@@ -22,7 +22,7 @@ class Ressource
     /**
      * @var string
      *
-     * @ORM\Column(name="description", type="blob", nullable=true)
+     * @ORM\Column(name="description", type="text", nullable=true)
      */
     protected $description;
 

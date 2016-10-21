@@ -14,8 +14,8 @@ class LoadDisciplineData extends AbstractFixture implements OrderedFixtureInterf
         //Second degré
         $disc = $this->createItem($manager,
             'Mathématiques',
-            'La discipline de Mathématiques du second degré', '
-            images/disc_maths.png');
+            'La discipline de Mathématiques du second degré',
+            'images/disc_maths.png');
         $this->addReference('disc_maths', $disc);
         $disc = $this->createItem($manager,
             'Lettres Modernes',
