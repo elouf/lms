@@ -14,15 +14,6 @@ use Doctrine\ORM\Mapping as ORM;
 class Devoir extends Ressource
 {
     /**
-     * @var int
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
-
-    /**
      * @var \DateTime
      *
      * @ORM\Column(name="dateDebut", type="datetime")
@@ -42,16 +33,6 @@ class Devoir extends Ressource
      * @ORM\Column(name="duree", type="integer")
      */
     private $duree;
-
-    /**
-     * Get id
-     *
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
 
     /**
      * Set dateDebut

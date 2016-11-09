@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+    <div class="container">
+        {{ cours.nom }} <br />
+        {% for section in sections %}
+            <a href="{{ path('oneCours', {id: cours.id}) }}" class="label label-info">{{ cours.nom }}</a>
+        {% endfor %}
+    </div>
+{% endblock %}

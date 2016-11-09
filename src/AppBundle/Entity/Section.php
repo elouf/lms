@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="section")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\SectionRepository")
  */
-class Section
+class Section extends OrderedItem
 {
     /**
      * @var int
@@ -31,23 +31,9 @@ class Section
     /**
      * @var string
      *
-     * @ORM\Column(name="contentFilePath", type="text")
-     */
-    private $contentFilePath;
-
-    /**
-     * @var string
-     *
      * @ORM\Column(name="pictoFilePath", type="text")
      */
     private $pictoFilePath;
-
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="position", type="integer")
-     */
-    private $position;
 
     /**
      * @var bool
@@ -98,30 +84,6 @@ class Section
     }
 
     /**
-     * Set contentFilePath
-     *
-     * @param string $contentFilePath
-     *
-     * @return Section
-     */
-    public function setContentFilePath($contentFilePath)
-    {
-        $this->contentFilePath = $contentFilePath;
-
-        return $this;
-    }
-
-    /**
-     * Get contentFilePath
-     *
-     * @return string
-     */
-    public function getContentFilePath()
-    {
-        return $this->contentFilePath;
-    }
-
-    /**
      * Set pictoFilePath
      *
      * @param string $pictoFilePath
@@ -143,30 +105,6 @@ class Section
     public function getPictoFilePath()
     {
         return $this->pictoFilePath;
-    }
-
-    /**
-     * Set position
-     *
-     * @param integer $position
-     *
-     * @return Section
-     */
-    public function setPosition($position)
-    {
-        $this->position = $position;
-
-        return $this;
-    }
-
-    /**
-     * Get position
-     *
-     * @return int
-     */
-    public function getPosition()
-    {
-        return $this->position;
     }
 
     /**

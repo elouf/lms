@@ -10,4 +10,12 @@ namespace AppBundle\Repository;
  */
 class CoursRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function getByDisc($disc)
+    {
+        $qb = $this->createQueryBuilder('c')
+            ->where('c.discipline = :disc')
+            ->setParameter('disc', $disc);
+
+        return $qb->getQuery()->getResult();
+    }
 }

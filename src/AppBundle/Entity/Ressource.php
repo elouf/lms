@@ -11,6 +11,14 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Ressource
 {
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
 
     /**
      * @var string
@@ -32,6 +40,16 @@ class Ressource
      * @ORM\ManyToOne(targetEntity="Cours")
      */
     private $cours;
+
+    /**
+     * Get id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
     /**
      * Set nom
@@ -104,4 +122,5 @@ class Ressource
     {
         return $this->cours;
     }
+
 }
