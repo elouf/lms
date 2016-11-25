@@ -14,26 +14,26 @@ class LoadRessourceData extends AbstractFixture implements OrderedFixtureInterfa
     public function load(ObjectManager $manager)
     {
         $ress = $this->createItem($manager,
-            'RessourceAlg1',
-            'description de la ressource 1',
+            'Lien Alg1',
+            'description du lien 1',
             $this->getReference('cours_alg'),
             'http://www.google.fr');
         $this->addReference('ress_cours_alg_1', $ress);
         $ress = $this->createItem($manager,
-            'RessourceAlg2',
-            'description de la ressource 2',
+            'Lien Alg2',
+            'description du lien 2',
             $this->getReference('cours_alg'),
             'http://www.google.fr');
         $this->addReference('ress_cours_alg_2', $ress);
         $ress = $this->createItem($manager,
-            'RessourceAlg3',
-            'description de la ressource 3',
+            'Lien Alg3',
+            'description du lien 3',
             $this->getReference('cours_alg'),
             'http://www.google.fr');
         $this->addReference('ress_cours_alg_3', $ress);
         $ress = $this->createItem($manager,
-            'RessourceAlg4',
-            'description de la ressource 4',
+            'Lien Alg4',
+            'description du lien 4',
             $this->getReference('cours_alg'),
             'http://www.google.fr');
         $this->addReference('ress_cours_alg_4', $ress);

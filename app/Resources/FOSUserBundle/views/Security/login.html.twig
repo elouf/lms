@@ -1,0 +1,19 @@
+{% extends "FOSUserBundle::layout.html.twig" %}
+ 
+{% block fos_user_content %}
+
+    <div class="col-sm-4 col-sm-push-8">
+        <aside class="applynow-widget">
+            <img src="images/applynow.png" class="img-responsive center-block hidden-xs" alt="">
+            <div class="apply-info">
+                <h4 class="heading text-center">CONNECTEZ VOUS</h4>
+
+                {% include "FOSUserBundle:Security:login_content.html.twig" %}
+
+                <hr/>
+                <a href="#">Mot de passe oublié ?</a>
+
+            </div>
+        </aside>
+    </div>
+{% endblock fos_user_content %}

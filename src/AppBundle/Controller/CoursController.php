@@ -35,15 +35,48 @@ class CoursController extends Controller
     }
 
     /**
+     *
      * @Route("/cours/{id}", name="oneCours")
      */
     public function oneCoursAction (Request $request, $id)
     {
+        $repositoryL = $this->getDoctrine()->getRepository('AppBundle:Lien');
+        $repositoryD = $this->getDoctrine()->getRepository('AppBundle:Devoir');
+        $repositoryZ = $this->getDoctrine()->getRepository('AppBundle:ZoneRessource');
         $repository = $this->getDoctrine()->getRepository('AppBundle:Cours');
         $cours = $repository->find($id);
 
         $sections = $this->getDoctrine()->getRepository('AppBundle:Section')->findBy(array('cours' => $cours));
 
-        return $this->render('cours/one.html.twig', ['cours' => $cours, 'sections' => $sections]);
+        $datas = array();
+        for($i=0; $i<count($sections); $i++){
+            $datas[$i]["section"] = $sections[$i];
+
+            $zones = $repositoryZ->findBy(array('section' => $sections[$i]));
+            $datas[$i]["zones"]["containers"] = $zones;
+            $datas[$i]["zones"]["content"] = array();
+            $datas[$i]["zones"]["type"] = array();
+            for($j=0; $j<count($zones); $j++){
+                $zone = $datas[$i]["zones"]["containers"][$j];
+
+                $ressource = "une ressource non typée";
+
+                if($repositoryL->findBy(array('id' => $zone->getRessource()->getId()))){
+                    // la ressource est un lien
+                    $ressource = $repositoryL->findOneBy(array('id' => $zone->getRessource()->getId()));
+                    $datas[$i]["zones"]["type"][$j] = "lien";
+                }elseif($repositoryD->findBy(array('id' => $zone->getRessource()->getId()))){
+                    // la ressource est un devoir
+                    $ressource = $repositoryD->findOneBy(array('id' => $zone->getRessource()->getId()));
+                    $datas[$i]["zones"]["type"][$j] = "devoir";
+                }else{
+                    // on ne trouve pas le type de la ressource
+                }
+
+                $datas[$i]["zones"]["content"][$j] = $ressource;
+            }
+        }
+
+        return $this->render('cours/one.html.twig', ['cours' => $cours, 'zonesSections' => $datas]);
     }
 }

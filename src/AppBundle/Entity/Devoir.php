@@ -28,6 +28,7 @@ class Devoir extends Ressource
     private $dateFin;
 
     /**
+     * Durée en secondes
      * @var int
      *
      * @ORM\Column(name="duree", type="integer")

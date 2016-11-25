@@ -1,280 +1,191 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="">
-        <meta name="author" content="">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-        <title>{% block title %}AFADEC{% endblock %}</title>
-        {% block mystylesheets %}
-            <link rel="stylesheet" href="{{ asset('vendors/bootstrap/dist/css/bootstrap.css') }}" />
-            <link rel="stylesheet" href="{{ asset('vendors/components-font-awesome/css/font-awesome.min.css') }}" />
+    <title>{% block title %}AFADEC{% endblock %}</title>
+    {% block mystylesheets %}
+        <link rel="stylesheet" href="{{ asset('vendors/bootstrap/dist/css/bootstrap.css') }}" />
+        <link rel="stylesheet" href="{{ asset('vendors/components-font-awesome/css/font-awesome.min.css') }}" />
 
-            <!--EDUComp Stylesheet -->
-            <link rel="stylesheet" href="{{ asset('css/vendors.css') }}" />
-            <link rel="stylesheet" href="{{ asset('css/style.css') }}" />
-            <link rel="stylesheet" href="{{ asset('css/components.css') }}" />
+        <!--EDUComp Stylesheet -->
+        <link rel="stylesheet" href="{{ asset('css/vendors.css') }}" />
+        <link rel="stylesheet" href="{{ asset('css/style.css') }}" />
+        <link rel="stylesheet" href="{{ asset('css/components.css') }}" />
+        <link rel="stylesheet" href="{{ asset('css/stdi_style.css') }}">
 
-            <!--Google Fonts-->
-            <link href='https://fonts.googleapis.com/css?family=Oswald:300,700,400' rel='stylesheet' type='text/css'>
-            <link href='https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400italic,700' rel='stylesheet' type='text/css'>
-            <link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
-        {% endblock %}
-        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+        <!--Google Fonts-->
+        <link href='https://fonts.googleapis.com/css?family=Oswald:300,700,400' rel='stylesheet' type='text/css'>
+        <link href='https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400italic,700' rel='stylesheet' type='text/css'>
+        <link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+    {% endblock %}
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
 
-    </head>
-    <body>
-        <div class="loader-backdrop">           <!-- Loader -->
-            <div class="loader">
-                <div class="ball-1"></div>
-                <div class="ball-2"></div>
-            </div>
-        </div>
+</head>
+<body>
 
-        <header>            <!-- Header = Topbar + Navigation Bar -->
-            <div class="topbar">            <!-- Dark Blue Topbar -->
-                <div class="container">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <span class="call-us"><i class="fa"></i> </span>          <!-- Change Phone Number Here -->
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="dropdown">          <!-- Language Dropdown -->
-                                <button class="btn btn-xs" type="button" id="select-lang" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="fa fa-globe"></i> Français
-                                </button>
-                                <ul class="dropdown-menu" aria-labelledby="select-lang">
-                                    <li><a href="#">Français</a></li>
-                                    <li><a href="#">Anglais</a></li>
+{% if app.user %}
+    {% if app.user.hasRole('ROLE_ADMIN') %}
+        <a class="pull-right btn btn-info account" href="{{ path('fos_user_security_login') }}">Vue Admin</a>
+    {% endif %}
+{% endif %}
 
-                                </ul>
-                            </div>
-                            <form class="search form-inline">           <!-- Search Form -->
-                                <input type="text" class="form-control" placeholder="Start typing...">
-                                <button class="btn-search" type="submit"><i class="fa fa-search fa-fw"></i></button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<div class="loader-backdrop">           <!-- Loader -->
+    <div class="loader">
+        <div class="ball-1"></div>
+        <div class="ball-2"></div>
+    </div>
+</div>
 
-            <nav class="navbar navbar-default">         <!-- Navigation Bar -->
-                <div class="container">
-                    <div class="navbar-header">
-                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-navigation" aria-expanded="false">
-                            <span class="sr-only">Toggle Menu</span>
-                            <span>Menu</span>
-                        </button>
-                        <a class="navbar-brand" href="index.html"><img src="{{ asset('educomp/images/logo.png') }}" alt=""></a> <!-- Replace with your Logo -->
-                    </div>
-
-                    <div class="collapse navbar-collapse" id="main-navigation">         <!-- Main Menu -->
-                        <ul class="nav navbar-nav navbar-right">
-                            <li><a href="index.html">Accueil</a></li>
-                            <li><a href="#">À propos</a>
-                                <ul class="sub-menu">									<!-- Sub Menu -->
-                                    <li><a href="brief-history.html">Historique</a></li>
-                                    <li><a href=about-educomp.html>À propos d'EduComp</a></li>
-                                    <li><a href="admission-process.html">Démarches d'admissions</a></li>
-                                    <li><a href="albums.html">Albums</a></li>
-                                    <li><a href="album-single.html">Album unique</a></li>
-                                    <li><a href="testimonials.html">Témoignages</a></li>
-                                    <li><a href="faq.html">FAQ</a></li>
-                                    <li><a href="code-of-conduct.html">Code de conduite</a></li>
-                                </ul>
-                            </li>
-                            <li class="active"><a href="#">Pages</a>
-                                <ul class="sub-menu">																<!-- Sub Menu -->
-                                    <li><a href="#"> Disciplines <i class="fa fa-angle-right pull-right"></i></a>                                     <ul class="sub-menu">														<!-- Sub Sub Menu -->                                         <li><a href="matters-grid.html">Grille des disciplines</a></li>                                         <li><a href="matters-courses.html">Disciplines</a></li>                                     </ul>                                 </li>
-                                    <li><a href="#"> Courses <i class="fa fa-angle-right pull-right"></i></a>
-                                        <ul class="sub-menu">														<!-- Sub Sub Menu -->
-                                            <li><a href="course-grid.html">Grille des cours</a></li>
-                                            <li><a href="course-list.html">Liste des cours</a></li>
-                                            <li><a href="course-detail.html">Détail des cours</a></li>
-                                        </ul>
-                                    </li>
-                                    <li><a href="#">Enseignants <i class="fa fa-angle-right pull-right"></i></a>
-                                        <ul class="sub-menu">														<!-- Sub Sub Menu -->
-                                            <li><a href="teachers.html">Nos enseignants</a></li>
-                                            <li><a href="teacher-profile.html">Profil de l'enseignant</a></li>
-                                        </ul>
-                                    </li>
-                                    <li><a href="#">Évènements  <i class="fa fa-angle-right pull-right"></i></a>
-                                        <ul class="sub-menu">														<!-- Sub Sub Menu -->
-                                            <li><a href="upcoming-events.html">Évènements à venir</a></li>
-                                            <li><a href="event-details.html">Event Details</a></li>
-                                        </ul>
-                                    </li>
-                                    <li><a href="coming-soon.html">À venir</a></li>
-                                    <li><a href="not-found.html">404</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="#">Elements</a>
-                                <ul class="sub-menu">																<!-- Sub Menu -->
-                                    <li><a href="video.html">Video</a></li>
-                                    <li><a href="modals.html">Modals</a></li>
-                                    <li><a href="call-to-action.html">Call to action</a></li>
-                                    <li><a href="icon-boxes.html">Icon boxes</a></li>
-                                    <li><a href="accordion.html">Accordion</a></li>
-                                    <li><a href="tabs.html">Tabs</a></li>
-                                    <li><a href="tables.html">Tables</a></li>
-                                    <li><a href="blockquotes.html">Blockquotes</a></li>
-                                    <li><a href="progress-bars.html">Progress Bars</a></li>
-                                    <li><a href="lists.html">Lists</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="#">Blog</a>
-                                <ul class="sub-menu">																<!-- Sub Menu -->
-                                    <li><a href="blog-list-right-sidebar.html">Blog Right Sidebar</a></li>
-                                    <li><a href="blog-list-left-sidebar.html">Blog Left Sidebar</a></li>
-                                    <li><a href="blog-single.html">Blog Single</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="#">Contact</a>
-                                <ul class="sub-menu">																<!-- Sub Menu -->
-                                    <li><a href="contact.html">Contactez nous</a></li>
-                                    <li><a href="google-map.html">Google Map</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
-        </header>
-
-
-
-
+<header>
+    <nav class="navbar navbar-default navbar-fixed-top">         <!-- Navigation Bar -->
         <div class="container">
-            {% block menu %}
-                <nav class="navbar navbar-default">
-                    <div class="container-fluid">
-                        <div class="navbar-header">
-                            <a class="navbar-brand" href="#">Plateforme</a>
-                        </div>
-                        <div id="navbar" class="navbar-collapse collapse">
-                            <ul class="nav navbar-nav">
-                                <li class="active"><a href="{{ path('homepage') }}">Home</a></li>
-                                <li><a href="{{ path('myCourses') }}">Cours</a></li>
-                            </ul>
-                            <a class="pull-right btn btn-info account" href="{{ path('fos_user_security_login') }}">Login</a>
-                        </div><!--/.nav-collapse -->
-                    </div><!--/.container-fluid -->
-                </nav>
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-navigation" aria-expanded="false">
+                    <span class="sr-only">Toggle Menu</span>
+                    <span>Menu</span>
+                </button>
+                <a class="navbar-brand" href="index.html"><img src="{{ asset('educomp/images/logo.png') }}" alt=""></a> <!-- Replace with your Logo -->
+
 
                 {% if app.user %}
-                <div class="text-right">
-                    Hello {{ app.user.username }} ! | <a href="{{ path('fos_user_security_logout') }}">Logout</a>
-                </div>
+                    <div class="text-right">
+                        {{ app.user.username }} | <a href="{{ path('fos_user_security_logout') }}">Déconnexion</a>
+                    </div>
+                {% else %}
+                    <a class="pull-right btn btn-info account" href="{{ path('fos_user_security_login') }}">Login</a>
                 {% endif %}
-            {% endblock %}
-            {% block main %}{% endblock %}
+            </div>
+
+            <div class="collapse navbar-collapse" id="main-navigation">         <!-- Main Menu -->
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="index.html">Accueil</a></li>
+                    <li><a href="afadec.html">L’AFADEC</a></li>
+                    <li><a href="#">Informations pratiques</a>
+                        <ul class="sub-menu">									<!-- Sub Menu -->
+                            <li><a href="concours.html">Concours</a></li>
+                            <li><a href="faq.html">FAQ</a></li>
+                            <li><a href="metier-enseignant.html">Le métier d'enseignant</a></li>
+                            <li><a href="admission-process.html">Comment s'inscrire ?</a></li>
+                        </ul>
+                    </li>
+                    <li class="active"><a href="{{ path('myCourses') }}">Les cours</a></li>
+                </ul>
+            </div>
         </div>
+        </div>
+    </nav>
+</header>
 
 
-        <footer class="footer">         <!-- Footer -->
-            <div class="footer-pri">            <!-- Primary Footer -->
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-sm-4 footer-widget">            <!-- Footer Widget - Blog -->
-                            <h5 class="heading inverse">Recent <span class="color2">Blog</span></h5>
-                            <ul class="blog-thumbnail">
-                                <li class="entry">          <!-- Blog Entry Excerpt -->
-                                    <div class="entry-content">
-                                        <h4 class="entry-header"><a href="blog-single.html">What it takes to be National Best ?</a></h4>
-                                        <p class="entry-text">A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy with my whole heart.                                     </p>
-                                    </div>
-                                </li>
-                                <li class="entry">          <!-- Blog Entry Excerpt -->
-                                    <div class="entry-content">
-                                        <h4 class="entry-header"><a href="blog-single.html">How do we achieve 100% success rate ?</a></h4>
-                                        <p class="entry-text">A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy with my whole heart.                                     </p>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="col-sm-2 footer-widget">            <!-- Footer Widget - Quick Links -->
-                            <h5 class="heading inverse">Quick <span class="color2">Links</span></h5>
-                            <ul class="quick-links">
-                                <li><a href="brief-history.html">Historique</a></li>
-                                <li><a href="about-educomp.html">À propos d'EDUComp</a></li>
-                                <li><a href="course-grid.html">Nos cours</a></li>
-                                <li><a href="teachers.html">Nos enseignants</a></li>
-                                <li><a href="upcoming-events.html">Évènements à venir</a></li>
-                                <li><a href="contact.html">Contactez nous</a></li>
-                            </ul>
-                        </div>
-                        <div class="col-sm-2 footer-widget">            <!-- Footer Widget - Affiliations -->
-                            <h5 class="heading inverse">Affiliations &amp; <span class="color2">Awards</span></h5>
-                            <ul class="affiliations">
-                                <li><img src="{{ asset('educomp/images/university-1.png') }}" class="img-responsive" alt=""></li>
-                                <li><img src="{{ asset('educomp/images/university-2.png') }}" class="img-responsive" alt=""></li>
-                            </ul>
-                        </div>
-                        <div class="col-sm-2 footer-widget">            <!-- Footer Widget - Policies -->
-                            <h5 class="heading inverse">Our <span class="color2">Elements</span></h5>
-                            <ul class="quick-links">
-                                <li><a href="icon-boxes.html">Icon Boxes</a></li>
-                                <li><a href="accordion.html">Accordion</a></li>
-                                <li><a href="tables.html">Tables</a></li>
-                                <li><a href="tabs.html">Tabs</a></li>
-                                <li><a href="modals.html">Modals</a></li>
-                                <li><a href="progress-bars.html">Progress Bars</a></li>
-                            </ul>
-                        </div>
-                        <div class="col-sm-2 footer-widget">            <!-- Footer Widget - Contact Info -->
-                            <h5 class="heading inverse">Contactez  <span class="color2">Nous</span></h5>
-                            <address>
-                                <strong>EDUcomp Group Of Institutions</strong>
-                                <span>45th Floor,<br/> Newzek Estate Building,<br/> United Kingdom</span>
-                            </address>
-                            <a href="tel:+4525644563" class="phone"><i class="fa fa-phone fa-fw"></i> +452 564 4563</a>
-                            <a href="mailto:test@example.com" class="email"><i class="fa fa-envelope fa-fw"></i> info@company.com</a>
-                        </div>
-                    </div>
+{% block main %}{% endblock %}
+
+
+
+<footer class="footer">         <!-- Footer -->
+    <div class="footer-pri">            <!-- Primary Footer -->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-4 footer-widget">            <!-- Footer Widget - Blog -->
+                    <h5 class="heading inverse">Recent <span class="color2">Blog</span></h5>
+                    <ul class="blog-thumbnail">
+                        <li class="entry">          <!-- Blog Entry Excerpt -->
+                            <div class="entry-content">
+                                <h4 class="entry-header"><a href="blog-single.html">What it takes to be National Best ?</a></h4>
+                                <p class="entry-text">A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy with my whole heart.                                     </p>
+                            </div>
+                        </li>
+                        <li class="entry">          <!-- Blog Entry Excerpt -->
+                            <div class="entry-content">
+                                <h4 class="entry-header"><a href="blog-single.html">How do we achieve 100% success rate ?</a></h4>
+                                <p class="entry-text">A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy with my whole heart.                                     </p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-sm-2 footer-widget">            <!-- Footer Widget - Quick Links -->
+                    <h5 class="heading inverse">Quick <span class="color2">Links</span></h5>
+                    <ul class="quick-links">
+                        <li><a href="brief-history.html">Historique</a></li>
+                        <li><a href="about-educomp.html">À propos d'EDUComp</a></li>
+                        <li><a href="course-grid.html">Nos cours</a></li>
+                        <li><a href="teachers.html">Nos enseignants</a></li>
+                        <li><a href="upcoming-events.html">Évènements à venir</a></li>
+                        <li><a href="contact.html">Contactez nous</a></li>
+                    </ul>
+                </div>
+                <div class="col-sm-2 footer-widget">            <!-- Footer Widget - Affiliations -->
+                    <h5 class="heading inverse">Affiliations &amp; <span class="color2">Awards</span></h5>
+                    <ul class="affiliations">
+                        <li><img src="{{ asset('educomp/images/logo.png') }}" class="img-responsive" alt=""></li>
+                    </ul>
+                </div>
+                <div class="col-sm-2 footer-widget">            <!-- Footer Widget - Policies -->
+                    <h5 class="heading inverse">Our <span class="color2">Elements</span></h5>
+                    <ul class="quick-links">
+                        <li><a href="icon-boxes.html">Icon Boxes</a></li>
+                        <li><a href="accordion.html">Accordion</a></li>
+                        <li><a href="tables.html">Tables</a></li>
+                        <li><a href="tabs.html">Tabs</a></li>
+                        <li><a href="modals.html">Modals</a></li>
+                        <li><a href="progress-bars.html">Progress Bars</a></li>
+                    </ul>
+                </div>
+                <div class="col-sm-2 footer-widget">            <!-- Footer Widget - Contact Info -->
+                    <h5 class="heading inverse">Contactez  <span class="color2">Nous</span></h5>
+                    <address>
+                        <strong>EDUcomp Group Of Institutions</strong>
+                        <span>45th Floor,<br/> Newzek Estate Building,<br/> United Kingdom</span>
+                    </address>
+                    <a href="tel:+4525644563" class="phone"><i class="fa fa-phone fa-fw"></i> +452 564 4563</a>
+                    <a href="mailto:test@example.com" class="email"><i class="fa fa-envelope fa-fw"></i> info@company.com</a>
                 </div>
             </div>
-            <div class="footer-sec">            <!-- Secondary Footer -->
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-sm-6 text-center">
-                            <span class="copyright">&copy; Copyright Your Company 2016</span>           <!-- Copyright Text -->
-                        </div>
-                        <div class="col-sm-6 text-center">
-                            <ul class="social">          <!-- Social Media Links -->
-                                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                <li><a href="#"><i class="fa fa-pinterest-p"></i></a></li>
-                                <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
-                                <li><a href="#"><i class="fa fa-reddit-alien"></i></a></li>
-                            </ul>
-                        </div>
-                    </div>
+        </div>
+    </div>
+    <div class="footer-sec">            <!-- Secondary Footer -->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-6 text-center">
+                    <span class="copyright">&copy; Copyright Your Company 2016</span>           <!-- Copyright Text -->
+                </div>
+                <div class="col-sm-6 text-center">
+                    <ul class="social">          <!-- Social Media Links -->
+                        <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                        <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                        <li><a href="#"><i class="fa fa-pinterest-p"></i></a></li>
+                        <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
+                        <li><a href="#"><i class="fa fa-reddit-alien"></i></a></li>
+                    </ul>
                 </div>
             </div>
-        </footer>
+        </div>
+    </div>
+</footer>
 
-        <div id="back"><i class="fa fa-angle-up"></i></div>     <!-- Back To Top -->
+<div id="back"><i class="fa fa-angle-up"></i></div>     <!-- Back To Top -->
 
 
 
 
 
-        {% block javascripts %}
-            <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}" type="text/javascript"></script>
-            <script src="{{ asset('vendors/bootstrap/dist/js/bootstrap.min.js') }}" type="text/javascript"></script>
-            <!--<script src="js/bootstrap-select.min.js" type="text/javascript"></script>-->
+{% block javascripts %}
+    <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('vendors/bootstrap/dist/js/bootstrap.min.js') }}" type="text/javascript"></script>
+    <!--<script src="js/bootstrap-select.min.js" type="text/javascript"></script>-->
 
-            <!--Educomp Custom Script-->
-            <script src="{{ asset('educomp/js/eduCompMain.js') }}" type=text/javascript></script>
+    <!--Educomp Custom Script-->
+    <script src="{{ asset('educomp/js/eduCompMain.js') }}" type=text/javascript></script>
 
-            <!-- Respond.js and HTML shiv provide HTML5 support in older browsers like IE9 and 8 -->
-            <!--[if lt IE 9]>
-            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-            <![endif]-->
-        {% endblock %}
-    </body>
+    <!-- Respond.js and HTML shiv provide HTML5 support in older browsers like IE9 and 8 -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+{% endblock %}
+</body>
 </html>

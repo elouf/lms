@@ -15,99 +15,123 @@ class LoadCoursData extends AbstractFixture implements OrderedFixtureInterface
     {
         $cours = $this->createItem($manager,
             'Algèbre',
-            'Cours d\'algèbre du second degré', '
-            images/disc_maths.png',
+            'Cours d\'algèbre du second degré',
+            '<p>Vous disposez ici de ressources d\'entraînement aux écrits du concours, sous différentes formes de
+                difficulté progressive pour vous aider à travailler en autonomie :</p>
+            <ul>
+                <li>Des exercices de mise en route</li>
+                <li>Des exercices niveau Concours</li>
+                <li>Des sujets format concours</li>
+            </ul>
+            <p>Tous les exercices et sujets disposent bien sûr de leur corrigé, écrit ou vidéo. Pour certains exercices
+            plus difficiles, vous disposez aussi d\'indices aidant à la résolution, si besoin. Attention: Les formats
+            des sujets ont changé, les annales permettent de s\'entraîner surtout à l\'épreuve 1 "Résolution de
+            problème". Tenez en compte dans vos révisions. Bonne découverte !</p>',
+            'disciplines/disc_maths.png',
             $this->getReference('disc_maths'),
             0);
         $this->addReference('cours_alg', $cours);
         $cours = $this->createItem($manager,
             'Analyse',
-            'Cours d\'analyse du second degré', '
-            images/disc_maths.png',
+            'Cours d\'analyse du second degré',
+            'accueil',
+            'disciplines/disc_maths.png',
             $this->getReference('disc_maths'),
             0);
         $this->addReference('cours_analyse', $cours);
         $cours = $this->createItem($manager,
             'Littérature',
             'Cours de Littérature du second degré',
-            'images/disc_lettres.png',
+            'accueil',
+            'disciplines/disc_lettres.png',
             $this->getReference('disc_lettres'),
             0);
         $this->addReference('cours_litt', $cours);
         $cours = $this->createItem($manager,
             'Langue Française',
             'Cours de Langue Française du second degré',
-            'images/disc_lettres.png',
+            'accueil',
+            'disciplines/disc_lettres.png',
             $this->getReference('disc_lettres'),
             0);
         $this->addReference('cours_lFra', $cours);
         $cours = $this->createItem($manager,
             'Biologie',
             'Cours de Biologie du second degré',
-            'images/disc_svt.png',
+            'accueil',
+            'disciplines/disc_svt.png',
             $this->getReference('disc_svt'),
             0);
         $this->addReference('cours_bio', $cours);
         $cours = $this->createItem($manager,
             'Géologie',
             'Cours de Géologie du second degré',
-            'images/disc_geol.png',
+            'accueil',
+            'disciplines/disc_geol.png',
             $this->getReference('disc_svt'),
             0);
         $this->addReference('cours_geol', $cours);
         $cours = $this->createItem($manager,
             'Union Indienne',
             'Cours Union indienne du second degré',
-            'images/disc_hist.png',
+            'accueil',
+            'disciplines/disc_hist.png',
             $this->getReference('disc_hist'),
             0);
         $this->addReference('cours_unInd', $cours);
         $cours = $this->createItem($manager,
             'La France des marges',
             'Cours La France des marges du second degré',
-            'images/disc_hist.png',
+            'accueil',
+            'disciplines/disc_hist.png',
             $this->getReference('disc_hist'),
             0);
         $this->addReference('cours_frMarges', $cours);
         $cours = $this->createItem($manager,
             'Physique',
             'Cours de Physique du second degré',
-            'images/disc_phy.png',
+            'accueil',
+            'disciplines/disc_phy.png',
             $this->getReference('disc_phy'),
             0);
         $this->addReference('cours_phy', $cours);
         $cours = $this->createItem($manager,
             'Chimie',
             'Cours de Chimie du second degré',
-            'images/disc_chi.png',
+            'accueil',
+            'disciplines/disc_chi.png',
             $this->getReference('disc_phy'),
             0);
         $this->addReference('cours_chi', $cours);
         $cours = $this->createItem($manager,
             'Composition',
             'Cours d\'Anglais Composition du second degré',
-            'images/disc_anglais.png',
+            'accueil',
+            'disciplines/disc_anglais.png',
             $this->getReference('disc_angl'),
             0);
         $this->addReference('cours_anglCompo', $cours);
         $cours = $this->createItem($manager,
             'Traduction',
             'Cours d\'Anglais Traduction du second degré',
-            'images/disc_anglais.png',
+            'accueil',
+            'disciplines/disc_anglais.png',
             $this->getReference('disc_angl'),
             0);
         $this->addReference('cours_anglTrad', $cours);
         $cours = $this->createItem($manager,
             'Traduction',
             'Cours d\'Espagnol Traduction du second degré',
-            'images/disc_esp.png',
+            'accueil',
+            'disciplines/disc_esp.png',
             $this->getReference('disc_esp'),
             0);
         $this->addReference('cours_espTrad', $cours);
         $cours = $this->createItem($manager,
             'Composition',
             'Cours d\'Espagnol Composition du second degré',
-            'images/disc_esp.png',
+            'accueil',
+            'disciplines/disc_esp.png',
             $this->getReference('disc_esp'),
             0);
         $this->addReference('cours_espCompo', $cours);
@@ -115,28 +139,32 @@ class LoadCoursData extends AbstractFixture implements OrderedFixtureInterface
         $cours = $this->createItem($manager,
             'Prépa concours',
             'Cours de Maths Prépa concours du premier degré',
-            'images/disc_crpe_maths.png',
+            'accueil',
+            'disciplines/disc_crpe_maths.png',
             $this->getReference('disc_crpe_maths'),
             0);
         $this->addReference('cours_crpe_maths_prepa', $cours);
         $cours = $this->createItem($manager,
             'Remédiation',
             'Cours de Maths Remédiation du premier degré',
-            'images/disc_crpe_maths.png',
+            'accueil',
+            'disciplines/disc_crpe_maths.png',
             $this->getReference('disc_crpe_maths'),
             0);
         $this->addReference('cours_crpe_maths_remed', $cours);
         $cours = $this->createItem($manager,
             'Prépa concours',
             'Cours de Français Prépa concours du premier degré',
-            'images/disc_crpe_fra.png',
+            'accueil',
+            'disciplines/disc_crpe_fra.png',
             $this->getReference('disc_crpe_fra'),
             0);
         $this->addReference('cours_crpe_fra_prepa', $cours);
         $cours = $this->createItem($manager,
             'Remédiation',
             'Cours de Français Remédiation du premier degré',
-            'images/disc_crpe_fra.png',
+            'accueil',
+            'disciplines/disc_crpe_fra.png',
             $this->getReference('disc_crpe_fra'),
             0);
         $this->addReference('cours_crpe_fra_remed', $cours);
@@ -144,10 +172,11 @@ class LoadCoursData extends AbstractFixture implements OrderedFixtureInterface
         $manager->flush();
     }
 
-    public function createItem(ObjectManager $manager, $nom, $descr, $imgFilePath, Discipline $disc, $cout){
+    public function createItem(ObjectManager $manager, $nom, $accueil, $descr, $imgFilePath, Discipline $disc, $cout){
         $item = new Cours();
         $item->setNom($nom);
         $item->setDescription($descr);
+        $item->setAccueil($accueil);
         $item->setImgFilePath($imgFilePath);
         $item->setCout($cout);
         $item->setDiscipline($disc);

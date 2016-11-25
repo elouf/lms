@@ -14,6 +14,10 @@ class LoadInscription_cData extends AbstractFixture implements OrderedFixtureInt
     {
         $this->createItem($manager,
             $this->getReference('role_etu'),
+            $this->getReference('user_etudiant_1'),
+            $this->getReference('cours_espTrad'));
+        $this->createItem($manager,
+            $this->getReference('role_etu'),
             $this->getReference('user_etudiant_2'),
             $this->getReference('cours_phy'));
         $this->createItem($manager,

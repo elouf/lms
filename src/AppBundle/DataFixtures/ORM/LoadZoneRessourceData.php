@@ -23,6 +23,10 @@ class LoadZoneRessourceData extends AbstractFixture implements OrderedFixtureInt
             1);
         $ress = $this->createItem($manager,
             $this->getReference('sect_cours_alg_1'),
+            $this->getReference('dev_cours_alg_1'),
+            2);
+        $ress = $this->createItem($manager,
+            $this->getReference('sect_cours_alg_1'),
             $this->getReference('ress_cours_alg_3'),
             2);
         $ress = $this->createItem($manager,
@@ -33,6 +37,10 @@ class LoadZoneRessourceData extends AbstractFixture implements OrderedFixtureInt
             $this->getReference('sect_cours_alg_2'),
             $this->getReference('ress_cours_alg_2'),
             1);
+        $ress = $this->createItem($manager,
+            $this->getReference('sect_cours_alg_2'),
+            $this->getReference('dev_cours_alg_1'),
+            2);
 
         $manager->flush();
     }
@@ -55,6 +63,6 @@ class LoadZoneRessourceData extends AbstractFixture implements OrderedFixtureInt
     {
         // the order in which fixtures will be loaded
         // the lower the number, the sooner that this fixture is loaded
-        return 13;
+        return 14;
     }
 }

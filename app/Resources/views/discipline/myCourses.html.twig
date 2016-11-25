@@ -19,21 +19,21 @@
                 <ul class="nav nav-pills nav-stacked pull-left" role="tablist" style="padding-bottom: 5px;padding-top: 5px">
                     {% for key,val in courses %}
                         <li role="presentation" {% if loop.index == 1 %} class="active" {% endif %}>
-                            <a href="#p1body{{ loop.index }}" aria-controls="p1body{{ loop.index }}" role="tab" data-toggle="tab"><i class="fa fa-university fa-fw"></i> {{ val.discipline }}</a>
+                            <a href="#p1body{{ val.discipline.id }}" aria-controls="p1body{{ val.discipline.id }}" role="tab" data-toggle="tab"><i class="fa fa-university fa-fw"></i> {{ val.discipline }}</a>
                         </li>
                     {% endfor %}
                 </ul>
 
                 <div class="tab-content">
                     {% for key,val in courses %}
-                        <div role="tabpanel" class="tab-pane fade{% if loop.index == 1 %} in active{% endif %}" id="p1body{{ loop.index }}" {% if loop.index == 1 %} style="padding-top: 0;" {% endif %}>
+                        <div role="tabpanel" class="tab-pane fade{% if loop.index == 1 %} in active{% endif %}" id="p1body{{ val.discipline.id }}" {% if loop.index == 1 %} style="padding-top: 0;" {% endif %}>
                             <div class="container mt-0 mb-60">
                                 <div class="row">
                                     <div class="col-sm-8">
                                         {% for keyC,valC in val.courses %}
                                             <div class="course-list new" style="margin-top: 0;">
                                                 <div class="course-media">
-                                                    <img src="{{ asset('educomp/images/1.png') }}" class="img-responsive course-img" alt="">
+                                                    <img src="{{ asset('images/') }}{{ valC.imgFilePath }}" class="img-responsive course-img" alt="">
                                                 </div>
                                                 <div class="course-detail">
                                                     <h4 class="heading">{{ valC.nom }}</h4>
@@ -42,7 +42,7 @@
                                                         <li><i class="fa fa-clock-o"></i> 2 mois</li>
                                                     </ul>
                                                     <p class="brief">{{ valC.description }}</p>
-                                                    <a href="course-detail.html" class="btn btn-primary btn-sm">Entrer</a>
+                                                    <a href="{{ path('oneCours', {id: valC.id}) }}" class="btn btn-primary btn-sm">Entrer</a>
                                                 </div>
                                             </div>
                                         {% endfor %}

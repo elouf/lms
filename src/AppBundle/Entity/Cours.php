@@ -39,6 +39,13 @@ class Cours
     /**
      * @var string
      *
+     * @ORM\Column(name="accueil", type="text", nullable=true)
+     */
+    private $accueil;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="cout", type="string", length=255, nullable=true)
      */
     private $cout;
@@ -135,6 +142,30 @@ class Cours
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * Set accueil
+     *
+     * @param string $accueil
+     *
+     * @return Cours
+     */
+    public function setAccueil($accueil)
+    {
+        $this->description = $accueil;
+
+        return $this;
+    }
+
+    /**
+     * Get accueil
+     *
+     * @return string
+     */
+    public function getAccueil()
+    {
+        return $this->accueil;
     }
 
     /**
