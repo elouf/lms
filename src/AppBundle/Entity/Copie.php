@@ -19,28 +19,28 @@ class Copie
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $id;
+    protected $id;
 
     /**
      * @var User
      *
      * @ORM\OneToOne(targetEntity="User")
      */
-    private $auteur;
+    protected $auteur;
 
     /**
      * @var \DateTime
      *
      * @ORM\Column(name="dateRendu", type="datetime")
      */
-    private $dateRendu;
+    protected $dateRendu;
 
     /**
      * @var Devoir
      *
      * @ORM\ManyToOne(targetEntity="Devoir")
      */
-    private $devoir;
+    protected $devoir;
 
     /**
      * Get id

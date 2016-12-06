@@ -21,6 +21,8 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
         $this->createItem($manager,
             'admin',
             'test',
+            'Erwannig',
+            'Louf',
             'erwannig.louf@gmail.com',
             $this->getReference('inst_paris'),
             true);
@@ -38,6 +40,8 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
             $user = $this->createItem($manager,
                 $intituleUser.$i,
                 'test',
+                'prenom',
+                'nom',
                 $intituleUser.$i.'@test.com',
                 $inst,
                 false);
@@ -45,10 +49,12 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
         }
     }
 
-    public function createItem(ObjectManager $manager, $username, $password, $email, $institut, $isSuperAdmin){
+    public function createItem(ObjectManager $manager, $username, $password, $firstname, $lastname, $email, $institut, $isSuperAdmin){
         $item = new User();
         $item->setUsername($username);
         $item->setPlainPassword($password);
+        $item->setFirstname($firstname);
+        $item->setLastname($lastname);
         $item->setEmail($email);
         $item->setInstitut($institut);
         $item->setEnabled(true);

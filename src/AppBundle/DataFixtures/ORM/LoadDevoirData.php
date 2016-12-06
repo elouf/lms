@@ -18,7 +18,7 @@ class LoadDevoirData extends AbstractFixture implements OrderedFixtureInterface
         $dateF->setDate(2017, 1, 10);
         $ress = $this->createItem($manager,
             'DevoirAlg1',
-            'description du devoir 1 en Alg',
+            'Premier devoir d\'Algèbre',
             $this->getReference('cours_alg'),
             $dateD,
             $dateF,
