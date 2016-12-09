@@ -1,0 +1,24 @@
+{
+  "name": "stdiLMS",
+  "homepage": "https://github.com/elouf/lms",
+  "authors": [
+    "elouf <erwannig.louf@gmail.com>"
+  ],
+  "description": "stdi LMS based on Symfony",
+  "main": "",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "web/vendors",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "autosize": "^3.0.20",
+    "bootstrap": "^3.3.7",
+    "components-font-awesome": "^4.7.0"
+  }
+}

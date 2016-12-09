@@ -1,18 +1,18 @@
 {% extends 'base.html.twig' %}
 
-{% block main %}
+{% block pageHeader %}
     <div class="page-header">
         <div class="container">
             <h1>Disciplines</h1>
             <ul class="breadcrumb">
-                <li><a href="index.html">Accueil</a></li>
+                <li><a href="{{ path('homepage') }}">Accueil</a></li>
                 <li class="active">Disciplines</li>
             </ul>
         </div>
     </div>
+{% endblock %}
 
-
-
+{% block main %}
     <div class="container mt-20">
         <div class="row mt-20 mb-100">
             <div class="col-sm-12">
@@ -42,7 +42,7 @@
                                                         <li><i class="fa fa-clock-o"></i> 2 mois</li>
                                                     </ul>
                                                     <p class="brief">{{ valC.description }}</p>
-                                                    <a href="{{ path('oneCours', {id: valC.id}) }}" class="btn btn-primary btn-sm">Entrer</a>
+                                                    <a href="{{ path('oneCours', {id: valC.id, mode: 'etu'}) }}" class="btn btn-primary btn-sm">Entrer</a>
                                                 </div>
                                             </div>
                                         {% endfor %}

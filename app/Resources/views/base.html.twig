@@ -60,19 +60,11 @@
                 </button>
                 <a class="navbar-brand" href="."><img src="{{ asset('educomp/images/logo.png') }}" alt=""></a> <!-- Replace with your Logo -->
 
-
-                {% if app.user %}
-                    <div class="text-right">
-                        {{ app.user.username }} | <a href="{{ path('fos_user_security_logout') }}">Déconnexion</a>
-                    </div>
-                {% else %}
-                    <a class="pull-right btn btn-info account" href="{{ path('fos_user_security_login') }}">Login</a>
-                {% endif %}
             </div>
 
-            <div class="collapse navbar-collapse" id="main-navigation">         <!-- Main Menu -->
+            <li class="collapse navbar-collapse" id="main-navigation">         <!-- Main Menu -->
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href=".">Accueil</a></li>
+                    <li><a href="{{ path('homepage') }}">Accueil</a></li>
                     <li><a href="afadec.html">L’AFADEC</a></li>
                     <li><a href="#">Informations pratiques</a>
                         <ul class="sub-menu">									<!-- Sub Menu -->
@@ -82,11 +74,18 @@
                             <li><a href="admission-process.html">Comment s'inscrire ?</a></li>
                         </ul>
                     </li>
-                    <li class="active"><a href="{{ path('myCourses') }}">Les cours</a></li>
+                    <li><a href="{{ path('myCourses') }}">Les cours</a></li>
                     {% if app.user %}
-                        {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
-                            <li><a href="{{ path('fos_user_security_login') }}">Vue Admin</a></li>
-                        {% endif %}
+                        <li>
+                            <a href="#">{{ app.user.username }}</a>
+                            <ul class="sub-menu">
+                                {% block vueAdmin %}{% endblock %}
+                                <li><a href="#">Mon compte</a></li>
+                                <li><a href="{{ path('fos_user_security_logout') }}">Déconnexion</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li><a class="pull-right btn btn-info account" href="{{ path('fos_user_security_login') }}">Login</a></li>
                     {% endif %}
                 </ul>
             </div>
@@ -96,6 +95,8 @@
 </header>
 
 
+
+{% block pageHeader %}{% endblock %}
 {% block main %}{% endblock %}
 
 

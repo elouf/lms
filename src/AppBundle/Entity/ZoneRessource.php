@@ -37,6 +37,20 @@ class ZoneRessource extends OrderedItem
     private $ressource;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="isVisible", type="boolean", nullable=true)
+     */
+    private $isVisible;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="description", type="text", nullable=true)
+     */
+    protected $description;
+
+    /**
      * Get id
      *
      * @return int
@@ -92,4 +106,51 @@ class ZoneRessource extends OrderedItem
         return $this->ressource;
     }
 
+    /**
+     * Set isVisible
+     *
+     * @param boolean $isVisible
+     *
+     * @return ZoneRessource
+     */
+    public function setIsVisible($isVisible)
+    {
+        $this->isVisible = $isVisible;
+
+        return $this;
+    }
+
+    /**
+     * Get isVisible
+     *
+     * @return bool
+     */
+    public function getIsVisible()
+    {
+        return $this->isVisible;
+    }
+
+    /**
+     * Set description
+     *
+     * @param string $description
+     *
+     * @return ZoneRessource
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Get description
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
 }

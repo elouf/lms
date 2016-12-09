@@ -14,30 +14,50 @@ class LoadSectionData extends AbstractFixture implements OrderedFixtureInterface
     public function load(ObjectManager $manager)
     {
         $section = $this->createItem($manager,
-            'Section1',
+            'Exercices de mise en route',
             $this->getReference('cours_alg'),
             0);
         $this->addReference('sect_cours_alg_1', $section);
         $section = $this->createItem($manager,
-            'Section2',
+            'Corrigés des exercices de mise en route',
             $this->getReference('cours_alg'),
             1);
         $this->addReference('sect_cours_alg_2', $section);
         $section = $this->createItem($manager,
-            'Section3',
+            'Exercices niveau concours',
             $this->getReference('cours_alg'),
             2);
         $this->addReference('sect_cours_alg_3', $section);
         $section = $this->createItem($manager,
-            'Section4',
+            'Corrigés des exercices niveau concours',
             $this->getReference('cours_alg'),
             3);
         $this->addReference('sect_cours_alg_4', $section);
         $section = $this->createItem($manager,
-            'Section5',
+            'Sujets format concours',
             $this->getReference('cours_alg'),
             4);
         $this->addReference('sect_cours_alg_5', $section);
+        $section = $this->createItem($manager,
+            'Corrigés des sujets format concours',
+            $this->getReference('cours_alg'),
+            5);
+        $this->addReference('sect_cours_alg_6', $section);
+        $section = $this->createItem($manager,
+            'Annales',
+            $this->getReference('cours_alg'),
+            6);
+        $this->addReference('sect_cours_alg_7', $section);
+        $section = $this->createItem($manager,
+            'Bibliographie',
+            $this->getReference('cours_alg'),
+            7);
+        $this->addReference('sect_cours_alg_8', $section);
+        $section = $this->createItem($manager,
+            'Rapport de jury',
+            $this->getReference('cours_alg'),
+            8);
+        $this->addReference('sect_cours_alg_9', $section);
 
         $section = $this->createItem($manager,
             'Section1',

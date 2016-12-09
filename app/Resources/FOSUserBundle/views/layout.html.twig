@@ -1,21 +1,98 @@
 {% extends 'base.html.twig' %}
 
-{% block main %}
+{% block pageHeader %}
+    <div class="page-header">
+        <div class="container">
+            <h2 class="color3">Bienvenue sur e-educmaster.com</h2>
+            <ul class="breadcrumb">
+                <li class="color3">E‐former les formateurs</li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
 
-    {% include "accueil/welcome.html.twig" %}
+{% block main %}
 
     <div class="container mb-60 mt-60">
         <div class="row">
 
-            {% block fos_user_content %}
-            {% endblock fos_user_content %}
+            {% if not app.user %}
+                {% block fos_user_content %}
+                {% endblock fos_user_content %}
+            {% endif %}
 
-            {% include "accueil/alaune.html.twig" %}
+            <div class="col-sm-8
+                {% if app.user %}
+                    col-sm-push-2
+                {% else %}
+                    col-sm-pull-4
+                {% endif %}
+            mt-40">
+                <h4 class="heading pt-20 text-center">DÉCOUVREZ L’AFADEC <span class="color2">EN 2 MINUTES</span></h4>
+                <iframe class="mt-20" width="100%" height="430" frameborder="0" allowfullscreen="" mozallowfullscreen="" webkitallowfullscreen="" src="https://player.vimeo.com/video/123835230"></iframe>
+            </div>
+        </div>
+        <br/>
+        <div class="row">
 
+            <div class="col-sm-4">
+                <div class="col-sm-12">
+                    <div class="row bgcolor3 pt-10 pb-20">
+                        <div class="col-sm-12">
+                            <figure class="effect-sadie">
+                                <a href="http://www.facebook.com">
+                                    <figcaption>
+                                        <h6 class="img-title">Suivez nous sur <span class="color2">Facebook</span></h6>
+                                    </figcaption>
+                                    <img src="{{ asset('images/accueil/facebook.png') }}" class="img-responsive" alt="facebook">
+
+                                </a>
+                            </figure>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-8">
+                <div class="col-sm-12">
+                    <div class="row bgcolor3 pt-20">
+                        <div class="col-sm-4">
+                            <figure class="effect-sadie">
+                                <a href="http://www.e-educmaster.com/data_AFADEC/1er_degre/Francais_cor_Chazeau_2013_wbm/index.html">
+                                    <img src="{{ asset('images/accueil/cor_Fra1.png') }}" class="img-responsive" alt="Corrigé Français 1D">
+                                    <figcaption>
+                                        <h6 class="img-title">Corrigé <span class="color2">Français 1D</span></h6>
+                                    </figcaption>
+                                </a>
+                            </figure>
+                        </div>
+                        <div class="col-sm-4">
+                            <figure class="effect-sadie">
+                                <a href="http://www.e-educmaster.com/data_AFADEC/2d_degre/HG_articles_geo_Monot_2016">
+                                    <img src="{{ asset('images/accueil/HG2.png') }}" class="img-responsive" alt="Histoire-Géographie 2D">
+                                    <figcaption>
+                                        <h6 class="img-title">Histoire-Géographie <span class="color2">2D</span></h6>
+                                    </figcaption>
+                                </a>
+                            </figure>
+                        </div>
+                        <div class="col-sm-4">
+                            <figure class="effect-sadie">
+                                <a href="http://www.e-educmaster.com/data_AFADEC/1er_degre/maths_remediation_Saunier_2013-2_capt/afadec_fractions.htm">
+                                    <img src="{{ asset('images/accueil/maths1.png') }}" class="img-responsive wp-post-image" alt="Le secrétaire général de l'enseignement catholique, Pascal Balmand, en conférence de presse le 4 octobre 2016">
+                                    <figcaption>
+                                        <h6 class="img-title">Cours <span class="color2">Maths 1D</span></h6>
+                                    </figcaption>
+                                </a>
+                            </figure>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    {% include "accueil/decouvrez.html.twig" %}
+
 
 {% endblock %}
-

@@ -16,40 +16,70 @@ class LoadZoneRessourceData extends AbstractFixture implements OrderedFixtureInt
         $ress = $this->createItem($manager,
             $this->getReference('sect_cours_alg_1'),
             $this->getReference('ress_cours_alg_1'),
+            true,
+            "",
             0);
         $ress = $this->createItem($manager,
             $this->getReference('sect_cours_alg_1'),
             $this->getReference('ress_cours_alg_2'),
+            true,
+            "",
             1);
         $ress = $this->createItem($manager,
             $this->getReference('sect_cours_alg_1'),
             $this->getReference('dev_cours_alg_1'),
+            true,
+            "",
             2);
         $ress = $this->createItem($manager,
             $this->getReference('sect_cours_alg_1'),
+            null,
+            true,
+            "Ceci est la description de la zone de resource libre 1",
+            3);
+        $ress = $this->createItem($manager,
+            $this->getReference('sect_cours_alg_1'),
+            null,
+            true,
+            "Ceci est la description de la zone de resource libre 2",
+            4);
+        $ress = $this->createItem($manager,
+            $this->getReference('sect_cours_alg_1'),
             $this->getReference('ress_cours_alg_3'),
+            true,
+            "",
             2);
         $ress = $this->createItem($manager,
             $this->getReference('sect_cours_alg_2'),
             $this->getReference('ress_cours_alg_1'),
+            true,
+            "",
             0);
         $ress = $this->createItem($manager,
             $this->getReference('sect_cours_alg_2'),
             $this->getReference('ress_cours_alg_2'),
+            true,
+            "",
             1);
         $ress = $this->createItem($manager,
             $this->getReference('sect_cours_alg_2'),
             $this->getReference('dev_cours_alg_1'),
+            true,
+            "",
             2);
 
         $manager->flush();
     }
 
-    public function createItem(ObjectManager $manager, $section, $ressource, $position){
+    public function createItem(ObjectManager $manager, $section, $ressource, $isVisible, $description, $position){
         $item = new ZoneRessource();
         $item->setSection($section);
-        $item->setRessource($ressource);
+        if($ressource != null){
+            $item->setRessource($ressource);
+        }
+        $item->setIsVisible($isVisible);
         $item->setPosition($position);
+        $item->setDescription($description);
         $manager->persist($item);
         return $item;
     }

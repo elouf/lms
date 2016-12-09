@@ -1,20 +1,24 @@
 {% extends 'base.html.twig' %}
 
-{% block main %}
+{% block vueAdmin %}
+    {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+        <li><a href="{{ path('oneCours', {id: cours.id, mode: 'admin'}) }}">Vue admin</a></li>
+    {% endif %}
+{% endblock %}
+
+{% block pageHeader %}
     <div class="page-header">
         <div class="container">
             <h1>Détail des cours</h1>
             <ul class="breadcrumb">
-                <li><a href=".">Accueil</a></li>
+                <li><a href="{{ path('homepage') }}">Accueil</a></li>
                 <li class="active">Détail des cours</li>
             </ul>
         </div>
     </div>
+{% endblock %}
 
-    {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
-        <a href="{{ path('fos_user_security_login') }}">Vue Admin</a>
-    {% endif %}
-
+{% block main %}
     <div class="container mt-20">
         <div class="row">
             <div class="col-sm-4">
@@ -43,7 +47,7 @@
         <div class="clearfix"></div>
 
         <div class="row mt-60 mb-100">
-            <div class="col-sm-3">
+            <div class="col-sm-4">
                 <ul class="nav nav-pills nav-stacked pull-left" role="tablist" style="padding-bottom: 5px;padding-top: 5px">
                     {% for key,val in zonesSections %}
                         <li role="presentation" {% if loop.index == 1 %} class="active" {% endif %}>
@@ -52,48 +56,69 @@
                     {% endfor %}
                 </ul>
             </div>
-            <div class="col-sm-9">
+            <div class="col-sm-8">
                 <div class="tab-content">
                     {% for key,val in zonesSections %}
                         <div role="tabpanel" class="tab-pane fade{% if loop.index == 1 %} in active {% endif %}" id="t1body{{ val.section.id }}">
                             <div class="editor">
                                 <ul class="list-default">
                                     {% for keyR,valR in val.zones.content %}
-                                        {% if val.zones.type[keyR] == "lien" %}
-                                            <li>{{ valR.nom }}</li>
-                                        {% elseif val.zones.type[keyR] == "devoir" %}
-                                            <li>
-                                                <table>
-                                                    <tr>
-                                                        <td></td>
-                                                        <td>Fichier</td>
-                                                        <td>date de dépôt</td>
-                                                        <td>Auteur</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Devoir</td>
-                                                        <td>{{ val.zones.content[keyR].devoir.nom }}</td>
-                                                        <td>{{ val.zones.content[keyR].devoir.dateDebut|date('Y-m-d') }}</td>
-                                                    </tr>
-                                                    {% if val.zones.content[keyR].copie %}
-                                                    <tr>
-                                                        <td>Copie</td>
-                                                        <td></td>
+                                        {% if val.zones.containers[keyR].isVisible %}
+                                            {% if val.zones.type[keyR] == "lien" %}
+                                                <li data-idZone="{{ val.zones.containers[keyR].id }}"
+                                                    class="courseElem lien col-md-12">
+                                                    <a class="" href="{{ valR.url }}">
+                                                        <i class="ressourceLink col-md-1 fa fa-arrow-right"></i>
 
-                                                        <td>{{ val.zones.content[keyR].copie.dateRendu|date('Y-m-d') }}</td>
-                                                        <td>{{ val.zones.content[keyR].copie.auteur.firstname }} {{ val.zones.content[keyR].copie.auteur.lastname }}</td>
-                                                    </tr>
-                                                    {% endif %}
-                                                    {% if val.zones.content[keyR].corrige %}
-                                                    <tr>
-                                                        <td>Corrigé</td>
-                                                        <td>{{ val.zones.content[keyR].corrige.dateRendu|date('Y-m-d') }}</td>
-                                                        <td>{{ val.zones.content[keyR].corrige.auteur.firstname }} {{ val.zones.content[keyR].corrige.auteur.lastname }}</td>
-                                                    </tr>
+                                                        <div class="col-md-11">
+                                                            {{ valR.description }}
+                                                        </div>
+                                                    </a>
+
+
+                                                </li>
+                                            {% elseif val.zones.type[keyR] == "devoir" %}
+                                                <li data-idZone="{{ val.zones.containers[keyR].id }}"
+                                                    class="courseElem devoir col-md-12">
+                                                    <table>
+                                                        <tr>
+                                                            <td></td>
+                                                            <td>Fichier</td>
+                                                            <td>date de dépôt</td>
+                                                            <td>Auteur</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Devoir</td>
+                                                            <td>{{ val.zones.content[keyR].devoir.nom }}</td>
+                                                            <td>{{ val.zones.content[keyR].devoir.dateDebut|date('Y-m-d') }}</td>
+                                                        </tr>
+                                                        {% if val.zones.content[keyR].copie %}
+                                                        <tr>
+                                                            <td>Copie</td>
+                                                            <td></td>
+
+                                                            <td>{{ val.zones.content[keyR].copie.dateRendu|date('Y-m-d') }}</td>
+                                                            <td>{{ val.zones.content[keyR].copie.auteur.firstname }} {{ val.zones.content[keyR].copie.auteur.lastname }}</td>
+                                                        </tr>
                                                         {% endif %}
-                                                </table>
+                                                        {% if val.zones.content[keyR].corrige %}
+                                                        <tr>
+                                                            <td>Corrigé</td>
+                                                            <td>{{ val.zones.content[keyR].corrige.dateRendu|date('Y-m-d') }}</td>
+                                                            <td>{{ val.zones.content[keyR].corrige.auteur.firstname }} {{ val.zones.content[keyR].corrige.auteur.lastname }}</td>
+                                                        </tr>
+                                                            {% endif %}
+                                                    </table>
 
-                                            </li>
+                                                </li>
+                                            {% elseif val.zones.type[keyR] == "free" %}
+                                                <li data-idZone="{{ val.zones.containers[keyR].id }}"
+                                                    class="courseElem freeRessource col-md-12">
+                                                    <div class="col-md-12">
+                                                        {{ valR }}
+                                                    </div>
+                                                </li>
+                                            {% endif %}
                                         {% endif %}
                                     {% endfor %}
                                 </ul>

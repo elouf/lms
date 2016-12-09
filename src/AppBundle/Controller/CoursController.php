@@ -61,35 +61,38 @@ class CoursController extends Controller
             for($j=0; $j<count($zones); $j++){
                 $zone = $datas[$i]["zones"]["containers"][$j];
 
-                $ressource = "une ressource non typée";
+                if($zone->getRessource() != null){
+                    if($repositoryL->findBy(array('id' => $zone->getRessource()->getId()))){
+                        // la ressource est un lien
+                        $ressource = $repositoryL->findOneBy(array('id' => $zone->getRessource()->getId()));
+                        $datas[$i]["zones"]["type"][$j] = "lien";
 
-                if($repositoryL->findBy(array('id' => $zone->getRessource()->getId()))){
-                    // la ressource est un lien
-                    $ressource = $repositoryL->findOneBy(array('id' => $zone->getRessource()->getId()));
-                    $datas[$i]["zones"]["type"][$j] = "lien";
+                        $datas[$i]["zones"]["content"][$j] = $ressource;
+                    }elseif($repositoryD->findBy(array('id' => $zone->getRessource()->getId()))){
+                        // la ressource est un devoir
+                        $ressource = $repositoryD->findOneBy(array('id' => $zone->getRessource()->getId()));
+                        $datas[$i]["zones"]["type"][$j] = "devoir";
 
-                    $datas[$i]["zones"]["content"][$j] = $ressource;
-                }elseif($repositoryD->findBy(array('id' => $zone->getRessource()->getId()))){
-                    // la ressource est un devoir
-                    $ressource = $repositoryD->findOneBy(array('id' => $zone->getRessource()->getId()));
-                    $datas[$i]["zones"]["type"][$j] = "devoir";
+                        $copie = $repositoryCop->findOneBy(array('auteur' => $this->getUser(), 'devoir' => $ressource));
+                        $datas[$i]["zones"]["copie"][$j] = $copie;
+                        $corrige = $repositoryCor->findOneBy(array('copie' => $copie));
+                        $datas[$i]["zones"]["corrige"][$j] = $corrige;
 
-                    $copie = $repositoryCop->findOneBy(array('auteur' => $this->getUser(), 'devoir' => $ressource));
-                    $datas[$i]["zones"]["copie"][$j] = $copie;
-                    $corrige = $repositoryCor->findOneBy(array('copie' => $copie));
-                    $datas[$i]["zones"]["corrige"][$j] = $corrige;
-
-                    $datas[$i]["zones"]["content"][$j] = array();
-                    $datas[$i]["zones"]["content"][$j]['devoir'] = $ressource;
-                    $datas[$i]["zones"]["content"][$j]['copie'] = $copie;
-                    $datas[$i]["zones"]["content"][$j]['corrige'] = $corrige;
-                    dump($copie);
-                    dump($corrige);
+                        $datas[$i]["zones"]["content"][$j] = array();
+                        $datas[$i]["zones"]["content"][$j]['devoir'] = $ressource;
+                        $datas[$i]["zones"]["content"][$j]['copie'] = $copie;
+                        $datas[$i]["zones"]["content"][$j]['corrige'] = $corrige;
+                    }else{
+                        // on ne trouve pas le type de la ressource
+                        $datas[$i]["zones"]["type"][$j] = "free";
+                        $datas[$i]["zones"]["content"][$j] = $zone->getDescription();
+                    }
                 }else{
-                    // on ne trouve pas le type de la ressource
+                    // Aucune ressource associée
+                    $datas[$i]["zones"]["type"][$j] = "free";
+                    $datas[$i]["zones"]["content"][$j] = $zone->getDescription();
                 }
-
-
+                dump($datas[$i]["zones"]["type"][$j]);
             }
         }
         if($mode == "etu"){
