@@ -17,10 +17,10 @@ class LoadCorrigeData extends AbstractFixture implements OrderedFixtureInterface
         $dateR->setDate(2017, 1, 5);
         $ress = $this->createItem($manager,
             $this->getReference('user_enseignant_1'),
-            $this->getReference('copie_dev_cours_alg_1'),
+            $this->getReference('copie_dev_cours_alg_2'),
             $dateR
             );
-        $this->addReference('corrige_copie_dev_cours_alg_1', $ress);
+        $this->addReference('corrige_copie_dev_cours_alg_2', $ress);
 
         $manager->flush();
     }

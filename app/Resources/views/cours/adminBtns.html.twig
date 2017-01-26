@@ -1,14 +1,14 @@
 <div class="btnActionCol col-md-1">
     <ul>
-        <li>
+        <li class="btnLeft">
             {% if val.zones.containers[keyR].isVisible %}
                 <i class="activationBtn fa fa-check-square-o"></i>
             {% else %}
                 <i class="activationBtn fa fa-square-o"></i>
             {% endif %}
         </li>
-        <li><i class="fa fa-pencil "></i></li>
-        <li><i class="btnMoveElem fa fa-arrows-alt "></i></li>
-        <li><i class="btnDeleteElem fa fa-trash "></i></li>
+        <li class="btnEdit btnLeft" data-toggle="modal" data-target="#modal1"><i class="fa fa-pencil"></i></li>
+        <li class="btnMoveElem btnLeft"><i class="fa fa-arrows-alt "></i></li>
+        <li class="btnDelete btnLeft btnDeleteElem"><i class="fa fa-trash"></i></li>
     </ul>
 </div>

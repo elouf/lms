@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block pageHeader %}
-    <div class="page-header">
+    <!--<div class="page-header">
         <div class="container">
             <h1>Détail des cours</h1>
             <ul class="breadcrumb">
@@ -15,11 +15,11 @@
                 <li class="active">Détail des cours</li>
             </ul>
         </div>
-    </div>
+    </div>-->
 {% endblock %}
 
 {% block main %}
-    <div class="container mt-20">
+    <div class="container mt-140">
         <div class="row">
             <div class="col-sm-4">
                 <div class="course-intro">
@@ -30,15 +30,15 @@
                 <div class="course-full">
                     <h2 class="heading">{{ cours.nom }}</h2>
                     <div class="personal">
-                        <div>
+                        <!--<div>
                             <span>Enseignant</span>
-                            <span>M. prof de math <a href="teacher-profile.html"><i class="fa fa fa-user"></i> </a></span>
+                            <span>M. Lefebre <a href="teacher-profile.html"><i class="fa fa fa-user"></i> </a></span>
                         </div>
                         <div>
-                        </div>
+                        </div>-->
                     </div>
                     <div class="editor">
-                        {{ cours.accueil }}
+                        {{ cours.accueil | raw }}
                     </div>
                 </div>
             </div>
@@ -46,19 +46,20 @@
 
         <div class="clearfix"></div>
 
-        <div class="row mt-60 mb-100">
-            <div class="col-sm-4">
+        <div class="row mt-40 mb-100">
+            <div class="col-sm-3">
                 <ul class="nav nav-pills nav-stacked pull-left" role="tablist" style="padding-bottom: 5px;padding-top: 5px">
-                    {% for key,val in zonesSections %}
+                    {% for key,val in zonesSections if val.section.isVisible == 1 %}
                         <li role="presentation" {% if loop.index == 1 %} class="active" {% endif %}>
                             <a href="#t1body{{ val.section.id }}" aria-controls="t1body{{ val.section.id }}" role="tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-pencil fa-fw" aria-hidden="true"> </i>{{ val.section.nom }}</a>
                         </li>
                     {% endfor %}
                 </ul>
             </div>
-            <div class="col-sm-8">
+            <div class="col-sm-9">
                 <div class="tab-content">
-                    {% for key,val in zonesSections %}
+                    {% set firstDisplayed = 1 %}
+                    {% for key,val in zonesSections if val.section.isVisible %}
                         <div role="tabpanel" class="tab-pane fade{% if loop.index == 1 %} in active {% endif %}" id="t1body{{ val.section.id }}">
                             <div class="editor">
                                 <ul class="list-default">
@@ -66,60 +67,117 @@
                                         {% if val.zones.containers[keyR].isVisible %}
                                             {% if val.zones.type[keyR] == "lien" %}
                                                 <li data-idZone="{{ val.zones.containers[keyR].id }}"
-                                                    class="courseElem lien col-md-12">
-                                                    <a class="" href="{{ valR.url }}">
-                                                        <i class="ressourceLink col-md-1 fa fa-arrow-right"></i>
+                                                    class="courseElem lien">
+                                                    <div class="row">
 
-                                                        <div class="col-md-11">
-                                                            {{ valR.description }}
+                                                        <div class="itemInfos col-xs-10">
+                                                            <div class="itemNom">{{ valR.nom }}</div>
+                                                            <div class="itemDescription">{{ valR.description | raw }}</div>
                                                         </div>
-                                                    </a>
+                                                        <div class="col-xs-2 text-right">
+                                                            <a class="btn btn-sm btn-warning" href="{{ valR.url }}">
+                                                                <i class="fa fa-arrow-right"></i>
+                                                            </a>
+                                                        </div>
+
+                                                    </div>
 
 
                                                 </li>
                                             {% elseif val.zones.type[keyR] == "devoir" %}
                                                 <li data-idZone="{{ val.zones.containers[keyR].id }}"
-                                                    class="courseElem devoir col-md-12">
-                                                    <table>
-                                                        <tr>
-                                                            <td></td>
-                                                            <td>Fichier</td>
-                                                            <td>date de dépôt</td>
-                                                            <td>Auteur</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Devoir</td>
-                                                            <td>{{ val.zones.content[keyR].devoir.nom }}</td>
-                                                            <td>{{ val.zones.content[keyR].devoir.dateDebut|date('Y-m-d') }}</td>
-                                                        </tr>
-                                                        {% if val.zones.content[keyR].copie %}
-                                                        <tr>
-                                                            <td>Copie</td>
-                                                            <td></td>
+                                                    class="courseElem devoir">
+                                                    <div class="">
+                                                        <div class="row">
+                                                            <div class="itemNom col-xs-9">
+                                                                {{ val.zones.content[keyR].devoir.nom }}
+                                                            </div>
+                                                            <div class="col-xs-3 text-right">
+                                                                <div class="btn btn-sm btn-info">Télécharger</div>
+                                                            </div>
+                                                        </div>
 
-                                                            <td>{{ val.zones.content[keyR].copie.dateRendu|date('Y-m-d') }}</td>
-                                                            <td>{{ val.zones.content[keyR].copie.auteur.firstname }} {{ val.zones.content[keyR].copie.auteur.lastname }}</td>
-                                                        </tr>
-                                                        {% endif %}
-                                                        {% if val.zones.content[keyR].corrige %}
-                                                        <tr>
-                                                            <td>Corrigé</td>
-                                                            <td>{{ val.zones.content[keyR].corrige.dateRendu|date('Y-m-d') }}</td>
-                                                            <td>{{ val.zones.content[keyR].corrige.auteur.firstname }} {{ val.zones.content[keyR].corrige.auteur.lastname }}</td>
-                                                        </tr>
+                                                        <div class="itemDescription">
+                                                            {{ val.zones.content[keyR].devoir.description | raw }}
+                                                        </div>
+                                                    </div>
+
+                                                    {% if val.zones.content[keyR].copie %}
+                                                    <div>
+                                                        <div class="itemInfos">
+                                                            Copie
+                                                        </div>
+                                                        <div class="itemInfos alignR">
+                                                            <div class="btn btn-sm btn-info">Télécharger</div>
+                                                            <div class="itemDescription">
+                                                                Auteur : <a href="">{{ val.zones.content[keyR].copie.auteur.firstname }} {{ val.zones.content[keyR].copie.auteur.lastname }} <i class="fa fa fa-user"></i></a>
+                                                            </div>
+                                                            <div class="itemDescription">
+                                                                Rendu le : {{ val.zones.content[keyR].copie.dateRendu|date('Y-m-d') }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    {% endif %}
+                                                    {% if val.zones.content[keyR].corrige %}
+                                                        <div>
+                                                            <div class="itemInfos">Corrigé</div>
+                                                            <div class="itemInfos alignR">
+                                                                <div class="btn btn-sm btn-info">Télécharger</div>
+                                                                <div class="itemDescription">
+                                                                    Auteur : <a href="">{{ val.zones.content[keyR].corrige.auteur.firstname }} {{ val.zones.content[keyR].corrige.auteur.lastname }} <i class="fa fa fa-user"></i></a>
+                                                                </div>
+                                                                <div class="itemDescription">
+                                                                    Rendu le : {{ val.zones.content[keyR].corrige.dateRendu|date('Y-m-d') }}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    {% endif %}
+
+                                                </li>
+                                            {% elseif val.zones.type[keyR] == "groupe" %}
+                                                <li data-idZone="{{ val.zones.containers[keyR].id }}"
+                                                    class="courseElem groupsRessource">
+                                                    <div class="row">
+                                                        <div class="itemNom col-lg-5">{{ val.zones.groupe[keyR].nom }}</div>
+                                                        <div class="col-lg-7 text-right">
+                                                        {% for keyG,valG in val.zones.content[keyR] %}
+                                                            <a class="btnLienGroupeRessource btn btn-xs
+                                                            {% if valG.categorieLien.nom == "Intitule" %}
+                                                                btn-info
+                                                            {% elseif valG.categorieLien.nom == "Aide" %}
+                                                                btn-success
+                                                            {% elseif valG.categorieLien.nom == "Corrige" %}
+                                                                btn-warning
+                                                            {% else %}
+                                                                btn-default
                                                             {% endif %}
-                                                    </table>
-
+                                                            " href="{{ valG.lien.url }}">
+                                                                {% if valG.lien.typeLien.nom == "PDF" %}
+                                                                    <i class="fa fa-file-pdf-o fa-2x"></i>
+                                                                {% elseif valG.lien.typeLien.nom == "Webmedia" %}
+                                                                    <i class="fa fa-file-video-o fa-2x"></i>
+                                                                {% elseif valG.lien.typeLien.nom == "Opale" %}
+                                                                    <i class="fa fa-files-o fa-2x"></i>
+                                                                {% elseif valG.lien.typeLien.nom == "HTTP" %}
+                                                                    <i class="fa fa-external-link fa-2x"></i>
+                                                                {% else %}
+                                                                    <i class="fa fa-file-o fa-2x"></i>
+                                                                {% endif %}
+                                                                {{ valG.nom }}
+                                                            </a>
+                                                        {%  endfor %}
+                                                        </div>
+                                                    </div>
                                                 </li>
                                             {% elseif val.zones.type[keyR] == "free" %}
                                                 <li data-idZone="{{ val.zones.containers[keyR].id }}"
-                                                    class="courseElem freeRessource col-md-12">
-                                                    <div class="col-md-12">
-                                                        {{ valR }}
-                                                    </div>
+                                                    class="courseElem freeRessource">
+                                                    <div class="">{{ val.zones.content[keyR] }}</div>
                                                 </li>
                                             {% endif %}
                                         {% endif %}
+                                        <hr class="mt-10 mb-10" />
                                     {% endfor %}
                                 </ul>
                             </div>

@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block pageHeader %}
+
+    <div class="page-header">
+        <div class="container">
+            <h2 class="color3">Informations pratiques</h2>
+            <ul class="breadcrumb">
+                <li class="color3">Comment s'inscrire ?</li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+
+{% block main %}
+    <div class="container mt-100 mb-40">
+        <div class="row">
+            <div class="col-sm-7 text-justify">
+                <h4 class="heading">Comment <span class="color2">s'inscrire ?</span></h4>
+                <p><span class="color2">L’inscription se fait en ligne, sur une interface dédiée, où vous pouvez créer votre compte pour accéder ensuite aux ressources vous concernant sur la plateforme.</span></p>
+                <p>Pour cela, il faut vous adresser à l’INSTITUT dans lequel vous faites votre MASTER, qui vous fournira le lien URL pour accéder à l’inscription.</p>
+                <p>Il n’y a pas de période d’inscription, vous pouvez le faire <span class="color2">TOUT AU LONG DE L’ANNÉE.</span></p>
+                <p>En cas de problème ou de question : contact.afadec@gmail.com</p>
+            </div>
+            <div class="col-sm-5">
+                <h4 class="heading">Nous <span class="color2">contacter</span></h4>
+                <form id="main-contact-form">
+                    <div class="form-group">
+                        <label for="contact-name">Votre nom</label>
+                        <input id="contact-name" type="text" class="form-control" name="name">
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-email">Votre e-mail</label>
+                        <input id="contact-email" type="text" class="form-control" name="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-number">Sujet</label>
+                        <input id="contact-number" type="text" class="form-control" name="subject">
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-message">Votre message</label>
+                        <textarea id="contact-message" class="form-control" rows="6" name="message"></textarea>
+                    </div>
+                    <p id="status"></p>
+                    <button type="submit" name="submit" class="btn btn-primary">Envoyer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

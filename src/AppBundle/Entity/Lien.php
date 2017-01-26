@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -18,6 +19,18 @@ class Lien extends Ressource
      * @ORM\Column(name="url", type="text")
      */
     private $url;
+
+    /**
+     * @ORM\OneToMany(targetEntity="AssocGroupeLiens", mappedBy="lien")
+     */
+    private $assocGroupes;
+
+    /**
+     * @var TypeLien
+     *
+     * @ORM\ManyToOne(targetEntity="TypeLien")
+     */
+    protected $typeLien;
 
     /**
      * Set url
@@ -41,5 +54,29 @@ class Lien extends Ressource
     public function getUrl()
     {
         return $this->url;
+    }
+
+    /**
+     * Set typeLien
+     *
+     * @param TypeLien $typeLien
+     *
+     * @return Lien
+     */
+    public function setTypeLien($typeLien)
+    {
+        $this->typeLien = $typeLien;
+
+        return $this;
+    }
+
+    /**
+     * Get typeLien
+     *
+     * @return TypeLien
+     */
+    public function getTypeLien()
+    {
+        return $this->typeLien;
     }
 }

@@ -27,21 +27,25 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
             $this->getReference('inst_paris'),
             true);
 
-        $this->boucleTypeUser($manager, "etudiant", 20, $tabInst);
-        $this->boucleTypeUser($manager, "stagiaire", 10, $tabInst);
-        $this->boucleTypeUser($manager, "enseignant", 10, $tabInst);
+        $this->boucleTypeUser($manager, "etudiant", 10, $tabInst);
+        $this->boucleTypeUser($manager, "stagiaire", 4, $tabInst);
+        $this->boucleTypeUser($manager, "enseignant", 4, $tabInst);
 
         $manager->flush();
     }
 
     public function boucleTypeUser(ObjectManager $manager, $intituleUser, $nbUser, $tabInst){
+        $prenoms = array('Luc', 'Thomas', 'Damien', 'Antoine', 'David', 'Matthieu', 'Sylvain', 'Julien');
+        $noms = array('Dupont', 'Lefebvre', 'Durand', 'Martineau', 'Grolier', 'Delamarche', 'Savidan', 'Deschamps');
         for($i=0; $i<$nbUser; $i++){
+            $randPrenom = $prenoms[mt_rand(0, count($prenoms)-1)];
+            $randNom = $noms[mt_rand(0, count($noms)-1)];
             $inst = $tabInst[mt_rand(0, count($tabInst)-1)];
             $user = $this->createItem($manager,
                 $intituleUser.$i,
                 'test',
-                'prenom',
-                'nom',
+                $randPrenom,
+                $randNom,
                 $intituleUser.$i.'@test.com',
                 $inst,
                 false);

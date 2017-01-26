@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block pageHeader %}
-    <div class="page-header">
+    <!--<div class="page-header">
         <div class="container">
             <h1>Détail des cours</h1>
             <ul class="breadcrumb">
@@ -18,20 +18,65 @@
                 <li class="active">Détail des cours</li>
             </ul>
         </div>
-    </div>
+    </div>-->
 {% endblock %}
 
 {% block main %}
     <script src="{{ asset('vendors/jquery-ui/jquery-ui.min.js') }}" type=text/javascript></script>
     <script src="{{ asset('vendors/autosize/dist/autosize.min.js') }}" type=text/javascript></script>
+    <script src="{{ asset('educomp/ckeditor/ckeditor.js') }}"></script>
+    <script src="{{ asset('educomp/ckeditor/adapters/jquery.js') }}"></script>
 
     <script language="JavaScript">
         jQuery(document).ready(function () {
 
+
+            var config = {
+                configname:"lightConfig",
+                toolbar:
+                    [
+                        { name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript' ] },
+                        { name: 'paragraph',   items : [ 'NumberedList','BulletedList','-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'] },
+                        '/',
+                        { name: 'styles',      items : [ 'Font','FontSize' ] },
+                        { name: 'colors',      items : [ 'TextColor','BGColor' ] },
+                        { name: 'switch',      items : [ 'Switch' ] }
+                    ],
+                height: 100,
+                allowedContent: true
+            };
+            var config2 = {
+                configname:"hugeConfig",
+                toolbar:
+                    [
+                        { name: 'document',    items : [ 'Preview','-','Templates' ] },
+                        { name: 'clipboard',   items : [ 'Cut','Copy','Paste','PasteText','PasteFromWord','-','Undo','Redo' ] },
+                        { name: 'editing',     items : [ 'Find','Replace','-','SelectAll','-','SpellChecker' ] },
+                        '/',
+                        { name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript','-','RemoveFormat' ] },
+                        { name: 'paragraph',   items : [ 'NumberedList','BulletedList','-','Outdent','Indent','-','Blockquote','-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'] },
+                        { name: 'links',       items : [ 'Link','Unlink' ] },
+                        { name: 'insert',      items : [ 'Image','Flash','Table','HorizontalRule','Smiley','SpecialChar' ] },
+                        '/',
+                        { name: 'styles',      items : [ 'Format','Font','FontSize' ] },
+                        { name: 'colors',      items : [ 'TextColor','BGColor' ] },
+                        { name: 'tools',       items : [ 'Maximize', 'ShowBlocks' ] },
+                        { name: 'switch',      items : [ 'Switch' ] }
+                    ],
+                height: 200,
+                allowedContent: true
+            };
+
+            $('textarea.simpleEditor').ckeditor(config);
+            $('textarea.complexEditor').ckeditor(config2);
+
+            var uncheckedClass = 'fa-square-o';
+            var checkedClass = 'fa-check-square-o';
+
             // click sur le check : affichage ou non de la zoneRessource
             $('.activationBtn').click(function () {
                 var id = $(this).closest('.courseElemAdmin').attr('data-idzone');
-                var isVisible = $(this).hasClass('fa-check-square-o');
+                var isVisible = $(this).hasClass(checkedClass);
                 var myBtn = $(this);
                 $.ajax({
                     type: "POST",
@@ -42,11 +87,7 @@
                     },
                     dataType: "json",
                     success: function (response) {
-                        if (response["isVisible"]) {
-                            myBtn.removeClass('fa-square-o').addClass('fa-check-square-o');
-                        } else {
-                            myBtn.removeClass('fa-check-square-o').addClass('fa-square-o');
-                        }
+                        updateCheckedState(myBtn, response["isVisible"]);
                     }
                 });
             });
@@ -68,55 +109,258 @@
                 });
             });
 
-            $( ".courseElems" ).sortable({
-                placeholder: "ui-state-highlight",
-                handle: ".btnMoveElem",
-                forcePlaceholderSize: true,
-                stop: function( event, ui ) {
-                    var order = [];
-                    $('.courseElems .courseElemAdmin').each(function(){
-                        order.push($(this).attr('data-idzone'));
+            // modification d'un champ d'un lien
+            $('.lienAdmin .champAdmin').on('input', function(){
+                changeLien($(this).closest('.lienAdmin'));
+            });
+            for (var i in CKEDITOR.instances) {
+                CKEDITOR.instances[i].on('change', function() {
+                    var idItem = $(this).attr('name');
+                    changeLien($('#'+idItem).closest('.lienAdmin'));
+                });
+            }
+            function changeLien(lien){
+                if(!lien.hasClass('inEdition')){
+                    lien.addClass('inEdition');
+                    lien.find('.btnActionCol .btnDelete').before('<div class="btnSaveInputChange btnAdmin btnLeft"><i class="fa fa-floppy-o"></i></div>')
+                    lien.find('.btnSaveInputChange').click(function(){
+                        var id = lien.attr('data-idItem');
+                        var nom = lien.find('[data-champName=nom]').val();
+                        var url = lien.find('[data-champName=url]').val();
+                        var description = CKEDITOR.instances[lien.find('[data-champName=description]').attr('id')].getData();
+
+                        $.ajax({
+                            type: 'POST',
+                            url: "{{path('changeContentLien_ajax')}}",
+                            async: false,
+                            dataType: "json",
+                            data: {
+                                id: id,
+                                nom: nom,
+                                url: url,
+                                description: description
+                            },
+                            success: function (data) {
+                                lien.removeClass('inEdition');
+                                lien.find('.btnSaveInputChange').remove();
+                            }
+                        });
                     });
+                }
+            }
+
+            $('.addRessource').click(function(){
+                $('.modal').attr('data-idSection', $(this).closest('.section').attr('data-idSection')).modal();
+            });
+
+
+            // click sur le check : affichage ou non de la section
+            $('.activationSectionBtn').click(function () {
+                var id = $(this).closest('.adminSectionRow').attr('data-idsection');
+                var isVisible = $(this).hasClass(checkedClass);
+                var myBtn = $(this);
+                $.ajax({
+                    type: "POST",
+                    url: "{{path('activateSection_ajax')}}",
+                    data: {
+                        id: id,
+                        isVisible: isVisible
+                    },
+                    dataType: "json",
+                    success: function (response) {
+                        updateCheckedState(myBtn, response["isVisible"]);
+                    }
+                });
+            });
+
+            // modification du nom d'une section
+            $('.nomSectionInput').on('input', function(){
+                if(!$(this).hasClass('inEdition')){
+                    var sectionInput = $(this);
+                    sectionInput.addClass('inEdition');
+                    sectionInput.after('<div class="btnSaveInputChange btnAdmin btnMiddle col-sm-1 col-xs-1"><i class="fa fa-floppy-o"></i></div>')
+                    sectionInput.next('.btnSaveInputChange').click(function(){
+                        var id = sectionInput.closest('.adminSectionRow').attr('data-idsection');
+                        var nom = sectionInput.val();
+                        $.ajax({
+                            type: 'POST',
+                            url: "{{path('changeNameSection_ajax')}}",
+                            async: false,
+                            dataType: "json",
+                            data: {
+                                id: id,
+                                nom: nom
+                            },
+                            success: function (data) {
+                                sectionInput.removeClass('inEdition');
+                                sectionInput.next('.btnSaveInputChange').remove();
+                                $('.ongletSection[data-idsection='+id+'] .nomSection').text(nom);
+                            }
+                        });
+                    });
+                }
+            });
+
+            //Ajout d'une section
+            $('.nomSectionAddInput').on('input', function(){
+                var sectionInput = $(this);
+                if(!$(this).next('.btnAddSection').hasClass('actif') && $(this).val() != ""){
+                    sectionInput.addClass('inEdition');
+                    sectionInput.next('.btnAddSection').addClass('actif').click(function(){
+                        var nom = sectionInput.val();
+                        var coursId = sectionInput.next('.btnAddSection').attr('data-coursId');
+                        $.ajax({
+                            type: 'POST',
+                            url: "{{path('addSection_ajax')}}",
+                            async: false,
+                            dataType: "json",
+                            data: {
+                                coursId:coursId,
+                                nom: nom
+                            },
+                            success: function (data) {
+                                location.reload();
+                            }
+                        });
+                    });
+                }else if($(this).val() == ""){
+                    sectionInput.removeClass('inEdition');
+                    $('.btnAddSection').removeClass('actif').unbind('click');
+                }
+            });
+
+            // click sur la suppression de la section
+            $('.btnDeleteSection').click(function () {
+                var id = $(this).closest('.adminSectionRow').attr('data-idsection');
+                $.ajax({
+                    type: "POST",
+                    url: "{{path('deleteSection_ajax')}}",
+                    data: {
+                        id: id
+                    },
+                    dataType: "json",
+                    success: function (response) {
+                        if(!response["error"]){
+                            location.reload();
+                        }else{
+                            var chaine = "la zone contenue";
+                            if(response["nbZone"] > 1){
+                                chaine = "les "+response["nbZone"]+" zones contenues";
+                            }
+                            alert("Vous devez préalablement supprimer "+chaine+" dans cette section");
+                        }
+                    }
+                });
+            });
+
+            // activation du sortable des sections
+            $('.sortableSections').sortable({
+                placeholder: "ui-state-highlight",
+                handle: ".btnMove",
+                cancel: ".notSortable",
+                stop: function( event, ui ) {
+                    var arraySections = [];
+                    var itemDropped = ui.item;
+                    var id = itemDropped.attr('data-idsection');
+                    $(this).find('[data-idsection]').each(function(){
+                        arraySections.push($(this).attr('data-idsection'));
+                    });
+
                     $.ajax({
                         type: "POST",
-                        url: "{{path('reorderZones_ajax')}}",
+                        url: "{{path('sortSection_ajax')}}",
                         data: {
-                            order: order
+                            arraySections: arraySections
                         },
                         dataType: "json",
                         success: function (response) {
-                            console.log(response);
+                            if(!response["error"]){
+                                //on remet aussi à la bonne place l'onglet de gauche correspondant
+                                var onglet = $('.ongletSection[data-idsection='+id+']');
+                                var newOngleIndex = itemDropped.index();
+
+                                var nbAdminIndex = $('.ongletAdmin').length;
+
+                                onglet.insertAfter($('.ongletSection:eq('+parseInt(newOngleIndex-2 + nbAdminIndex)+')'));
+                            }else{
+                                console.log("Erreur de tri des sections");
+                            }
                         }
                     });
                 }
             });
 
-            autosize($('textarea'));
+            $('.btnAddItem').click(function(){
+                var idItem = $(this).closest('.item').attr('data-idItem');
+                var typeItem = $(this).closest('.item').attr('data-typeItem');
+                var idSection = $(this).closest('.modal').attr('data-idSection');
+                $.ajax({
+                    type: "POST",
+                    url: "{{path('addZone_ajax')}}",
+                    data: {
+                        idItem: idItem,
+                        idSection: idSection,
+                        typeItem: typeItem
+                    },
+                    dataType: "json",
+                    success: function (response) {
+                        if(!response["error"]){
+
+                        }else{
+                            console.log("Erreur d'ajout de l'item "+idItem+" à la section");
+                        }
+                    }
+                });
+            });
+
+            // reset les input text pour éviter le cache
+            $('.inputReset').val('');
+
+
+            function updateCheckedState(btn, isVisible){
+                if (isVisible) {
+                    btn.removeClass(uncheckedClass).addClass(checkedClass);
+                } else {
+                    btn.removeClass(checkedClass).addClass(uncheckedClass);
+                }
+            }
+
+            $.fn.changeElementType = function(newType) {
+                var attrs = {};
+
+                $.each(this[0].attributes, function(idx, attr) {
+                    attrs[attr.nodeName] = attr.nodeValue;
+                });
+
+                this.replaceWith(function() {
+                    return $("<" + newType + "/>", attrs).append($(this).contents());
+                });
+            };
         });
     </script>
 
-    <div class="container mt-20">
+    <div class="container mt-140">
         <div class="row">
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                 <div class="course-intro">
                     <img src="{{ asset('images/') }}{{ cours.imgFilePath }}" class="img-responsive" alt="">
                 </div>
             </div>
-            <div class="col-sm-8">
+            <div class="col-sm-9">
                 <div class="course-full">
                     <h2 class="heading">{{ cours.nom }}</h2>
 
                     <div class="personal">
-                        <div>
+                        <!--<div>
                             <span>Enseignant</span>
                             <span>M. prof de math <a href="teacher-profile.html"><i class="fa fa fa-user"></i>
                                 </a></span>
                         </div>
                         <div>
-                        </div>
+                        </div>-->
                     </div>
                     <div class="editor">
-                        {{ cours.accueil }}
+                        {{ cours.accueil | raw}}
                     </div>
                 </div>
             </div>
@@ -124,95 +368,222 @@
 
         <div class="clearfix"></div>
 
-        <div class="row mt-60 mb-100">
-            <div class="col-sm-3">
+        <div class="row mt-40 mb-100">
+
+            <!--- Menu des sections sur la gauche -->
+            <div class="col-md-3 col-sm-3 col-xs-12">
                 <ul class="nav nav-pills nav-stacked pull-left" role="tablist"
                     style="padding-bottom: 5px;padding-top: 5px">
+
+                    <!--- section fictive : pour l'admin -->
+                    <li role="presentation" class="active ongletAdmin" id="sectionAdmin">
+                        <a href="#t1body_0" aria-controls="t1body_0" role="tab"
+                           data-toggle="tab" aria-expanded="true"><i class="fa fa-cogs fa-fw" aria-hidden="true"> </i>
+                            Gestion des sections
+                        </a>
+                    </li>
+                    <li role="presentation" class="ongletAdmin" id="ressourcesAdmin">
+                        <a href="#t1body_1" aria-controls="t1body_1" role="tab"
+                           data-toggle="tab" aria-expanded="true"><i class="fa fa-cogs fa-fw" aria-hidden="true"> </i>
+                            Gestion des ressources
+                        </a>
+                    </li>
+
+                    <!--- sections -->
                     {% for key,val in zonesSections %}
-                        <li role="presentation" {% if loop.index == 1 %} class="active" {% endif %}>
+                        <li role="presentation" class="ongletSection" data-idsection="{{ val.section.id }}">
                             <a href="#t1body{{ val.section.id }}" aria-controls="t1body{{ val.section.id }}" role="tab"
-                               data-toggle="tab" aria-expanded="true"><i class="fa fa-pencil fa-fw"
-                                                                         aria-hidden="true"> </i>{{ val.section.nom }}
+                               data-toggle="tab" aria-expanded="true" >
+                                <i class="fa {{ val.section.pictoFilePath }} fa-fw" aria-hidden="true"> </i><span class="nomSection">{{ val.section.nom }}</span>
                             </a>
                         </li>
                     {% endfor %}
                 </ul>
             </div>
-            <div class="col-sm-9">
+            <div class="col-md-9 col-sm-9 col-xs-12">
                 <div class="tab-content">
+
+                    <!--- administration des sections (activation, modif nom et suppression) -->
+                    <div role="tabpanel" class="tab-pane fade in active sortable" id="t1body_0">
+                        <div class="sortableSections">
+                            {% for key,val in zonesSections %}
+                                <div class="row mb-10 adminSectionRow" data-idSection="{{ val.section.id }}">
+                                    <div class="btnAdmin btnLeft col-sm-1  col-xs-1">
+                                        {% if val.section.isVisible %}
+                                            <i class="activationSectionBtn fa fa-check-square-o"></i>
+                                        {% else %}
+                                            <i class="activationSectionBtn fa fa-square-o"></i>
+                                        {% endif %}
+                                    </div>
+                                    <div class="btnAdmin btnMove btnMoveSection col-sm-1  col-xs-1"><i class="fa fa-arrows-alt "></i></div>
+                                    <input data-champName="nom" class="nomSectionInput col-sm-8  col-xs-8" value="{{ val.section.nom }}"/>
+                                    <div class="btnRight btnAdmin btnDelete btnDeleteSection col-sm-1 col-xs-1"><i class="fa fa-trash"></i></div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="row mb-10 adminSectionRow mt-40 notSortable">
+                            <input data-champName="nom" class="inputReset nomSectionAddInput col-sm-6  col-xs-6 col-xs-push-2" placeholder="Ajouter une nouvelle section" />
+                            <div class="btnRight btnAdmin btnAddSection col-sm-1 col-xs-1 col-xs-push-2" data-coursId="{{ cours.id }}"><i class="fa fa-plus"></i></div>
+                        </div>
+                    </div>
+
+                    <!--- administration des ressources (CRUD) -->
+                    <div role="tabpanel" class="tab-pane fade" id="t1body_1">
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li role="presentation" class="active"><a href="#btnListLien" aria-controls="btnListLien" role="tab" data-toggle="tab"><i class="fa fa-external-link  fa-fw"></i> Lien</a></li>
+                            <li role="presentation"><a href="#btnListDevoir" aria-controls="btnListDevoir" role="tab" data-toggle="tab"><i class="fa fa-university fa-fw"></i> Devoir</a></li>
+                            <li role="presentation"><a href="#btnListGroupe" aria-controls="btnListGroupe" role="tab" data-toggle="tab"><i class="fa fa-cubes fa-fw"></i> Groupe de liens</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div role="tabpanel" class="tab-pane fade in active" id="btnListLien">
+                                <ul class="list-default courseElems">
+                                    {% for key,val in liens %}
+                                        <li data-idItem="{{ val.id }}"
+                                            class="courseElemAdmin lienAdmin col-md-12"
+                                        >
+                                            <div class="titleBar">Lien externe</div>
+
+
+                                            <div class="btnActionCol col-md-1">
+                                                <ul>
+                                                    <li class="btnDelete btnLeft btnDeleteElem"><i class="fa fa-trash"></i></li>
+                                                </ul>
+                                            </div>
+
+
+                                            <div class="formCol col-md-11">
+                                                <div class="row mb-10">
+                                                    <div class="LabelAdmin col-sm-3">Nom</div>
+                                                    <input data-champName="nom" class="champAdmin col-sm-9 col-xs-12" value="{{ val.nom }}"/>
+                                                </div>
+                                                <div class="row mb-10">
+                                                    <div class="LabelAdmin col-sm-3">Description</div>
+                                                    <div class=" col-sm-9  col-xs-12">
+                                                        <textarea data-champName="description" id="lien_{{ val.id }}_descr" class="simpleEditor editor champAdmin">{{ val.description }}</textarea>
+                                                    </div>
+
+                                                </div>
+                                                <div class="row">
+                                                    <div class="LabelAdmin col-sm-3">URL</div>
+                                                    <input data-champName="url" class="champAdmin col-sm-9  col-xs-12" value="{{ val.url }}"/>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <div role="tabpanel" class="tab-pane fade" id="btnListDevoir">
+                                <table class="tableAddItem">
+                                    {% for key,val in devoirs %}
+                                        <tr class="item" data-typeItem="devoir" data-idItem="{{ val.id }}">
+                                            <td>
+                                                <table class="tableDetailItem">
+                                                    <tr><td class="nomChamp">Nom</td><td>{{ val.nom }}</td></tr>
+                                                    <tr><td class="nomChamp">Description</td><td>{{ val.description | raw }}</td></tr>
+                                                    <tr><td class="nomChamp">Dates</td><td>du {{ val.dateDebut|date('Y-m-d') }} au {{ val.dateFin|date('Y-m-d') }}</td></tr>
+                                                    <tr><td class="nomChamp">Durée</td><td>{{ val.duree//3600 }}h</td></tr>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <div class="btnAdmin btnAlone btnAddItem"><i class="fa fa-plus"></i></div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </table>
+                            </div>
+                            <div role="tabpanel" class="tab-pane fade" id="btnListGroupe">
+                                <table class="tableAddItem">
+                                    {% for key,val in groupes %}
+                                        <tr class="item" data-typeItem="groupe" data-idItem="{{ val.id }}">
+                                            <td>
+                                                <table class="tableDetailItem">
+                                                    <tr><td class="nomChamp">Nom</td><td>{{ val.nom }}</td></tr>
+                                                    <tr><td class="nomChamp">Description</td><td>{{ val.description | raw }}</td></tr>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <div class="btnAdmin btnAlone btnAddItem"><i class="fa fa-plus"></i></div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!--- administration des Zones des différentes sections -->
                     {% for key,val in zonesSections %}
-                        <div role="tabpanel" class="tab-pane fade{% if loop.index == 1 %} in active {% endif %}"
-                             id="t1body{{ val.section.id }}">
+                        <div role="tabpanel" class="section tab-pane fade"
+                             id="t1body{{ val.section.id }}" data-idSection="{{ val.section.id }}">
                             <div class="editor">
+                                <div class="btnAdmin btnAlone addRessource col-sm-2 col-xs-12"><i class="fa fa-plus"></i></div>
                                 <ul class="list-default courseElems">
                                     {% for keyR,valR in val.zones.content %}
+
                                         {% if val.zones.type[keyR] == "lien" %}
+                                            <!--
+                                                                LIENS
+                                            -->
                                             <li data-idZone="{{ val.zones.containers[keyR].id }}"
-                                                class="courseElemAdmin lienAdmin col-md-12">
-                                                <div class="titleBar col-md-12">Lien externe</div>
+                                                data-idItem="{{ valR.id }}"
+                                                class="courseElemAdmin lienAdmin col-md-12"
+                                            >
+                                                <div class="titleBar">Lien externe</div>
                                                 {% include "cours/adminBtns.html.twig" %}
                                                 <div class="formCol col-md-11">
-                                                    <div class="row">
+                                                    <div class="row mb-10">
                                                         <div class="LabelAdmin col-sm-3">Nom</div>
-                                                        <input class="champAdmin col-sm-9" value="{{ valR.nom }}"/>
+                                                        <input data-champName="nom" class="champAdmin col-sm-9 col-xs-12" value="{{ valR.nom }}"/>
                                                     </div>
-                                                    <div class="row">
+                                                    <div class="row mb-10">
                                                         <div class="LabelAdmin col-sm-3">Description</div>
-                                                        <input class="champAdmin col-sm-9" value="{{ valR.description }}"/>
+                                                        <div class=" col-sm-9  col-xs-12">
+                                                            <textarea data-champName="description" id="zone_{{ val.zones.containers[keyR].id }}_lien_{{ valR.id }}_descr" class="simpleEditor editor champAdmin">{{ valR.description }}</textarea>
+                                                        </div>
+
                                                     </div>
                                                     <div class="row">
                                                         <div class="LabelAdmin col-sm-3">URL</div>
-                                                        <input class="champAdmin col-sm-9" value="{{ valR.url }}"/>
+                                                        <input data-champName="url" class="champAdmin col-sm-9  col-xs-12" value="{{ valR.url }}"/>
                                                     </div>
                                                 </div>
                                             </li>
+
                                         {% elseif val.zones.type[keyR] == "devoir" %}
+                                            <!--
+                                                                DEVOIRS
+                                            -->
                                             <li data-idZone="{{ val.zones.containers[keyR].id }}"
                                                 class="courseElemAdmin devoirAdmin col-md-12">
 
-                                                <div class="titleBar col-md-12">{{ val.zones.content[keyR].devoir.nom }}</div>
+                                                <div class="titleBar">Devoir</div>
                                                 {% include "cours/adminBtns.html.twig" %}
                                                 <div class="formCol col-md-11">
-                                                    <table>
-                                                        <tr>
-                                                            <td></td>
-                                                            <td>Fichier</td>
-                                                            <td>date de dépôt</td>
-                                                            <td>Auteur</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Devoir</td>
-                                                            <td>{{ val.zones.content[keyR].devoir.nom }}</td>
-                                                            <td>{{ val.zones.content[keyR].devoir.dateDebut|date('Y-m-d') }}</td>
-                                                        </tr>
-                                                        {% if val.zones.content[keyR].copie %}
-                                                            <tr>
-                                                                <td>Copie</td>
-                                                                <td></td>
-
-                                                                <td>{{ val.zones.content[keyR].copie.dateRendu|date('Y-m-d') }}</td>
-                                                                <td>{{ val.zones.content[keyR].copie.auteur.firstname }} {{ val.zones.content[keyR].copie.auteur.lastname }}</td>
-                                                            </tr>
-                                                        {% endif %}
-                                                        {% if val.zones.content[keyR].corrige %}
-                                                            <tr>
-                                                                <td>Corrigé</td>
-                                                                <td>{{ val.zones.content[keyR].corrige.dateRendu|date('Y-m-d') }}</td>
-                                                                <td>{{ val.zones.content[keyR].corrige.auteur.firstname }} {{ val.zones.content[keyR].corrige.auteur.lastname }}</td>
-                                                            </tr>
-                                                        {% endif %}
-                                                    </table>
+                                                    <div class="row">
+                                                        <div class="col-sm-6 sectionDrop">
+                                                            <div>Sujet</div>
+                                                            <div class="zoneDrop"></div>
+                                                        </div>
+                                                        <div class="col-sm-6 sectionDrop">
+                                                            <div>Corrigé</div>
+                                                            <div class="zoneDrop"></div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </li>
 
                                         {% elseif val.zones.type[keyR] == "free" %}
+                                            <!--
+                                                                LIBRE
+                                            -->
                                             <li data-idZone="{{ val.zones.containers[keyR].id }}"
                                                 class="courseElemAdmin freeAdmin col-md-12">
 
-                                                <div class="titleBar col-md-12">Zone libre</div>
+                                                <div class="titleBar">Zone libre</div>
                                                 {% include "cours/adminBtns.html.twig" %}
                                                 <div class="formCol col-md-11">
-                                                    <textarea data-champName="description" class="champAdmin col-sm-12">{{ valR }}</textarea>
+                                                    <div data-champName="description" class="textarea champAdmin col-xs-12">{{ valR }}</div>
                                                 </div>
                                             </li>
                                         {% endif %}
@@ -222,6 +593,83 @@
                         </div>
                     {% endfor %}
 
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="modal fade" tabindex="-1" role="dialog" data-idSection="0">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <div class="modal-body" style="background:#aaa; background-size:cover">
+                    <div class="row">
+                        <div class="bginverse">
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li role="presentation" class="active"><a href="#btnListLien" aria-controls="btnListLien" role="tab" data-toggle="tab"><i class="fa fa-external-link  fa-fw"></i> Lien</a></li>
+                                <li role="presentation"><a href="#btnListDevoir" aria-controls="btnListDevoir" role="tab" data-toggle="tab"><i class="fa fa-university fa-fw"></i> Devoir</a></li>
+                                <li role="presentation"><a href="#btnListGroupe" aria-controls="btnListGroupe" role="tab" data-toggle="tab"><i class="fa fa-cubes fa-fw"></i> Groupe de liens</a></li>
+                            </ul>
+                            <div class="tab-content">
+                                <div role="tabpanel" class="tab-pane fade in active" id="btnListLien">
+                                    <table class="tableAddItem">
+                                        {% for key,val in liens %}
+                                            <tr class="item" data-typeItem="lien" data-idItem="{{ val.id }}">
+                                                <td>
+                                                    <table class="tableDetailItem">
+                                                        <tr><td class="nomChamp">Nom</td><td>{{ val.nom }}</td></tr>
+                                                        <tr><td class="nomChamp">Url</td><td>{{ val.url }}</td></tr>
+                                                        <tr><td class="nomChamp">Description</td><td>{{ val.description | raw }}</td></tr>
+                                                    </table>
+                                                </td>
+                                                <td>
+                                                    <div class="btnAdmin btnAlone btnAddItem"><i class="fa fa-plus"></i></div>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </table>
+                                </div>
+                                <div role="tabpanel" class="tab-pane fade" id="btnListDevoir">
+                                    <table class="tableAddItem">
+                                        {% for key,val in devoirs %}
+                                            <tr class="item" data-typeItem="devoir" data-idItem="{{ val.id }}">
+                                                <td>
+                                                    <table class="tableDetailItem">
+                                                        <tr><td class="nomChamp">Nom</td><td>{{ val.nom }}</td></tr>
+                                                        <tr><td class="nomChamp">Description</td><td>{{ val.description | raw }}</td></tr>
+                                                        <tr><td class="nomChamp">Dates</td><td>du {{ val.dateDebut|date('Y-m-d') }} au {{ val.dateFin|date('Y-m-d') }}</td></tr>
+                                                        <tr><td class="nomChamp">Durée</td><td>{{ val.duree//3600 }}h</td></tr>
+                                                    </table>
+                                                </td>
+                                                <td>
+                                                    <div class="btnAdmin btnAlone btnAddItem"><i class="fa fa-plus"></i></div>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </table>
+                                </div>
+                                <div role="tabpanel" class="tab-pane fade" id="btnListGroupe">
+                                    <table class="tableAddItem">
+                                        {% for key,val in groupes %}
+                                            <tr class="item" data-typeItem="groupe" data-idItem="{{ val.id }}">
+                                                <td>
+                                                    <table class="tableDetailItem">
+                                                        <tr><td class="nomChamp">Nom</td><td>{{ val.nom }}</td></tr>
+                                                        <tr><td class="nomChamp">Description</td><td>{{ val.description | raw }}</td></tr>
+                                                    </table>
+                                                </td>
+                                                <td>
+                                                    <div class="btnAdmin btnAlone btnAddItem"><i class="fa fa-plus"></i></div>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

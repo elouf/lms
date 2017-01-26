@@ -18,7 +18,7 @@ class LoadCoursData extends AbstractFixture implements OrderedFixtureInterface
             'Cours d\'algèbre du second degré',
             '<p>Vous disposez ici de ressources d\'entraînement aux écrits du concours, sous différentes formes de
                 difficulté progressive pour vous aider à travailler en autonomie :</p>
-            <ul>
+            <ul class="list-default">
                 <li>Des exercices de mise en route</li>
                 <li>Des exercices niveau Concours</li>
                 <li>Des sujets format concours</li>
@@ -172,7 +172,7 @@ class LoadCoursData extends AbstractFixture implements OrderedFixtureInterface
         $manager->flush();
     }
 
-    public function createItem(ObjectManager $manager, $nom, $accueil, $descr, $imgFilePath, Discipline $disc, $cout){
+    public function createItem(ObjectManager $manager, $nom, $descr, $accueil, $imgFilePath, Discipline $disc, $cout){
         $item = new Cours();
         $item->setNom($nom);
         $item->setDescription($descr);

@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block pageHeader %}
-    <div class="page-header">
+    <!--<div class="page-header">
         <div class="container">
             <h1>Disciplines</h1>
             <ul class="breadcrumb">
@@ -9,11 +9,11 @@
                 <li class="active">Disciplines</li>
             </ul>
         </div>
-    </div>
+    </div>-->
 {% endblock %}
 
 {% block main %}
-    <div class="container mt-20">
+    <div class="container mt-140">
         <div class="row mt-20 mb-100">
             <div class="col-sm-12">
                 <ul class="nav nav-pills nav-stacked pull-left" role="tablist" style="padding-bottom: 5px;padding-top: 5px">
@@ -31,7 +31,7 @@
                                 <div class="row">
                                     <div class="col-sm-8">
                                         {% for keyC,valC in val.courses %}
-                                            <div class="course-list new" style="margin-top: 0;">
+                                            <div class="course-list" style="margin-top: 0;">
                                                 <div class="course-media">
                                                     <img src="{{ asset('images/') }}{{ valC.imgFilePath }}" class="img-responsive course-img" alt="">
                                                 </div>

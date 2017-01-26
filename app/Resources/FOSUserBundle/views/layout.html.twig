@@ -13,7 +13,7 @@
 
 {% block main %}
 
-    <div class="container mb-60 mt-60">
+    <div class="container mb-60 mt-20">
         <div class="row">
 
             {% if not app.user %}
@@ -32,10 +32,10 @@
                 <iframe class="mt-20" width="100%" height="430" frameborder="0" allowfullscreen="" mozallowfullscreen="" webkitallowfullscreen="" src="https://player.vimeo.com/video/123835230"></iframe>
             </div>
         </div>
-        <br/>
-        <div class="row">
 
-            <div class="col-sm-4">
+        <div class="row mt-40">
+
+            <!--<div class="col-sm-4">
                 <div class="col-sm-12">
                     <div class="row bgcolor3 pt-10 pb-20">
                         <div class="col-sm-12">
@@ -51,11 +51,38 @@
                         </div>
                     </div>
                 </div>
+            </div>-->
+            <div class="col-sm-4">
+                <div class="col-sm-12">
+                    <div class="row bgcolor3 pt-10 pb-20">
+                        <div class="col-sm-12">
+                            <figure class="effect-sadie">
+                                <figcaption>
+                                    <h4 class="img-title">Informations <span class="color2">pratiques</span></h4>
+                                </figcaption>
+                                <ul class="list-default">
+                                    <li><a href="{{ path('concours') }}">Concours</a></li>
+                                    <li><a href="{{ path('faq') }}">FAQ</a></li>
+                                    <li><a href="{{ path('metierEnseignant') }}">Le métier d'enseignant</a></li>
+                                    <li><a href="http://www.e-educmaster.com/data_AFADEC/2d_degre/accueil_CATHO.pdf">Comment s'inscrire ?</a></li>
+                                </ul>
+
+
+
+                            </figure>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="col-sm-8">
                 <div class="col-sm-12">
                     <div class="row bgcolor3 pt-20">
+                        <div class="col-sm-12">
+                            <figcaption>
+                                <h4 class="img-title">Testez <span class="color2">nos modules</span></h4>
+                            </figcaption>
+                        </div>
                         <div class="col-sm-4">
                             <figure class="effect-sadie">
                                 <a href="http://www.e-educmaster.com/data_AFADEC/1er_degre/Francais_cor_Chazeau_2013_wbm/index.html">
@@ -92,7 +119,5 @@
             </div>
         </div>
     </div>
-
-
-
+    {% include 'pagesFixes/afadecContent.html.twig' %}
 {% endblock %}

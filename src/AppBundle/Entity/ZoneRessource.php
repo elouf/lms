@@ -44,6 +44,7 @@ class ZoneRessource extends OrderedItem
     private $isVisible;
 
     /**
+     * Sera utilisée pour les zones libres surtout
      * @var string
      *
      * @ORM\Column(name="description", type="text", nullable=true)

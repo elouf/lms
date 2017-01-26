@@ -13,8 +13,57 @@ class DefaultController extends Controller
      */
     public function indexAction(Request $request)
     {
-        // replace this example code with whatever you need
         return $this->render('index.html.twig', [
+            'base_dir' => realpath($this->getParameter('kernel.root_dir').'/..'),
+        ]);
+    }
+
+    /**
+     * @Route("/faq", name="faq")
+     */
+    public function faqAction(Request $request)
+    {
+        return $this->render('pagesFixes/faq.html.twig', [
+            'base_dir' => realpath($this->getParameter('kernel.root_dir').'/..'),
+        ]);
+    }
+
+    /**
+     * @Route("/concours", name="concours")
+     */
+    public function concoursAction(Request $request)
+    {
+        return $this->render('pagesFixes/concours.html.twig', [
+            'base_dir' => realpath($this->getParameter('kernel.root_dir').'/..'),
+        ]);
+    }
+
+    /**
+     * @Route("/metierEnseignant", name="metierEnseignant")
+     */
+    public function metierEnseignantAction(Request $request)
+    {
+        return $this->render('pagesFixes/metierEnseignant.html.twig', [
+            'base_dir' => realpath($this->getParameter('kernel.root_dir').'/..'),
+        ]);
+    }
+
+    /**
+     * @Route("/sinscrire", name="sinscrire")
+     */
+    public function sinscrireAction(Request $request)
+    {
+        return $this->render('pagesFixes/sinscrire.html.twig', [
+            'base_dir' => realpath($this->getParameter('kernel.root_dir').'/..'),
+        ]);
+    }
+
+    /**
+     * @Route("/afadec", name="afadec")
+     */
+    public function afadecAction(Request $request)
+    {
+        return $this->render('pagesFixes/afadec.html.twig', [
             'base_dir' => realpath($this->getParameter('kernel.root_dir').'/..'),
         ]);
     }

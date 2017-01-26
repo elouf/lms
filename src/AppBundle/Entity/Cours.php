@@ -153,7 +153,7 @@ class Cours
      */
     public function setAccueil($accueil)
     {
-        $this->description = $accueil;
+        $this->accueil = $accueil;
 
         return $this;
     }
