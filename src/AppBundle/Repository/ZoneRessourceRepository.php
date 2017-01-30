@@ -10,4 +10,5 @@ namespace AppBundle\Repository;
  */
 class ZoneRessourceRepository extends \Doctrine\ORM\EntityRepository
 {
+
 }

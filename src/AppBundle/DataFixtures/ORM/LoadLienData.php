@@ -45,6 +45,14 @@ class LoadLienData extends AbstractFixture implements OrderedFixtureInterface
             $this->getReference('typelien_opale'));
         $this->addReference('ress_cours_alg_4', $ress);
 
+        $ress = $this->createItem($manager,
+            'Lien Analyse1',
+            'description du lien 1',
+            $this->getReference('cours_analyse'),
+            'http://www.google.fr',
+            $this->getReference('typelien_opale'));
+        $this->addReference('ress_cours_ana_1', $ress);
+
         $manager->flush();
     }
 

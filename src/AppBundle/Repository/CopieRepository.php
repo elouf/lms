@@ -10,4 +10,12 @@ namespace AppBundle\Repository;
  */
 class CopieRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function getByDevoir($devoir)
+    {
+        $qb = $this->createQueryBuilder('c')
+            ->where('c.devoir = :devoir')
+            ->setParameter('devoir', $devoir);
+
+        return $qb->getQuery()->getResult();
+    }
 }

@@ -88,6 +88,13 @@ class LoadZoneRessourceData extends AbstractFixture implements OrderedFixtureInt
             "",
             7);
 
+        $ress = $this->createItem($manager,
+            $this->getReference('sect_cours_analyse_1'),
+            $this->getReference('ress_cours_ana_1'),
+            true,
+            "",
+            0);
+
         $manager->flush();
     }
 

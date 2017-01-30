@@ -117,14 +117,24 @@ class ZoneRessourceController extends Controller
     }
 
     /**
-     * @Route("/reorderZones_ajax", name="reorderZones_ajax")
+     * @Route("/sortZone_ajax", name="sortZone_ajax")
      * @Method({"GET", "POST"})
      */
-    public function reorderZonesAjaxAction (Request $request)
+    public function sortZoneAjaxAction (Request $request)
     {
         if ($request->isXMLHttpRequest()) {
             $em = $this->getDoctrine()->getEntityManager();
-            return new JsonResponse(array('action' =>'reorder Zones'));
+            $arrayZonesId = $request->request->get('arrayZones');
+
+            for($i=0; $i<count($arrayZonesId); $i++){
+                $zone = $em->getRepository('AppBundle:ZoneRessource')->findOneBy(array('id' => $arrayZonesId[$i]));
+                $zone->setPosition($i);
+            }
+
+            $em->flush();
+            return new JsonResponse(array(
+                    'action' =>'sort Zones')
+            );
         }
 
         return new JsonResponse('This is not ajax!', 400);

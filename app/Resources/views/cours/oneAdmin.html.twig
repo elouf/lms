@@ -109,44 +109,40 @@
                 });
             });
 
-            // modification d'un champ d'un lien
-            $('.lienAdmin .champAdmin').on('input', function(){
-                changeLien($(this).closest('.lienAdmin'));
+            // déplacement des zones
+            $('.btnMoveDown').click(function(){
+                var elem = $(this).closest('.courseElemAdmin');
+                var next = elem.next('.courseElemAdmin');
+                elem.insertAfter(next);
+                reorderZone($(this).closest('.courseElems'))
             });
-            for (var i in CKEDITOR.instances) {
-                CKEDITOR.instances[i].on('change', function() {
-                    var idItem = $(this).attr('name');
-                    changeLien($('#'+idItem).closest('.lienAdmin'));
+            $('.btnMoveUp').click(function(){
+                var elem = $(this).closest('.courseElemAdmin');
+                var prev = elem.prev('.courseElemAdmin');
+                elem.insertBefore(prev);
+                reorderZone($(this).closest('.courseElems'))
+            });
+            function reorderZone(zoneList){
+                var arrayZones = [];
+                zoneList.find('[data-idzone]').each(function(){
+                    arrayZones.push($(this).attr('data-idzone'));
                 });
-            }
-            function changeLien(lien){
-                if(!lien.hasClass('inEdition')){
-                    lien.addClass('inEdition');
-                    lien.find('.btnActionCol .btnDelete').before('<div class="btnSaveInputChange btnAdmin btnLeft"><i class="fa fa-floppy-o"></i></div>')
-                    lien.find('.btnSaveInputChange').click(function(){
-                        var id = lien.attr('data-idItem');
-                        var nom = lien.find('[data-champName=nom]').val();
-                        var url = lien.find('[data-champName=url]').val();
-                        var description = CKEDITOR.instances[lien.find('[data-champName=description]').attr('id')].getData();
 
-                        $.ajax({
-                            type: 'POST',
-                            url: "{{path('changeContentLien_ajax')}}",
-                            async: false,
-                            dataType: "json",
-                            data: {
-                                id: id,
-                                nom: nom,
-                                url: url,
-                                description: description
-                            },
-                            success: function (data) {
-                                lien.removeClass('inEdition');
-                                lien.find('.btnSaveInputChange').remove();
-                            }
-                        });
-                    });
-                }
+                $.ajax({
+                    type: "POST",
+                    url: "{{path('sortZone_ajax')}}",
+                    data: {
+                        arrayZones: arrayZones
+                    },
+                    dataType: "json",
+                    success: function (response) {
+                        if(!response["error"]){
+
+                        }else{
+                            console.log("Erreur de tri des zones");
+                        }
+                    }
+                });
             }
 
             $('.addRessource').click(function(){
@@ -178,7 +174,7 @@
                 if(!$(this).hasClass('inEdition')){
                     var sectionInput = $(this);
                     sectionInput.addClass('inEdition');
-                    sectionInput.after('<div class="btnSaveInputChange btnAdmin btnMiddle col-sm-1 col-xs-1"><i class="fa fa-floppy-o"></i></div>')
+                    sectionInput.after('<div class="myBtn btnSaveInputChange btnAdmin btnMiddle col-sm-1 col-xs-1"><i class="fa fa-floppy-o"></i></div>')
                     sectionInput.next('.btnSaveInputChange').click(function(){
                         var id = sectionInput.closest('.adminSectionRow').attr('data-idsection');
                         var nom = sectionInput.val();
@@ -290,6 +286,7 @@
                 }
             });
 
+            // ajout d'un item du cours dans une section (via la modale)
             $('.btnAddItem').click(function(){
                 var idItem = $(this).closest('.item').attr('data-idItem');
                 var typeItem = $(this).closest('.item').attr('data-typeItem');
@@ -305,13 +302,119 @@
                     dataType: "json",
                     success: function (response) {
                         if(!response["error"]){
-
+                            location.reload();
                         }else{
                             console.log("Erreur d'ajout de l'item "+idItem+" à la section");
                         }
                     }
                 });
             });
+
+            // GESTION DES RESSOURCES
+            // suppression d'un item
+            $('.btnSupprElem').click(function(){
+                var idItem = $(this).closest('.courseElemAdmin').attr('data-idItem');
+                var typeItem = $(this).closest('.courseElemAdmin').attr('data-typeItem');
+                $.ajax({
+                    type: "POST",
+                    url: "{{path('supprItem_ajax')}}",
+                    data: {
+                        idItem: idItem,
+                        typeItem: typeItem
+                    },
+                    dataType: "json",
+                    success: function (response) {
+                        if(!response["error"]){
+                            location.reload();
+                        }else{
+                            console.log("Erreur de suppression de l'item "+idItem);
+                        }
+                    }
+                });
+            });
+
+            // modification d'un champ d'un lien
+            $('.champAdmin').on('input', function(){
+                var elem = $(this).closest('.courseElemAdmin');
+                detectInput(elem);
+            });
+            for (var i in CKEDITOR.instances) {
+                CKEDITOR.instances[i].on('change', function() {
+                    var idItem = $(this).attr('name');
+                    var elem = $('#'+idItem).closest('.courseElemAdmin');
+                    detectInput(elem);
+                });
+            }
+            function detectInput(elem){
+                if(!elem.hasClass('inEdition')) {
+                    elem.addClass('inEdition');
+                    elem.find('.btnActionCol .btnDelete').before('<div class="myBtn btnSaveInputChange btnAdmin btnLeft"><i class="fa fa-floppy-o"></i></div>');
+                    if(elem.attr('data-typeItem') == 'lien'){
+                        changeLien(elem);
+                    }else if(elem.attr('data-typeItem') == 'groupe'){
+                        changeGroupe(elem);
+                    }
+                }
+            }
+            function changeLien(lien){
+                lien.find('.btnSaveInputChange').click(function(){
+                    var id = lien.attr('data-idItem');
+                    var nom = lien.find('[data-champName=nom]').val();
+                    var url = lien.find('[data-champName=url]').val();
+                    var description = CKEDITOR.instances[lien.find('[data-champName=description]').attr('id')].getData();
+
+                    $.ajax({
+                        type: 'POST',
+                        url: "{{path('changeContentLien_ajax')}}",
+                        async: false,
+                        dataType: "json",
+                        data: {
+                            id: id,
+                            nom: nom,
+                            url: url,
+                            description: description
+                        },
+                        success: function (data) {
+                            lien.removeClass('inEdition');
+                            lien.find('.btnSaveInputChange').remove();
+                        }
+                    });
+                });
+            }
+            function changeGroupe(groupe){
+                console.log('changeGroupe')
+                groupe.find('.btnSaveInputChange').click(function(){
+                    var id = groupe.attr('data-idItem');
+                    var nom = groupe.find('[data-champName=nom]').val();
+                    var description = CKEDITOR.instances[groupe.find('[data-champName=description]').attr('id')].getData();
+
+                    $.ajax({
+                        type: 'POST',
+                        url: "{{path('changeContentGroupe_ajax')}}",
+                        async: false,
+                        dataType: "json",
+                        data: {
+                            id: id,
+                            nom: nom,
+                            description: description
+                        },
+                        success: function (data) {
+                            groupe.removeClass('inEdition');
+                            groupe.find('.btnSaveInputChange').remove();
+                        }
+                    });
+                });
+            }
+
+            $('.sortableLiensInGroupe').sortable({
+                placeholder: "ui-state-highlight",
+                handle: ".btnMove",
+                cancel: ".notSortable",
+                stop: function (event, ui) {
+
+                }
+            });
+
 
             // reset les input text pour éviter le cache
             $('.inputReset').val('');
@@ -408,22 +511,22 @@
                         <div class="sortableSections">
                             {% for key,val in zonesSections %}
                                 <div class="row mb-10 adminSectionRow" data-idSection="{{ val.section.id }}">
-                                    <div class="btnAdmin btnLeft col-sm-1  col-xs-1">
+                                    <div class="myBtn btnAdmin btnLeft col-sm-1  col-xs-1">
                                         {% if val.section.isVisible %}
                                             <i class="activationSectionBtn fa fa-check-square-o"></i>
                                         {% else %}
                                             <i class="activationSectionBtn fa fa-square-o"></i>
                                         {% endif %}
                                     </div>
-                                    <div class="btnAdmin btnMove btnMoveSection col-sm-1  col-xs-1"><i class="fa fa-arrows-alt "></i></div>
+                                    <div class="myBtn btnAdmin btnMove btnMoveSection col-sm-1  col-xs-1"><i class="fa fa-arrows-alt "></i></div>
                                     <input data-champName="nom" class="nomSectionInput col-sm-8  col-xs-8" value="{{ val.section.nom }}"/>
-                                    <div class="btnRight btnAdmin btnDelete btnDeleteSection col-sm-1 col-xs-1"><i class="fa fa-trash"></i></div>
+                                    <div class="myBtn btnRight btnAdmin btnDelete btnDeleteSection col-sm-1 col-xs-1"><i class="fa fa-trash"></i></div>
                                 </div>
                             {% endfor %}
                         </div>
                         <div class="row mb-10 adminSectionRow mt-40 notSortable">
                             <input data-champName="nom" class="inputReset nomSectionAddInput col-sm-6  col-xs-6 col-xs-push-2" placeholder="Ajouter une nouvelle section" />
-                            <div class="btnRight btnAdmin btnAddSection col-sm-1 col-xs-1 col-xs-push-2" data-coursId="{{ cours.id }}"><i class="fa fa-plus"></i></div>
+                            <div class="myBtn btnRight btnAdmin btnAddSection col-sm-1 col-xs-1 col-xs-push-2" data-coursId="{{ cours.id }}"><i class="fa fa-plus"></i></div>
                         </div>
                     </div>
 
@@ -439,14 +542,12 @@
                                 <ul class="list-default courseElems">
                                     {% for key,val in liens %}
                                         <li data-idItem="{{ val.id }}"
-                                            class="courseElemAdmin lienAdmin col-md-12"
-                                        >
+                                            class="courseElemAdmin lienAdmin col-md-12" data-typeItem="lien">
                                             <div class="titleBar">Lien externe</div>
-
 
                                             <div class="btnActionCol col-md-1">
                                                 <ul>
-                                                    <li class="btnDelete btnLeft btnDeleteElem"><i class="fa fa-trash"></i></li>
+                                                    <li class="myBtn btnDelete btnLeft btnSupprElem"><i class="fa fa-trash"></i></li>
                                                 </ul>
                                             </div>
 
@@ -485,39 +586,74 @@
                                                 </table>
                                             </td>
                                             <td>
-                                                <div class="btnAdmin btnAlone btnAddItem"><i class="fa fa-plus"></i></div>
+                                                <div class="myBtn btnAdmin btnAlone btnAddItem"><i class="fa fa-plus"></i></div>
                                             </td>
                                         </tr>
                                     {% endfor %}
                                 </table>
                             </div>
                             <div role="tabpanel" class="tab-pane fade" id="btnListGroupe">
-                                <table class="tableAddItem">
+                                <ul class="list-default courseElems">
                                     {% for key,val in groupes %}
-                                        <tr class="item" data-typeItem="groupe" data-idItem="{{ val.id }}">
-                                            <td>
-                                                <table class="tableDetailItem">
-                                                    <tr><td class="nomChamp">Nom</td><td>{{ val.nom }}</td></tr>
-                                                    <tr><td class="nomChamp">Description</td><td>{{ val.description | raw }}</td></tr>
-                                                </table>
-                                            </td>
-                                            <td>
-                                                <div class="btnAdmin btnAlone btnAddItem"><i class="fa fa-plus"></i></div>
-                                            </td>
-                                        </tr>
+                                        <li data-idItem="{{ val.groupe.id }}"
+                                            class="courseElemAdmin groupeLiensAdmin col-md-12" data-typeItem="groupe">
+                                            <div class="titleBar">Groupe de Liens</div>
+
+                                            <div class="btnActionCol col-md-1">
+                                                <ul>
+                                                    <li class="myBtn btnDelete btnLeft btnSupprElem"><i class="fa fa-trash"></i></li>
+                                                </ul>
+                                            </div>
+
+
+                                            <div class="formCol col-md-11">
+                                                <div class="row mb-10">
+                                                    <div class="LabelAdmin col-sm-3">Nom</div>
+                                                    <input data-champName="nom" class="champAdmin col-sm-9 col-xs-12" value="{{ val.groupe.nom }}"/>
+                                                </div>
+                                                <div class="row mb-10">
+                                                    <div class="LabelAdmin col-sm-3">Description</div>
+                                                    <div class=" col-sm-9  col-xs-12">
+                                                        <textarea data-champName="description" id="groupeLien_{{ val.groupe.id }}_descr" class="simpleEditor editor champAdmin">{{ val.groupe.description }}</textarea>
+                                                    </div>
+
+                                                </div>
+                                                <div class="row">
+                                                    <div class="LabelAdmin col-sm-3">Liens</div>
+                                                    <div class=" col-sm-9  col-xs-12 listeLiensGroupe sortableLiensInGroupe">
+                                                        {% for keyR,valR in val.content %}
+                                                            <div class="row" data-idLien="{{ valR.id }}">
+                                                                <div class="col-xs-10">
+                                                                    <div class="myBtn btnMove inlineBtn"><i class="fa fa-arrows-alt "></i></div>
+                                                                    {{ valR.nom }}
+                                                                </div>
+                                                                <div class="col-xs-2 text-right">
+                                                                    <div class="myBtn btnEdit inlineBtn">
+                                                                        <i class="fa fa-pencil"></i>
+                                                                    </div>
+                                                                    <div class="myBtn btnDelete inlineBtn">
+                                                                        <i class="fa fa-trash"></i>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
                                     {% endfor %}
-                                </table>
+                                </ul>
                             </div>
                         </div>
                     </div>
 
 
-                    <!--- administration des Zones des différentes sections -->
+                    <!--- administration des Zones des différentes sections (activation et tri)  -->
                     {% for key,val in zonesSections %}
                         <div role="tabpanel" class="section tab-pane fade"
                              id="t1body{{ val.section.id }}" data-idSection="{{ val.section.id }}">
                             <div class="editor">
-                                <div class="btnAdmin btnAlone addRessource col-sm-2 col-xs-12"><i class="fa fa-plus"></i></div>
+                                <div class="myBtn btnAdmin btnAlone addRessource col-sm-2 col-xs-12"><i class="fa fa-plus"></i></div>
                                 <ul class="list-default courseElems">
                                     {% for keyR,valR in val.zones.content %}
 
@@ -532,23 +668,51 @@
                                                 <div class="titleBar">Lien externe</div>
                                                 {% include "cours/adminBtns.html.twig" %}
                                                 <div class="formCol col-md-11">
-                                                    <div class="row mb-10">
-                                                        <div class="LabelAdmin col-sm-3">Nom</div>
-                                                        <input data-champName="nom" class="champAdmin col-sm-9 col-xs-12" value="{{ valR.nom }}"/>
-                                                    </div>
-                                                    <div class="row mb-10">
-                                                        <div class="LabelAdmin col-sm-3">Description</div>
-                                                        <div class=" col-sm-9  col-xs-12">
-                                                            <textarea data-champName="description" id="zone_{{ val.zones.containers[keyR].id }}_lien_{{ valR.id }}_descr" class="simpleEditor editor champAdmin">{{ valR.description }}</textarea>
-                                                        </div>
-
+                                                    <div class="row">
+                                                        <div class="LabelAdmin col-sm-2">Nom</div>
+                                                        <div class="champAdmin col-sm-10 col-xs-12">{{ valR.nom }}</div>
                                                     </div>
                                                     <div class="row">
-                                                        <div class="LabelAdmin col-sm-3">URL</div>
-                                                        <input data-champName="url" class="champAdmin col-sm-9  col-xs-12" value="{{ valR.url }}"/>
+                                                        <div class="LabelAdmin col-sm-2">Description</div>
+                                                        <div class="champAdmin col-sm-10  col-xs-12">{{ valR.description | raw }}</div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="LabelAdmin col-sm-2">URL</div>
+                                                        <div class="champAdmin col-sm-10 col-xs-12">{{ valR.url }}</div>
                                                     </div>
                                                 </div>
                                             </li>
+                                    {% elseif val.zones.type[keyR] == "groupe" %}
+                                        <!--
+                                                            GROUPES DE LIENS
+                                        -->
+                                        <li data-idZone="{{ val.zones.containers[keyR].id }}"
+                                            data-idItem="{{ val.zones.groupe[keyR].id }}"
+                                            class="courseElemAdmin groupeLiensAdmin col-md-12"
+                                        >
+                                            <div class="titleBar">Groupe de Liens</div>
+                                            {% include "cours/adminBtns.html.twig" %}
+                                            <div class="formCol col-md-11">
+                                                <div class="row">
+                                                    <div class="LabelAdmin col-sm-2">Nom</div>
+                                                    <div class="champAdmin col-sm-10 col-xs-12">{{ val.zones.groupe[keyR].nom }}</div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="LabelAdmin col-sm-2">Description</div>
+                                                    <div class="champAdmin col-sm-10  col-xs-12">{{ val.zones.groupe[keyR].description | raw }}</div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="LabelAdmin col-sm-2">Liens</div>
+                                                    <div class=" col-sm-10  col-xs-12 listeLiensGroupe notEditable">
+                                                        {% for keyG,valG in val.zones.groupe[keyR].assocLiens %}
+                                                            <div class="row" data-idLien="{{ valG.id }}">
+                                                                <div class="col-xs-11">{{ valG.nom }}</div>
+                                                            </div>
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
 
                                         {% elseif val.zones.type[keyR] == "devoir" %}
                                             <!--
@@ -608,12 +772,12 @@
                     <div class="row">
                         <div class="bginverse">
                             <ul class="nav nav-tabs" role="tablist">
-                                <li role="presentation" class="active"><a href="#btnListLien" aria-controls="btnListLien" role="tab" data-toggle="tab"><i class="fa fa-external-link  fa-fw"></i> Lien</a></li>
-                                <li role="presentation"><a href="#btnListDevoir" aria-controls="btnListDevoir" role="tab" data-toggle="tab"><i class="fa fa-university fa-fw"></i> Devoir</a></li>
-                                <li role="presentation"><a href="#btnListGroupe" aria-controls="btnListGroupe" role="tab" data-toggle="tab"><i class="fa fa-cubes fa-fw"></i> Groupe de liens</a></li>
+                                <li role="presentation" class="active"><a href="#btnListLienModal" aria-controls="btnListLienModal" role="tab" data-toggle="tab"><i class="fa fa-external-link  fa-fw"></i> Lien</a></li>
+                                <li role="presentation"><a href="#btnListDevoirModal" aria-controls="btnListDevoirModal" role="tab" data-toggle="tab"><i class="fa fa-university fa-fw"></i> Devoir</a></li>
+                                <li role="presentation"><a href="#btnListGroupeModal" aria-controls="btnListGroupeModal" role="tab" data-toggle="tab"><i class="fa fa-cubes fa-fw"></i> Groupe de liens</a></li>
                             </ul>
                             <div class="tab-content">
-                                <div role="tabpanel" class="tab-pane fade in active" id="btnListLien">
+                                <div role="tabpanel" class="tab-pane fade in active" id="btnListLienModal">
                                     <table class="tableAddItem">
                                         {% for key,val in liens %}
                                             <tr class="item" data-typeItem="lien" data-idItem="{{ val.id }}">
@@ -625,13 +789,13 @@
                                                     </table>
                                                 </td>
                                                 <td>
-                                                    <div class="btnAdmin btnAlone btnAddItem"><i class="fa fa-plus"></i></div>
+                                                    <div class="myBtn btnAdmin btnAlone btnAddItem"><i class="fa fa-plus"></i></div>
                                                 </td>
                                             </tr>
                                         {% endfor %}
                                     </table>
                                 </div>
-                                <div role="tabpanel" class="tab-pane fade" id="btnListDevoir">
+                                <div role="tabpanel" class="tab-pane fade" id="btnListDevoirModal">
                                     <table class="tableAddItem">
                                         {% for key,val in devoirs %}
                                             <tr class="item" data-typeItem="devoir" data-idItem="{{ val.id }}">
@@ -644,24 +808,33 @@
                                                     </table>
                                                 </td>
                                                 <td>
-                                                    <div class="btnAdmin btnAlone btnAddItem"><i class="fa fa-plus"></i></div>
+                                                    <div class="myBtn btnAdmin btnAlone btnAddItem"><i class="fa fa-plus"></i></div>
                                                 </td>
                                             </tr>
                                         {% endfor %}
                                     </table>
                                 </div>
-                                <div role="tabpanel" class="tab-pane fade" id="btnListGroupe">
+                                <div role="tabpanel" class="tab-pane fade" id="btnListGroupeModal">
                                     <table class="tableAddItem">
                                         {% for key,val in groupes %}
-                                            <tr class="item" data-typeItem="groupe" data-idItem="{{ val.id }}">
+                                            <tr class="item" data-typeItem="groupe" data-idItem="{{ val.groupe.id }}">
                                                 <td>
                                                     <table class="tableDetailItem">
-                                                        <tr><td class="nomChamp">Nom</td><td>{{ val.nom }}</td></tr>
-                                                        <tr><td class="nomChamp">Description</td><td>{{ val.description | raw }}</td></tr>
+                                                        <tr><td class="nomChamp">Nom</td><td>{{ val.groupe.nom }}</td></tr>
+                                                        <tr><td class="nomChamp">Description</td><td>{{ val.groupe.description | raw }}</td></tr>
+                                                        <tr><td class="nomChamp">Liens présents</td>
+                                                            <td>
+                                                                <ul>
+                                                                    {% for keyR,valR in val.content %}
+                                                                        <li>{{ valR.nom }}</li>
+                                                                    {% endfor %}
+                                                                </ul>
+                                                            </td>
+                                                        </tr>
                                                     </table>
                                                 </td>
                                                 <td>
-                                                    <div class="btnAdmin btnAlone btnAddItem"><i class="fa fa-plus"></i></div>
+                                                    <div class="myBtn btnAdmin btnAlone btnAddItem"><i class="fa fa-plus"></i></div>
                                                 </td>
                                             </tr>
                                         {% endfor %}

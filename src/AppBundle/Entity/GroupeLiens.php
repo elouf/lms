@@ -13,10 +13,32 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class GroupeLiens extends Ressource
 {
+    /**
+     * @ORM\OneToMany(targetEntity="AssocGroupeLiens", mappedBy="groupe", cascade={"persist", "remove"})
+     */
+    protected $assocLiens;
 
     /**
-     * @ORM\OneToMany(targetEntity="AssocGroupeLiens", mappedBy="groupe")
+     * Set assocLiens
+     *
+     * @param User $assocLiens
+     *
+     * @return GroupeLiens
      */
-    private $assocLiens;
+    public function setAssocLiens($assocLiens)
+    {
+        $this->auteur = $assocLiens;
 
+        return $this;
+    }
+
+    /**
+     * Get assocLiens
+     *
+     * @return AssocGroupeLiens
+     */
+    public function getAssocLiens()
+    {
+        return $this->assocLiens;
+    }
 }

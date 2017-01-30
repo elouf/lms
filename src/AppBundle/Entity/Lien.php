@@ -21,7 +21,7 @@ class Lien extends Ressource
     private $url;
 
     /**
-     * @ORM\OneToMany(targetEntity="AssocGroupeLiens", mappedBy="lien")
+     * @ORM\OneToMany(targetEntity="AssocGroupeLiens", mappedBy="lien", cascade={"persist", "remove"})
      */
     private $assocGroupes;
 
