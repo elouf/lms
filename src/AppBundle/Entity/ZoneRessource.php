@@ -32,7 +32,7 @@ class ZoneRessource extends OrderedItem
     /**
      * @var Ressource
      *
-     * @ORM\ManyToOne(targetEntity="Ressource")
+     * @ORM\ManyToOne(targetEntity="Ressource", cascade={"persist"})
      */
     private $ressource;
 

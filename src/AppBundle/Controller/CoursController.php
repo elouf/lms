@@ -47,6 +47,7 @@ class CoursController extends Controller
         $cours = $repository->find($id);
 
         $repositoryG = $this->getDoctrine()->getRepository('AppBundle:GroupeLiens');
+        $repositoryRL = $this->getDoctrine()->getRepository('AppBundle:RessourceLibre');
         $repositoryL = $this->getDoctrine()->getRepository('AppBundle:Lien');
         $repositoryD = $this->getDoctrine()->getRepository('AppBundle:Devoir');
 
@@ -88,20 +89,24 @@ class CoursController extends Controller
                         $datas[$i]["zones"]["content"][$j]['copie'] = $copie;
                         $datas[$i]["zones"]["content"][$j]['corrige'] = $corrige;
 
-                    }elseif($groupe = $repositoryG->findOneBy(array('id' => $zone->getRessource()->getId()))){
+                    }elseif($groupe = $repositoryG->findOneBy(array('id' => $zone->getRessource()->getId()))) {
 
                         // la ressource est un groupe de liens
                         $datas[$i]["zones"]["type"][$j] = "groupe";
                         $repositoryGaL = $this->getDoctrine()
                             ->getRepository('AppBundle:AssocGroupeLiens')
-                            ->findBy(array('groupe' => $groupe))
-                        ;
+                            ->findBy(array('groupe' => $groupe));
                         $datas[$i]["zones"]["groupe"][$j] = $groupe;
                         $datas[$i]["zones"]["content"][$j] = $repositoryGaL;
+                    }elseif($free = $repositoryRL->findOneBy(array('id' => $zone->getRessource()->getId()))){
+
+                            // la ressource est une ressource libre
+                            $datas[$i]["zones"]["type"][$j] = "free";
+                            $datas[$i]["zones"]["content"][$j] = $free;
                     }else{
 
                         // on ne trouve pas le type de la ressource
-                        $datas[$i]["zones"]["type"][$j] = "free";
+                        $datas[$i]["zones"]["type"][$j] = "unknown";
                         $datas[$i]["zones"]["content"][$j] = $zone->getDescription();
 
                     }
@@ -118,6 +123,7 @@ class CoursController extends Controller
         // on récupère aussi tout le contenu du cours
         $cLiens = $repositoryL->findBy(array('cours' => $cours));
         $cDevoirs = $repositoryD->findBy(array('cours' => $cours));
+        $cLibres = $repositoryRL->findBy(array('cours' => $cours));
 
         $cGroupesEntity = $repositoryG->findBy(array('cours' => $cours));
         $cGroupes = array();
@@ -140,6 +146,7 @@ class CoursController extends Controller
                     'liens' => $cLiens,
                     'devoirs' => $cDevoirs,
                     'groupes' => $cGroupes,
+                    'libres' => $cLibres
                 ]);
         }
     }
@@ -162,6 +169,8 @@ class CoursController extends Controller
                 $entityRessourceName = "Devoir";
             }elseif($type == "lien"){
                 $entityRessourceName = "Lien";
+            }elseif($type == "libre"){
+                $entityRessourceName = "RessourceLibre";
             }
 
             if($entityRessourceName == ""){
@@ -171,6 +180,14 @@ class CoursController extends Controller
                 );
             }else {
                 $ressource = $em->getRepository('AppBundle:' . $entityRessourceName)->findOneBy(array('id' => $id));
+
+                // on supprime les zones qui contenait l'item
+                $zones = $em->getRepository('AppBundle:ZoneRessource')->findBy(array('ressource' => $ressource));
+                for($i=0; $i<count($zones); $i++){
+                    $em->remove($zones[$i]);
+                }
+
+                // puis on supprime l'item
                 $em->remove($ressource);
                 $em->flush();
                 return new JsonResponse(array('action' =>'delete Zone', 'id' => $ressource->getId()));

@@ -25,43 +25,41 @@
     <script src="{{ asset('vendors/jquery-ui/jquery-ui.min.js') }}" type=text/javascript></script>
     <script src="{{ asset('educomp/ckeditor/ckeditor.js') }}"></script>
     <script src="{{ asset('educomp/ckeditor/adapters/jquery.js') }}"></script>
+    <script>
 
-    <script language="JavaScript">
         jQuery(document).ready(function () {
-
-
             var config = {
                 configname:"lightConfig",
                 toolbar:
-                    [
-                        { name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript' ] },
-                        { name: 'paragraph',   items : [ 'NumberedList','BulletedList','-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'] },
-                        '/',
-                        { name: 'styles',      items : [ 'Font','FontSize' ] },
-                        { name: 'colors',      items : [ 'TextColor','BGColor' ] },
-                        { name: 'switch',      items : [ 'Switch' ] }
-                    ],
+                        [
+                            { name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript' ] },
+                            { name: 'paragraph',   items : [ 'NumberedList','BulletedList','-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'] },
+                            '/',
+                            { name: 'styles',      items : [ 'Font','FontSize' ] },
+                            { name: 'colors',      items : [ 'TextColor','BGColor' ] },
+                            { name: 'switch',      items : [ 'Switch' ] }
+                        ],
                 height: 100,
                 allowedContent: true
             };
             var config2 = {
                 configname:"hugeConfig",
                 toolbar:
-                    [
-                        { name: 'document',    items : [ 'Preview','-','Templates' ] },
-                        { name: 'clipboard',   items : [ 'Cut','Copy','Paste','PasteText','PasteFromWord','-','Undo','Redo' ] },
-                        { name: 'editing',     items : [ 'Find','Replace','-','SelectAll','-','SpellChecker' ] },
-                        '/',
-                        { name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript','-','RemoveFormat' ] },
-                        { name: 'paragraph',   items : [ 'NumberedList','BulletedList','-','Outdent','Indent','-','Blockquote','-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'] },
-                        { name: 'links',       items : [ 'Link','Unlink' ] },
-                        { name: 'insert',      items : [ 'Image','Flash','Table','HorizontalRule','Smiley','SpecialChar' ] },
-                        '/',
-                        { name: 'styles',      items : [ 'Format','Font','FontSize' ] },
-                        { name: 'colors',      items : [ 'TextColor','BGColor' ] },
-                        { name: 'tools',       items : [ 'Maximize', 'ShowBlocks' ] },
-                        { name: 'switch',      items : [ 'Switch' ] }
-                    ],
+                        [
+                            { name: 'document',    items : [ 'Preview','-','Templates' ] },
+                            { name: 'clipboard',   items : [ 'Cut','Copy','Paste','PasteText','PasteFromWord','-','Undo','Redo' ] },
+                            { name: 'editing',     items : [ 'Find','Replace','-','SelectAll','-','SpellChecker' ] },
+                            '/',
+                            { name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript','-','RemoveFormat' ] },
+                            { name: 'paragraph',   items : [ 'NumberedList','BulletedList','-','Outdent','Indent','-','Blockquote','-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'] },
+                            { name: 'links',       items : [ 'Link','Unlink' ] },
+                            { name: 'insert',      items : [ 'Image','Flash','Table','HorizontalRule','Smiley','SpecialChar' ] },
+                            '/',
+                            { name: 'styles',      items : [ 'Format','Font','FontSize' ] },
+                            { name: 'colors',      items : [ 'TextColor','BGColor' ] },
+                            { name: 'tools',       items : [ 'Maximize', 'ShowBlocks' ] },
+                            { name: 'switch',      items : [ 'Switch' ] }
+                        ],
                 height: 200,
                 allowedContent: true
             };
@@ -144,8 +142,36 @@
                 });
             }
 
-            $('.addRessource').click(function(){
+            /*
+             AJOUTS DE ZONES
+             */
+            //Ajout d'une ressource existante
+            $('.addExistingRessource').click(function(){
                 $('.modal').attr('data-idSection', $(this).closest('.section').attr('data-idSection')).modal();
+            });
+            // Ajout de nouvelles ressources
+            $('.addNewLien').click(function(){
+                var idItem = 0;
+                var idSection = $(this).closest('.section').attr('data-idSection');
+                var typeItem = "lien";
+                $.ajax({
+                    type: "POST",
+                    url: "{{path('addZone_ajax')}}",
+                    data: {
+                        idItem: idItem,
+                        idSection: idSection,
+                        typeItem: typeItem,
+                        idCours: $('[data-coursId]').attr('data-coursId')
+                    },
+                    dataType: "json",
+                    success: function (response) {
+                        if(!response["error"]){
+                            window.location.href = window.location.href.replace( /[\?#].*|$/, "?idSection="+idSection );
+                        }else{
+                            console.log("Erreur d'ajout de l'item "+idItem+" à la section");
+                        }
+                    }
+                });
             });
 
 
@@ -202,19 +228,17 @@
                 if(!$(this).next('.btnAddSection').hasClass('actif') && $(this).val() != ""){
                     sectionInput.addClass('inEdition');
                     sectionInput.next('.btnAddSection').addClass('actif').click(function(){
-                        var nom = sectionInput.val();
-                        var coursId = sectionInput.next('.btnAddSection').attr('data-coursId');
                         $.ajax({
                             type: 'POST',
                             url: "{{path('addSection_ajax')}}",
                             async: false,
                             dataType: "json",
                             data: {
-                                coursId:coursId,
-                                nom: nom
+                                coursId: $('[data-coursId]').attr('data-coursId'),
+                                nom: sectionInput.val()
                             },
                             success: function (data) {
-                                location.reload();
+                                window.location.href = window.location.href.replace( /[\?#].*|$/, "?sectionAdmin" );
                             }
                         });
                     });
@@ -236,7 +260,7 @@
                     dataType: "json",
                     success: function (response) {
                         if(!response["error"]){
-                            location.reload();
+                            window.location.href = window.location.href.replace( /[\?#].*|$/, "?sectionAdmin" );
                         }else{
                             var chaine = "la zone contenue";
                             if(response["nbZone"] > 1){
@@ -301,7 +325,7 @@
                     dataType: "json",
                     success: function (response) {
                         if(!response["error"]){
-                            location.reload();
+                            window.location.href = window.location.href.replace( /[\?#].*|$/, "?idSection="+idSection );
                         }else{
                             console.log("Erreur d'ajout de l'item "+idItem+" à la section");
                         }
@@ -314,6 +338,10 @@
             $('.btnSupprElem').click(function(){
                 var idItem = $(this).closest('.courseElemAdmin').attr('data-idItem');
                 var typeItem = $(this).closest('.courseElemAdmin').attr('data-typeItem');
+                var idSection = null;
+                if($(this).closest('[data-idSection]')){
+                    idSection = $(this).closest('[data-idSection]').attr('data-idSection');
+                }
                 $.ajax({
                     type: "POST",
                     url: "{{path('supprItem_ajax')}}",
@@ -324,7 +352,11 @@
                     dataType: "json",
                     success: function (response) {
                         if(!response["error"]){
-                            location.reload();
+                            if(idSection == null){
+                                window.location.href = window.location.href.replace( /[\?#].*|$/, "?ressourcesAdmin" );
+                            }else{
+                                window.location.href = window.location.href.replace( /[\?#].*|$/, "?idSection="+idSection );
+                            }
                         }else{
                             console.log("Erreur de suppression de l'item "+idItem);
                         }
@@ -347,11 +379,13 @@
             function detectInput(elem){
                 if(!elem.hasClass('inEdition')) {
                     elem.addClass('inEdition');
-                    elem.find('.btnActionCol .btnDelete').before('<div class="myBtn btnSaveInputChange btnAdmin btnLeft"><i class="fa fa-floppy-o"></i></div>');
+                    elem.find('.btnActionCol .btnDelete:first').before('<div class="myBtn btnSaveInputChange btnAdmin btnLeft"><i class="fa fa-floppy-o"></i></div>');
                     if(elem.attr('data-typeItem') == 'lien'){
                         changeLien(elem);
                     }else if(elem.attr('data-typeItem') == 'groupe'){
                         changeGroupe(elem);
+                    }else if(elem.attr('data-typeItem') == 'libre'){
+                        changeLibre(elem);
                     }
                 }
             }
@@ -371,6 +405,27 @@
                             id: id,
                             nom: nom,
                             url: url,
+                            description: description
+                        },
+                        success: function (data) {
+                            lien.removeClass('inEdition');
+                            lien.find('.btnSaveInputChange').remove();
+                        }
+                    });
+                });
+            }
+            function changeLibre(lien){
+                lien.find('.btnSaveInputChange').click(function(){
+                    var id = lien.attr('data-idItem');
+                    var description = CKEDITOR.instances[lien.find('[data-champName=description]').attr('id')].getData();
+
+                    $.ajax({
+                        type: 'POST',
+                        url: "{{path('changeContentLibre_ajax')}}",
+                        async: false,
+                        dataType: "json",
+                        data: {
+                            id: id,
                             description: description
                         },
                         success: function (data) {
@@ -418,7 +473,6 @@
             // reset les input text pour éviter le cache
             $('.inputReset').val('');
 
-
             function updateCheckedState(btn, isVisible){
                 if (isVisible) {
                     btn.removeClass(uncheckedClass).addClass(checkedClass);
@@ -427,21 +481,35 @@
                 }
             }
 
-            $.fn.changeElementType = function(newType) {
-                var attrs = {};
+            var getUrlParameter = function getUrlParameter(sParam) {
+                var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+                        sURLVariables = sPageURL.split('&'),
+                        sParameterName,
+                        i;
 
-                $.each(this[0].attributes, function(idx, attr) {
-                    attrs[attr.nodeName] = attr.nodeValue;
-                });
+                for (i = 0; i < sURLVariables.length; i++) {
+                    sParameterName = sURLVariables[i].split('=');
 
-                this.replaceWith(function() {
-                    return $("<" + newType + "/>", attrs).append($(this).contents());
-                });
+                    if (sParameterName[0] === sParam) {
+                        return sParameterName[1] === undefined ? true : sParameterName[1];
+                    }
+                }
             };
+            // on clique sur la section passée en paramètre (si reload de la page)
+            if(getUrlParameter("idSection")){
+                $('.ongletSection[data-idsection='+getUrlParameter("idSection")+'] a').click();
+            }else if(getUrlParameter("sectionAdmin")){
+                $('#sectionAdmin a').click();
+            }else if(getUrlParameter("ressourcesAdmin")){
+                $('#ressourcesAdmin a').click();
+            }
         });
+
+
     </script>
 
-    <div class="container mt-140">
+
+    <div class="container mt-140" data-coursId="{{ cours.id }}">
         <div class="row">
             <div class="col-sm-3">
                 <div class="course-intro">
@@ -525,7 +593,7 @@
                         </div>
                         <div class="row mb-10 adminSectionRow mt-40 notSortable">
                             <input data-champName="nom" class="inputReset nomSectionAddInput col-sm-6  col-xs-6 col-xs-push-2" placeholder="Ajouter une nouvelle section" />
-                            <div class="myBtn btnRight btnAdmin btnAddSection col-sm-1 col-xs-1 col-xs-push-2" data-coursId="{{ cours.id }}"><i class="fa fa-plus"></i></div>
+                            <div class="myBtn btnRight btnAdmin btnAddSection col-sm-1 col-xs-1 col-xs-push-2"><i class="fa fa-plus"></i></div>
                         </div>
                     </div>
 
@@ -540,56 +608,22 @@
                             <div role="tabpanel" class="tab-pane fade in active" id="btnListLien">
                                 <ul class="list-default courseElems">
                                     {% for key,val in liens %}
-                                        <li data-idItem="{{ val.id }}"
-                                            class="courseElemAdmin lienAdmin col-md-12" data-typeItem="lien">
-                                            <div class="titleBar">Lien externe</div>
-
-                                            <div class="btnActionCol col-md-1">
-                                                <ul>
-                                                    <li class="myBtn btnDelete btnLeft btnSupprElem"><i class="fa fa-trash"></i></li>
-                                                </ul>
-                                            </div>
-
-
-                                            <div class="formCol col-md-11">
-                                                <div class="row mb-10">
-                                                    <div class="LabelAdmin col-sm-3">Nom</div>
-                                                    <input data-champName="nom" class="champAdmin col-sm-9 col-xs-12" value="{{ val.nom }}"/>
-                                                </div>
-                                                <div class="row mb-10">
-                                                    <div class="LabelAdmin col-sm-3">Description</div>
-                                                    <div class=" col-sm-9  col-xs-12">
-                                                        <textarea data-champName="description" id="lien_{{ val.id }}_descr" class="simpleEditor editor champAdmin">{{ val.description }}</textarea>
-                                                    </div>
-
-                                                </div>
-                                                <div class="row">
-                                                    <div class="LabelAdmin col-sm-3">URL</div>
-                                                    <input data-champName="url" class="champAdmin col-sm-9  col-xs-12" value="{{ val.url }}"/>
-                                                </div>
-                                            </div>
-                                        </li>
+                                        {% include "cours/adminLien.html.twig"
+                                        with {nom:val.nom, description: val.description,
+                                        url: val.url, zoneId: '0', itemId: val.id, inSection: 'false'}
+                                        %}
                                     {% endfor %}
                                 </ul>
                             </div>
                             <div role="tabpanel" class="tab-pane fade" id="btnListDevoir">
-                                <table class="tableAddItem">
+                                <ul class="list-default courseElems">
                                     {% for key,val in devoirs %}
-                                        <tr class="item" data-typeItem="devoir" data-idItem="{{ val.id }}">
-                                            <td>
-                                                <table class="tableDetailItem">
-                                                    <tr><td class="nomChamp">Nom</td><td>{{ val.nom }}</td></tr>
-                                                    <tr><td class="nomChamp">Description</td><td>{{ val.description | raw }}</td></tr>
-                                                    <tr><td class="nomChamp">Dates</td><td>du {{ val.dateDebut|date('Y-m-d') }} au {{ val.dateFin|date('Y-m-d') }}</td></tr>
-                                                    <tr><td class="nomChamp">Durée</td><td>{{ val.duree//3600 }}h</td></tr>
-                                                </table>
-                                            </td>
-                                            <td>
-                                                <div class="myBtn btnAdmin btnAlone btnAddItem"><i class="fa fa-plus"></i></div>
-                                            </td>
-                                        </tr>
+                                        {% include "cours/adminDevoir.html.twig"
+                                        with {nom:val.nom, description: val.description,
+                                        zoneId: '0', itemId: val.id, inSection: 'false'}
+                                        %}
                                     {% endfor %}
-                                </table>
+                                </ul>
                             </div>
                             <div role="tabpanel" class="tab-pane fade" id="btnListGroupe">
                                 <ul class="list-default courseElems">
@@ -603,7 +637,6 @@
                                                     <li class="myBtn btnDelete btnLeft btnSupprElem"><i class="fa fa-trash"></i></li>
                                                 </ul>
                                             </div>
-
 
                                             <div class="formCol col-md-11">
                                                 <div class="row mb-10">
@@ -652,7 +685,16 @@
                         <div role="tabpanel" class="section tab-pane fade"
                              id="t1body{{ val.section.id }}" data-idSection="{{ val.section.id }}">
                             <div class="editor">
-                                <div class="myBtn btnAdmin btnAlone addRessource col-sm-2 col-xs-12"><i class="fa fa-plus"></i></div>
+                                <div class="row">
+                                    <select class="selectpicker show-menu-arrow col-xs-6" title="Nouvelle ressource">
+                                        <option title="Nouvelle ressource" class="addNewDevoir">Devoir</option>
+                                        <option title="Nouvelle ressource" class="addNewLien">Lien</option>
+                                        <option title="Nouvelle ressource" class="addNewGroupe">Groupe de liens</option>
+                                        <option title="Nouvelle ressource" class="addNewZoneLibre">Zone libre</option>
+                                        <option data-divider="true"></option>
+                                        <option title="Nouvelle ressource" class="addExistingRessource">Ressource existante</option>
+                                    </select>
+                                </div>
                                 <ul class="list-default courseElems">
                                     {% for keyR,valR in val.zones.content %}
 
@@ -660,28 +702,11 @@
                                             <!--
                                                                 LIENS
                                             -->
-                                            <li data-idZone="{{ val.zones.containers[keyR].id }}"
-                                                data-idItem="{{ valR.id }}"
-                                                class="courseElemAdmin lienAdmin col-md-12"
-                                            >
-                                                <div class="titleBar">Lien externe</div>
-                                                {% include "cours/adminBtns.html.twig" %}
-                                                <div class="formCol col-md-11">
-                                                    <div class="row">
-                                                        <div class="LabelAdmin col-sm-2">Nom</div>
-                                                        <div class="champAdmin col-sm-10 col-xs-12">{{ valR.nom }}</div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="LabelAdmin col-sm-2">Description</div>
-                                                        <div class="champAdmin col-sm-10  col-xs-12">{{ valR.description | raw }}</div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="LabelAdmin col-sm-2">URL</div>
-                                                        <div class="champAdmin col-sm-10 col-xs-12">{{ valR.url }}</div>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                    {% elseif val.zones.type[keyR] == "groupe" %}
+                                            {% include "cours/adminLien.html.twig"
+                                            with {nom:valR.nom, description: valR.description, visible: val.zones.containers[keyR].isVisible,
+                                            url: valR.url, zoneId: val.zones.containers[keyR].id, itemId: valR.id, inSection: 'true'}
+                                            %}
+                                        {% elseif val.zones.type[keyR] == "groupe" %}
                                         <!--
                                                             GROUPES DE LIENS
                                         -->
@@ -690,7 +715,7 @@
                                             class="courseElemAdmin groupeLiensAdmin col-md-12"
                                         >
                                             <div class="titleBar">Groupe de Liens</div>
-                                            {% include "cours/adminBtns.html.twig" %}
+
                                             <div class="formCol col-md-11">
                                                 <div class="row">
                                                     <div class="LabelAdmin col-sm-2">Nom</div>
@@ -717,38 +742,19 @@
                                             <!--
                                                                 DEVOIRS
                                             -->
-                                            <li data-idZone="{{ val.zones.containers[keyR].id }}"
-                                                class="courseElemAdmin devoirAdmin col-md-12">
-
-                                                <div class="titleBar">Devoir</div>
-                                                {% include "cours/adminBtns.html.twig" %}
-                                                <div class="formCol col-md-11">
-                                                    <div class="row">
-                                                        <div class="col-sm-6 sectionDrop">
-                                                            <div>Sujet</div>
-                                                            <div class="zoneDrop"></div>
-                                                        </div>
-                                                        <div class="col-sm-6 sectionDrop">
-                                                            <div>Corrigé</div>
-                                                            <div class="zoneDrop"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </li>
+                                            {% include "cours/adminDevoir.html.twig"
+                                            with {nom:valR.devoir.nom, description: valR.devoir.description, visible: val.zones.containers[keyR].isVisible,
+                                            zoneId: val.zones.containers[keyR].id, itemId: valR.devoir.id, inSection: 'true'}
+                                            %}
 
                                         {% elseif val.zones.type[keyR] == "free" %}
                                             <!--
                                                                 LIBRE
                                             -->
-                                            <li data-idZone="{{ val.zones.containers[keyR].id }}"
-                                                class="courseElemAdmin freeAdmin col-md-12">
-
-                                                <div class="titleBar">Zone libre</div>
-                                                {% include "cours/adminBtns.html.twig" %}
-                                                <div class="formCol col-md-11">
-                                                    <div data-champName="description" class="textarea champAdmin col-xs-12">{{ valR }}</div>
-                                                </div>
-                                            </li>
+                                            {% include "cours/adminLibre.html.twig"
+                                            with {description: valR.description, visible: val.zones.containers[keyR].isVisible,
+                                            zoneId: val.zones.containers[keyR].id, itemId: valR.id, inSection: 'true'}
+                                            %}
                                         {% endif %}
                                     {% endfor %}
                                 </ul>
@@ -760,8 +766,6 @@
             </div>
         </div>
     </div>
-
-
 
     <div class="modal fade" tabindex="-1" role="dialog" data-idSection="0">
         <div class="modal-dialog modal-lg" role="document">

@@ -1,0 +1,29 @@
+<li data-idZone="{{ zoneId }}"
+    class="courseElemAdmin devoirAdmin col-md-12"
+    data-idItem="{{ itemId }}"
+    data-typeItem="lien"
+>
+
+    <div class="titleBar">Devoir</div>
+    {% if inSection == 'true' %}
+        {% include "cours/adminBtns.html.twig" with {visible: visible} %}
+    {% else %}
+        <div class="btnActionCol col-md-1">
+            <ul>
+                <li class="myBtn btnDelete btnLeft btnSupprElem"><i class="fa fa-times"></i></li>
+            </ul>
+        </div>
+    {% endif %}
+    <div class="formCol col-md-11">
+        <div class="row">
+            <div class="col-sm-6 sectionDrop">
+                <div>Sujet</div>
+                <div class="zoneDrop"></div>
+            </div>
+            <div class="col-sm-6 sectionDrop">
+                <div>Corrigé</div>
+                <div class="zoneDrop"></div>
+            </div>
+        </div>
+    </div>
+</li>

@@ -153,13 +153,13 @@
                                                                 btn-default
                                                             {% endif %}
                                                             " href="{{ valG.lien.url }}">
-                                                                {% if valG.lien.typeLien.nom == "PDF" %}
+                                                                {% if valG.lien.typeLien == "PDF" %}
                                                                     <i class="fa fa-file-pdf-o fa-2x"></i>
-                                                                {% elseif valG.lien.typeLien.nom == "Webmedia" %}
+                                                                {% elseif valG.lien.typeLien == "Webmedia" %}
                                                                     <i class="fa fa-file-video-o fa-2x"></i>
-                                                                {% elseif valG.lien.typeLien.nom == "Opale" %}
+                                                                {% elseif valG.lien.typeLien == "Opale" %}
                                                                     <i class="fa fa-files-o fa-2x"></i>
-                                                                {% elseif valG.lien.typeLien.nom == "HTTP" %}
+                                                                {% elseif valG.lien.typeLien == "HTTP" %}
                                                                     <i class="fa fa-external-link fa-2x"></i>
                                                                 {% else %}
                                                                     <i class="fa fa-file-o fa-2x"></i>
@@ -173,7 +173,7 @@
                                             {% elseif val.zones.type[keyR] == "free" %}
                                                 <li data-idZone="{{ val.zones.containers[keyR].id }}"
                                                     class="courseElem freeRessource">
-                                                    <div class="">{{ val.zones.content[keyR] }}</div>
+                                                    <div class="">{{ val.zones.content[keyR].description | raw }}</div>
                                                 </li>
                                             {% endif %}
                                         {% endif %}

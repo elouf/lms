@@ -38,6 +38,30 @@ class LoadZoneRessourceData extends AbstractFixture implements OrderedFixtureInt
             true,
             "",
             0);
+        $ress = $this->createItem($manager,
+            $this->getReference('sect_cours_alg_2'),
+            $this->getReference('ressLib_cours_alg_1'),
+            true,
+            "",
+            1);
+        $ress = $this->createItem($manager,
+            $this->getReference('sect_cours_alg_2'),
+            $this->getReference('ressLib_cours_alg_2'),
+            true,
+            "",
+            2);
+        $ress = $this->createItem($manager,
+            $this->getReference('sect_cours_alg_2'),
+            $this->getReference('ressLib_cours_alg_1'),
+            true,
+            "",
+            3);
+        $ress = $this->createItem($manager,
+            $this->getReference('sect_cours_alg_2'),
+            $this->getReference('ressLib_cours_alg_2'),
+            true,
+            "",
+            4);
 
         $ress = $this->createItem($manager,
             $this->getReference('sect_cours_alg_3'),
@@ -59,34 +83,22 @@ class LoadZoneRessourceData extends AbstractFixture implements OrderedFixtureInt
             2);
         $ress = $this->createItem($manager,
             $this->getReference('sect_cours_alg_3'),
-            null,
-            true,
-            "Ceci est la description de la zone de resource libre 1",
-            3);
-        $ress = $this->createItem($manager,
-            $this->getReference('sect_cours_alg_3'),
-            null,
-            true,
-            "Ceci est la description de la zone de resource libre 2",
-            4);
-        $ress = $this->createItem($manager,
-            $this->getReference('sect_cours_alg_3'),
             $this->getReference('ress_cours_alg_3'),
             true,
             "",
-            5);
+            3);
         $ress = $this->createItem($manager,
             $this->getReference('sect_cours_alg_3'),
             $this->getReference('ress_cours_alg_1'),
             true,
             "",
-            6);
+            4);
         $ress = $this->createItem($manager,
             $this->getReference('sect_cours_alg_3'),
             $this->getReference('ress_cours_alg_2'),
             true,
             "",
-            7);
+            5);
 
         $ress = $this->createItem($manager,
             $this->getReference('sect_cours_analyse_1'),

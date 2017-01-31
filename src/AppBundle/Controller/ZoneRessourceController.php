@@ -2,6 +2,8 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Lien;
+use AppBundle\Entity\Cours;
 use AppBundle\Entity\ZoneRessource;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -85,7 +87,25 @@ class ZoneRessourceController extends Controller
                     'entityRessourceName' => "non reconnu")
                 );
             }else{
-                $ressource = $em->getRepository('AppBundle:'.$entityRessourceName)->findOneBy(array('id' => $idItem));
+                $ressource = null;
+                if($idItem != 0){
+                    // c'est une ressource existante
+                    $ressource = $em->getRepository('AppBundle:'.$entityRessourceName)->findOneBy(array('id' => $idItem));
+                }else{
+                    // création d'une nouvelle ressource
+                    $idCours = $request->request->get('idCours');
+                    $cours = $em->getRepository('AppBundle:Cours')->findOneBy(array('id' => $idCours));
+                    if($typeItem == "groupe"){
+                    }elseif($typeItem == "devoir"){
+                    }elseif($typeItem == "lien"){
+                        $ressource = new Lien();
+                        $ressource->setDescription("");
+                        $ressource->setUrl("");
+                        $ressource->setNom("");
+                    }
+                    $ressource->setCours($cours);
+                }
+
                 $zone->setRessource($ressource);
 
                 $section = $em->getRepository('AppBundle:Section')->findOneBy(array('id' => $idSection));
@@ -106,9 +126,11 @@ class ZoneRessourceController extends Controller
                 return new JsonResponse(array(
                         'action' =>'add Zone',
                         'id' => $zone->getId(),
+                        'ressource' => $ressource,
                         'coursId' => $zone->getSection()->getCours()->getId(),
                         'section nom' => $zone->getSection()->getNom())
                 );
+
             }
 
         }

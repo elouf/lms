@@ -1,0 +1,16 @@
+<li data-idZone="{{ zoneId }}"
+    data-idItem="{{ itemId }}"
+    class="courseElemAdmin freeAdmin col-md-12"
+    data-typeItem="libre"
+>
+
+    <div class="titleBar">Zone libre</div>
+    {% include "cours/adminBtns.html.twig" with {visible: visible}  %}
+    <div class="formCol col-md-11">
+        <div class="row">
+            <div class="col-xs-12">
+                <textarea data-champName="description" id="zone_{{ zoneId }}_lien_{{ itemId }}_descr" class="simpleEditor editor champAdmin">{{ description }}</textarea>
+            </div>
+        </div>
+    </div>
+</li>

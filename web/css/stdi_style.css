@@ -106,11 +106,14 @@ a { font-family: inherit; color: inherit; }
     margin-bottom: 5px;
     background: #ff9c00;
 }
-.btnDelete{
-    background: #c60100 !important;
+.btnDelete:not(.btnSupprElem){
+    background: #c64d34 !important;
 }
 .btnEdit{
     background: #006ca2 !important;
+}
+.btnSupprElem{
+    background: #7907c6 !important;
 }
 .btnRight{
     border-bottom-left-radius: 0px;
@@ -128,8 +131,11 @@ a { font-family: inherit; color: inherit; }
     border-radius: 3px;
 }
 .btnActionCol i, .btnAdmin i{
-    line-height: 32px;
+    line-height: 26px;
     font-size: 20px;
+}
+.adminSectionRow .btnActionCol i, .adminSectionRow .btnAdmin i{
+    line-height: 32px;
 }
 .inlineBtn{
     display: inline-block;

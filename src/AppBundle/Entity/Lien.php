@@ -27,7 +27,7 @@ class Lien extends Ressource
 
     /**
      * @var TypeLien
-     *
+     * @ORM\Column(nullable=true)
      * @ORM\ManyToOne(targetEntity="TypeLien")
      */
     protected $typeLien;
