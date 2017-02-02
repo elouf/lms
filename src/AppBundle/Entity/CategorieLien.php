@@ -29,6 +29,13 @@ class CategorieLien
     private $nom;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="couleur", type="string", length=255, unique=false)
+     */
+    private $couleur;
+
+    /**
      * Get id
      *
      * @return int
@@ -60,5 +67,29 @@ class CategorieLien
     public function getNom()
     {
         return $this->nom;
+    }
+
+    /**
+     * Set couleur
+     *
+     * @param string $couleur
+     *
+     * @return TypeLien
+     */
+    public function setCouleur($couleur)
+    {
+        $this->couleur = $couleur;
+
+        return $this;
+    }
+
+    /**
+     * Get couleur
+     *
+     * @return string
+     */
+    public function getCouleur()
+    {
+        return $this->couleur;
     }
 }

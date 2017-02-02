@@ -25,11 +25,13 @@ class LienController extends Controller
             $nom = $request->request->get('nom');
             $url = $request->request->get('url');
             $description = $request->request->get('description');
+            $typeLienId = $request->request->get('typeLien');
 
             $lien = $em->getRepository('AppBundle:Lien')->findOneBy(array('id' => $id));
             $lien->setNom($nom);
             $lien->setUrl($url);
             $lien->setDescription($description);
+            $lien->setTypeLien($em->getRepository('AppBundle:TypeLien')->findOneBy(array('id' => $typeLienId)));
 
             $em->persist($lien);
             $em->flush();

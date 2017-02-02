@@ -54,6 +54,8 @@ class CoursController extends Controller
         $repositoryCop = $this->getDoctrine()->getRepository('AppBundle:Copie');
         $repositoryCor = $this->getDoctrine()->getRepository('AppBundle:Corrige');
 
+        $repositoryTypeLiens = $this->getDoctrine()->getRepository('AppBundle:TypeLien')->findAll();
+
         $sections = $this->getDoctrine()->getRepository('AppBundle:Section')->findBy(array('cours' => $cours), array('position' => 'ASC'));
 
         // On commence par récupérer le contenu des sections du cours
@@ -146,7 +148,8 @@ class CoursController extends Controller
                     'liens' => $cLiens,
                     'devoirs' => $cDevoirs,
                     'groupes' => $cGroupes,
-                    'libres' => $cLibres
+                    'libres' => $cLibres,
+                    'typeLiens' => $repositoryTypeLiens
                 ]);
         }
     }

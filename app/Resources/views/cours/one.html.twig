@@ -66,6 +66,9 @@
                                     {% for keyR,valR in val.zones.content %}
                                         {% if val.zones.containers[keyR].isVisible %}
                                             {% if val.zones.type[keyR] == "lien" %}
+                                                <!--
+                                                        LIEN
+                                                -->
                                                 <li data-idZone="{{ val.zones.containers[keyR].id }}"
                                                     class="courseElem lien">
                                                     <div class="row">
@@ -75,8 +78,8 @@
                                                             <div class="itemDescription">{{ valR.description | raw }}</div>
                                                         </div>
                                                         <div class="col-xs-2 text-right">
-                                                            <a class="btn btn-sm btn-warning" href="{{ valR.url }}">
-                                                                <i class="fa fa-arrow-right"></i>
+                                                            <a class="btn btnLien btn-sm btn-warning" href="{{ valR.url }}">
+                                                                <i class="fa {{ valR.typeLien.faIcon }}"></i>
                                                             </a>
                                                         </div>
 
@@ -85,6 +88,9 @@
 
                                                 </li>
                                             {% elseif val.zones.type[keyR] == "devoir" %}
+                                                <!--
+                                                        DEVOIR
+                                                -->
                                                 <li data-idZone="{{ val.zones.containers[keyR].id }}"
                                                     class="courseElem devoir">
                                                     <div class="">
@@ -136,34 +142,19 @@
 
                                                 </li>
                                             {% elseif val.zones.type[keyR] == "groupe" %}
+                                                <!--
+                                                        GROUPE
+                                                -->
                                                 <li data-idZone="{{ val.zones.containers[keyR].id }}"
                                                     class="courseElem groupsRessource">
                                                     <div class="row">
                                                         <div class="itemNom col-lg-5">{{ val.zones.groupe[keyR].nom }}</div>
                                                         <div class="col-lg-7 text-right">
                                                         {% for keyG,valG in val.zones.content[keyR] %}
-                                                            <a class="btnLienGroupeRessource btn btn-xs
-                                                            {% if valG.categorieLien.nom == "Intitule" %}
-                                                                btn-info
-                                                            {% elseif valG.categorieLien.nom == "Aide" %}
-                                                                btn-success
-                                                            {% elseif valG.categorieLien.nom == "Corrige" %}
-                                                                btn-warning
-                                                            {% else %}
-                                                                btn-default
-                                                            {% endif %}
-                                                            " href="{{ valG.lien.url }}">
-                                                                {% if valG.lien.typeLien == "PDF" %}
-                                                                    <i class="fa fa-file-pdf-o fa-2x"></i>
-                                                                {% elseif valG.lien.typeLien == "Webmedia" %}
-                                                                    <i class="fa fa-file-video-o fa-2x"></i>
-                                                                {% elseif valG.lien.typeLien == "Opale" %}
-                                                                    <i class="fa fa-files-o fa-2x"></i>
-                                                                {% elseif valG.lien.typeLien == "HTTP" %}
-                                                                    <i class="fa fa-external-link fa-2x"></i>
-                                                                {% else %}
-                                                                    <i class="fa fa-file-o fa-2x"></i>
-                                                                {% endif %}
+                                                            <a class="btnLienGroupeRessource btn btn-xs"
+                                                               style="background-color: {{ valG.categorieLien.couleur }};"
+                                                               href="{{ valG.lien.url }}">
+                                                                <i class="fa {{ valG.lien.typeLien.faIcon }} fa-2x"></i>
                                                                 {{ valG.nom }}
                                                             </a>
                                                         {%  endfor %}
@@ -171,6 +162,9 @@
                                                     </div>
                                                 </li>
                                             {% elseif val.zones.type[keyR] == "free" %}
+                                                <!--
+                                                        LIBRE
+                                                -->
                                                 <li data-idZone="{{ val.zones.containers[keyR].id }}"
                                                     class="courseElem freeRessource">
                                                     <div class="">{{ val.zones.content[keyR].description | raw }}</div>

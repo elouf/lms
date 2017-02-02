@@ -14,24 +14,29 @@ class LoadTypeLienData extends AbstractFixture implements OrderedFixtureInterfac
     public function load(ObjectManager $manager)
     {
         $ress = $this->createItem($manager,
-            'PDF');
+            'PDF',
+            'fa-file-pdf-o');
         $this->addReference('typelien_pdf', $ress);
         $ress = $this->createItem($manager,
-            'Webmedia');
+            'Webmedia',
+            'fa-file-video-o');
         $this->addReference('typelien_webmedia', $ress);
         $ress = $this->createItem($manager,
-            'Opale');
+            'Opale',
+            'fa-book ');
         $this->addReference('typelien_opale', $ress);
         $ress = $this->createItem($manager,
-            'HTTP');
+            'HTTP',
+            'fa-external-link');
         $this->addReference('typelien_http', $ress);
 
         $manager->flush();
     }
 
-    public function createItem(ObjectManager $manager, $nom){
+    public function createItem(ObjectManager $manager, $nom, $faIcon){
         $item = new TypeLien();
         $item->setNom($nom);
+        $item->setFaIcon($faIcon);
         $manager->persist($item);
         return $item;
     }

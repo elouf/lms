@@ -13,21 +13,25 @@ class LoadCategorieLienData extends AbstractFixture implements OrderedFixtureInt
     public function load(ObjectManager $manager)
     {
         $ress = $this->createItem($manager,
-            'Intitule');
+            'Intitule',
+            '#44b144');
         $this->addReference('categorielien_intitule', $ress);
         $ress = $this->createItem($manager,
-            'Aide');
+            'Aide',
+            '#f99f1f');
         $this->addReference('categorielien_aide', $ress);
         $ress = $this->createItem($manager,
-            'Corrige');
+            'Corrige',
+            '#5bc0de');
         $this->addReference('categorielien_corrige', $ress);
 
         $manager->flush();
     }
 
-    public function createItem(ObjectManager $manager, $nom){
+    public function createItem(ObjectManager $manager, $nom, $couleur){
         $item = new CategorieLien();
         $item->setNom($nom);
+        $item->setCouleur($couleur);
         $manager->persist($item);
         return $item;
     }

@@ -150,10 +150,20 @@
                 $('.modal').attr('data-idSection', $(this).closest('.section').attr('data-idSection')).modal();
             });
             // Ajout de nouvelles ressources
-            $('.addNewLien').click(function(){
+            $('.addNewItem').click(function(){
                 var idItem = 0;
                 var idSection = $(this).closest('.section').attr('data-idSection');
-                var typeItem = "lien";
+
+                var typeItem;
+                if($(this).hasClass('addNewTypeDevoir')){
+                    typeItem = "devoir";
+                }else if($(this).hasClass('addNewTypeLien')){
+                    typeItem = "lien";
+                }else if($(this).hasClass('addNewTypeLibre')){
+                    typeItem = "libre";
+                }else if($(this).hasClass('addNewTypeGroupe')){
+                    typeItem = "groupe";
+                }
                 $.ajax({
                     type: "POST",
                     url: "{{path('addZone_ajax')}}",
@@ -173,7 +183,6 @@
                     }
                 });
             });
-
 
             // click sur le check : affichage ou non de la section
             $('.activationSectionBtn').click(function () {
@@ -364,10 +373,17 @@
                 });
             });
 
-            // modification d'un champ d'un lien
+            // modification d'un champ d'une ressource
             $('.champAdmin').on('input', function(){
                 var elem = $(this).closest('.courseElemAdmin');
                 detectInput(elem);
+            });
+            $('[data-champName=typeLien]').on('change', function(){
+                var elem = $(this).closest('.courseElemAdmin');
+                detectInput(elem);
+                // mise à jour de l'icone (prévisualisation) ) chaque changement d'option
+                elem.find('.detailIconTypeLien i').remove();
+                elem.find('.detailIconTypeLien').append('<i class="fa '+$(this).find("option:selected").attr('data-icon')+'"></i>');
             });
             for (var i in CKEDITOR.instances) {
                 CKEDITOR.instances[i].on('change', function() {
@@ -395,6 +411,7 @@
                     var nom = lien.find('[data-champName=nom]').val();
                     var url = lien.find('[data-champName=url]').val();
                     var description = CKEDITOR.instances[lien.find('[data-champName=description]').attr('id')].getData();
+                    var typeLien = lien.find('[data-champName=typeLien]').val();
 
                     $.ajax({
                         type: 'POST',
@@ -405,7 +422,8 @@
                             id: id,
                             nom: nom,
                             url: url,
-                            description: description
+                            description: description,
+                            typeLien: typeLien
                         },
                         success: function (data) {
                             lien.removeClass('inEdition');
@@ -472,6 +490,11 @@
 
             // reset les input text pour éviter le cache
             $('.inputReset').val('');
+
+            // force les select option selected (car pb sur les types de liens ça ne se met pas à jour...)
+            $('select').each(function(){
+                $(this).val($(this).find("[selected=selected]").attr('value'));
+            });
 
             function updateCheckedState(btn, isVisible){
                 if (isVisible) {
@@ -609,8 +632,7 @@
                                 <ul class="list-default courseElems">
                                     {% for key,val in liens %}
                                         {% include "cours/adminLien.html.twig"
-                                        with {nom:val.nom, description: val.description,
-                                        url: val.url, zoneId: '0', itemId: val.id, inSection: 'false'}
+                                        with {lien:val, zoneId: '0', inSection: 'false', lienTypes: typeLiens}
                                         %}
                                     {% endfor %}
                                 </ul>
@@ -628,51 +650,10 @@
                             <div role="tabpanel" class="tab-pane fade" id="btnListGroupe">
                                 <ul class="list-default courseElems">
                                     {% for key,val in groupes %}
-                                        <li data-idItem="{{ val.groupe.id }}"
-                                            class="courseElemAdmin groupeLiensAdmin col-md-12" data-typeItem="groupe">
-                                            <div class="titleBar">Groupe de Liens</div>
-
-                                            <div class="btnActionCol col-md-1">
-                                                <ul>
-                                                    <li class="myBtn btnDelete btnLeft btnSupprElem"><i class="fa fa-trash"></i></li>
-                                                </ul>
-                                            </div>
-
-                                            <div class="formCol col-md-11">
-                                                <div class="row mb-10">
-                                                    <div class="LabelAdmin col-sm-3">Nom</div>
-                                                    <input data-champName="nom" class="champAdmin col-sm-9 col-xs-12" value="{{ val.groupe.nom }}"/>
-                                                </div>
-                                                <div class="row mb-10">
-                                                    <div class="LabelAdmin col-sm-3">Description</div>
-                                                    <div class=" col-sm-9  col-xs-12">
-                                                        <textarea data-champName="description" id="groupeLien_{{ val.groupe.id }}_descr" class="simpleEditor editor champAdmin">{{ val.groupe.description }}</textarea>
-                                                    </div>
-
-                                                </div>
-                                                <div class="row">
-                                                    <div class="LabelAdmin col-sm-3">Liens</div>
-                                                    <div class=" col-sm-9  col-xs-12 listeLiensGroupe sortableLiensInGroupe">
-                                                        {% for keyR,valR in val.content %}
-                                                            <div class="row" data-idLien="{{ valR.id }}">
-                                                                <div class="col-xs-10">
-                                                                    <div class="myBtn btnMove inlineBtn"><i class="fa fa-arrows-alt "></i></div>
-                                                                    {{ valR.nom }}
-                                                                </div>
-                                                                <div class="col-xs-2 text-right">
-                                                                    <div class="myBtn btnEdit inlineBtn">
-                                                                        <i class="fa fa-pencil"></i>
-                                                                    </div>
-                                                                    <div class="myBtn btnDelete inlineBtn">
-                                                                        <i class="fa fa-trash"></i>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        {% endfor %}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </li>
+                                        {% include "cours/adminGroupe.html.twig"
+                                        with {nom:val.groupe.nom, description: val.groupe.description,
+                                        zoneId: '0', itemId: val.groupe.id, inSection: 'false', liens: val.content}
+                                        %}
                                     {% endfor %}
                                 </ul>
                             </div>
@@ -687,10 +668,10 @@
                             <div class="editor">
                                 <div class="row">
                                     <select class="selectpicker show-menu-arrow col-xs-6" title="Nouvelle ressource">
-                                        <option title="Nouvelle ressource" class="addNewDevoir">Devoir</option>
-                                        <option title="Nouvelle ressource" class="addNewLien">Lien</option>
-                                        <option title="Nouvelle ressource" class="addNewGroupe">Groupe de liens</option>
-                                        <option title="Nouvelle ressource" class="addNewZoneLibre">Zone libre</option>
+                                        <option title="Nouvelle ressource" class="addNewItem addNewTypeDevoir">Devoir</option>
+                                        <option title="Nouvelle ressource" class="addNewItem addNewTypeLien">Lien</option>
+                                        <option title="Nouvelle ressource" class="addNewItem addNewTypeGroupe">Groupe de liens</option>
+                                        <option title="Nouvelle ressource" class="addNewItem addNewTypeLibre">Zone libre</option>
                                         <option data-divider="true"></option>
                                         <option title="Nouvelle ressource" class="addExistingRessource">Ressource existante</option>
                                     </select>
@@ -703,41 +684,18 @@
                                                                 LIENS
                                             -->
                                             {% include "cours/adminLien.html.twig"
-                                            with {nom:valR.nom, description: valR.description, visible: val.zones.containers[keyR].isVisible,
-                                            url: valR.url, zoneId: val.zones.containers[keyR].id, itemId: valR.id, inSection: 'true'}
+                                            with {lien:valR, visible: val.zones.containers[keyR].isVisible, zoneId: val.zones.containers[keyR].id,
+                                            inSection: 'true', lienTypes: typeLiens}
                                             %}
                                         {% elseif val.zones.type[keyR] == "groupe" %}
                                         <!--
                                                             GROUPES DE LIENS
                                         -->
-                                        <li data-idZone="{{ val.zones.containers[keyR].id }}"
-                                            data-idItem="{{ val.zones.groupe[keyR].id }}"
-                                            class="courseElemAdmin groupeLiensAdmin col-md-12"
-                                        >
-                                            <div class="titleBar">Groupe de Liens</div>
-
-                                            <div class="formCol col-md-11">
-                                                <div class="row">
-                                                    <div class="LabelAdmin col-sm-2">Nom</div>
-                                                    <div class="champAdmin col-sm-10 col-xs-12">{{ val.zones.groupe[keyR].nom }}</div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="LabelAdmin col-sm-2">Description</div>
-                                                    <div class="champAdmin col-sm-10  col-xs-12">{{ val.zones.groupe[keyR].description | raw }}</div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="LabelAdmin col-sm-2">Liens</div>
-                                                    <div class=" col-sm-10  col-xs-12 listeLiensGroupe notEditable">
-                                                        {% for keyG,valG in val.zones.groupe[keyR].assocLiens %}
-                                                            <div class="row" data-idLien="{{ valG.id }}">
-                                                                <div class="col-xs-11">{{ valG.nom }}</div>
-                                                            </div>
-                                                        {% endfor %}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </li>
-
+                                            {% include "cours/adminGroupe.html.twig"
+                                            with {nom:val.zones.groupe[keyR].nom, description: val.zones.groupe[keyR].description,
+                                            zoneId: val.zones.containers[keyR].id, itemId: val.zones.groupe[keyR].id, inSection: 'true',
+                                            liens: val.zones.groupe[keyR].assocLiens, visible: val.zones.containers[keyR].isVisible}
+                                            %}
                                         {% elseif val.zones.type[keyR] == "devoir" %}
                                             <!--
                                                                 DEVOIRS

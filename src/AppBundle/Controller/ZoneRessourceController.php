@@ -2,8 +2,11 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Devoir;
+use AppBundle\Entity\GroupeLiens;
 use AppBundle\Entity\Lien;
 use AppBundle\Entity\Cours;
+use AppBundle\Entity\RessourceLibre;
 use AppBundle\Entity\ZoneRessource;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -79,6 +82,8 @@ class ZoneRessourceController extends Controller
                 $entityRessourceName = "Devoir";
             }elseif($typeItem == "lien"){
                 $entityRessourceName = "Lien";
+            }elseif($typeItem == "libre"){
+                $entityRessourceName = "RessourceLibre";
             }
 
             if($entityRessourceName == ""){
@@ -96,13 +101,20 @@ class ZoneRessourceController extends Controller
                     $idCours = $request->request->get('idCours');
                     $cours = $em->getRepository('AppBundle:Cours')->findOneBy(array('id' => $idCours));
                     if($typeItem == "groupe"){
+                        $ressource = new GroupeLiens();
                     }elseif($typeItem == "devoir"){
+                        $ressource = new Devoir();
+                        $ressource->setDateDebut(new \DateTime("now"));
+                        $ressource->setDateFin(new \DateTime("now"));
+                        $ressource->setDuree(0);
                     }elseif($typeItem == "lien"){
                         $ressource = new Lien();
-                        $ressource->setDescription("");
                         $ressource->setUrl("");
-                        $ressource->setNom("");
+                    }elseif($typeItem == "libre"){
+                        $ressource = new RessourceLibre();
                     }
+                    $ressource->setDescription("");
+                    $ressource->setNom("");
                     $ressource->setCours($cours);
                 }
 

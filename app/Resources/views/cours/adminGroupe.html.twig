@@ -1,0 +1,52 @@
+<li data-idZone="{{ zoneId }}"
+    data-idItem="{{ itemId }}"
+    class="courseElemAdmin groupeLiensAdmin col-md-12"
+    data-typeItem="groupe"
+>
+    <div class="titleBar">Groupe de Liens</div>
+
+    {% if inSection == 'true' %}
+        {% include "cours/adminBtns.html.twig" with {visible: visible}  %}
+    {% else %}
+        <div class="btnActionCol col-md-1">
+            <ul>
+                <li class="myBtn btnDelete btnLeft btnSupprElem"><i class="fa fa-times"></i></li>
+            </ul>
+        </div>
+    {% endif %}
+
+    <div class="formCol col-md-11">
+        <div class="row mb-10">
+            <div class="LabelAdmin col-sm-3">Nom</div>
+            <input data-champName="nom" class="champAdmin col-sm-9 col-xs-12" value="{{ nom }}"/>
+        </div>
+        <div class="row mb-10">
+            <div class="LabelAdmin col-sm-3">Description</div>
+            <div class=" col-sm-9  col-xs-12">
+                <textarea data-champName="description" id="groupeLien_{{ itemId }}_descr" class="simpleEditor editor champAdmin">{{ description }}</textarea>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="LabelAdmin col-sm-3">Liens</div>
+            <div class=" col-sm-9  col-xs-12 listeLiensGroupe sortableLiensInGroupe">
+                {% for keyR,valR in liens %}
+                    <div class="row" data-idLien="{{ valR.id }}">
+                        <div class="col-xs-10">
+                            <div class="myBtn btnMove inlineBtn"><i class="fa fa-arrows-alt "></i></div>
+                            {{ valR.nom }}
+                        </div>
+                        <div class="col-xs-2 text-right">
+                            <div class="myBtn btnEdit inlineBtn">
+                                <i class="fa fa-pencil"></i>
+                            </div>
+                            <div class="myBtn btnDelete inlineBtn">
+                                <i class="fa fa-trash"></i>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</li>

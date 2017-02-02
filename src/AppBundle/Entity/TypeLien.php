@@ -29,6 +29,13 @@ class TypeLien
     private $nom;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="faicon", type="string", length=255, unique=false)
+     */
+    private $faIcon;
+
+    /**
      * Get id
      *
      * @return int
@@ -43,7 +50,7 @@ class TypeLien
      *
      * @param string $nom
      *
-     * @return CategorieLien
+     * @return TypeLien
      */
     public function setNom($nom)
     {
@@ -60,6 +67,30 @@ class TypeLien
     public function getNom()
     {
         return $this->nom;
+    }
+
+    /**
+     * Set faIcon
+     *
+     * @param string $faIcon
+     *
+     * @return TypeLien
+     */
+    public function setFaIcon($faIcon)
+    {
+        $this->faIcon = $faIcon;
+
+        return $this;
+    }
+
+    /**
+     * Get faIcon
+     *
+     * @return string
+     */
+    public function getFaIcon()
+    {
+        return $this->faIcon;
     }
 
     public function __toString()
