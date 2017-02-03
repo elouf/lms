@@ -147,7 +147,9 @@
              */
             //Ajout d'une ressource existante
             $('.addExistingRessource').click(function(){
-                $('.modal').attr('data-idSection', $(this).closest('.section').attr('data-idSection')).modal();
+                $('.modal').modal();
+                $('.modal .modal-body').hide();
+                $('.modal .modal-body[data-contentModal=ajoutRessExist]').attr('data-idSection', $(this).closest('.section').attr('data-idSection')).show();
             });
             // Ajout de nouvelles ressources
             $('.addNewItem').click(function(){
@@ -322,7 +324,7 @@
             $('.btnAddItem').click(function(){
                 var idItem = $(this).closest('.item').attr('data-idItem');
                 var typeItem = $(this).closest('.item').attr('data-typeItem');
-                var idSection = $(this).closest('.modal').attr('data-idSection');
+                var idSection = $(this).closest('.modal-body').attr('data-idSection');
                 $.ajax({
                     type: "POST",
                     url: "{{path('addZone_ajax')}}",
@@ -478,6 +480,7 @@
                 });
             }
 
+            // Gestion particilière de l'édition des groupes de liens
             $('.sortableLiensInGroupe').sortable({
                 placeholder: "ui-state-highlight",
                 handle: ".btnMove",
@@ -485,6 +488,103 @@
                 stop: function (event, ui) {
 
                 }
+            });
+            $('.selectLienToAddToGroupe').click(function(){
+                var idSection = $('.ongletSection.active').attr('data-idSection');
+                $('.modal').modal();
+                $('.modal .modal-body').hide();
+                $('.modal .modal-body[data-contentModal=ajoutLienToGroupe]').attr('data-idGroupe', $(this).closest('[data-typeitem=groupe]').attr('data-iditem')).show();
+
+                $('.alertMustBeSet').removeClass('alertMustBeSet');
+
+                $('.btnAddNewLienToGroupe').unbind('click').click(function(){
+                    $('.alertMustBeSet').removeClass('alertMustBeSet');
+                    var nomLienInGroupe = $(this).closest('.modal-body').find('[data-champName=nomLienInGroupe]').val();
+                    var selectedIdCat = $('[data-id=categorieLienInGroupeSelectPicker] [data-idcat]');
+                    var categorieLienInGroupe = selectedIdCat.attr('data-idcat');
+
+                    var nomLien = $('[data-champName=groupeNewLien_nom]').val();
+                    var urlLien = $('[data-champName=groupeNewLien_url]').val();
+                    var descriptionLien = CKEDITOR.instances['newLienInGroupDescription'].getData();
+                    var selectedIdType = $('[data-id=typeLienInGroupeSelectPicker] [data-idType]');
+                    var typeLien = selectedIdType.attr('data-idType');
+
+
+                    if(nomLienInGroupe == "" ) {
+                        $('[data-champName=nomLienInGroupe]').addClass('alertMustBeSet');
+                    }else if(selectedIdCat.length == 0){
+                        $('[data-id=categorieLienInGroupeSelectPicker]').addClass('alertMustBeSet');
+                    }else if(urlLien == ""){
+                        $('[data-champName=groupeNewLien_url]').addClass('alertMustBeSet');
+                    }else if(selectedIdType.length == 0){
+                        $('[data-id=typeLienInGroupeSelectPicker]').addClass('alertMustBeSet');
+                    }else{
+                        var groupeId = $(this).closest('[data-idGroupe]').attr('data-idGroupe');
+                        $.ajax({
+                            type: 'POST',
+                            url: "{{path('addLien_ajax')}}",
+                            async: false,
+                            dataType: "json",
+                            data: {
+                                typeLien: typeLien,
+                                nom: nomLien,
+                                description: descriptionLien,
+                                url: urlLien,
+                                idCours: $('[data-coursId]').attr('data-coursId')
+                            },
+                            success: function (data) {
+                                var lienId = data['id'];
+                                $.ajax({
+                                    type: 'POST',
+                                    url: "{{path('addLienGroupe_ajax')}}",
+                                    async: false,
+                                    dataType: "json",
+                                    data: {
+                                        groupeId: groupeId,
+                                        lienId: lienId,
+                                        nomLien: nomLienInGroupe,
+                                        categorieId: categorieLienInGroupe
+                                    },
+                                    success: function (data) {
+                                        window.location.href = window.location.href.replace( /[\?#].*|$/, "?idSection="+idSection );
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+
+                $('.btnAddLienToGroupe').unbind('click').click(function(){
+                    $('.alertMustBeSet').removeClass('alertMustBeSet');
+                    var nomLienInGroupe = $(this).closest('.modal-body').find('[data-champName=nomLienInGroupe]').val();
+                    var selectedIdCat = $('[data-id=categorieLienInGroupeSelectPicker] [data-idcat]');
+                    var categorieLienInGroupe = selectedIdCat.attr('data-idcat');
+
+                    if(nomLienInGroupe == "" ) {
+                        $('[data-champName=nomLienInGroupe]').addClass('alertMustBeSet');
+                    }else if(selectedIdCat.length == 0){
+                        $('[data-id=categorieLienInGroupeSelectPicker]').addClass('alertMustBeSet');
+                    }else{
+                        var groupeId = $(this).closest('[data-idGroupe]').attr('data-idGroupe');
+                        var lienId = $(this).closest('[data-typeitem]').attr('data-iditem');
+                        $.ajax({
+                            type: 'POST',
+                            url: "{{path('addLienGroupe_ajax')}}",
+                            async: false,
+                            dataType: "json",
+                            data: {
+                                groupeId: groupeId,
+                                lienId: lienId,
+                                nomLien: nomLienInGroupe,
+                                categorieId: categorieLienInGroupe
+                            },
+                            success: function (data) {
+                                window.location.href = window.location.href.replace( /[\?#].*|$/, "?idSection="+idSection );
+                            }
+                        });
+                    }
+
+                });
             });
 
 
@@ -667,7 +767,7 @@
                              id="t1body{{ val.section.id }}" data-idSection="{{ val.section.id }}">
                             <div class="editor">
                                 <div class="row">
-                                    <select class="selectpicker show-menu-arrow col-xs-6" title="Nouvelle ressource">
+                                    <select class="selectpicker col-xs-6" data-style="MyBtnSelectPickeer" title="Nouvelle ressource">
                                         <option title="Nouvelle ressource" class="addNewItem addNewTypeDevoir">Devoir</option>
                                         <option title="Nouvelle ressource" class="addNewItem addNewTypeLien">Lien</option>
                                         <option title="Nouvelle ressource" class="addNewItem addNewTypeGroupe">Groupe de liens</option>
@@ -705,7 +805,7 @@
                                             zoneId: val.zones.containers[keyR].id, itemId: valR.devoir.id, inSection: 'true'}
                                             %}
 
-                                        {% elseif val.zones.type[keyR] == "free" %}
+                                        {% elseif val.zones.type[keyR] == "libre" %}
                                             <!--
                                                                 LIBRE
                                             -->
@@ -725,11 +825,85 @@
         </div>
     </div>
 
-    <div class="modal fade" tabindex="-1" role="dialog" data-idSection="0">
+    <div class="modal fade" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <div class="modal-body" style="background:#aaa; background-size:cover">
+                <div class="modal-body" data-contentModal="ajoutLienToGroupe" style="background:#aaa; background-size:cover">
+                    <div class="row">
+                        <div class="bginverse">
+                            <div class="col-xs-12">
+                                <div class="row mb-10">
+                                    <div class="LabelAdmin col-xs-4">Nom du lien dans le groupe</div>
+                                    <input data-champName="nomLienInGroupe" class="col-xs-8" value=""/>
+                                </div>
+                                <div class="row mb-10">
+                                    <div class="LabelAdmin col-xs-4">Catégorie du lien</div>
+
+                                    <select id="categorieLienInGroupeSelectPicker" class="selectpicker col-xs-8" data-style="MyBtnSelectPickeer" title="Categorie (couleur) du lien">
+                                        {% for key,val in categorieLiens %}
+                                            <option data-content="<span data-idCat='{{ val.id }}' class='couleurLabelOption' style='background-color:{{ val.couleur }};'>{{ val.nom }}</span>">{{ val.nom }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <hr />
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li role="presentation" class="active"><a href="#btnNewLienInGroupeModal" aria-controls="btnNewLienInGroupeModal" role="tab" data-toggle="tab"><i class="fa fa-external-link  fa-fw"></i> Nouveau Lien</a></li>
+                                <li role="presentation"><a href="#btnOldLienInGroupeModal" aria-controls="btnOldLienInGroupeModal" role="tab" data-toggle="tab"><i class="fa fa-university fa-fw"></i> Lien existant</a></li>
+                            </ul>
+                            <div class="tab-content">
+                                <div role="tabpanel" class="tab-pane fade in active" id="btnNewLienInGroupeModal">
+                                    <table class="tableAddNewLienInGroup">
+                                        <tr>
+                                            <td class="LabelAdmin">Nom du lien</td>
+                                            <td><input data-champName="groupeNewLien_nom" class="col-xs-8" value=""/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="LabelAdmin">Url du lien</td>
+                                            <td><input data-champName="groupeNewLien_url" class="col-xs-8" value=""/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="LabelAdmin">Type du lien</td>
+                                            <td>
+                                                <select id="typeLienInGroupeSelectPicker" class="selectpicker col-xs-8" data-style="MyBtnSelectPickeer" title="Type du lien (icone)">
+                                                    {% for key,val in typeLiens %}
+                                                        <option data-content="<span data-idType='{{ val.id }}' class='typeLabelOption'>{{ val.nom }} <i class='fa {{ val.faIcon }}'></i></span>">{{ val.nom }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="LabelAdmin">Description du lien</td>
+                                            <td><textarea id="newLienInGroupDescription" data-champName="groupeNewLien_description" class="simpleEditor editor champAdmin"></textarea></td>
+                                        </tr>
+                                    </table>
+                                    <div class="myBtn inlineBtn btnAdmin btnAlone btnAddNewLienToGroupe">Ajouter ce nouveau lien</div>
+                                </div>
+                                <div role="tabpanel" class="tab-pane fade" id="btnOldLienInGroupeModal">
+                                    <table class="tableAddItem">
+                                        {% for key,val in liens %}
+                                            <tr class="item" data-typeItem="lien" data-idItem="{{ val.id }}">
+                                                <td>
+                                                    <table class="tableDetailItem">
+                                                        <tr><td class="nomChamp">Nom</td><td>{{ val.nom }}</td></tr>
+                                                        <tr><td class="nomChamp">Url</td><td>{{ val.url }}</td></tr>
+                                                        <tr><td class="nomChamp">Description</td><td>{{ val.description | raw }}</td></tr>
+                                                    </table>
+                                                </td>
+                                                <td>
+                                                    <div class="myBtn btnAdmin btnAlone btnAddLienToGroupe"><i class="fa fa-plus"></i></div>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-body" data-contentModal="ajoutRessExist" data-idSection="0" style="background:#aaa; background-size:cover">
                     <div class="row">
                         <div class="bginverse">
                             <ul class="nav nav-tabs" role="tablist">

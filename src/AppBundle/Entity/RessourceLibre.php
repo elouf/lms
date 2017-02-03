@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * RessourceLibre
  *
- * @ORM\Table(name="ressourceLibre")
+ * @ORM\Table(name="ress_ressourceLibre")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\RessourceLibreRepository")
  */
 class RessourceLibre extends Ressource
@@ -16,4 +16,9 @@ class RessourceLibre extends Ressource
     {
         return $this->description;
     }*/
+
+    public function getType()
+    {
+        return $this::TYPE_LIBRE;
+    }
 }

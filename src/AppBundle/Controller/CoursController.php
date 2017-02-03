@@ -46,15 +46,11 @@ class CoursController extends Controller
         $repository = $this->getDoctrine()->getRepository('AppBundle:Cours');
         $cours = $repository->find($id);
 
-        $repositoryG = $this->getDoctrine()->getRepository('AppBundle:GroupeLiens');
-        $repositoryRL = $this->getDoctrine()->getRepository('AppBundle:RessourceLibre');
-        $repositoryL = $this->getDoctrine()->getRepository('AppBundle:Lien');
-        $repositoryD = $this->getDoctrine()->getRepository('AppBundle:Devoir');
-
         $repositoryCop = $this->getDoctrine()->getRepository('AppBundle:Copie');
         $repositoryCor = $this->getDoctrine()->getRepository('AppBundle:Corrige');
 
         $repositoryTypeLiens = $this->getDoctrine()->getRepository('AppBundle:TypeLien')->findAll();
+        $repositoryCategorieLiens = $this->getDoctrine()->getRepository('AppBundle:CategorieLien')->findAll();
 
         $sections = $this->getDoctrine()->getRepository('AppBundle:Section')->findBy(array('cours' => $cours), array('position' => 'ASC'));
 
@@ -71,16 +67,15 @@ class CoursController extends Controller
                 $zone = $datas[$i]["zones"]["containers"][$j];
 
                 if($zone->getRessource() != null){
-                    if($ressource = $repositoryL->findOneBy(array('id' => $zone->getRessource()->getId()))){
+                    $ressource = $this->getDoctrine()->getRepository('AppBundle:Ressource')->findOneBy(array('id' => $zone->getRessource()->getId()));
+                    $ressType = $ressource->getType();
+                    $datas[$i]["zones"]["type"][$j] = $ressType;
 
-                        // la ressource est un lien
+                    if($ressType == "lien"){
                         $datas[$i]["zones"]["type"][$j] = "lien";
                         $datas[$i]["zones"]["content"][$j] = $ressource;
-                    }elseif($ressource = $repositoryD->findOneBy(array('id' => $zone->getRessource()->getId()))){
 
-                        // la ressource est un devoir
-                        $datas[$i]["zones"]["type"][$j] = "devoir";
-
+                    }elseif($ressType == "devoir"){
                         $copie = $repositoryCop->findOneBy(array('auteur' => $this->getUser(), 'devoir' => $ressource));
                         $datas[$i]["zones"]["copie"][$j] = $copie;
                         $corrige = $repositoryCor->findOneBy(array('copie' => $copie));
@@ -91,20 +86,14 @@ class CoursController extends Controller
                         $datas[$i]["zones"]["content"][$j]['copie'] = $copie;
                         $datas[$i]["zones"]["content"][$j]['corrige'] = $corrige;
 
-                    }elseif($groupe = $repositoryG->findOneBy(array('id' => $zone->getRessource()->getId()))) {
-
-                        // la ressource est un groupe de liens
-                        $datas[$i]["zones"]["type"][$j] = "groupe";
+                    }elseif($ressType == "groupe") {
                         $repositoryGaL = $this->getDoctrine()
                             ->getRepository('AppBundle:AssocGroupeLiens')
-                            ->findBy(array('groupe' => $groupe));
-                        $datas[$i]["zones"]["groupe"][$j] = $groupe;
+                            ->findBy(array('groupe' => $ressource));
+                        $datas[$i]["zones"]["groupe"][$j] = $ressource;
                         $datas[$i]["zones"]["content"][$j] = $repositoryGaL;
-                    }elseif($free = $repositoryRL->findOneBy(array('id' => $zone->getRessource()->getId()))){
-
-                            // la ressource est une ressource libre
-                            $datas[$i]["zones"]["type"][$j] = "free";
-                            $datas[$i]["zones"]["content"][$j] = $free;
+                    }elseif($ressType == "libre"){
+                            $datas[$i]["zones"]["content"][$j] = $ressource;
                     }else{
 
                         // on ne trouve pas le type de la ressource
@@ -123,11 +112,11 @@ class CoursController extends Controller
         }
 
         // on récupère aussi tout le contenu du cours
-        $cLiens = $repositoryL->findBy(array('cours' => $cours));
-        $cDevoirs = $repositoryD->findBy(array('cours' => $cours));
-        $cLibres = $repositoryRL->findBy(array('cours' => $cours));
+        $cLiens = $this->getDoctrine()->getRepository('AppBundle:Lien')->findBy(array('cours' => $cours));
+        $cDevoirs = $this->getDoctrine()->getRepository('AppBundle:Devoir')->findBy(array('cours' => $cours));
+        $cLibres = $this->getDoctrine()->getRepository('AppBundle:RessourceLibre')->findBy(array('cours' => $cours));
 
-        $cGroupesEntity = $repositoryG->findBy(array('cours' => $cours));
+        $cGroupesEntity = $this->getDoctrine()->getRepository('AppBundle:GroupeLiens')->findBy(array('cours' => $cours));
         $cGroupes = array();
         for($i=0; $i<count($cGroupesEntity); $i++){
             $repositoryGaL = $this->getDoctrine()
@@ -149,7 +138,8 @@ class CoursController extends Controller
                     'devoirs' => $cDevoirs,
                     'groupes' => $cGroupes,
                     'libres' => $cLibres,
-                    'typeLiens' => $repositoryTypeLiens
+                    'typeLiens' => $repositoryTypeLiens,
+                    'categorieLiens' => $repositoryCategorieLiens
                 ]);
         }
     }

@@ -46,4 +46,39 @@ class LienController extends Controller
         return new JsonResponse('This is not ajax!', 400);
     }
 
+    /**
+     * @Route("/addLien_ajax", name="addLien_ajax")
+     * @Method({"GET", "POST"})
+     */
+    public function addLienAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+
+            $nom = $request->request->get('nom');
+            $url = $request->request->get('url');
+            $description = $request->request->get('description');
+            $typeLienId = $request->request->get('typeLien');
+            $idCours = $request->request->get('idCours');
+
+            $lien = new Lien();
+            $lien->setNom($nom);
+            $lien->setUrl($url);
+            $lien->setDescription($description);
+            $lien->setTypeLien($em->getRepository('AppBundle:TypeLien')->findOneBy(array('id' => $typeLienId)));
+            $lien->setCours($em->getRepository('AppBundle:Cours')->findOneBy(array('id' => $idCours)));
+
+            $em->persist($lien);
+            $em->flush();
+
+            return new JsonResponse(array(
+                    'action' =>'change Lien content',
+                    'id' => $lien->getId(),
+                    'nom' => $lien->getNom())
+            );
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
 }

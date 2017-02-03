@@ -28,7 +28,8 @@
 
         </div>
         <div class="row">
-            <div class="LabelAdmin col-sm-3">Liens</div>
+            <div class="LabelAdmin col-sm-2">Liens</div>
+            <div class="selectLienToAddToGroupe btn btnAdmin col-sm-1"><i class="fa fa-plus"> </i></div>
             <div class=" col-sm-9  col-xs-12 listeLiensGroupe sortableLiensInGroupe">
                 {% for keyR,valR in liens %}
                     <div class="row" data-idLien="{{ valR.id }}">

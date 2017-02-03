@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * GroupeLiens
  *
- * @ORM\Table(name="groupeliens")
+ * @ORM\Table(name="ress_groupeliens")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\GroupeLiensRepository")
  */
 class GroupeLiens extends Ressource
@@ -40,5 +40,10 @@ class GroupeLiens extends Ressource
     public function getAssocLiens()
     {
         return $this->assocLiens;
+    }
+
+    public function getType()
+    {
+        return $this::TYPE_GROUPE;
     }
 }

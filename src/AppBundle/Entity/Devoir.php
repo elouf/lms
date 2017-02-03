@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Devoir
  *
- * @ORM\Table(name="devoir")
+ * @ORM\Table(name="ress_devoir")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\DevoirRepository")
  */
 class Devoir extends Ressource
@@ -105,5 +105,10 @@ class Devoir extends Ressource
     public function getDuree()
     {
         return $this->duree;
+    }
+
+    public function getType()
+    {
+        return $this::TYPE_DEVOIR;
     }
 }

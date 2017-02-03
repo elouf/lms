@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Lien
  *
- * @ORM\Table(name="lien")
+ * @ORM\Table(name="ress_lien")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\LienRepository")
  */
 class Lien extends Ressource
@@ -79,5 +79,10 @@ class Lien extends Ressource
     public function getTypeLien()
     {
         return $this->typeLien;
+    }
+
+    public function getType()
+    {
+        return $this::TYPE_LIEN;
     }
 }

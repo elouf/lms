@@ -6,15 +6,25 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Ressource
- * @ORM\MappedSuperclass
+ *
+ * @ORM\Entity()
+ * @ORM\InheritanceType("JOINED")
+ * @ORM\Table(name="ressource")
+ * @ORM\DiscriminatorColumn(name="type", type="string")
+ * @ORM\DiscriminatorMap({Ressource::TYPE_DEVOIR = "Devoir", Ressource::TYPE_LIEN = "Lien", Ressource::TYPE_GROUPE = "GroupeLiens", Ressource::TYPE_LIBRE = "RessourceLibre"})
  *
  */
-class Ressource
+abstract class Ressource
 {
+    const TYPE_DEVOIR = 'devoir';
+    const TYPE_LIEN    = 'lien';
+    const TYPE_GROUPE = 'groupe';
+    const TYPE_LIBRE    = 'libre';
+
     /**
      * @var int
      *
-     * @ORM\Column(name="id", type="integer")
+     * @ORM\Column(name="id", type="integer", unique=true)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
@@ -50,6 +60,8 @@ class Ressource
     {
         return $this->id;
     }
+
+    abstract public function getType();
 
     /**
      * Set nom
