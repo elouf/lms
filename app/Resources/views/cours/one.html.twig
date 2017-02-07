@@ -78,7 +78,7 @@
                                                             <div class="itemDescription">{{ valR.description | raw }}</div>
                                                         </div>
                                                         <div class="col-xs-2 text-right">
-                                                            <a class="btn btnLien btn-sm btn-warning" href="{{ valR.url }}">
+                                                            <a class="btn btnLien btn-sm btn-warning" target="_blank" href="{{ valR.url }}">
                                                                 <i class="fa {{ valR.typeLien.faIcon }}"></i>
                                                             </a>
                                                         </div>
@@ -152,7 +152,7 @@
                                                         <div class="col-lg-7 text-right">
                                                         {% for keyG,valG in val.zones.content[keyR] %}
                                                             <a class="btnLienGroupeRessource btn btn-xs"
-                                                               style="background-color: {{ valG.categorieLien.couleur }};"
+                                                               style="background-color: {{ valG.categorieLien.couleur }};" target="_blank"
                                                                href="{{ valG.lien.url }}">
                                                                 <i class="fa {{ valG.lien.typeLien.faIcon }} fa-2x"></i>
                                                                 {{ valG.nom }}

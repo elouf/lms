@@ -239,8 +239,9 @@ textarea{
 #btnNewLienInGroupeModal{
     text-align: center;
 }
-[data-contentmodal=ajoutLienToGroupe] .bginverse{
-    padding: 2px;
+[data-contentmodal=ajoutLienToGroupe] .bginverse,
+[data-contentmodal=editLienInGroupe] .bginverse{
+    padding: 3px;
 }
 .alertMustBeSet{
     box-shadow: 1px 2px 5px 3px rgba(255, 0, 0, 0.7);

@@ -31,15 +31,18 @@ class LienController extends Controller
             $lien->setNom($nom);
             $lien->setUrl($url);
             $lien->setDescription($description);
-            $lien->setTypeLien($em->getRepository('AppBundle:TypeLien')->findOneBy(array('id' => $typeLienId)));
+            if($typeLienId == 0){
+                $lien->setTypeLien(null);
+            }else{
+                $lien->setTypeLien($em->getRepository('AppBundle:TypeLien')->findOneBy(array('id' => $typeLienId)));
+            }
 
             $em->persist($lien);
             $em->flush();
 
             return new JsonResponse(array(
                 'action' =>'change Lien content',
-                'id' => $lien->getId(),
-                'nom' => $lien->getNom())
+                'lien' => $lien)
             );
         }
 
@@ -72,9 +75,9 @@ class LienController extends Controller
             $em->flush();
 
             return new JsonResponse(array(
-                    'action' =>'change Lien content',
-                    'id' => $lien->getId(),
-                    'nom' => $lien->getNom())
+                    'action' =>'Add Lien',
+                    'lien' => $lien,
+                    'id' => $lien->getId())
             );
         }
 

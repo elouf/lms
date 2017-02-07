@@ -23,7 +23,7 @@
         <div class="row mb-10">
             <div class="LabelAdmin col-sm-3">Description</div>
             <div class=" col-sm-9  col-xs-12">
-                <textarea data-champName="description" id="groupeLien_{{ itemId }}_descr" class="simpleEditor editor champAdmin">{{ description }}</textarea>
+                <textarea data-champName="description" id="zone_{{ zoneId }}_groupeLien_{{ itemId }}_descr" class="simpleEditor editor champAdmin">{{ description }}</textarea>
             </div>
 
         </div>
@@ -35,13 +35,13 @@
                     <div class="row" data-idLien="{{ valR.id }}">
                         <div class="col-xs-10">
                             <div class="myBtn btnMove inlineBtn"><i class="fa fa-arrows-alt "></i></div>
-                            {{ valR.nom }}
+                            <div class="nomAssoc inlineBtn">{{ valR.nom }}</div>
                         </div>
                         <div class="col-xs-2 text-right">
-                            <div class="myBtn btnEdit inlineBtn">
+                            <div class="myBtn btnEdit inlineBtn btnEditLienInGroup">
                                 <i class="fa fa-pencil"></i>
                             </div>
-                            <div class="myBtn btnDelete inlineBtn">
+                            <div class="myBtn btnDelete inlineBtn btnRemoveLienFromGroup">
                                 <i class="fa fa-trash"></i>
                             </div>
                         </div>

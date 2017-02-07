@@ -33,8 +33,7 @@ class SectionController extends Controller
 
             return new JsonResponse(array(
                 'action' =>'change Section Visibility',
-                'id' => $section->getId(),
-                'isVisible' => $section->getIsVisible())
+                'section' => $section->getId())
             );
         }
 
@@ -61,8 +60,7 @@ class SectionController extends Controller
 
             return new JsonResponse(array(
                 'action' =>'change Section Name',
-                'id' => $section->getId(),
-                'nom' => $section->getNom())
+                'section' => $section)
             );
         }
 
@@ -103,9 +101,8 @@ class SectionController extends Controller
 
             return new JsonResponse(array(
                 'action' =>'add Section',
-                'id' => $section->getId(),
-                'coursId' => $section->getCours()->getId(),
-                'nom' => $section->getNom())
+                'section' => $section,
+                'cours' => $cours)
             );
         }
 
@@ -134,8 +131,7 @@ class SectionController extends Controller
                 $em->remove($section);
                 $em->flush();
                 return new JsonResponse(array(
-                    'action' =>'delete Section',
-                    'id' => $section->getId())
+                    'action' =>'delete Section')
                 );
             }
         }

@@ -389,12 +389,14 @@
             });
             for (var i in CKEDITOR.instances) {
                 CKEDITOR.instances[i].on('change', function() {
+
                     var idItem = $(this).attr('name');
                     var elem = $('#'+idItem).closest('.courseElemAdmin');
                     detectInput(elem);
                 });
             }
             function detectInput(elem){
+                console.log(elem.find('.btnSaveInputChange').length)
                 if(!elem.hasClass('inEdition')) {
                     elem.addClass('inEdition');
                     elem.find('.btnActionCol .btnDelete:first').before('<div class="myBtn btnSaveInputChange btnAdmin btnLeft"><i class="fa fa-floppy-o"></i></div>');
@@ -408,6 +410,7 @@
                 }
             }
             function changeLien(lien){
+                console.log('changeGroupe : '+lien.hasClass('inEdition'))
                 lien.find('.btnSaveInputChange').click(function(){
                     var id = lien.attr('data-idItem');
                     var nom = lien.find('[data-champName=nom]').val();
@@ -435,6 +438,7 @@
                 });
             }
             function changeLibre(lien){
+                console.log('changeGroupe : '+lien.hasClass('inEdition'))
                 lien.find('.btnSaveInputChange').click(function(){
                     var id = lien.attr('data-idItem');
                     var description = CKEDITOR.instances[lien.find('[data-champName=description]').attr('id')].getData();
@@ -456,7 +460,7 @@
                 });
             }
             function changeGroupe(groupe){
-                console.log('changeGroupe')
+                console.log('changeGroupe : '+groupe.hasClass('inEdition'))
                 groupe.find('.btnSaveInputChange').click(function(){
                     var id = groupe.attr('data-idItem');
                     var nom = groupe.find('[data-champName=nom]').val();
@@ -481,15 +485,45 @@
             }
 
             // Gestion particilière de l'édition des groupes de liens
+            // tri de ces liens
             $('.sortableLiensInGroupe').sortable({
                 placeholder: "ui-state-highlight",
                 handle: ".btnMove",
                 cancel: ".notSortable",
                 stop: function (event, ui) {
+                    var arrayAssocs = [];
+                    var itemDropped = ui.item;
+                    var id = itemDropped.attr('data-idLien');
+                    $(this).find('[data-idLien]').each(function(){
+                        arrayAssocs.push($(this).attr('data-idLien'));
+                    });
 
+                    $.ajax({
+                        type: "POST",
+                        url: "{{path('sortGroupeLiensAssocs_ajax')}}",
+                        data: {
+                            arrayAssocs: arrayAssocs
+                        },
+                        dataType: "json",
+                        success: function (response) {
+                            if(!response["error"]){
+
+                            }else{
+                                console.log("Erreur de tri des sections");
+                            }
+                        }
+                    });
                 }
             });
+            // ajout d'un lien dans un groupe
             $('.selectLienToAddToGroupe').click(function(){
+                // On commence par sauvegarder le groupe s'il était en cours d'édition
+                var groupe = $(this).closest('.courseElemAdmin');
+                if(groupe.find('.btnSaveInputChange')){
+                    groupe.find('.btnSaveInputChange').click();
+                }
+
+                // puis, on affiche la popup d'ajout d'un lien
                 var idSection = $('.ongletSection.active').attr('data-idSection');
                 $('.modal').modal();
                 $('.modal .modal-body').hide();
@@ -584,6 +618,82 @@
                         });
                     }
 
+                });
+            });
+            // suppression d'un lien d'un groupe
+            $('.btnRemoveLienFromGroup').click(function(){
+                var lien = $(this).closest('[data-idlien]');
+                var idAssoc = lien.attr('data-idlien');
+                $.ajax({
+                    type: 'POST',
+                    url: "{{path('removeLienGroupe_ajax')}}",
+                    async: false,
+                    dataType: "json",
+                    data: {
+                        idAssoc: idAssoc
+                    },
+                    success: function (data) {
+                        lien.remove();
+                    }
+                });
+            });
+            $('.btnEditLienInGroup').click(function() {
+                var lien = $(this).closest('[data-idlien]');
+                var idAssoc = lien.attr('data-idlien');
+                $('.modal').modal();
+                $('.modal .modal-body').hide();
+                $('.modal .modal-body[data-contentModal=editLienInGroupe]').show();
+
+                $('.alertMustBeSet').removeClass('alertMustBeSet');
+
+                $.ajax({
+                    type: 'POST',
+                    url: "{{path('getLienGroupe_ajax')}}",
+                    async: false,
+                    dataType: "json",
+                    data: {
+                        idAssoc: idAssoc
+                    },
+                    success: function (data) {
+                        $('[data-contentModal=editLienInGroupe] [data-champName=nomLienInGroupe]').val(data['nomAssoc']);
+                        $('[data-contentModal=editLienInGroupe] [data-champName=groupeNewLien_nom]').val(data['nomLien']);
+                        $('[data-contentModal=editLienInGroupe] [data-champName=groupeNewLien_url]').val(data['urlLien']);
+
+                        CKEDITOR.instances['editLienInGroupDescription'].setData(data['descrLien']);
+
+                        $('#categorieEditLienInGroupeSelectPicker').selectpicker('val', data['catAssoc']);
+                        $('#typeEditLienInGroupeSelectPicker').selectpicker('val', data['typeLien']);
+                    }
+                });
+
+                $('.btnSaveEditLienInGroupe').unbind('click').click(function(){
+                    var selectedIdType = $('[data-id=typeEditLienInGroupeSelectPicker] [data-idType]');
+                    var typeLien = selectedIdType.attr('data-idType');
+                    var selectedIdCat = $('[data-id=categorieEditLienInGroupeSelectPicker] [data-idcat]');
+                    var categorieLienInGroupe = selectedIdCat.attr('data-idcat');
+
+                    var nomAssoc = $('[data-contentModal=editLienInGroupe] [data-champName=nomLienInGroupe]').val();
+
+                    $.ajax({
+                        type: 'POST',
+                        url: "{{path('editLienGroupe_ajax')}}",
+                        async: false,
+                        dataType: "json",
+                        data: {
+                            idAssoc: idAssoc,
+                            nomAssoc: nomAssoc,
+                            nomLien: $('[data-contentModal=editLienInGroupe] [data-champName=groupeNewLien_nom]').val(),
+                            urlLien: $('[data-contentModal=editLienInGroupe] [data-champName=groupeNewLien_url]').val(),
+                            descrLien: CKEDITOR.instances['editLienInGroupDescription'].getData(),
+                            typeLienId: typeLien,
+                            categorieLienId: categorieLienInGroupe
+
+                        },
+                        success: function (data) {
+                            lien.find('.nomAssoc').text(nomAssoc);
+                            $('.modal').modal('toggle');
+                        }
+                    });
                 });
             });
 
@@ -794,7 +904,7 @@
                                             {% include "cours/adminGroupe.html.twig"
                                             with {nom:val.zones.groupe[keyR].nom, description: val.zones.groupe[keyR].description,
                                             zoneId: val.zones.containers[keyR].id, itemId: val.zones.groupe[keyR].id, inSection: 'true',
-                                            liens: val.zones.groupe[keyR].assocLiens, visible: val.zones.containers[keyR].isVisible}
+                                            liens: valR, visible: val.zones.containers[keyR].isVisible}
                                             %}
                                         {% elseif val.zones.type[keyR] == "devoir" %}
                                             <!--
@@ -829,6 +939,58 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+                <!--                  EDITION DU LIEN D'UN GROUPE                      -->
+
+                <div class="modal-body" data-contentModal="editLienInGroupe" style="background:#aaa; background-size:cover">
+                    <div class="row">
+                        <div class="bginverse">
+                            <table class="tableAddNewLienInGroup">
+                                <tr>
+                                    <td class="LabelAdmin">Nom du lien dans le groupe</td>
+                                    <td><input data-champName="nomLienInGroupe" class="col-xs-8" value=""/></td>
+                                </tr>
+                                <tr>
+                                    <td class="LabelAdmin">Catégorie du lien</td>
+                                    <td>
+                                        <select id="categorieEditLienInGroupeSelectPicker" class="selectpicker col-xs-8" data-style="MyBtnSelectPickeer" title="Categorie (couleur) du lien">
+                                            {% for key,val in categorieLiens %}
+                                                <option value="{{ val.id }}" data-content="<span data-idCat='{{ val.id }}' class='couleurLabelOption' style='background-color:{{ val.couleur }};'>{{ val.nom }}</span>">{{ val.nom }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="LabelAdmin">Nom du lien</td>
+                                    <td><input data-champName="groupeNewLien_nom" class="col-xs-8" value=""/></td>
+                                </tr>
+                                <tr>
+                                    <td class="LabelAdmin">Url du lien</td>
+                                    <td><input data-champName="groupeNewLien_url" class="col-xs-8" value=""/></td>
+                                </tr>
+                                <tr>
+                                    <td class="LabelAdmin">Type du lien</td>
+                                    <td>
+                                        <select id="typeEditLienInGroupeSelectPicker" class="selectpicker col-xs-8" data-style="MyBtnSelectPickeer" title="Type du lien (icone)">
+                                            {% for key,val in typeLiens %}
+                                                <option value="{{ val.id }}" data-content="<span data-idType='{{ val.id }}' class='typeLabelOption'>{{ val.nom }} <i class='fa {{ val.faIcon }}'></i></span>">{{ val.nom }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="LabelAdmin">Description du lien</td>
+                                    <td><textarea id="editLienInGroupDescription" data-champName="groupeNewLien_description" class="simpleEditor editor champAdmin"></textarea></td>
+                                </tr>
+                            </table>
+                            <div class="myBtn inlineBtn btnAdmin btnAlone btnSaveEditLienInGroupe">Enregistrer ce lien</div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!--                  AJOUT D'UN LIEN DANS UN GROUPE                      -->
+
                 <div class="modal-body" data-contentModal="ajoutLienToGroupe" style="background:#aaa; background-size:cover">
                     <div class="row">
                         <div class="bginverse">
@@ -903,6 +1065,9 @@
                     </div>
 
                 </div>
+
+                <!--                  AJOUT D'UNERESSOURCE DANS UNE SECTION                      -->
+
                 <div class="modal-body" data-contentModal="ajoutRessExist" data-idSection="0" style="background:#aaa; background-size:cover">
                     <div class="row">
                         <div class="bginverse">

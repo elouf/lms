@@ -24,16 +24,15 @@ class RessourceLibreController extends Controller
             $id = $request->request->get('id');
             $description = $request->request->get('description');
 
-            $lien = $em->getRepository('AppBundle:RessourceLibre')->findOneBy(array('id' => $id));
-            $lien->setDescription($description);
+            $ress = $em->getRepository('AppBundle:RessourceLibre')->findOneBy(array('id' => $id));
+            $ress->setDescription($description);
 
-            $em->persist($lien);
+            $em->persist($ress);
             $em->flush();
 
             return new JsonResponse(array(
                 'action' =>'change Ressource Libre content',
-                'id' => $lien->getId(),
-                'nom' => $lien->getDescription())
+                'ressource' => $ress->getId())
             );
         }
 

@@ -89,7 +89,7 @@ class CoursController extends Controller
                     }elseif($ressType == "groupe") {
                         $repositoryGaL = $this->getDoctrine()
                             ->getRepository('AppBundle:AssocGroupeLiens')
-                            ->findBy(array('groupe' => $ressource));
+                            ->findBy(array('groupe' => $ressource), array('position' => 'ASC'));
                         $datas[$i]["zones"]["groupe"][$j] = $ressource;
                         $datas[$i]["zones"]["content"][$j] = $repositoryGaL;
                     }elseif($ressType == "libre"){

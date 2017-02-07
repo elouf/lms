@@ -35,9 +35,8 @@ class GroupesLiensController extends Controller
             $em->flush();
 
             return new JsonResponse(array(
-                'action' =>'change Section Name',
-                'id' => $groupe->getId(),
-                'nom' => $groupe->getNom())
+                'action' =>'change Groupe Infos',
+                'groupe' => $groupe)
             );
         }
 
@@ -84,12 +83,142 @@ class GroupesLiensController extends Controller
 
             return new JsonResponse(array(
                     'action' =>'Add Lien in Groupe',
-                    'id' => $groupe->getId(),
-                    'nom' => $groupe->getNom())
+                    'groupe' => $groupe,
+                    'lien' => $lien)
             );
         }
 
         return new JsonResponse('This is not ajax!', 400);
     }
 
+
+    /**
+     * @Route("/removeLienGroupe_ajax", name="removeLienGroupe_ajax")
+     * @Method({"GET", "POST"})
+     */
+    public function removeLienGroupeAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+
+            $idAssoc = $request->request->get('idAssoc');
+            $assoc = $em->getRepository('AppBundle:AssocGroupeLiens')->findOneBy(array('id' => $idAssoc));
+
+            $em->remove($assoc);
+            $em->flush();
+
+            return new JsonResponse(array(
+                    'action' =>'Remove Lien from Groupe',
+                    'assoc' => $assoc)
+            );
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
+    /**
+     * @Route("/sortGroupeLiensAssocs_ajax", name="sortGroupeLiensAssocs_ajax")
+     * @Method({"GET", "POST"})
+     */
+    public function sortGroupeLiensAssocsAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+            $arrayAssocsId = $request->request->get('arrayAssocs');
+
+            for($i=0; $i<count($arrayAssocsId); $i++){
+                $assoc = $em->getRepository('AppBundle:AssocGroupeLiens')->findOneBy(array('id' => $arrayAssocsId[$i]));
+                $assoc->setPosition($i);
+                $em->persist($assoc);
+            }
+
+            $em->flush();
+            return new JsonResponse(array(
+                    'action' =>'sort Liens in Groupe')
+            );
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
+
+    /**
+     * @Route("/getLienGroupe_ajax", name="getLienGroupe_ajax")
+     * @Method({"GET", "POST"})
+     */
+    public function getLienGroupeAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+
+            $idAssoc = $request->request->get('idAssoc');
+            $assoc = $em->getRepository('AppBundle:AssocGroupeLiens')->findOneBy(array('id' => $idAssoc));
+            $lien = $assoc->getLien();
+
+            $em->flush();
+
+            return new JsonResponse(array(
+                    'action' =>'Get Lien from Groupe',
+                    'nomAssoc' => $assoc->getNom(),
+                    'catAssoc' => $assoc->getCategorieLien()->getId(),
+                    'nomLien' => $lien->getNom(),
+                    'descrLien' => $lien->getDescription(),
+                    'typeLien' => $lien->getTypeLien()->getId(),
+                    'urlLien' => $lien->getUrl()
+                    )
+            );
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
+    /**
+     * @Route("/editLienGroupe_ajax", name="editLienGroupe_ajax")
+     * @Method({"GET", "POST"})
+     */
+    public function editLienGroupeAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+
+            $idAssoc = $request->request->get('idAssoc');
+            $nomAssoc = $request->request->get('nomAssoc');
+            $nomLien = $request->request->get('nomLien');
+            $urlLien = $request->request->get('urlLien');
+            $descrLien = $request->request->get('descrLien');
+            $typeLienId = $request->request->get('typeLienId');
+            $categorieLienId = $request->request->get('categorieLienId');
+
+
+            $assoc = $em->getRepository('AppBundle:AssocGroupeLiens')->findOneBy(array('id' => $idAssoc));
+            $lien = $em->getRepository('AppBundle:Lien')->findOneBy(array('id' => $assoc->getLien()->getId()));
+            $categorie = $em->getRepository('AppBundle:CategorieLien')->findOneBy(array('id' => $categorieLienId));
+            $typeLien = $em->getRepository('AppBundle:TypeLien')->findOneBy(array('id' => $typeLienId));
+
+            $assoc->setNom($nomAssoc);
+            $assoc->setCategorieLien($categorie);
+
+            $lien->setNom($nomLien);
+            $lien->setUrl($urlLien);
+            $lien->setDescription($descrLien);
+            $lien->setTypeLien($typeLien);
+
+            $em->persist($assoc);
+            $em->persist($lien);
+            $em->flush();
+
+            return new JsonResponse(array(
+                    'action' =>'Edit Lien in Groupe',
+                    'nomAssoc' => $assoc->getNom(),
+                    'catAssoc' => $assoc->getCategorieLien()->getId(),
+                    'nomLien' => $lien->getNom(),
+                    'descrLien' => $lien->getDescription(),
+                    'typeLien' => $lien->getTypeLien()->getId(),
+                    'urlLien' => $lien->getUrl()
+                    )
+            );
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
 }
