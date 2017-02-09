@@ -359,3 +359,9 @@ textarea{
     text-align: center;
     font-size: 20px;
 }
+
+/*  */
+
+.progress{
+    margin-bottom: 0;
+}

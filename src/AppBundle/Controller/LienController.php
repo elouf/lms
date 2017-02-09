@@ -84,4 +84,28 @@ class LienController extends Controller
         return new JsonResponse('This is not ajax!', 400);
     }
 
+
+    /**
+     * @Route("/uploadLien_ajax", name="uploadLien_ajax")
+     * @Method({"GET", "POST"})
+     */
+    public function uploadLienAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+            $itemId = $request->request->get('itemId');
+            $type = $request->request->get('type');
+            $url = $request->request->get('url');
+            $urlDest = $request->request->get('urlDest');
+
+            $lien = $em->getRepository('AppBundle:Lien')->findOneBy(array('id' => $itemId));
+
+            
+
+            $em->flush();
+            return new JsonResponse(array('action' =>'upload File', 'id' => $itemId));
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
 }

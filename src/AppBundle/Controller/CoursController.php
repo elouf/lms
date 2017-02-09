@@ -189,4 +189,33 @@ class CoursController extends Controller
 
         return new JsonResponse('This is not ajax!', 400);
     }
+
+    /**
+     * @Route("/checkDirForUploadFile_ajax", name="checkDirForUploadFile_ajax")
+     * @Method({"GET", "POST"})
+     */
+    public function checkDirForUploadFileAjax (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+            $url = $request->request->get('url');
+
+            if(!is_dir($url)) {
+                if (!mkdir($url, 0777, true)) {
+                    return new JsonResponse(array('error' =>'Echec de la création du dossier', 'url' => $url));
+                }else{
+                    return new JsonResponse(array('action' =>'Dossier créé', 'url' => $url));
+                }
+            }else{
+                return new JsonResponse(array('action' =>'Dossier existe déjà', 'url' => $url));
+            }
+
+
+            $em->flush();
+
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
 }

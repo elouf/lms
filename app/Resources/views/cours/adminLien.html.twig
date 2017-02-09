@@ -28,7 +28,16 @@
         </div>
         <div class="row">
             <div class="LabelAdmin col-sm-2">URL</div>
-            <input data-champName="url" class="champAdmin col-sm-10  col-xs-12" value="{{ lien.url }}"/>
+            <div class="LabelAdmin col-sm-10  col-xs-12">
+                <div class="fileUploader btn btnAdmin inlineBtn" data-idItem="{{ lien.id }}" data-itemType="lien" data-itemNomChamp="url">
+                    <i class="glyphicon glyphicon-plus"></i>
+                    <span>Ajouter un fichier</span>
+                </div>
+
+                <input data-champName="url" class="champAdmin col-xs-12" value="{{ lien.url }}"/>
+            </div>
+
+
         </div>
         <div class="row">
             <div class="LabelAdmin col-sm-2">Type du lien</div>

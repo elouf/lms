@@ -736,8 +736,98 @@
             }else if(getUrlParameter("ressourcesAdmin")){
                 $('#ressourcesAdmin a').click();
             }
-        });
 
+            $('.lienAdmin .fileUploader').click(function(){
+                var lienId = $(this).attr('data-idItem');
+                var coursId = $('[data-coursId]').attr('data-coursId');
+
+                $('.modal').modal();
+                $('.modal .modal-body').hide();
+                $('.modal .modal-body[data-contentModal=uploadFileLien]').attr('data-idLien', lienId).show();
+
+                // si le folder n'existe pas, on le créé
+                var folderLocation = 'var/upload/';
+                var url = '../'+folderLocation+coursId+'/lien/'+lienId+'/';
+                $.ajax({
+                    type: 'POST',
+                    url: "{{path('checkDirForUploadFile_ajax')}}",
+                    async: false,
+                    dataType: "json",
+                    data: {
+                        url: url
+                    },
+                    success: function (data) {
+                    },
+                    error: function(xhr, status, error) {
+                    }
+                });
+
+                $('.modal .modal-body[data-contentModal=uploadFileLien] .bginverse').empty().append(
+                        '<div>' +
+                            '<div class="row mb-10">'+
+                                '<div class="LabelAdmin col-xs-8">Dézipper le fichier (le fichier index.html sera pointé par le lien)</div>'+
+                                '<input data-champName="unzipUploaded" class="col-xs-2" value="" type="checkbox" />'+
+                            '</div>'+
+                        '</div>'+
+                        '<div class="fileUploader btn">' +
+                            '<span class="btn btn-success fileinput-button"> '+
+                                '<i class="glyphicon glyphicon-plus"></i> '+
+                                '<span>Ajouter un fichier</span> '+
+                                '<input id="lienUpload" type="file" name="files[]" multiple> '+
+                            '</span> '+
+                            '<div id="lienProgress" class="progress col-xs-12"> '+
+                            '   <div class="progress-bar progress-bar-success"></div> '+
+                            '</div> '+
+                        '</div>'
+                );
+
+
+
+                $('#lienUpload').fileupload({
+                    url: '../../../../../'+folderLocation,
+                    dropZone:null,
+                    dataType: 'json',
+                    done: function (e, data) {
+                        $.each(data.result.files, function (index, file) {
+                            console.log(index)
+                            console.log(file)
+                            $.ajax({
+                                type: 'POST',
+                                url: "{{path('uploadLien_ajax')}}",
+                                async: false,
+                                dataType: "json",
+                                data: {
+                                    itemId: lienId,
+                                    type: file.type,
+                                    url: file.url,
+                                    urlDest: url
+                                },
+                                success: function (data) {
+                                    console.log("success");
+                                    console.log(data);
+                                    //$('[data-id='+itemId+'] [data-champ='+champ+']').val(data);
+                                },
+                                error: function(xhr, status, error) {
+                                    console.log("error");
+                                    console.log(data);
+                                    //$('[data-id='+itemId+'] [data-champ='+champ+']').val(xhr);
+                                }
+                            });
+                        });
+
+                    },
+                    progressall: function (e, data) {
+                        var progress = parseInt(data.loaded / data.total * 100, 10);
+                        $('#progressUpload').find('.progress-bar').css(
+                                'width',
+                                progress + '%'
+                        );
+                    }
+                }).prop('disabled', !$.support.fileInput)
+                        .parent().addClass($.support.fileInput ? undefined : 'disabled');
+            });
+
+        });
 
     </script>
 
@@ -939,6 +1029,17 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+                <!--                  ON ECRASE L'URL D'UN LIEN AVEC UN UPLOAD                      -->
+
+                <div class="modal-body" data-contentModal="uploadFileLien" data-idLien="" style="background:#aaa; background-size:cover">
+                    <div class="row">
+                        <div class="bginverse">
+
+
+                        </div>
+                    </div>
+                </div>
 
                 <!--                  EDITION DU LIEN D'UN GROUPE                      -->
 

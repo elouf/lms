@@ -33,7 +33,8 @@ class SectionController extends Controller
 
             return new JsonResponse(array(
                 'action' =>'change Section Visibility',
-                'section' => $section->getId())
+                'id' => $section->getId(),
+                'isVisible' => $section->getIsVisible())
             );
         }
 
