@@ -70,9 +70,19 @@ a { font-family: inherit; color: inherit; }
 }
 
 /* zonesRessource */
-.courseElems *{
+/*.courseElems *{
     padding: 0;
     display: block;
+}*/
+.btnActionCol, .btnActionCol *, .LabelAdmin, .listeItemContained{
+    padding: 0;
+    display: block;
+}
+.noPadding{
+    padding: 0;
+}
+.noMargin{
+    margin: 0;
 }
 .courseElemAdmin{
     margin-bottom: 20px;
@@ -115,6 +125,7 @@ a { font-family: inherit; color: inherit; }
 .btnActionCol li, .btnAdmin{
     margin-bottom: 5px;
     background: #ff9c00;
+    padding: 0;
 }
 .btnDelete:not(.btnSupprElem){
     background: #c64d34 !important;
@@ -190,24 +201,22 @@ textarea{
     background: #E8E8E8;
 }
 
-.sectionDrop{
-    display: flex;
-    flex-direction: column;
-    padding: 5px;
-    text-align: center;
-    font-family: "Oswald",sans-serif;
-    height: 100%;
-}
-.zoneDrop{
-    flex:1;
-    background: #fff;
-    border: 4px dashed #888;
-    border-radius: 15px;
-    height: 100%;
-}
-
 .courseElems .courseElemAdmin:first-child .btnMoveUp, .courseElems .courseElemAdmin:last-child .btnMoveDown{
     display: none;
+}
+
+.hrCourseElem{
+    border-color: #aaa;
+    border-style: none none dashed;
+    border-width: 0 0 2px;
+    width: 100%;
+}
+
+.dureeSelect .form-control{
+    height: 32px;
+}
+.dureeSelect .btn{
+    padding: 6px 15px
 }
 
 /* popup ajout ressources */
@@ -239,6 +248,8 @@ textarea{
 #btnNewLienInGroupeModal{
     text-align: center;
 }
+[data-contentmodal=devoirDisplay] .bginverse,
+[data-contentmodal=uploadFile] .bginverse,
 [data-contentmodal=ajoutLienToGroupe] .bginverse,
 [data-contentmodal=editLienInGroupe] .bginverse{
     padding: 3px;
@@ -343,14 +354,14 @@ textarea{
 }
 
 /* CRUD DES ITEMS */
-.listeLiensGroupe{
+.listeItemContained{
     background: #fff;
     border:#aaa 1px solid;
 }
-.listeLiensGroupe.notEditable{
+.listeItemContained.notEditable{
     background: none;
 }
-.listeLiensGroupe .row{
+.listeItemContained .row{
     padding: 5px;
     border-bottom: dashed #bbb 1px;
     margin: 0;
@@ -364,4 +375,30 @@ textarea{
 
 .progress{
     margin-bottom: 0;
+}
+
+/*  CALENDRIER  */
+.tooltipevent{
+    width:200px;
+    background:#555;
+    color:#fff;
+    position:absolute;
+    z-index:10001;
+    padding: 10px;
+    border-radius: 4px;
+    font-family: "Oswald",sans-serif;
+    letter-spacing: +0.03em;
+}
+
+/* Etudiant popupDevoir */
+
+[data-contentmodal=devoirDisplay] .popupDevoirNom{
+    font-family: "Oswald",sans-serif;
+    font-size: 150%;
+}
+[data-contentmodal=devoirDisplay] .popupDevoirDescription{
+    font-family: "Libre Baskerville",serif;
+    color: #888;
+    font-size: 14px;
+    font-style: italic;
 }

@@ -25,6 +25,9 @@
         <link href='https://fonts.googleapis.com/css?family=Oswald:300,700,400' rel='stylesheet' type='text/css'>
         <link href='https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400italic,700' rel='stylesheet' type='text/css'>
         <link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+
+        <!-- Fullcalendar Stylesheet-->
+        <link rel='stylesheet' href='{{ asset("vendors/fullcalendar/dist/fullcalendar.css") }}' />
     {% endblock %}
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
 
@@ -44,6 +47,14 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
         <![endif]-->
+
+        <!-- Fullcalendar Script-->
+        <script src='{{ asset("vendors/moment/min/moment.min.js") }}'></script>
+        <script src='{{ asset("vendors/fullcalendar/dist/fullcalendar.js") }}'></script>
+        <script src='{{ asset("vendors/fullcalendar/dist/locale/fr.js") }}'></script>
+
+        <! -- bootstrap-number-input -->
+        <script src='{{ asset("js/bootstrap-number-input.js") }}'></script>
     {% endblock %}
 
 </head>
@@ -86,6 +97,7 @@
                             <a href="#">{{ app.user.username }}</a>
                             <ul class="sub-menu">
                                 {% block vueAdmin %}{% endblock %}
+                                <li><a href="{{ path('calendrier') }}">Mon calendrier</a></li>
                                 <li><a href="#">Mon compte</a></li>
                                 <li><a href="{{ path('fos_user_security_logout') }}">Déconnexion</a></li>
                             </ul>

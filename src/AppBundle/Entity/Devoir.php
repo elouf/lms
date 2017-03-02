@@ -14,20 +14,6 @@ use Doctrine\ORM\Mapping as ORM;
 class Devoir extends Ressource
 {
     /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="dateDebut", type="datetime")
-     */
-    private $dateDebut;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="dateFin", type="datetime")
-     */
-    private $dateFin;
-
-    /**
      * Durée en secondes
      * @var int
      *
@@ -36,52 +22,12 @@ class Devoir extends Ressource
     private $duree;
 
     /**
-     * Set dateDebut
+     * Durée en secondes
+     * @var int
      *
-     * @param \DateTime $dateDebut
-     *
-     * @return Devoir
+     * @ORM\Column(name="corrigeType", type="integer", nullable=true)
      */
-    public function setDateDebut($dateDebut)
-    {
-        $this->dateDebut = $dateDebut;
-
-        return $this;
-    }
-
-    /**
-     * Get dateDebut
-     *
-     * @return \DateTime
-     */
-    public function getDateDebut()
-    {
-        return $this->dateDebut;
-    }
-
-    /**
-     * Set dateFin
-     *
-     * @param \DateTime $dateFin
-     *
-     * @return Devoir
-     */
-    public function setDateFin($dateFin)
-    {
-        $this->dateFin = $dateFin;
-
-        return $this;
-    }
-
-    /**
-     * Get dateFin
-     *
-     * @return \DateTime
-     */
-    public function getDateFin()
-    {
-        return $this->dateFin;
-    }
+    private $corrigeType;
 
     /**
      * Set duree

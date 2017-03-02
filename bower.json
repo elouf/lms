@@ -21,6 +21,8 @@
     "components-font-awesome": "^4.7.0",
     "jquery-ui": "^1.12.1",
     "bootstrap-select": "^1.12.2",
-    "blueimp-file-upload": "^9.15.0"
+    "blueimp-file-upload": "^9.15.0",
+    "fullcalendar": "^3.2.0",
+    "eonasdan-bootstrap-datetimepicker": "^4.17.47"
   }
 }

@@ -13,9 +13,9 @@ class LoadDevoirData extends AbstractFixture implements OrderedFixtureInterface
     public function load(ObjectManager $manager)
     {
         $dateD = new \DateTime();
-        $dateD->setDate(2017, 1, 1);
+        $dateD->setDate(2017, 3, 5);
         $dateF = new \DateTime();
-        $dateF->setDate(2017, 1, 10);
+        $dateF->setDate(2017, 3, 10);
         $ress = $this->createItem($manager,
             'Devoir d\'Algèbre 2017 n°1',
             'Devoir d\'algèbre linéaire portant sur la théorie des anneaux',
@@ -27,9 +27,9 @@ class LoadDevoirData extends AbstractFixture implements OrderedFixtureInterface
         $this->addReference('dev_cours_alg_1', $ress);
 
         $dateD = new \DateTime();
-        $dateD->setDate(2017, 1, 15);
+        $dateD->setDate(2017, 3, 15);
         $dateF = new \DateTime();
-        $dateF->setDate(2017, 1, 25);
+        $dateF->setDate(2017, 3, 25);
         $ress = $this->createItem($manager,
             'DevoirAlg2',
             'description du devoir 2 en Alg',

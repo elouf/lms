@@ -17,18 +17,19 @@
 
     <div class="formCol col-md-11">
         <div class="row">
-            <div class="LabelAdmin col-sm-2">Nom</div>
-            <input data-champName="nom" class="champAdmin col-sm-10 col-xs-12" value="{{ lien.nom }}"/>
+            <div class="LabelAdmin col-sm-3">Nom</div>
+            <input data-champName="nom" class="champAdmin col-sm-9 col-xs-12" value="{{ lien.nom }}"/>
         </div>
         <div class="row">
-            <div class="LabelAdmin col-sm-2">Description</div>
-            <div class="col-sm-10  col-xs-12">
+            <div class="LabelAdmin col-sm-3">Description</div>
+            <div class="col-sm-9  col-xs-12 noPadding">
                 <textarea data-champName="description" id="zone_{{ zoneId }}_lien_{{ lien.id }}_descr" class="simpleEditor editor champAdmin">{{ lien.description }}</textarea>
             </div>
         </div>
+        <hr class="hrCourseElem" />
         <div class="row">
-            <div class="LabelAdmin col-sm-2">URL</div>
-            <div class="LabelAdmin col-sm-10  col-xs-12">
+            <div class="LabelAdmin col-sm-3">URL</div>
+            <div class="LabelAdmin col-sm-9  col-xs-12">
                 <div class="fileUploader btn btnAdmin inlineBtn" data-idItem="{{ lien.id }}" data-itemType="lien" data-itemNomChamp="url">
                     <i class="glyphicon glyphicon-plus"></i>
                     <span>Ajouter un fichier</span>
@@ -39,6 +40,7 @@
 
 
         </div>
+        <hr class="hrCourseElem" />
         <div class="row">
             <div class="LabelAdmin col-sm-2">Type du lien</div>
             <div class="detailIconTypeLien col-xs-1">

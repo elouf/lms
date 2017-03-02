@@ -39,3 +39,19 @@ services:
         arguments: [~, AppBundle\Entity\TypeLien, ~]
         tags:
             - { name: sonata.admin,manager_type: orm, label: Types de liens, group: "Ressources" }
+
+    admin.evtUser:
+        class: AppBundle\Admin\Evt_userAdmin
+        arguments: [~, AppBundle\Entity\Evt_user, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: Evènements utilisateurs, group: "Calendrier" }
+    admin.evtDiscipline:
+        class: AppBundle\Admin\Evt_disciplineAdmin
+        arguments: [~, AppBundle\Entity\Evt_discipline, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: Evènements de discipline, group: "Calendrier" }
+    admin.evtCours:
+        class: AppBundle\Admin\Evt_coursAdmin
+        arguments: [~, AppBundle\Entity\Evt_cours, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: Evènements de cours, group: "Calendrier" }

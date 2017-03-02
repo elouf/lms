@@ -19,6 +19,50 @@
 {% endblock %}
 
 {% block main %}
+
+    <script>
+
+        jQuery(document).ready(function () {
+
+
+
+            $('.btnOpenDevoir').click(function(){
+                var idItem = $(this).closest('[data-iditem]').attr('data-iditem');
+
+                $.ajax({
+                    type: 'POST',
+                    url: "{{path('getDevoir_ajax')}}",
+                    async: false,
+                    dataType: "json",
+                    data: {
+                        id: idItem
+                    },
+                    success: function (data) {
+                        $('.modal').modal();
+                        $('.modal .modal-body').hide();
+                        var popup = $('.modal .modal-body[data-contentModal=devoirDisplay]');
+                        popup.attr('data-idItem', $(this).closest('.courseElem').attr('data-idItem')).show();
+
+                        var dureeH = parseInt(data['duree'] / 3600);
+                        var dureeM = (data['duree'] % 3600) / 60;
+                        if(dureeM < 10){
+                            dureeM = "0"+dureeM;
+                        }
+
+                        popup.find('.popupDevoirDuree').text(dureeH+'h'+dureeM);
+                        popup.find('.popupDevoirNom').text(data['nom']);
+                        popup.find('.popupDevoirDescription').html(data['description']);
+                    },
+                    error: function(xhr, status, error) {
+                    }
+                });
+            });
+
+
+
+        });
+    </script>
+
     <div class="container mt-140">
         <div class="row">
             <div class="col-sm-4">
@@ -92,53 +136,24 @@
                                                         DEVOIR
                                                 -->
                                                 <li data-idZone="{{ val.zones.containers[keyR].id }}"
-                                                    class="courseElem devoir">
+                                                    class="courseElem devoir" data-idItem="{{ valR.id }}">
                                                     <div class="">
                                                         <div class="row">
                                                             <div class="itemNom col-xs-9">
-                                                                {{ val.zones.content[keyR].devoir.nom }}
+                                                                <div>
+                                                                    {{ valR.nom }}
+                                                                </div>
+                                                                <div class="itemDescription">
+                                                                    {{ valR.description | raw }}
+                                                                </div>
                                                             </div>
                                                             <div class="col-xs-3 text-right">
-                                                                <div class="btn btn-sm btn-info">Télécharger</div>
+                                                                <div class="btn btn-sm btn-info btnOpenDevoir">Ouvrir</div>
                                                             </div>
                                                         </div>
 
-                                                        <div class="itemDescription">
-                                                            {{ val.zones.content[keyR].devoir.description | raw }}
-                                                        </div>
+
                                                     </div>
-
-                                                    {% if val.zones.content[keyR].copie %}
-                                                    <div>
-                                                        <div class="itemInfos">
-                                                            Copie
-                                                        </div>
-                                                        <div class="itemInfos alignR">
-                                                            <div class="btn btn-sm btn-info">Télécharger</div>
-                                                            <div class="itemDescription">
-                                                                Auteur : <a href="">{{ val.zones.content[keyR].copie.auteur.firstname }} {{ val.zones.content[keyR].copie.auteur.lastname }} <i class="fa fa fa-user"></i></a>
-                                                            </div>
-                                                            <div class="itemDescription">
-                                                                Rendu le : {{ val.zones.content[keyR].copie.dateRendu|date('Y-m-d') }}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    {% endif %}
-                                                    {% if val.zones.content[keyR].corrige %}
-                                                        <div>
-                                                            <div class="itemInfos">Corrigé</div>
-                                                            <div class="itemInfos alignR">
-                                                                <div class="btn btn-sm btn-info">Télécharger</div>
-                                                                <div class="itemDescription">
-                                                                    Auteur : <a href="">{{ val.zones.content[keyR].corrige.auteur.firstname }} {{ val.zones.content[keyR].corrige.auteur.lastname }} <i class="fa fa fa-user"></i></a>
-                                                                </div>
-                                                                <div class="itemDescription">
-                                                                    Rendu le : {{ val.zones.content[keyR].corrige.dateRendu|date('Y-m-d') }}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    {% endif %}
 
                                                 </li>
                                             {% elseif val.zones.type[keyR] == "groupe" %}
@@ -179,6 +194,34 @@
                     {% endfor %}
 
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+                <!--                  POPUP DEVOIR                     -->
+
+                <div class="modal-body" data-contentModal="devoirDisplay" data-idItem="" style="background:#aaa; background-size:cover">
+                    <div class="row">
+                        <div class="bginverse">
+                            <div class="">
+                                <div class="popupDevoirNom"></div>
+                                <div class="popupDevoirDescription"></div>
+
+                                <div class="alert alert-danger">
+                                    <strong>Attention!</strong> Lors du démarrage du téléchargement, le chronomètre du devoir sera lancé.
+                                    <p>Vous disposerez alors de <span class="popupDevoirDuree"></span> pour rendre vos fichiers.</p>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>

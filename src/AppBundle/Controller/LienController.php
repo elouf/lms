@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use ZipArchive;
 
 class LienController extends Controller
 {
@@ -95,15 +96,39 @@ class LienController extends Controller
             $em = $this->getDoctrine()->getEntityManager();
             $itemId = $request->request->get('itemId');
             $type = $request->request->get('type');
-            $url = $request->request->get('url');
+            $url = utf8_encode($request->request->get('url'));
             $urlDest = $request->request->get('urlDest');
+            $currentUrl = $request->request->get('currentUrl');
+            $unzipIfZip = $request->request->get('unzipIfZip') == 'true';
+
+            $urlTab = explode('/web', $currentUrl);
+            $urlDestTab = explode('/var', $urlDest);
 
             $lien = $em->getRepository('AppBundle:Lien')->findOneBy(array('id' => $itemId));
 
-            
+            $ext = pathinfo($url, PATHINFO_EXTENSION);
+            rename($url, $urlDest.'file.'.$ext);
+
+            if($unzipIfZip && $type == 'application/zip'){
+                $zip = new ZipArchive;
+                $res = $zip->open($urlDest.'file.'.$ext);
+                if ($res === TRUE) {
+                    $zip->extractTo($urlDest);
+                    $zip->close();
+                    $lien->setUrl($urlTab[0].'/var'.$urlDestTab[1].'index.html');
+                    unlink($urlDest.'file.'.$ext);
+                } else {
+                    return new JsonResponse(array(
+                            'error' => true,
+                            'unzipping' => "absence du fichier zip")
+                    );
+                }
+            }else{
+                $lien->setUrl($urlTab[0].'/var'.$urlDestTab[1].'file.'.$ext);
+            }
 
             $em->flush();
-            return new JsonResponse(array('action' =>'upload File', 'id' => $itemId));
+            return new JsonResponse(array('action' =>'upload File', 'id' => $itemId, 'ext' => $ext, 'newLien' => $lien->getUrl()));
         }
 
         return new JsonResponse('This is not ajax!', 400);

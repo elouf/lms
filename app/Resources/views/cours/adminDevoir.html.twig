@@ -1,7 +1,7 @@
 <li data-idZone="{{ zoneId }}"
     class="courseElemAdmin devoirAdmin col-md-12"
-    data-idItem="{{ itemId }}"
-    data-typeItem="lien"
+    data-idItem="{{ devoir.id }}"
+    data-typeItem="devoir"
 >
 
     <div class="titleBar">Devoir</div>
@@ -16,14 +16,98 @@
     {% endif %}
     <div class="formCol col-md-11">
         <div class="row">
-            <div class="col-sm-6 sectionDrop">
-                <div>Sujet</div>
-                <div class="zoneDrop"></div>
+            <div class="LabelAdmin col-sm-3">Nom</div>
+            <input data-champName="nom" class="champAdmin col-sm-9 col-xs-12" value="{{ devoir.nom }}"/>
+        </div>
+        <div class="row">
+            <div class="LabelAdmin col-sm-3">Description</div>
+            <div class="col-sm-9  col-xs-12 noPadding">
+                <textarea data-champName="description" id="zone_{{ zoneId }}_lien_{{ devoir.id }}_descr" class="simpleEditor editor champAdmin">{{ devoir.description }}</textarea>
             </div>
-            <div class="col-sm-6 sectionDrop">
-                <div>Corrigé</div>
-                <div class="zoneDrop"></div>
+        </div>
+        <hr class="hrCourseElem" />
+        <div class="row">
+            <div class="LabelAdmin col-sm-2">Sujet</div>
+            <div class="selectSujetAddToDevoir btn btnAdmin col-sm-1"><i class="fa fa-plus"> </i></div>
+            <div class=" col-sm-9  col-xs-12 listeItemContained">
+                {% for keyR,valR in sujets %}
+                    <div class="row" data-idFile="{{ valR.id }}">
+                        <div class="col-xs-10">
+                            <div class="nomAssoc inlineBtn">{{ valR.nom }}</div>
+                        </div>
+                        <div class="col-xs-2 text-right">
+                            <div class="myBtn btnDelete inlineBtn btnRemoveSujetFromDevoir">
+                                <i class="fa fa-trash"></i>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
             </div>
+        </div>
+        <div class="row">
+            <div class="LabelAdmin col-sm-2">Corrigé type</div>
+            <div class="selectCorrigeTypeAddToDevoir btn btnAdmin col-sm-1"><i class="fa fa-plus"> </i></div>
+            <div class=" col-sm-9  col-xs-12 listeItemContained">
+                {% for keyR,valR in corrigesType %}
+                    <div class="row" data-idFile="{{ valR.id }}">
+                        <div class="col-xs-10">
+                            <div class="nomAssoc inlineBtn">{{ valR.nom }}</div>
+                        </div>
+                        <div class="col-xs-2 text-right">
+                            <div class="myBtn btnDelete inlineBtn btnRemoveCorrigeTypeFromDevoir">
+                                <i class="fa fa-trash"></i>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <hr class="hrCourseElem" />
+        <div class="row cssExterne">
+            <div class="datePickerEvtGroup">
+                <div class="LabelAdmin col-sm-3">Date de début</div>
+                <div class='col-sm-9 noPadding mb-10'  data-champName="dateDebut">
+                    <div class="form-group noMargin mb-10">
+                        <div class='input-group date evtDateD' id='dateD_{{ zoneId }}_{{ devoir.id }}'>
+                            <input type='text' class="form-control" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="LabelAdmin col-sm-3">Date de fin</div>
+                <div class='col-sm-9 noPadding mb-10' data-champName="dateFin">
+                    <div class="form-group noMargin">
+                        <div class='input-group date evtDateF' id='dateF_{{ zoneId }}_{{ devoir.id }}'>
+                            <input type='text' class="form-control" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr class="hrCourseElem" />
+        <div>
+            <div class="LabelAdmin col-sm-3">Durée</div>
+            <div class="col-sm-9  col-xs-12 noPadding">
+                <div class="row noMargin">
+                    <div class="col-sm-4" data-champName="dureeHeures">
+                        <input class="form-control bootstrapNumber" data-type="dureeSelect" type="number" value="{{ devoir.duree//3600 }}" min="0" max="12" readonly />
+                    </div>
+                    <div class="col-sm-8">heures</div>
+                </div>
+                <div class="row noMargin">
+                    <div class="col-sm-4" data-champName="dureeMinutes">
+                        <input class="form-control bootstrapNumber" data-type="dureeSelect" type="number" value="{{ (devoir.duree%3600)/60 }}" min="0" max="59" readonly />
+                    </div>
+                    <div class="col-sm-8">minutes</div>
+                </div>
+
+            </div>
+
         </div>
     </div>
 </li>

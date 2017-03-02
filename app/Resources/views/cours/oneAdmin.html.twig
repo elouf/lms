@@ -25,6 +25,12 @@
     <script src="{{ asset('vendors/jquery-ui/jquery-ui.min.js') }}" type=text/javascript></script>
     <script src="{{ asset('educomp/ckeditor/ckeditor.js') }}"></script>
     <script src="{{ asset('educomp/ckeditor/adapters/jquery.js') }}"></script>
+
+    <script type="text/javascript" src="{{ asset('vendors/moment/min/moment.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('vendors/moment/min/moment-with-locales.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('vendors/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('vendors/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css') }}" />
+
     <script>
 
         jQuery(document).ready(function () {
@@ -406,6 +412,8 @@
                         changeGroupe(elem);
                     }else if(elem.attr('data-typeItem') == 'libre'){
                         changeLibre(elem);
+                    }else if(elem.attr('data-typeItem') == 'devoir'){
+                        changeDevoir(elem);
                     }
                 }
             }
@@ -479,6 +487,38 @@
                         success: function (data) {
                             groupe.removeClass('inEdition');
                             groupe.find('.btnSaveInputChange').remove();
+                        }
+                    });
+                });
+            }
+            function changeDevoir(devoir){
+                console.log('changeDevoir : '+devoir.hasClass('inEdition'))
+                devoir.find('.btnSaveInputChange').click(function(){
+                    var id = devoir.attr('data-idItem');
+                    var nom = devoir.find('[data-champName=nom]').val();
+                    var description = CKEDITOR.instances[devoir.find('[data-champName=description]').attr('id')].getData();
+                    var dureeH = devoir.find('[data-champName=dureeHeures] input').val();
+                    var dureeM = devoir.find('[data-champName=dureeMinutes] input').val();
+                    var dateDebut = devoir.find('[data-champName=dateDebut] input').val();
+                    var dateFin = devoir.find('[data-champName=dateFin] input').val();
+
+                    $.ajax({
+                        type: 'POST',
+                        url: "{{path('changeContentDevoir_ajax')}}",
+                        async: false,
+                        dataType: "json",
+                        data: {
+                            id: id,
+                            nom: nom,
+                            description: description,
+                            dureeH: dureeH,
+                            dureeM: dureeM,
+                            dateDebut : dateDebut,
+                            dateFin: dateFin
+                        },
+                        success: function (data) {
+                            devoir.removeClass('inEdition');
+                            devoir.find('.btnSaveInputChange').remove();
                         }
                     });
                 });
@@ -737,13 +777,15 @@
                 $('#ressourcesAdmin a').click();
             }
 
+            // upload d'un fichier pour un lien
             $('.lienAdmin .fileUploader').click(function(){
                 var lienId = $(this).attr('data-idItem');
                 var coursId = $('[data-coursId]').attr('data-coursId');
+                var lienUrlInput = $('[data-typeItem=lien][data-idItem='+lienId+'] .champAdmin[data-champName=url]');
 
                 $('.modal').modal();
                 $('.modal .modal-body').hide();
-                $('.modal .modal-body[data-contentModal=uploadFileLien]').attr('data-idLien', lienId).show();
+                $('.modal .modal-body[data-contentModal=uploadFile]').attr('data-idItem', lienId).show();
 
                 // si le folder n'existe pas, on le créé
                 var folderLocation = 'var/upload/';
@@ -762,9 +804,9 @@
                     }
                 });
 
-                $('.modal .modal-body[data-contentModal=uploadFileLien] .bginverse').empty().append(
+                $('.modal .modal-body[data-contentModal=uploadFile] .bginverse').empty().append(
                         '<div>' +
-                            '<div class="row mb-10">'+
+                            '<div class="mb-10" style="text-align: center">'+
                                 '<div class="LabelAdmin col-xs-8">Dézipper le fichier (le fichier index.html sera pointé par le lien)</div>'+
                                 '<input data-champName="unzipUploaded" class="col-xs-2" value="" type="checkbox" />'+
                             '</div>'+
@@ -773,9 +815,9 @@
                             '<span class="btn btn-success fileinput-button"> '+
                                 '<i class="glyphicon glyphicon-plus"></i> '+
                                 '<span>Ajouter un fichier</span> '+
-                                '<input id="lienUpload" type="file" name="files[]" multiple> '+
+                                '<input id="itemUpload" type="file" name="files[]" multiple> '+
                             '</span> '+
-                            '<div id="lienProgress" class="progress col-xs-12"> '+
+                            '<div id="itemProgress" class="progress col-xs-12"> '+
                             '   <div class="progress-bar progress-bar-success"></div> '+
                             '</div> '+
                         '</div>'
@@ -783,14 +825,13 @@
 
 
 
-                $('#lienUpload').fileupload({
+                $('#itemUpload').fileupload({
                     url: '../../../../../'+folderLocation,
                     dropZone:null,
                     dataType: 'json',
                     done: function (e, data) {
                         $.each(data.result.files, function (index, file) {
-                            console.log(index)
-                            console.log(file)
+                            var myUrlTab = file.url.split(folderLocation);
                             $.ajax({
                                 type: 'POST',
                                 url: "{{path('uploadLien_ajax')}}",
@@ -799,18 +840,21 @@
                                 data: {
                                     itemId: lienId,
                                     type: file.type,
-                                    url: file.url,
-                                    urlDest: url
+                                    url: '../'+folderLocation+myUrlTab[1],
+                                    urlDest: url,
+                                    unzipIfZip: $('[data-champName=unzipUploaded]').prop('checked'),
+                                    currentUrl: window.location.pathname
                                 },
                                 success: function (data) {
                                     console.log("success");
                                     console.log(data);
-                                    //$('[data-id='+itemId+'] [data-champ='+champ+']').val(data);
+                                    $('.modal').modal('toggle');
+                                    lienUrlInput.val(data.newLien);
                                 },
                                 error: function(xhr, status, error) {
                                     console.log("error");
                                     console.log(data);
-                                    //$('[data-id='+itemId+'] [data-champ='+champ+']').val(xhr);
+                                    $('.modal').modal('toggle');
                                 }
                             });
                         });
@@ -827,6 +871,165 @@
                         .parent().addClass($.support.fileInput ? undefined : 'disabled');
             });
 
+
+            // upload d'un fichier pour un sujet de devoir ou pour un corrige type
+            $('.selectSujetAddToDevoir, .selectCorrigeTypeAddToDevoir').click(function(){
+                var idSection = $(this).closest('.section').attr('data-idSection');
+                var devoir = $(this).closest('[data-typeitem=devoir]');
+                var devoirId = devoir.attr('data-iditem');
+                var coursId = $('[data-coursId]').attr('data-coursId');
+
+                $('.modal').modal();
+                $('.modal .modal-body').hide();
+                $('.modal .modal-body[data-contentModal=uploadFile]').attr('data-idItem', devoirId).show();
+
+                // si le folder n'existe pas, on le créé
+                var folderLocation = 'var/upload/';
+                var typeItem = "sujets";
+                var titreDefaut = "Sujet du devoir";
+                if($(this).hasClass("selectCorrigeTypeAddToDevoir")){
+                    typeItem = "corrigeTypes";
+                    titreDefaut = "Corrigé type du devoir";
+                }
+                var url = '../'+folderLocation+coursId+'/devoir/'+devoirId+'/'+typeItem+'/';
+                $.ajax({
+                    type: 'POST',
+                    url: "{{path('checkDirForUploadFile_ajax')}}",
+                    async: false,
+                    dataType: "json",
+                    data: {
+                        url: url
+                    },
+                    success: function (data) {
+                    },
+                    error: function(xhr, status, error) {
+                    }
+                });
+
+                $('.modal .modal-body[data-contentModal=uploadFile] .bginverse').empty().append(
+                    '<div>' +
+                        '<div class="mb-10" style="text-align: left">'+
+                            '<div class="LabelAdmin col-xs-4">Nom du fichier</div>'+
+                            '<input data-champName="uploadedFileName" class="col-xs-8" value="" type="text" />'+
+                        '</div>'+
+                    '</div>'+
+                    '<div class="fileUploader btn mb-10">' +
+                        '<span class="btn btn-success fileinput-button"> '+
+                            '<i class="glyphicon glyphicon-plus"></i> '+
+                            '<span>Ajouter un fichier</span> '+
+                            '<input id="itemUpload" type="file" name="files[]" multiple> '+
+                        '</span> '+
+                        '<div id="itemProgress" class="progress col-xs-12"> '+
+                        '   <div class="progress-bar progress-bar-success"></div> '+
+                        '</div> '+
+                    '</div>'
+                );
+
+                $('.modal .modal-body[data-contentModal=uploadFile] [data-champName=uploadedFileName]').val(titreDefaut);
+
+                $('#itemUpload').fileupload({
+                    url: '../../../../../'+folderLocation,
+                    dropZone:null,
+                    dataType: 'json',
+                    done: function (e, data) {
+                        $.each(data.result.files, function (index, file) {
+                            var myUrlTab = file.url.split(folderLocation);
+                            $.ajax({
+                                type: 'POST',
+                                url: "{{path('uploadDevoirFile_ajax')}}",
+                                async: false,
+                                dataType: "json",
+                                data: {
+                                    typeItem: typeItem,
+                                    itemId: devoirId,
+                                    url: '../'+folderLocation+myUrlTab[1],
+                                    urlDest: url,
+                                    currentUrl: window.location.pathname,
+                                    nom: $('.modal .modal-body[data-contentModal=uploadFile] [data-champName=uploadedFileName]').val()
+                                },
+                                success: function (data) {
+                                    console.log("success");
+                                    console.log(data);
+                                    $('.modal').modal('toggle');
+                                    window.location.href = window.location.href.replace( /[\?#].*|$/, "?idSection="+idSection );
+                                },
+                                error: function(xhr, status, error) {
+                                    console.log("error");
+                                    console.log(data);
+                                    $('.modal').modal('toggle');
+                                }
+                            });
+                        });
+
+                    },
+                    progressall: function (e, data) {
+                        var progress = parseInt(data.loaded / data.total * 100, 10);
+                        $('#progressUpload').find('.progress-bar').css(
+                                'width',
+                                progress + '%'
+                        );
+                    }
+                }).prop('disabled', !$.support.fileInput)
+                        .parent().addClass($.support.fileInput ? undefined : 'disabled');
+            });
+
+            $('.btnRemoveSujetFromDevoir, .btnRemoveCorrigeTypeFromDevoir').click(function(){
+                var devoir = $(this).closest('[data-typeitem=devoir]');
+
+                var typeItem = "sujet";
+                if($(this).hasClass("btnRemoveCorrigeTypeFromDevoir")){
+                    typeItem = "corrigeType";
+                }
+                var item = $(this).closest('[data-idfile]');
+                var idItem = item.attr('data-idfile');
+
+                $.ajax({
+                    type: 'POST',
+                    url: "{{path('removeDevoirFile_ajax')}}",
+                    async: false,
+                    dataType: "json",
+                    data: {
+                        typeItem: typeItem,
+                        itemId: idItem
+                    },
+                    success: function (data) {
+                        item.remove();
+                    },
+                    error: function(xhr, status, error) {
+                        console.log("error");
+                    }
+                });
+            });
+
+            // ajout des dateTimePicker pour les dates de début et de fin
+            $('.datePickerEvtGroup').each(function(){
+                var dateD = $(this).find('.evtDateD');
+                var dateF = $(this).find('.evtDateF');
+                dateD.datetimepicker({
+                    locale: 'fr'
+                });
+                dateF.datetimepicker({
+                    locale: 'fr',
+                    useCurrent: false
+                });
+                dateD.on("dp.change", function (e) {
+                    dateF.data("DateTimePicker").minDate(e.date);
+                    var elem = $(this).closest('.courseElemAdmin');
+                    detectInput(elem);
+                });
+                dateF.on("dp.change", function (e) {
+                    dateD.data("DateTimePicker").maxDate(e.date);
+                    var elem = $(this).closest('.courseElemAdmin');
+                    detectInput(elem);
+                });
+            });
+
+            // champ durée
+            $('.bootstrapNumber').bootstrapNumber();
+            $('.devoirAdmin button').click(function(){
+                var elem = $(this).closest('.courseElemAdmin');
+                detectInput(elem);
+            });
         });
 
     </script>
@@ -941,8 +1144,7 @@
                                 <ul class="list-default courseElems">
                                     {% for key,val in devoirs %}
                                         {% include "cours/adminDevoir.html.twig"
-                                        with {nom:val.nom, description: val.description,
-                                        zoneId: '0', itemId: val.id, inSection: 'false'}
+                                        with {devoir:val.content, zoneId: '0', inSection: 'false', sujets: val.sujets, corrigesType: val.corrigesType}
                                         %}
                                     {% endfor %}
                                 </ul>
@@ -967,7 +1169,7 @@
                              id="t1body{{ val.section.id }}" data-idSection="{{ val.section.id }}">
                             <div class="editor">
                                 <div class="row">
-                                    <select class="selectpicker col-xs-6" data-style="MyBtnSelectPickeer" title="Nouvelle ressource">
+                                    <select class="selectpicker col-xs-6" data-style="MyBtnSelectPickeer" title="Ajouter une ressource">
                                         <option title="Nouvelle ressource" class="addNewItem addNewTypeDevoir">Devoir</option>
                                         <option title="Nouvelle ressource" class="addNewItem addNewTypeLien">Lien</option>
                                         <option title="Nouvelle ressource" class="addNewItem addNewTypeGroupe">Groupe de liens</option>
@@ -1001,8 +1203,8 @@
                                                                 DEVOIRS
                                             -->
                                             {% include "cours/adminDevoir.html.twig"
-                                            with {nom:valR.devoir.nom, description: valR.devoir.description, visible: val.zones.containers[keyR].isVisible,
-                                            zoneId: val.zones.containers[keyR].id, itemId: valR.devoir.id, inSection: 'true'}
+                                            with {devoir:valR, visible: val.zones.containers[keyR].isVisible,
+                                            zoneId: val.zones.containers[keyR].id, inSection: 'true', sujets: val.zones.sujet[keyR], corrigesType: val.zones.corrigeType[keyR]}
                                             %}
 
                                         {% elseif val.zones.type[keyR] == "libre" %}
@@ -1030,9 +1232,10 @@
             <div class="modal-content">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 
-                <!--                  ON ECRASE L'URL D'UN LIEN AVEC UN UPLOAD                      -->
 
-                <div class="modal-body" data-contentModal="uploadFileLien" data-idLien="" style="background:#aaa; background-size:cover">
+                <!--                  UPLOAD DE FICHIER                     -->
+
+                <div class="modal-body" data-contentModal="uploadFile" data-idItem="" style="background:#aaa; background-size:cover">
                     <div class="row">
                         <div class="bginverse">
 
@@ -1199,13 +1402,13 @@
                                 <div role="tabpanel" class="tab-pane fade" id="btnListDevoirModal">
                                     <table class="tableAddItem">
                                         {% for key,val in devoirs %}
-                                            <tr class="item" data-typeItem="devoir" data-idItem="{{ val.id }}">
+                                            <tr class="item" data-typeItem="devoir" data-idItem="{{ val.content.id }}">
                                                 <td>
                                                     <table class="tableDetailItem">
-                                                        <tr><td class="nomChamp">Nom</td><td>{{ val.nom }}</td></tr>
-                                                        <tr><td class="nomChamp">Description</td><td>{{ val.description | raw }}</td></tr>
-                                                        <tr><td class="nomChamp">Dates</td><td>du {{ val.dateDebut|date('Y-m-d') }} au {{ val.dateFin|date('Y-m-d') }}</td></tr>
-                                                        <tr><td class="nomChamp">Durée</td><td>{{ val.duree//3600 }}h</td></tr>
+                                                        <tr><td class="nomChamp">Nom</td><td>{{ val.content.nom }}</td></tr>
+                                                        <tr><td class="nomChamp">Description</td><td>{{ val.content.description | raw }}</td></tr>
+                                                        <tr><td class="nomChamp">Dates</td><td>du {{ val.content.dateDebut|date('Y-m-d') }} au {{ val.content.dateFin|date('Y-m-d') }}</td></tr>
+                                                        <tr><td class="nomChamp">Durée</td><td>{{ val.content.duree//3600 }}h</td></tr>
                                                     </table>
                                                 </td>
                                                 <td>
