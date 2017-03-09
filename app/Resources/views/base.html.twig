@@ -55,6 +55,12 @@
 
         <! -- bootstrap-number-input -->
         <script src='{{ asset("js/bootstrap-number-input.js") }}'></script>
+
+        <script>
+            var monthNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
+                "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
+            ];
+        </script>
     {% endblock %}
 
 </head>
@@ -94,7 +100,7 @@
                     <li><a href="{{ path('myCourses') }}">Les cours</a></li>
                     {% if app.user %}
                         <li>
-                            <a href="#">{{ app.user.username }}</a>
+                            <a href="#" data-userId="{{ app.user.id }}">{{ app.user.username }}</a>
                             <ul class="sub-menu">
                                 {% block vueAdmin %}{% endblock %}
                                 <li><a href="{{ path('calendrier') }}">Mon calendrier</a></li>

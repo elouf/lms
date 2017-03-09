@@ -24,11 +24,11 @@ class LoadCopieData extends AbstractFixture implements OrderedFixtureInterface
         $manager->flush();
     }
 
-    public function createItem(ObjectManager $manager, $user, $devoir, $dateRendu){
+    public function createItem(ObjectManager $manager, $user, $devoir, $dateCrea){
         $item = new Copie();
         $item->setAuteur($user);
         $item->setDevoir($devoir);
-        $item->setDateRendu($dateRendu);
+        $item->setDateCreation($dateCrea);
         $manager->persist($item);
         return $item;
     }

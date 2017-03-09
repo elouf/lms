@@ -31,9 +31,9 @@ class Copie
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="dateRendu", type="datetime")
+     * @ORM\Column(name="dateCreation", type="datetime")
      */
-    protected $dateRendu;
+    protected $dateCreation;
 
     /**
      * @var Devoir
@@ -77,27 +77,27 @@ class Copie
     }
 
     /**
-     * Set dateRendu
+     * Set dateCreation
      *
-     * @param \DateTime $dateRendu
+     * @param \DateTime $dateCreation
      *
      * @return Copie
      */
-    public function setDateRendu($dateRendu)
+    public function setDateCreation($dateCreation)
     {
-        $this->dateRendu = $dateRendu;
+        $this->dateCreation = $dateCreation;
 
         return $this;
     }
 
     /**
-     * Get dateRendu
+     * Get dateCreation
      *
      * @return \DateTime
      */
-    public function getDateRendu()
+    public function getDateCreation()
     {
-        return $this->dateRendu;
+        return $this->dateCreation;
     }
 
     /**

@@ -35,7 +35,8 @@
                     async: false,
                     dataType: "json",
                     data: {
-                        id: idItem
+                        id: idItem,
+                        userId: $('[data-userId]').attr('data-userId')
                     },
                     success: function (data) {
                         $('.modal').modal();
@@ -44,7 +45,7 @@
                         popup.attr('data-idItem', $(this).closest('.courseElem').attr('data-idItem')).show();
 
                         var dureeH = parseInt(data['duree'] / 3600);
-                        var dureeM = (data['duree'] % 3600) / 60;
+                        var dureeM = parseInt((data['duree'] % 3600) / 60);
                         if(dureeM < 10){
                             dureeM = "0"+dureeM;
                         }
@@ -52,6 +53,16 @@
                         popup.find('.popupDevoirDuree').text(dureeH+'h'+dureeM);
                         popup.find('.popupDevoirNom').text(data['nom']);
                         popup.find('.popupDevoirDescription').html(data['description']);
+
+                        var dateD = toJSDate(data['dateDebut']['date']);
+                        var dateF = toJSDate(data['dateFin']['date']);
+                        var limitDate = dateF;
+                        limitDate.setHours(limitDate.getHours() + parseInt(dureeH));
+                        limitDate.setMinutes(limitDate.setMinutes() + parseInt(dureeM));
+
+
+                        popup.find('.alert').hide();
+
                     },
                     error: function(xhr, status, error) {
                     }
@@ -59,7 +70,14 @@
             });
 
 
+            function toJSDate(phpDateTime){
+                var dateTime = phpDateTime.split(" ");//dateTime[0] = date, dateTime[1] = time
 
+                var date = dateTime[0].split("-");
+                var time = dateTime[1].split(":");
+
+                return new Date(date[0], (date[1]-1), date[2], time[0], time[1], 0, 0);
+            }
         });
     </script>
 
@@ -117,8 +135,8 @@
                                                     class="courseElem lien">
                                                     <div class="row">
 
-                                                        <div class="itemInfos col-xs-10">
-                                                            <div class="itemNom">{{ valR.nom }}</div>
+                                                        <div class="itemInfos itemHeader col-xs-10">
+                                                            <div class="itemTitle">{{ valR.nom }}</div>
                                                             <div class="itemDescription">{{ valR.description | raw }}</div>
                                                         </div>
                                                         <div class="col-xs-2 text-right">
@@ -139,20 +157,71 @@
                                                     class="courseElem devoir" data-idItem="{{ valR.id }}">
                                                     <div class="">
                                                         <div class="row">
-                                                            <div class="itemNom col-xs-9">
-                                                                <div>
+                                                            <div class="itemHeader col-xs-9 mb-10">
+                                                                <div class="itemTitle mb-10">
                                                                     {{ valR.nom }}
                                                                 </div>
-                                                                <div class="itemDescription">
+                                                                <div class="ml-10">
+                                                                    Du {{ valR.dateDebut|localizeddate('none', 'none', null, null, 'd LLLL Y à h:mm' ) }} au {{ valR.dateFin|localizeddate('none', 'none', null, null, 'd LLLL Y à h:mm' ) }}
+                                                                </div>
+                                                                <div class="ml-10">
+                                                                    Durée : {{ valR.duree//3600  }}h{{ (valR.duree - 3600*(valR.duree//3600))//60 }}min
+                                                                </div>
+                                                                <div class="itemDescription ml-10">
                                                                     {{ valR.description | raw }}
                                                                 </div>
                                                             </div>
-                                                            <div class="col-xs-3 text-right">
-                                                                <div class="btn btn-sm btn-info btnOpenDevoir">Ouvrir</div>
-                                                            </div>
+                                                            <!-- On permet d'afficher la popup seulement si la date de fin n'est pas dépassée et si une copie n'a pas encore été déposée -->
+                                                            {% if val.zones.copieFichier[keyR] == "undefined" and  "now"|date('Ymd H:i:s') < valR.dateFin|date('Ymd H:i:s') %}
+                                                                <div class="col-xs-3 text-right">
+                                                                    <div class="btn btn-sm btn-info btnOpenDevoir">Ouvrir</div>
+                                                                </div>
+                                                            {% endif %}
                                                         </div>
-
-
+                                                        {% if val.zones.copie[keyR] != "undefined" or "now"|date('Ymd H:i:s') > valR.dateFin|date('Ymd H:i:s') %}
+                                                            <!-- On affiche les fichiers (sujet, copie, corrigé) que si le user
+                                                                 a déjà déposé une copie ou si la date de fin est dépassée-->
+                                                            <table class="devoirCptRenduTable">
+                                                                <tr>
+                                                                    <td>Sujet du devoir</td>
+                                                                    <td>
+                                                                        {% for keyS,valS in val.zones.sujet[keyR] %}
+                                                                            <a class="btn btn-sm btn-info mb-3" href="{{ valS.url }}">{{ valS.nom }}</a>
+                                                                        {% endfor %}
+                                                                    </td>
+                                                                </tr>
+                                                                {% if val.zones.corrige[keyR] != "undefined" %}
+                                                                    <tr>
+                                                                        <td>Corrigé type du devoir</td>
+                                                                        <td>
+                                                                            {% for keyC,valC in val.zones.corrigeType[keyR] %}
+                                                                                <a class="btn btn-sm btn-success mb-3" href="{{ valC.url }}">{{ valC.nom }}</a>
+                                                                            {% endfor %}
+                                                                        </td>
+                                                                    </tr>
+                                                                {% endif %}
+                                                                {% if val.zones.copie[keyR] != "undefined" %}
+                                                                <tr>
+                                                                    <td>Devoir commencé le {{ val.zones.copie[keyR].dateCreation|localizeddate('none', 'none', null, null, 'd LLLL Y à h:mm' ) }}</td>
+                                                                    <td>
+                                                                        {% if val.zones.copieFichier[keyR] != "undefined" %}
+                                                                            <a class="btn btn-sm btn-warning" href="{{ val.zones.copieFichier[keyR].url }}">Ma copie</a>
+                                                                        {% endif %}
+                                                                    </td>
+                                                                </tr>
+                                                                {% endif %}
+                                                                {% if val.zones.corrige[keyR] != "undefined" %}
+                                                                    <tr>
+                                                                        <td>Corrigé déposé le {{ val.zones.corrige[keyR].dateRendu|localizeddate('none', 'none', null, null, 'd LLLL Y à h:mm' ) }} par <a href="mailto:{{ val.zones.corrige[keyR].auteur.email }}">{{ val.zones.corrige[keyR].auteur.firstname }} {{ val.zones.corrige[keyR].auteur.lastname }}</a></td>
+                                                                        <td>
+                                                                            {% if val.zones.corrigeFichier[keyR] != "undefined" %}
+                                                                                <a class="btn btn-sm btn-success" href="{{ val.zones.corrigeFichier[keyR].url }}">Ma copie</a>
+                                                                            {% endif %}
+                                                                        </td>
+                                                                    </tr>
+                                                                {% endif %}
+                                                            </table>
+                                                        {% endif %}
                                                     </div>
 
                                                 </li>
@@ -163,7 +232,7 @@
                                                 <li data-idZone="{{ val.zones.containers[keyR].id }}"
                                                     class="courseElem groupsRessource">
                                                     <div class="row">
-                                                        <div class="itemNom col-lg-5">{{ val.zones.groupe[keyR].nom }}</div>
+                                                        <div class="itemHeader itemTitle col-lg-5">{{ val.zones.groupe[keyR].nom }}</div>
                                                         <div class="col-lg-7 text-right">
                                                         {% for keyG,valG in val.zones.content[keyR] %}
                                                             <a class="btnLienGroupeRessource btn btn-xs"
@@ -210,11 +279,15 @@
                         <div class="bginverse">
                             <div class="">
                                 <div class="popupDevoirNom"></div>
-                                <div class="popupDevoirDescription"></div>
+                                <div class="popupDevoirDescription mb-10"></div>
 
-                                <div class="alert alert-danger">
+                                <div class="alert alert-danger mb-10 alert_beforeDownload">
                                     <strong>Attention!</strong> Lors du démarrage du téléchargement, le chronomètre du devoir sera lancé.
                                     <p>Vous disposerez alors de <span class="popupDevoirDuree"></span> pour rendre vos fichiers.</p>
+                                </div>
+
+                                <div class="chronometre">
+                                    <span class="chrono_h"></span>:<span class="chrono_m"></span>
                                 </div>
 
                             </div>

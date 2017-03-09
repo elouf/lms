@@ -33,7 +33,8 @@
         "sonata-project/admin-bundle": "^3.9",
         "sendinblue/sendinblue-api-bundle": "2.0.*",
         "sonata-project/formatter-bundle": "^3.1",
-        "sonata-project/media-bundle": "^3.3"
+        "sonata-project/media-bundle": "^3.3",
+        "twig/extensions": "^1.4"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

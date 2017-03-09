@@ -11,7 +11,7 @@ html,body{
 
 body{
     color: #373737;
-    font-family: 'Libre Baskerville', serif;
+    font-family: 'Montserrat', sans-serif;
 }
 
 a{
@@ -119,7 +119,7 @@ h1.heading, h2.heading, h3.heading, h4.heading, h5.heading, h6.heading{
 
 .sub-heading{
     display: block;
-    font-family: 'Libre Baskerville', serif;
+    font-family: 'Montserrat', sans-serif;
     font-size: 50%;
     margin: 18px auto 18px auto;
     color: #1a2b51;
@@ -130,7 +130,7 @@ h1.heading, h2.heading, h3.heading, h4.heading, h5.heading, h6.heading{
 }
 
 p{
-    font-family: 'Libre Baskerville', serif;
+    font-family: 'Montserrat', sans-serif;
     font-size: 15px;
     display: block;
     line-height: 1.75em;
@@ -941,7 +941,7 @@ blockquote footer{
 
 .course-box h4, .course-box h5, .course-box h6{
     text-transform: none;
-    font-family: 'Libre Baskerville', serif;
+    font-family: 'Montserrat', sans-serif;
     color: #fff;
 }
 
@@ -2955,7 +2955,7 @@ blockquote footer{
 
 .sr-text{
     color: #fff;
-    font-family: 'Libre Baskerville', serif;
+    font-family: 'Montserrat', sans-serif;
     font-size: 18px;
     font-weight: 400;
 }

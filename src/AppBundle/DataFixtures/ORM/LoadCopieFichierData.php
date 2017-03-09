@@ -14,28 +14,35 @@ class LoadCopieFichierData extends AbstractFixture implements OrderedFixtureInte
 
     public function load(ObjectManager $manager)
     {
+        $dateR = new \DateTime();
+        $dateR->setDate(2017, 1, 2);
         $ress = $this->createItem($manager,
             'www.google.fr',
             'copie Fichier 1',
-            $this->getReference('copie_dev_cours_alg_2')
+            $this->getReference('copie_dev_cours_alg_2'),
+            $dateR
             );
         $this->addReference('copieFichier_dev_cours_alg_2_1', $ress);
 
+        $dateR = new \DateTime();
+        $dateR->setDate(2017, 1, 6);
         $ress = $this->createItem($manager,
             'www.google2.fr',
             'copie Fichier 1',
-            $this->getReference('copie_dev_cours_alg_2')
+            $this->getReference('copie_dev_cours_alg_2'),
+            $dateR
         );
         $this->addReference('copieFichier_dev_cours_alg_2_2', $ress);
 
         $manager->flush();
     }
 
-    public function createItem(ObjectManager $manager, $url, $nom, $copie){
+    public function createItem(ObjectManager $manager, $url, $nom, $copie, $dateRendu){
         $item = new CopieFichier();
         $item->setUrl($url);
         $item->setCopie($copie);
         $item->setNom($nom);
+        $item->setDateRendu($dateRendu);
         $manager->persist($item);
         return $item;
     }

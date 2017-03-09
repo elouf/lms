@@ -3,7 +3,7 @@ body{
 }
 body{
     color: #373737;
-    font-family: 'Libre Baskerville', serif;
+    font-family: 'Montserrat', sans-serif;
 }
 
 /* footer */
@@ -41,10 +41,14 @@ body{
 .pt-0{padding-top:0px;}
 .pb-0{padding-bottom:0px;}
 
+.mb-3{margin-bottom:3px;}
+
 .mt-10{margin-top:10px;}
 .mb-10{margin-bottom:10px;}
 .pt-10{padding-top:10px;}
 .pb-10{padding-bottom:10px;}
+
+.ml-10{margin-left:10px;}
 
 .mt-140 {
     margin-top: 140px;
@@ -326,13 +330,17 @@ textarea{
     display: inline-block;
     vertical-align: top;
 }
-.itemNom{
+.itemHeader{
     font-family: "Oswald",sans-serif;
-    font-size: 120%;
+    font-size: 15px;
+    color: #333;
+}
+.itemTitle{
+    color: #000;
+    font-size: 20px;
 }
 .itemDescription{
-    font-size: 14px;
-    font-style: italic;
+    font-size: 15px;
     color: #AAAAAA;
 }
 .alignR{
@@ -390,6 +398,13 @@ textarea{
     letter-spacing: +0.03em;
 }
 
+/* Etudiant Devoir */
+.devoirCptRenduTable{
+    width: 100%;
+}
+.devoirCptRenduTable td{
+    padding-bottom: 10px;
+}
 /* Etudiant popupDevoir */
 
 [data-contentmodal=devoirDisplay] .popupDevoirNom{
@@ -397,7 +412,7 @@ textarea{
     font-size: 150%;
 }
 [data-contentmodal=devoirDisplay] .popupDevoirDescription{
-    font-family: "Libre Baskerville",serif;
+    font-family: 'Montserrat', sans-serif;
     color: #888;
     font-size: 14px;
     font-style: italic;

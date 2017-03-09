@@ -46,9 +46,6 @@ class CoursController extends Controller
         $repository = $this->getDoctrine()->getRepository('AppBundle:Cours');
         $cours = $repository->find($id);
 
-        $repositoryCop = $this->getDoctrine()->getRepository('AppBundle:Copie');
-        $repositoryCor = $this->getDoctrine()->getRepository('AppBundle:Corrige');
-
         $repositoryTypeLiens = $this->getDoctrine()->getRepository('AppBundle:TypeLien')->findAll();
         $repositoryCategorieLiens = $this->getDoctrine()->getRepository('AppBundle:CategorieLien')->findAll();
 
@@ -88,17 +85,36 @@ class CoursController extends Controller
 
                         $datas[$i]["zones"]["content"][$j] = $ressource;
                         $datas[$i]["zones"]["sujet"][$j] = $repositorySujet;
-                        $datas[$i]["zones"]["corrigeType"][$j] = $repositoryCorrigeType;
+                        $datas[$i]["zones"]["corrigeType"][$j] = "undefined";
 
-                        /*$copie = $repositoryCop->findOneBy(array('auteur' => $this->getUser(), 'devoir' => $ressource));
-                        $datas[$i]["zones"]["copie"][$j] = $copie;
-                        $corrige = $repositoryCor->findOneBy(array('copie' => $copie));
-                        $datas[$i]["zones"]["corrige"][$j] = $corrige;
+                        if($repositoryCorrigeType) {
+                            $datas[$i]["zones"]["corrigeType"][$j] = $repositoryCorrigeType;
+                        }
 
-                        $datas[$i]["zones"]["content"][$j] = array();
-                        $datas[$i]["zones"]["content"][$j]['devoir'] = $ressource;
-                        $datas[$i]["zones"]["content"][$j]['copie'] = $copie;
-                        $datas[$i]["zones"]["content"][$j]['corrige'] = $corrige;*/
+                        // on a pas besoin des copies du user si on est en mode admin, par contre en etu, oui
+                        if($mode == "etu"){
+                            $datas[$i]["zones"]["copie"][$j] = "undefined";
+                            $datas[$i]["zones"]["corrige"][$j] = "undefined";
+                            $datas[$i]["zones"]["copieFichier"][$j] = "undefined";
+                            $datas[$i]["zones"]["corrigeFichier"][$j] = "undefined";
+
+                            $copie = $this->getDoctrine()->getRepository('AppBundle:Copie')->findOneBy(array('devoir' => $ressource, 'auteur' => $this->getUser()));
+                            if($copie){
+                                $datas[$i]["zones"]["copie"][$j] = $copie;
+
+                                $copieFichier = $this->getDoctrine()->getRepository('AppBundle:CopieFichier')->findOneBy(array('copie' => $copie));
+                                if($copieFichier){
+                                    $datas[$i]["zones"]["copieFichier"][$j] = $copieFichier;
+                                }
+
+                                $corrige = $this->getDoctrine()->getRepository('AppBundle:Corrige')->findOneBy(array('copie' => $copie));
+                                if($corrige){
+                                    $datas[$i]["zones"]["corrige"][$j] = $corrige;
+                                    $corrigeFichier = $this->getDoctrine()->getRepository('AppBundle:CorrigeFichier')->findOneBy(array('corrige' => $corrige));
+                                    $datas[$i]["zones"]["corrigeFichier"][$j] = $corrigeFichier;
+                                }
+                            }
+                        }
 
                     }elseif($ressType == "groupe") {
                         $repositoryGaL = $this->getDoctrine()
@@ -109,18 +125,14 @@ class CoursController extends Controller
                     }elseif($ressType == "libre"){
                             $datas[$i]["zones"]["content"][$j] = $ressource;
                     }else{
-
                         // on ne trouve pas le type de la ressource
                         $datas[$i]["zones"]["type"][$j] = "unknown";
                         $datas[$i]["zones"]["content"][$j] = $zone->getDescription();
-
                     }
                 }else{
-
                     // Aucune ressource associée
                     $datas[$i]["zones"]["type"][$j] = "free";
                     $datas[$i]["zones"]["content"][$j] = $zone->getDescription();
-
                 }
             }
         }

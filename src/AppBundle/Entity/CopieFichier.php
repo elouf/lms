@@ -21,6 +21,13 @@ class CopieFichier extends Fichier
     private $copie;
 
     /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="dateRendu", type="datetime")
+     */
+    protected $dateRendu;
+
+    /**
      * Set copie
      *
      * @param Copie $copie
@@ -42,5 +49,29 @@ class CopieFichier extends Fichier
     public function getCopie()
     {
         return $this->copie;
+    }
+
+    /**
+     * Set dateRendu
+     *
+     * @param \DateTime $dateRendu
+     *
+     * @return Copie
+     */
+    public function setDateRendu($dateRendu)
+    {
+        $this->dateRendu = $dateRendu;
+
+        return $this;
+    }
+
+    /**
+     * Get dateRendu
+     *
+     * @return \DateTime
+     */
+    public function getDateRendu()
+    {
+        return $this->dateRendu;
     }
 }
