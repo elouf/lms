@@ -237,7 +237,6 @@ class CoursController extends Controller
     public function checkDirForUploadFileAjax (Request $request)
     {
         if ($request->isXMLHttpRequest()) {
-            $em = $this->getDoctrine()->getEntityManager();
             $url = $request->request->get('url');
 
             if(!is_dir($url)) {
@@ -249,9 +248,6 @@ class CoursController extends Controller
             }else{
                 return new JsonResponse(array('action' =>'Dossier existe déjà', 'url' => $url));
             }
-
-
-            $em->flush();
 
         }
 

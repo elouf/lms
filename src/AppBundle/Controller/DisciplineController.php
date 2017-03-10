@@ -89,8 +89,6 @@ class DisciplineController extends Controller
             }
         }
 
-        dump($courses);
-
         return $this->render('discipline/myCourses.html.twig', ['courses' => $courses]);
     }
 

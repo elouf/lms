@@ -24,7 +24,7 @@ class Copie
     /**
      * @var User
      *
-     * @ORM\OneToOne(targetEntity="User")
+     * @ORM\ManyToOne(targetEntity="User")
      */
     protected $auteur;
 

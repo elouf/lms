@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Copie;
 use AppBundle\Entity\Devoir;
 use AppBundle\Entity\DevoirCorrigeType;
 use AppBundle\Entity\DevoirSujet;
@@ -16,6 +17,7 @@ use ZipArchive;
 
 class DevoirController extends Controller
 {
+
     /**
      * @Route("/getDevoir_ajax", name="getDevoir_ajax")
      * @Method({"GET", "POST"})
@@ -30,10 +32,25 @@ class DevoirController extends Controller
             $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
             $devoir = $em->getRepository('AppBundle:Devoir')->findOneBy(array('id' => $id));
 
+            $repositorySujet = $this->getDoctrine()
+                ->getRepository('AppBundle:DevoirSujet')
+                ->findOneBy(array('devoir' => $devoir));
+
             $copieStart = "";
-            $copie = $em->getRepository('AppBundle:Copie')->findBy(array('devoir' => $devoir, 'auteur' => $user));
-            if(count($copie)){
-                $copieStart = $copie[0]->getDateCreation();
+            $copieFichier = "";
+            $corrige = "";
+            $corrigeFichier = "";
+            $copie = $em->getRepository('AppBundle:Copie')->findOneBy(array('devoir' => $devoir, 'auteur' => $user));
+            if($copie){
+                $copieStart = $copie->getDateCreation();
+
+                $copieFichier = $this->getDoctrine()->getRepository('AppBundle:CopieFichier')->findOneBy(array('copie' => $copie));
+
+                $corrige = $this->getDoctrine()->getRepository('AppBundle:Corrige')->findOneBy(array('copie' => $copie));
+                if($corrige){
+                    $corrigeFichier = $this->getDoctrine()->getRepository('AppBundle:CorrigeFichier')->findOneBy(array('corrige' => $corrige));
+                }
+
             }
 
             return new JsonResponse(array(
@@ -43,8 +60,44 @@ class DevoirController extends Controller
                     'dateFin' => $devoir->getDateFin(),
                     'nom' => $devoir->getNom(),
                     'description' => $devoir->getDescription(),
-                    'userCopie' => count($copie),
-                    'copieStart' => $copieStart
+                    'sujet' => $repositorySujet->getUrl(),
+                    'copieStart' => $copieStart,
+                    'copieFichier' => $copieFichier,
+                    'corrige' => $corrige,
+                    'corrigeFichier' => $corrigeFichier
+                )
+            );
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
+    /**
+     * @Route("/startDevoir_ajax", name="startDevoir_ajax")
+     * @Method({"GET", "POST"})
+     */
+    public function startDevoirAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+
+            $id = $request->request->get('id');
+            $userId = $request->request->get('userId');
+            $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
+            $devoir = $em->getRepository('AppBundle:Devoir')->findOneBy(array('id' => $id));
+
+            $copie = new Copie();
+            $copie->setDateCreation(new DateTime());
+            $copie->setAuteur($user);
+            $copie->setDevoir($devoir);
+
+            $em->persist($copie);
+            $em->flush();
+
+
+            return new JsonResponse(array(
+                    'action' =>'start Devoir',
+                    'copieId' => $copie->getId()
                 )
             );
         }
@@ -59,7 +112,7 @@ class DevoirController extends Controller
     public function changeContentDevoirAjaxAction (Request $request)
     {
         if ($request->isXMLHttpRequest()) {
-            $em = $this->getDoctrine();
+            $em = $this->getDoctrine()->getEntityManager();
 
             $id = $request->request->get('id');
             $nom = $request->request->get('nom');
@@ -96,7 +149,7 @@ class DevoirController extends Controller
     public function uploadDevoirFileAjaxAction (Request $request)
     {
         if ($request->isXMLHttpRequest()) {
-            $em = $this->getDoctrine();
+            $em = $this->getDoctrine()->getEntityManager();
             $typeItem = $request->request->get('typeItem');
             $itemId = $request->request->get('itemId');
             $url = utf8_encode($request->request->get('url'));
@@ -144,7 +197,7 @@ class DevoirController extends Controller
     public function removeDevoirFileAjaxAction (Request $request)
     {
         if ($request->isXMLHttpRequest()) {
-            $em = $this->getDoctrine();
+            $em = $this->getDoctrine()->getEntityManager();
             $typeItem = $request->request->get('typeItem');
             $itemId = $request->request->get('itemId');
 
