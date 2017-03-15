@@ -24,7 +24,7 @@ class Corrige
     /**
      * @var User
      *
-     * @ORM\OneToOne(targetEntity="User")
+     * @ORM\ManyToOne(targetEntity="User")
      */
     private $auteur;
 

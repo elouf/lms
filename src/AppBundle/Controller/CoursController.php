@@ -114,6 +114,22 @@ class CoursController extends Controller
                                     $datas[$i]["zones"]["corrigeFichier"][$j] = $corrigeFichier;
                                 }
                             }
+                        }elseif($mode == 'ens'){
+                            // on compte le nombre de copies non corrigées
+                            $datas[$i]["zones"]["copiesDeposes"][$j] = 0;
+                            $datas[$i]["zones"]["corrigesDeposes"][$j] = 0;
+
+                            $copies = $this->getDoctrine()->getRepository('AppBundle:Copie')->findBy(array('devoir' => $ressource));
+                            for($u=0; $u<count($copies); $u++){
+                                $copieFichier = $this->getDoctrine()->getRepository('AppBundle:CopieFichier')->findOneBy(array('copie' => $copies[$u]));
+                                if($copieFichier){
+                                    $datas[$i]["zones"]["copiesDeposes"][$j]++;
+                                    $corrigeFichier = $this->getDoctrine()->getRepository('AppBundle:Corrige')->findOneBy(array('copie' => $copies[$u]));
+                                    if($corrigeFichier){
+                                        $datas[$i]["zones"]["corrigesDeposes"][$j]++;
+                                    }
+                                }
+                            }
                         }
 
                     }elseif($ressType == "groupe") {
@@ -168,7 +184,7 @@ class CoursController extends Controller
         }
 
         if($mode == "etu"){
-            return $this->render('cours/one.html.twig', ['cours' => $cours, 'zonesSections' => $datas]);
+            return $this->render('cours/one.html.twig', ['cours' => $cours, 'zonesSections' => $datas, 'mode' => 'etu']);
         }elseif($mode == "admin"){
             return $this->render('cours/oneAdmin.html.twig',
                 [
@@ -181,6 +197,8 @@ class CoursController extends Controller
                     'typeLiens' => $repositoryTypeLiens,
                     'categorieLiens' => $repositoryCategorieLiens
                 ]);
+        }elseif($mode == "ens") {
+            return $this->render('cours/one.html.twig', ['cours' => $cours, 'zonesSections' => $datas, 'mode' => 'ens']);
         }
     }
 

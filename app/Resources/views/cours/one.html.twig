@@ -3,28 +3,19 @@
 {% block vueAdmin %}
     {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
         <li><a href="{{ path('oneCours', {id: cours.id, mode: 'admin'}) }}">Vue admin</a></li>
+        <li><a href="{{ path('oneCours', {id: cours.id, mode: 'ens'}) }}">Vue enseignant</a></li>
+        <li><a href="{{ path('oneCours', {id: cours.id, mode: 'etu'}) }}">Vue étudiant</a></li>
     {% endif %}
 {% endblock %}
 
 {% block pageHeader %}
-    <!--<div class="page-header">
-        <div class="container">
-            <h1>Détail des cours</h1>
-            <ul class="breadcrumb">
-                <li><a href="{{ path('homepage') }}">Accueil</a></li>
-                <li class="active">Détail des cours</li>
-            </ul>
-        </div>
-    </div>-->
 {% endblock %}
 
 {% block main %}
 
     <script>
-
+        var chrono;
         jQuery(document).ready(function () {
-
-
 
             $('.btnOpenDevoir').click(function(){
                 var idItem = $(this).closest('[data-iditem]').attr('data-iditem');
@@ -67,7 +58,7 @@
                         $('.listeDevoirSujets .listeSujets *').removeClass('hidden')
 
                         popup.find('.alert').hide();
-                        if(data['copieStart'] == "") {
+                        if(data['copieStart'] == null) {
                             $('.beginDevoir, .masqueDevoir').show();
                             $('.alert_beforeDownload').show();
                             $('.chrono_h').text(dureeH);
@@ -87,39 +78,8 @@
                                         userId: $('[data-userId]').attr('data-userId')
                                     },
                                     success: function (data) {
-
                                         $('.masqueDevoir').hide();
-                                        var chrono = setInterval(function(){
-                                            var h = parseInt($('.chrono_h').text());
-                                            var m = parseInt($('.chrono_m').text());
-                                            var s = parseInt($('.chrono_s').text());
-                                            if(s == 0){
-                                                if(m == 0){
-                                                    if(h == 0){
-                                                        clearInterval(chrono);
-                                                        window.location.href = window.location.href.replace( /[\?#].*|$/, "?idSection="+idSection );
-                                                    }else{
-                                                        var newH = parseInt(h-1);
-                                                        $('.chrono_h').text(newH);
-                                                        $('.chrono_m').text('59');
-                                                    }
-                                                }else{
-                                                    var newM = parseInt(m-1);
-                                                    if(newM < 10){
-                                                        newM = "0"+newM;
-                                                    }
-                                                    $('.chrono_m').text(newM);
-                                                    $('.chrono_s').text('59');
-                                                }
-                                            }else{
-                                                var newS = parseInt(s-1);
-                                                if(newS < 10){
-                                                    newS = "0"+newS;
-                                                }
-                                                $('.chrono_s').text(newS);
-                                            }
-                                        }, 1000);
-
+                                        launchChrono();
                                     }
                                 });
                             });
@@ -129,27 +89,118 @@
                             $('.alert_duringDevoir').show();
                             var dateCopie = toJSDate(data['copieStart']['date']);
                             var timeLimit = dateCopie;
-                            timeLimit.setHours(limitDate.getHours() + parseInt(dureeH));
-                            timeLimit.setMinutes(limitDate.getMinutes() + parseInt(dureeM));
+                            timeLimit.setHours(timeLimit.getHours() + parseInt(dureeH));
+                            timeLimit.setMinutes(timeLimit.getMinutes() + parseInt(dureeM));
                             var now = new Date();
                             if(now > timeLimit){
                                 window.location.href = window.location.href.replace( /[\?#].*|$/, "?idSection="+idSection );
                             }else{
                                 var diff = timeLimit - now;
                                 var diffSeconds = diff / 1000;
-                                var HH = Math.floor(diffSeconds / 3600);
-                                var MM = Math.floor(diffSeconds % 3600) / 60;
+                                var HH = parseInt(Math.floor(diffSeconds / 3600))+1;
+                                var MM = parseInt(Math.floor(diffSeconds % 3600) / 60);
                                 $('.chrono_h').text(HH);
                                 $('.chrono_m').text(MM);
                                 $('.chrono_s').text("00");
+                                launchChrono();
                             }
                         }
+
+                        var folderLocation = 'var/upload/';
+                        var url = '../'+folderLocation+$('[data-coursId]').attr('data-coursId')+'/devoir/'+idItem+'/copies/'+$('[data-userId]').attr('data-userId')+'/';
+
+                        $.ajax({
+                            type: 'POST',
+                            url: "{{path('checkDirForUploadFile_ajax')}}",
+                            async: false,
+                            dataType: "json",
+                            data: {
+                                url: url
+                            },
+                            success: function (data) {
+                            },
+                            error: function(xhr, status, error) {
+                            }
+                        });
+
+                        $('#copieUpload').fileupload({
+                            url: '../../../../../'+folderLocation,
+                            dropZone:null,
+                            dataType: 'json',
+                            done: function (e, data) {
+                                $.each(data.result.files, function (index, file) {
+                                    var myUrlTab = file.url.split(folderLocation);
+                                    $.ajax({
+                                        type: 'POST',
+                                        url: "{{path('uploadCopieFile_ajax')}}",
+                                        async: false,
+                                        dataType: "json",
+                                        data: {
+                                            itemId: idItem,
+                                            userId: $('[data-userId]').attr('data-userId'),
+                                            url: '../'+folderLocation+myUrlTab[1],
+                                            urlDest: url,
+                                            currentUrl: window.location.pathname
+                                        },
+                                        success: function (data) {
+                                            $('.modal').modal('toggle');
+                                            window.location.href = window.location.href.replace( /[\?#].*|$/, "?idSection="+idSection );
+                                        },
+                                        error: function(xhr, status, error) {
+                                            $('.modal').modal('toggle');
+                                        }
+                                    });
+                                });
+
+                            },
+                            progressall: function (e, data) {
+                                var progress = parseInt(data.loaded / data.total * 100, 10);
+                                $('#progressUpload').find('.progress-bar').css(
+                                        'width',
+                                        progress + '%'
+                                );
+                            }
+                        }).prop('disabled', !$.support.fileInput)
+                                .parent().addClass($.support.fileInput ? undefined : 'disabled');
                     },
                     error: function(xhr, status, error) {
                     }
                 });
             });
 
+            function launchChrono(){
+                clearInterval(chrono);
+                chrono = setInterval(function(){
+                    var h = parseInt($('.chrono_h').text());
+                    var m = parseInt($('.chrono_m').text());
+                    var s = parseInt($('.chrono_s').text());
+                    if(s == 0){
+                        if(m == 0){
+                            if(h == 0){
+                                clearInterval(chrono);
+                                window.location.href = window.location.href.replace( /[\?#].*|$/, "?idSection="+idSection );
+                            }else{
+                                var newH = parseInt(h-1);
+                                $('.chrono_h').text(newH);
+                                $('.chrono_m').text('59');
+                            }
+                        }else{
+                            var newM = parseInt(m-1);
+                            if(newM < 10){
+                                newM = "0"+newM;
+                            }
+                            $('.chrono_m').text(newM);
+                            $('.chrono_s').text('59');
+                        }
+                    }else{
+                        var newS = parseInt(s-1);
+                        if(newS < 10){
+                            newS = "0"+newS;
+                        }
+                        $('.chrono_s').text(newS);
+                    }
+                }, 1000);
+            }
 
             function toJSDate(phpDateTime){
                 var dateTime = phpDateTime.split(" ");//dateTime[0] = date, dateTime[1] = time
@@ -184,7 +235,7 @@
         });
     </script>
 
-    <div class="container mt-140">
+    <div class="container mt-140" data-coursId="{{ cours.id }}">
         <div class="row">
             <div class="col-sm-4">
                 <div class="course-intro">
@@ -274,23 +325,75 @@
                                                                     {{ valR.description | raw }}
                                                                 </div>
                                                             </div>
-                                                            <!-- On permet d'afficher la popup seulement si la date de fin n'est pas dépassée et si une copie n'a pas encore été déposée -->
-                                                            {% if val.zones.copieFichier[keyR] == "undefined" and  "now"|date('Ymd H:i:s') < valR.dateFin|date('Ymd H:i:s') %}
-                                                                <div class="col-xs-3 text-right conteneurLiensSujets">
-                                                                    <div class="btn btn-sm btn-info btnOpenDevoir">
-                                                                        Ouvrir
-                                                                    </div>
-                                                                    <div class="listeSujets">
-                                                                        {% for keyS,valS in val.zones.sujet[keyR] %}
-                                                                            <a class="btn btn-sm btn-info mb-3 hidden" target="_blank" href="{{ valS.url }}">{{ valS.nom }}</a>
-                                                                        {% endfor %}
-                                                                    </div>
-                                                                </div>
+                                                            {% if mode == "etu" %}
+                                                                <!-- On permet d'afficher la popup seulement si la date de fin n'est pas dépassée
+                                                                et si une copie n'a pas encore été déposée
+                                                                et si on a pas dépassé le temps alloué -->
+                                                                {% set duree = '+' ~ valR.duree ~ 'seconds' %}
+                                                                {% if val.zones.copieFichier[keyR] == "undefined"
+                                                                    and  "now"|date('Ymd H:i:s') < valR.dateFin|date('Ymd H:i:s')
+                                                                %}
+                                                                    {% if val.zones.copie[keyR] == "undefined" or "now"|date('Ymd H:i:s') < val.zones.copie[keyR].dateCreation|date_modify(duree)|date('Ymd H:i:s') %}
+                                                                        <div class="col-xs-3 text-right conteneurLiensSujets">
+                                                                            <div class="btn btn-sm btn-info btnOpenDevoir">
+                                                                                Ouvrir
+                                                                            </div>
+                                                                            <div class="listeSujets">
+                                                                                {% for keyS,valS in val.zones.sujet[keyR] %}
+                                                                                    <a class="btn btn-sm btn-info mb-3 hidden" target="_blank" href="{{ valS.url }}">{{ valS.nom }}</a>
+                                                                                {% endfor %}
+                                                                            </div>
+                                                                        </div>
+                                                                    {% endif %}
+                                                                {% endif %}
                                                             {% endif %}
                                                         </div>
-                                                        {% if val.zones.copie[keyR] != "undefined" or "now"|date('Ymd H:i:s') > valR.dateFin|date('Ymd H:i:s') %}
-                                                            <!-- On affiche les fichiers (sujet, copie, corrigé) que si le user
-                                                                 a déjà déposé une copie ou si la date de fin est dépassée-->
+                                                        {% if mode == "etu" %}
+                                                            {% if val.zones.copie[keyR] != "undefined" or "now"|date('Ymd H:i:s') > valR.dateFin|date('Ymd H:i:s') %}
+                                                                <!-- On affiche les fichiers (sujet, copie, corrigé) que si le user
+                                                                     a déjà déposé une copie ou si la date de fin est dépassée-->
+                                                                <table class="devoirCptRenduTable">
+                                                                    <tr>
+                                                                        <td>Sujet du devoir</td>
+                                                                        <td>
+                                                                            {% for keyS,valS in val.zones.sujet[keyR] %}
+                                                                                <a class="btn btn-sm btn-info mb-3" target="_blank" href="{{ valS.url }}">{{ valS.nom }}</a>
+                                                                            {% endfor %}
+                                                                        </td>
+                                                                    </tr>
+                                                                    {% if (val.zones.corrigeType[keyR] != "undefined" and "now"|date('Ymd H:i:s') > valR.dateFin|date('Ymd H:i:s')) or val.zones.copieFichier[keyR] != "undefined" %}
+                                                                        <tr>
+                                                                            <td>Corrigé type du devoir</td>
+                                                                            <td>
+                                                                                {% for keyC,valC in val.zones.corrigeType[keyR] %}
+                                                                                    <a class="btn btn-sm btn-success mb-3" target="_blank" href="{{ valC.url }}">{{ valC.nom }}</a>
+                                                                                {% endfor %}
+                                                                            </td>
+                                                                        </tr>
+                                                                    {% endif %}
+                                                                    {% if val.zones.copie[keyR] != "undefined" %}
+                                                                    <tr>
+                                                                        <td>Devoir commencé le {{ val.zones.copie[keyR].dateCreation|localizeddate('none', 'none', 'fr', null, 'd LLLL Y à h:mm' ) }}</td>
+                                                                        <td>
+                                                                            {% if val.zones.copieFichier[keyR] != "undefined" %}
+                                                                                <a class="btn btn-sm btn-warning" target="_blank" href="{{ val.zones.copieFichier[keyR].url }}">Ma copie</a>
+                                                                            {% endif %}
+                                                                        </td>
+                                                                    </tr>
+                                                                    {% endif %}
+                                                                    {% if val.zones.corrige[keyR] != "undefined" %}
+                                                                        <tr>
+                                                                            <td>Corrigé déposé le {{ val.zones.corrige[keyR].dateRendu|localizeddate('none', 'none', null, null, 'd LLLL Y à h:mm' ) }} par <a href="mailto:{{ val.zones.corrige[keyR].auteur.email }}">{{ val.zones.corrige[keyR].auteur.firstname }} {{ val.zones.corrige[keyR].auteur.lastname }}</a></td>
+                                                                            <td>
+                                                                                {% if val.zones.corrigeFichier[keyR] != "undefined" %}
+                                                                                    <a class="btn btn-sm btn-success" target="_blank" href="{{ val.zones.corrigeFichier[keyR].url }}">Ma copie</a>
+                                                                                {% endif %}
+                                                                            </td>
+                                                                        </tr>
+                                                                    {% endif %}
+                                                                </table>
+                                                            {% endif %}
+                                                        {% elseif mode == 'ens' %}
                                                             <table class="devoirCptRenduTable">
                                                                 <tr>
                                                                     <td>Sujet du devoir</td>
@@ -300,36 +403,20 @@
                                                                         {% endfor %}
                                                                     </td>
                                                                 </tr>
-                                                                {% if val.zones.corrigeType[keyR] != "undefined" %}
-                                                                    <tr>
-                                                                        <td>Corrigé type du devoir</td>
-                                                                        <td>
-                                                                            {% for keyC,valC in val.zones.corrigeType[keyR] %}
-                                                                                <a class="btn btn-sm btn-success mb-3" target="_blank" href="{{ valC.url }}">{{ valC.nom }}</a>
-                                                                            {% endfor %}
-                                                                        </td>
-                                                                    </tr>
-                                                                {% endif %}
-                                                                {% if val.zones.copie[keyR] != "undefined" %}
                                                                 <tr>
-                                                                    <td>Devoir commencé le {{ val.zones.copie[keyR].dateCreation|localizeddate('none', 'none', null, null, 'd LLLL Y à h:mm' ) }}</td>
+                                                                    <td>Corrigé type du devoir</td>
                                                                     <td>
-                                                                        {% if val.zones.copieFichier[keyR] != "undefined" %}
-                                                                            <a class="btn btn-sm btn-warning" target="_blank" href="{{ val.zones.copieFichier[keyR].url }}">Ma copie</a>
-                                                                        {% endif %}
+                                                                        {% for keyC,valC in val.zones.corrigeType[keyR] %}
+                                                                            <a class="btn btn-sm btn-success mb-3" target="_blank" href="{{ valC.url }}">{{ valC.nom }}</a>
+                                                                        {% endfor %}
                                                                     </td>
                                                                 </tr>
-                                                                {% endif %}
-                                                                {% if val.zones.corrige[keyR] != "undefined" %}
-                                                                    <tr>
-                                                                        <td>Corrigé déposé le {{ val.zones.corrige[keyR].dateRendu|localizeddate('none', 'none', null, null, 'd LLLL Y à h:mm' ) }} par <a href="mailto:{{ val.zones.corrige[keyR].auteur.email }}">{{ val.zones.corrige[keyR].auteur.firstname }} {{ val.zones.corrige[keyR].auteur.lastname }}</a></td>
-                                                                        <td>
-                                                                            {% if val.zones.corrigeFichier[keyR] != "undefined" %}
-                                                                                <a class="btn btn-sm btn-success" target="_blank" href="{{ val.zones.corrigeFichier[keyR].url }}">Ma copie</a>
-                                                                            {% endif %}
-                                                                        </td>
-                                                                    </tr>
-                                                                {% endif %}
+                                                                <tr>
+                                                                    <td>{{ val.zones.corrigesDeposes[keyR] }} copies corrigée{% if val.zones.corrigesDeposes[keyR]>1 %}s{% endif %} sur {{ val.zones.copiesDeposes[keyR] }} déposée{% if val.zones.copiesDeposes[keyR]>1 %}s{% endif %}</td>
+                                                                    <td>
+                                                                        <a class="btn btn-sm btn-danger mb-3 btnOpenDevoirEns" href="{{ path('oneDevoirEns', {id: valR.id}) }}">Afficher</a>
+                                                                    </td>
+                                                                </tr>
                                                             </table>
                                                         {% endif %}
                                                     </div>
@@ -382,7 +469,7 @@
             <div class="modal-content">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 
-                <!--                  POPUP DEVOIR                     -->
+                <!--                  POPUP DEVOIR ELEVE                     -->
 
                 <div class="modal-body" data-contentModal="devoirDisplay" data-idItem="" style="background:#aaa; background-size:cover">
                     <div class="row">
@@ -397,8 +484,8 @@
                                 </div>
 
                                 <div class="alert alert-danger mb-10 alert_duringDevoir">
-                                    <strong>Attention!</strong> Lors du démarrage du téléchargement, le chronomètre du devoir sera lancé.
-                                    <p>Vous disposerez alors de <span class="popupDevoirDuree"></span> pour rendre vos fichiers.</p>
+                                    <strong>Attention!</strong> Vous avez déjà commencé ce devoir.
+                                    <p>Le temps restant s'affiche en bas de cette popup.</p>
                                 </div>
 
                                 <div class="row mb-10" style="text-align: center">
@@ -415,7 +502,7 @@
                                         <span class="btn btn-success fileinput-button">
                                             <i class="glyphicon glyphicon-plus"></i>
                                             <span>Déposer ma copie</span>
-                                            <input id="itemUpload" type="file" name="files[]" multiple>
+                                            <input id="copieUpload" type="file" name="files[]" multiple>
                                         </span>
 
                                         <div id="itemProgress" class="progress col-xs-12">
@@ -433,7 +520,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>

@@ -1,0 +1,200 @@
+{% extends 'base.html.twig' %}
+
+{% block vueAdmin %}
+
+{% endblock %}
+
+{% block pageHeader %}
+    <div class="page-header">
+        <div class="container">
+            <h2 class="color3">Copies du devoir {{ devoir.nom }}</h2>
+            <ul class="breadcrumb">
+                <li class="color3">
+                    <a href="{{ path('myCourses') }}" class="label label-info">{{ cours.discipline.nom }}</a>
+                    >
+                    <a href="{{ path('oneCours', {id: cours.id, mode: 'ens'}) }}" class="label label-info">{{ cours.nom }}</a>
+
+                </li>
+
+
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+
+{% block main %}
+
+    <script>
+        jQuery(document).ready(function () {
+            var idCours = $('[data-coursId]').attr('data-coursId');
+            var idDevoir = $('[data-idDevoir]').attr('data-idDevoir');
+
+            var userId = $('[data-userId]').attr('data-userId');
+
+            var folderLocation = 'var/upload/';
+            var url = '../'+folderLocation+idCours+'/devoir/'+idDevoir+'/corriges/';
+
+            $('.corrigeUpload').each(function(){
+                var etuId = $(this).closest('[data-userId]').attr('data-userId');
+                var destUrl = url+etuId+'/';
+                $.ajax({
+                    type: 'POST',
+                    url: "{{path('checkDirForUploadFile_ajax')}}",
+                    async: false,
+                    dataType: "json",
+                    data: {
+                        url: destUrl
+                    },
+                    success: function (data) {
+                    },
+                    error: function(xhr, status, error) {
+                    }
+                });
+            });
+
+            $('.corrigeUpload').fileupload({
+                url: '../../../'+folderLocation,
+                dropZone:null,
+                dataType: 'json',
+                done: function (e, data) {
+                    console.log(e)
+                    var etuId = $(this).closest('[data-userId]').attr('data-userId');
+                    var destUrl = url+etuId+'/';
+                    $.each(data.result.files, function (index, file) {
+                        var myUrlTab = file.url.split(folderLocation);
+                        $.ajax({
+                            type: 'POST',
+                            url: "{{path('uploadCorrigeFile_ajax')}}",
+                            async: false,
+                            dataType: "json",
+                            data: {
+                                idDevoir: idDevoir,
+                                userId: userId,
+                                etuId: etuId,
+                                url: '../'+folderLocation+myUrlTab[1],
+                                urlDest: destUrl,
+                                currentUrl: window.location.pathname,
+                                etuId: etuId
+                            },
+                            success: function (data) {
+                                window.location.href = window.location.href;
+                            },
+                            error: function(xhr, status, error) {
+                            }
+                        });
+                    });
+
+                },
+                progressall: function (e, data) {
+                    var progress = parseInt(data.loaded / data.total * 100, 10);
+                    $('#progressUpload').find('.progress-bar').css(
+                            'width',
+                            progress + '%'
+                    );
+                }
+            }).prop('disabled', !$.support.fileInput)
+                    .parent().addClass($.support.fileInput ? undefined : 'disabled');
+
+
+        });
+    </script>
+
+    <div class="container mt-10" data-coursId="{{ cours.id }}" data-idDevoir="{{ devoir.id }}">
+        <div class="alert alert-info mb-10">
+            <p>Vous pouvez déposer un corrigé pour chaque copie déposée.</p>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <div class="row bgcolor3 pb-20">
+            <div class="col-sm-12">
+                <figcaption>
+                    <h4 class="img-title">Documents sujets <span class="color2">du devoir</span></h4>
+                </figcaption>
+            </div>
+            <div class="col-sm-12 ml-20">
+                {% for key,val in sujets %}
+                    <a class="btn btn-sm btn-info mb-3" href="{{ val.url }}">{{ val.nom }}</a>
+                {% endfor %}
+            </div>
+            <div class="col-sm-12">
+                <figcaption>
+                    <h4 class="img-title">Documents corrigés type <span class="color2">du devoir</span></h4>
+                </figcaption>
+            </div>
+            <div class="col-sm-12 ml-20">
+                {% for key,val in corrigesType %}
+                    <a class="btn btn-sm btn-info mb-3" href="{{ val.url }}">{{ val.nom }}</a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <div class="container mb-40">
+            <div class="row">
+                <div class="col-sm-12">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Étudiant</th>
+                            <th>Copie</th>
+                            <th>Corrigé</th>
+                            <th>Nouvel upload</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for key,val in devoirsEns %}
+                            <tr data-userId="{{ val.copie.auteur.id }}">
+                                <th scope="row">{{ key+1 }}</th>
+                                <td>{{ val.copie.auteur.firstname }} {{ val.copie.auteur.lastname }}</td>
+                                <td>
+                                    {{ val.copie.dateCreation|localizeddate('none', 'none', null, null, 'd LLLL Y à h:mm' ) }}
+                                    <a class="btn btn-warning btn-sm" target="_blank" href="{{ val.copieFichier.url }}"><i class="fa fa-external-link fa-2x"></i></a>
+                                </td>
+                                <td>
+                                    {% if val.corrige != "undefined" %}
+                                        {{ val.corrige.dateRendu|localizeddate('none', 'none', null, null, 'd LLLL Y à h:mm' ) }}
+                                        <a class="btn btn-success btn-sm" target="_blank" href="{{ val.corrigeFichier.url }}"><i class="fa fa-external-link fa-2x"></i></a>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="fileUploader col-sm-6 col-xs-12">
+                                        <span class="btn btn-success fileinput-button">
+                                            <i class="glyphicon glyphicon-plus"></i>
+                                            <span>Déposer un corrigé</span>
+                                            <input class="corrigeUpload" id="corrigeUpload_{{ val.copie.id }}" type="file" name="files[]" multiple>
+                                        </span>
+
+                                        <div id="itemProgress_{{ val.copie.id }}" class="progress col-xs-12">
+                                            <div class="progress-bar progress-bar-success"></div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+                <div class="modal-body" data-contentModal="devoirDisplay" data-idItem="" style="background:#aaa; background-size:cover">
+                    <div class="row">
+                        <div class="bginverse">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

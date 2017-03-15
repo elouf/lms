@@ -3,6 +3,9 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Copie;
+use AppBundle\Entity\CopieFichier;
+use AppBundle\Entity\Corrige;
+use AppBundle\Entity\CorrigeFichier;
 use AppBundle\Entity\Devoir;
 use AppBundle\Entity\DevoirCorrigeType;
 use AppBundle\Entity\DevoirSujet;
@@ -17,6 +20,57 @@ use ZipArchive;
 
 class DevoirController extends Controller
 {
+
+    /**
+     *
+     * @Route("/devoirens/{id}", name="oneDevoirEns")
+     */
+    public function getDevoirsEnsAction (Request $request, $id)
+    {
+        $em = $this->getDoctrine();
+
+        $devoir = $em->getRepository('AppBundle:Devoir')->findOneBy(array('id' => $id));
+        $cours = $devoir->getCours();
+
+        $datas = array();
+
+        $copies = $this->getDoctrine()->getRepository('AppBundle:Copie')->findBy(array('devoir' => $devoir));
+        for($u=0; $u<count($copies); $u++){
+            $copieFichier = $this->getDoctrine()->getRepository('AppBundle:CopieFichier')->findOneBy(array('copie' => $copies[$u]));
+            $datas[$u]["copie"] = $copies[$u];
+            $datas[$u]["copieFichier"] = $copieFichier;
+            $datas[$u]["corrigeFichier"] = "undefined";
+            $datas[$u]["corrige"] = "undefined";
+            if($copieFichier){
+                $corrige = $this->getDoctrine()->getRepository('AppBundle:Corrige')->findOneBy(array('copie' => $copies[$u]));
+                if($corrige){
+                    $corrigeFichier = $this->getDoctrine()->getRepository('AppBundle:CorrigeFichier')->findOneBy(array('corrige' => $corrige));
+                    $datas[$u]["corrigeFichier"] = $corrigeFichier;
+                    $datas[$u]["corrige"] = $corrige;
+                }
+            }
+        }
+
+        $corrigesType = array();
+        $corrigesTypeEntities = $this->getDoctrine()->getRepository('AppBundle:DevoirCorrigeType')->findBy(array('devoir' => $devoir));
+        for($u=0; $u<count($corrigesTypeEntities); $u++){
+            $corrigesType[$u] = $corrigesTypeEntities[$u];
+        }
+
+        $sujets = array();
+        $sujetsEntities = $this->getDoctrine()->getRepository('AppBundle:DevoirSujet')->findBy(array('devoir' => $devoir));
+        for($u=0; $u<count($sujetsEntities); $u++){
+            $sujets[$u] = $sujetsEntities[$u];
+        }
+        return $this->render('ressources/oneDevoirEns.html.twig',
+            [
+                'cours' => $cours,
+                'devoir' => $devoir,
+                'devoirsEns' => $datas,
+                'sujets' => $sujets,
+                'corrigesType' => $corrigesType
+            ]);
+    }
 
     /**
      * @Route("/getDevoir_ajax", name="getDevoir_ajax")
@@ -36,7 +90,7 @@ class DevoirController extends Controller
                 ->getRepository('AppBundle:DevoirSujet')
                 ->findOneBy(array('devoir' => $devoir));
 
-            $copieStart = "";
+            $copieStart = null;
             $copieFichier = "";
             $corrige = "";
             $corrigeFichier = "";
@@ -185,6 +239,112 @@ class DevoirController extends Controller
             $em->persist($devoirF);
             $em->flush();
             return new JsonResponse(array('action' =>'upload File', 'id' => $itemId, 'ext' => $ext, 'nouveau '.$typeItem => $devoirF->getUrl()));
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
+
+    /**
+     * @Route("/uploadCopieFile_ajax", name="uploadCopieFile_ajax")
+     * @Method({"GET", "POST"})
+     */
+    public function uploadCopieFileAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+            $itemId = $request->request->get('itemId');
+            $userId = $request->request->get('userId');
+            $url = utf8_encode($request->request->get('url'));
+            $urlDest = $request->request->get('urlDest');
+            $currentUrl = $request->request->get('currentUrl');
+
+            $devoir = $em->getRepository('AppBundle:Devoir')->findOneBy(array('id' => $itemId));
+            $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
+            $copie = $em->getRepository('AppBundle:Copie')->findOneBy(array('auteur' => $user, 'devoir' => $devoir));
+
+            $urlTab = explode('/web', $currentUrl);
+            $urlDestTab = explode('/var', $urlDest);
+
+            $copieFichier = new CopieFichier();
+            $copieFichier->setCopie($copie);
+            $copieFichier->setDateRendu(new DateTime());
+            $copieFichier->setNom("[Devoir ".$devoir->getNom()."] Copie de ".$user->getFirstName()." ".$user->getLastName());
+
+            $ext = pathinfo($url, PATHINFO_EXTENSION);
+            $rand = rand(1, 999999);
+            rename($url, $urlDest.'file'.$rand.'.'.$ext);
+
+            $copieFichier->setUrl($urlTab[0].'/var'.$urlDestTab[1].'file'.$rand.'.'.$ext);
+
+            $em->persist($copieFichier);
+            $em->flush();
+
+            return new JsonResponse(array('action' =>'upload File', 'id' => $itemId, 'ext' => $ext, 'nouvelle copie ' => $copieFichier->getUrl()));
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
+    /**
+     * @Route("/uploadCorrigeFile_ajax", name="uploadCorrigeFile_ajax")
+     * @Method({"GET", "POST"})
+     */
+    public function uploadCorrigeFileAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+            $idDevoir = $request->request->get('idDevoir');
+            $userId = $request->request->get('userId');
+            $etuId = $request->request->get('etuId');
+            $url = utf8_encode($request->request->get('url'));
+            $urlDest = $request->request->get('urlDest');
+            $currentUrl = $request->request->get('currentUrl');
+
+            $devoir = $em->getRepository('AppBundle:Devoir')->findOneBy(array('id' => $idDevoir));
+            $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
+            $etu = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $etuId));
+
+            $copie = $em->getRepository('AppBundle:Copie')->findOneBy(array('auteur' => $etu, 'devoir' => $devoir));
+
+            $checkCorrige = $em->getRepository('AppBundle:Corrige')->findOneBy(array('copie' => $copie));
+            if($checkCorrige){
+                $corrigeF = $em->getRepository('AppBundle:CorrigeFichier')->findOneBy(array('corrige' => $checkCorrige));
+
+                $urlTab = explode('/var', $corrigeF->getUrl());
+
+                $em->remove($corrigeF);
+                $em->flush();
+                $em->remove($checkCorrige);
+                $em->flush();
+
+                unlink('../var'.$urlTab[1]);
+            }
+
+            $urlTab = explode('/web', $currentUrl);
+            $urlDestTab = explode('/var', $urlDest);
+
+            $corrige = new Corrige();
+            $corrige->setDateRendu(new DateTime());
+            $corrige->setCopie($copie);
+            $corrige->setAuteur($user);
+
+            $em->persist($corrige);
+
+            $corrigeFichier = new CorrigeFichier();
+            $corrigeFichier->setCorrige($corrige);
+            $corrigeFichier->setNom("[Devoir ".$devoir->getNom()."] Corrige de ".$etu->getFirstName()." ".$etu->getLastName());
+
+            $ext = pathinfo($url, PATHINFO_EXTENSION);
+            $rand = rand(1, 999999);
+            rename($url, $urlDest.'file'.$rand.'.'.$ext);
+
+            $corrigeFichier->setUrl($urlTab[0].'/var'.$urlDestTab[1].'file'.$rand.'.'.$ext);
+
+            $em->persist($corrigeFichier);
+            $em->flush();
+
+            return new JsonResponse(array('action' =>'upload File', 'id' => $idDevoir, 'ext' => $ext, 'nouvelle copie ' => $corrigeFichier->getUrl()));
         }
 
         return new JsonResponse('This is not ajax!', 400);
