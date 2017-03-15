@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block pageHeader %}
+    <div class="page-header">
+        <div class="container">
+            <h2 class="color3">Inscription</h2>
+            <ul class="breadcrumb">
+                <li class="color3">Je créé mon compte</li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+
+{% block main %}
+    <div class="container mt-10 mb-40">
+        <div class="row">
+            <div class="col-sm-5 text-justify">
+                <h4 class="heading">Comment <span class="color2">s'inscrire ?</span></h4>
+                <p><span class="color2">L’inscription se fait en ligne, sur cette interface dédiée, où vous pouvez créer votre compte pour accéder ensuite aux ressources vous concernant sur la plateforme.</span></p>
+                <p>Il n’y a pas de période d’inscription, vous pouvez le faire <span class="color2">TOUT AU LONG DE L’ANNÉE.</span></p>
+                <p>En cas de problème ou de question : contact.afadec@gmail.com</p>
+            </div>
+            <div class="col-sm-5 pull-right">
+                <h4 class="heading">Renseigner <span class="color2">mes informations</span></h4>
+                <div class="container">
+                    {{ form(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

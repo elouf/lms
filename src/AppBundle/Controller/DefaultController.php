@@ -49,16 +49,6 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/sinscrire", name="sinscrire")
-     */
-    public function sinscrireAction(Request $request)
-    {
-        return $this->render('pagesFixes/sinscrire.html.twig', [
-            'base_dir' => realpath($this->getParameter('kernel.root_dir').'/..'),
-        ]);
-    }
-
-    /**
      * @Route("/afadec", name="afadec")
      */
     public function afadecAction(Request $request)

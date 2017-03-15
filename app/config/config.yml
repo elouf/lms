@@ -82,8 +82,8 @@ fos_user:
     firewall_name: main
     user_class: AppBundle\Entity\User
     from_email:
-        address: erwannig.louf@stdi.eu
-        sender_name: Erwannig Louf
+        address: contact.afadec@gmail.com
+        sender_name: Contact AFADEC
 
 sonata_block:
     default_contexts: [cms]

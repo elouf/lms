@@ -6,6 +6,10 @@ body{
     font-family: 'Montserrat', sans-serif;
 }
 
+.loginError{
+    color: #c70700;
+}
+
 /* footer */
 .quick-links > li > a{
     color: #d3d3d3
