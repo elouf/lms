@@ -12,17 +12,78 @@
 {% endblock %}
 
 {% block main %}
+    <style>
+        #form>div{
+            margin-bottom: 15px;
+        }
+        label{
+            text-align: right;
+        }
+    </style>
+
+    <script>
+        jQuery(document).ready(function () {
+            loadEtudiant();
+
+            $('#form_typeUser').on('change', function(){
+                if($(this).val() == 0){
+                    loadEtudiant();
+                }else if($(this).val() == 1){
+                    loadFormateur();
+                }else{
+                    loadProf();
+                }
+            });
+            $('#form_concours').on('change', function(){
+                if($(this).val() == 0){
+                    // 1er degré
+                    $('#form_matiereEtu, #form_matiereForm, #form_matiereProfStag').parent().hide();
+                }else if($(this).val() == 1){
+                    // 2nd degré
+                    $('#form_matiereEtu').parent().show();
+                }
+            });
+            $('#form_sectionEns').on('change', function(){
+                if($(this).val() == 0){
+                    // 1er degré
+                    $('#form_matiereEtu, #form_matiereForm, #form_matiereProfStag').parent().hide();
+                }else if($(this).val() == 1){
+                    // 2nd degré
+                    $('#form_matiereForm').parent().show();
+                }
+            });
+
+            function loadEtudiant(){
+                $('#form_sectionEns').parent().hide();
+                $('#form_matiereEtu, #form_matiereForm, #form_matiereProfStag').parent().hide();
+                $('#form_concours').parent().show().val(0);
+            }
+            function loadFormateur(){
+                $('#form_sectionEns').parent().show();
+                $('#form_matiereEtu, #form_matiereForm, #form_matiereProfStag').parent().hide();
+                $('#form_concours').parent().hide();
+            }
+            function loadProf(){
+                $('#form_sectionEns').parent().hide();
+                $('#form_matiereEtu, #form_matiereForm').parent().hide();
+                $('#form_matiereProfStag').parent().show();
+                $('#form_concours').parent().hide();
+            }
+
+        });
+    </script>
+
     <div class="container mt-10 mb-40">
-        <div class="row">
-            <div class="col-sm-5 text-justify">
-                <h4 class="heading">Comment <span class="color2">s'inscrire ?</span></h4>
-                <p><span class="color2">L’inscription se fait en ligne, sur cette interface dédiée, où vous pouvez créer votre compte pour accéder ensuite aux ressources vous concernant sur la plateforme.</span></p>
-                <p>Il n’y a pas de période d’inscription, vous pouvez le faire <span class="color2">TOUT AU LONG DE L’ANNÉE.</span></p>
-                <p>En cas de problème ou de question : contact.afadec@gmail.com</p>
-            </div>
-            <div class="col-sm-5 pull-right">
-                <h4 class="heading">Renseigner <span class="color2">mes informations</span></h4>
-                <div class="container">
+        <div class="text-justify">
+            <h4 class="heading">Comment <span class="color2">s'inscrire ?</span></h4>
+            <p><span class="color2">L’inscription se fait en ligne, sur cette interface dédiée, où vous pouvez créer votre compte pour accéder ensuite aux ressources vous concernant sur la plateforme.</span></p>
+            <p>Il n’y a pas de période d’inscription, vous pouvez le faire <span class="color2">TOUT AU LONG DE L’ANNÉE.</span></p>
+            <p>En cas de problème ou de question : contact.afadec@gmail.com</p>
+        </div>
+        <div>
+            <h4 class="heading">Renseigner <span class="color2">mes informations</span></h4>
+            <div class="container">
+                <div class="row">
                     {{ form(form) }}
                 </div>
             </div>

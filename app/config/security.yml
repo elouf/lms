@@ -29,6 +29,11 @@ security:
         - { path: ^/login, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/inscription, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/registration, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/activation, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/faq, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/concours, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/metierEnseignant, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/afadec, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/, role: ROLE_USER }
         - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/logout, role: ROLE_USER }
