@@ -16,7 +16,8 @@ class CorrigeFichier extends Fichier
     /**
      * @var Corrige
      *
-     * @ORM\ManyToOne(targetEntity="Corrige")
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @ORM\ManyToOne(targetEntity="Corrige", cascade={"persist"})
      */
     private $corrige;
 

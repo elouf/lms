@@ -38,7 +38,8 @@ class Copie
     /**
      * @var Devoir
      *
-     * @ORM\ManyToOne(targetEntity="Devoir")
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @ORM\ManyToOne(targetEntity="Ressource", cascade={"persist"})
      */
     protected $devoir;
 

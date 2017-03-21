@@ -2,6 +2,13 @@
     data-idItem="{{ lien.id }}"
     class="courseElemAdmin lienAdmin col-md-12"
     data-typeItem="lien"
+    {% if inSection == 'true' %}
+        {% set isVisible = "false" %}
+        {% if  visible == 1 %}
+            {% set isVisible = "true" %}
+        {% endif %}
+        data-IsVisible="{{ isVisible }}"
+    {% endif %}
 >
     <div class="titleBar">Lien externe</div>
 

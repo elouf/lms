@@ -16,7 +16,8 @@ class CopieFichier extends Fichier
     /**
      * @var Copie
      *
-     * @ORM\ManyToOne(targetEntity="Copie")
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @ORM\ManyToOne(targetEntity="Copie", cascade={"persist"})
      */
     private $copie;
 

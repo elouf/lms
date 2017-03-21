@@ -2,6 +2,13 @@
     data-idItem="{{ itemId }}"
     class="courseElemAdmin groupeLiensAdmin col-md-12"
     data-typeItem="groupe"
+    {% if inSection == 'true' %}
+        {% set isVisible = "false" %}
+        {% if  visible == 1 %}
+            {% set isVisible = "true" %}
+        {% endif %}
+        data-IsVisible="{{ isVisible }}"
+    {% endif %}
 >
     <div class="titleBar">Groupe de Liens</div>
 

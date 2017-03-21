@@ -383,10 +383,10 @@
                                                                     {% endif %}
                                                                     {% if val.zones.corrige[keyR] != "undefined" %}
                                                                         <tr>
-                                                                            <td>Corrigé déposé le {{ val.zones.corrige[keyR].dateRendu|localizeddate('none', 'none', null, null, 'd LLLL Y à h:mm' ) }} par <a href="mailto:{{ val.zones.corrige[keyR].auteur.email }}">{{ val.zones.corrige[keyR].auteur.firstname }} {{ val.zones.corrige[keyR].auteur.lastname }}</a></td>
+                                                                            <td>Corrigé déposé le {{ val.zones.corrige[keyR].dateRendu|localizeddate('none', 'none', null, null, 'd LLLL Y à h:mm' ) }}</td>
                                                                             <td>
                                                                                 {% if val.zones.corrigeFichier[keyR] != "undefined" %}
-                                                                                    <a class="btn btn-sm btn-success" target="_blank" href="{{ val.zones.corrigeFichier[keyR].url }}">Ma copie</a>
+                                                                                    <a class="btn btn-sm btn-success" target="_blank" href="{{ val.zones.corrigeFichier[keyR].url }}">Ma copie corrigée</a>
                                                                                 {% endif %}
                                                                             </td>
                                                                         </tr>

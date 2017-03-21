@@ -79,7 +79,8 @@
 
             // click sur le check : affichage ou non de la zoneRessource
             $('.activationBtn').click(function () {
-                var id = $(this).closest('.courseElemAdmin').attr('data-idzone');
+                var elem = $(this).closest('.courseElemAdmin');
+                var id = elem.attr('data-idzone');
                 var isVisible = $(this).hasClass(checkedClass);
                 var myBtn = $(this);
                 $.ajax({
@@ -92,6 +93,7 @@
                     dataType: "json",
                     success: function (response) {
                         updateCheckedState(myBtn, response["isVisible"]);
+                        elem.attr('data-isVisible', response["isVisible"])
                     }
                 });
             });
@@ -357,29 +359,55 @@
                 var idItem = $(this).closest('.courseElemAdmin').attr('data-idItem');
                 var typeItem = $(this).closest('.courseElemAdmin').attr('data-typeItem');
                 var idSection = null;
+
                 if($(this).closest('[data-idSection]')){
                     idSection = $(this).closest('[data-idSection]').attr('data-idSection');
                 }
+
+                $('.modal').modal();
+                $('.modal .modal-body').hide();
+                $('.modal .modal-body[data-contentModal=alertDeleteZoneRess]').show();
+
                 $.ajax({
                     type: "POST",
-                    url: "{{path('supprItem_ajax')}}",
+                    url: "{{path('getNbZoneRess_ajax')}}",
                     data: {
-                        idItem: idItem,
-                        typeItem: typeItem
+                        idItem: idItem
                     },
                     dataType: "json",
-                    success: function (response) {
-                        if(!response["error"]){
-                            if(idSection == null){
-                                window.location.href = window.location.href.replace( /[\?#].*|$/, "?ressourcesAdmin" );
-                            }else{
-                                window.location.href = window.location.href.replace( /[\?#].*|$/, "?idSection="+idSection );
-                            }
-                        }else{
-                            console.log("Erreur de suppression de l'item "+idItem);
-                        }
+                    success: function (data) {
+
+                        $('.nbZoneUseOfRess').text(data['nb']);
+
+                        $('.validateRessDeletion').unbind('click').click(function(){
+                            $.ajax({
+                                type: "POST",
+                                url: "{{path('supprItem_ajax')}}",
+                                data: {
+                                    idItem: idItem,
+                                    typeItem: typeItem
+                                },
+                                dataType: "json",
+                                success: function (response) {
+                                    if(!response["error"]){
+                                        if(idSection == null){
+                                            window.location.href = window.location.href.replace( /[\?#].*|$/, "?ressourcesAdmin" );
+                                        }else{
+                                            window.location.href = window.location.href.replace( /[\?#].*|$/, "?idSection="+idSection );
+                                        }
+                                    }else{
+                                        console.log("Erreur de suppression de l'item "+idItem);
+                                    }
+                                }
+                            });
+                        });
+
+
+
                     }
                 });
+
+
             });
 
             // modification d'un champ d'une ressource
@@ -1233,6 +1261,24 @@
             <div class="modal-content">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 
+
+                <!--                  ALERT SUPPRESSION DE RESSOURCE                     -->
+
+                <div class="modal-body" data-contentModal="alertDeleteZoneRess" data-idItem="" style="background:#aaa; background-size:cover">
+                    <div class="row">
+                        <div class="bginverse">
+                            <div class="">
+                                <div class="alert alert-danger mb-10">
+                                    <strong>Attention!</strong> Vous allez supprimer une ressource qui est utilisée dans <span class="nbZoneUseOfRess"></span> zones!</p>
+                                </div>
+                                <div class="row mb-10" style="text-align: center">
+                                    <div class="btn btn-sm btn-info mb-3 validateRessDeletion">Valider</div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
 
                 <!--                  UPLOAD DE FICHIER                     -->
 

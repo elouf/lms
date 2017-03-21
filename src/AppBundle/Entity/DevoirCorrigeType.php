@@ -16,7 +16,8 @@ class DevoirCorrigeType extends Fichier
     /**
      * @var Devoir
      *
-     * @ORM\ManyToOne(targetEntity="Devoir")
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @ORM\ManyToOne(targetEntity="Devoir", cascade={"persist"})
      */
     private $devoir;
 

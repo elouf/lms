@@ -2,6 +2,13 @@
     class="courseElemAdmin devoirAdmin col-md-12"
     data-idItem="{{ devoir.id }}"
     data-typeItem="devoir"
+    {% if inSection == 'true' %}
+        {% set isVisible = "false" %}
+        {% if  visible == 1 %}
+            {% set isVisible = "true" %}
+        {% endif %}
+        data-IsVisible="{{ isVisible }}"
+    {% endif %}
 >
 
     <div class="titleBar">Devoir</div>

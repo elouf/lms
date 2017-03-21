@@ -59,6 +59,11 @@ class LoadDisciplineData extends AbstractFixture implements OrderedFixtureInterf
             'La discipline de Français du premier degré',
             'images/disc_crpe_fra.png');
         $this->addReference('disc_crpe_fra', $disc);
+        $disc = $this->createItem($manager,
+            'Langues Tell me More',
+            'La discipline des cours payants en ligne Tell Me More',
+            'images/disc_anglais.png');
+        $this->addReference('disc_tmm', $disc);
 
         $manager->flush();
     }

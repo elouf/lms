@@ -12,40 +12,95 @@ class LoadCohorteData extends AbstractFixture implements OrderedFixtureInterface
     public function load(ObjectManager $manager)
     {
         $coh = $this->createItem($manager,
-            'Mathématiques',
-            [$this->getReference('disc_maths')],
+            'Allemand',
+            [],
             []);
-        $this->addReference('coh_maths', $coh);
-        $coh = $this->createItem($manager,
-            'Lettres Modernes',
-            [$this->getReference('disc_maths')],
-            []);
-        $this->addReference('coh_lettres', $coh);
-        $coh = $this->createItem($manager,
-            'SVT',
-            [$this->getReference('disc_svt')],
-            []);
-        $this->addReference('coh_svt', $coh);
-        $coh = $this->createItem($manager,
-            'Histoire-Géographie',
-            [$this->getReference('disc_hist')],
-            []);
-        $this->addReference('coh_hist', $coh);
-        $coh = $this->createItem($manager,
-            'Physique-Chimie',
-            [$this->getReference('disc_phy')],
-            []);
-        $this->addReference('coh_phy', $coh);
+        $this->addReference('coh_allmand', $coh);
         $coh = $this->createItem($manager,
             'Anglais',
             [$this->getReference('disc_angl')],
             []);
         $this->addReference('coh_angl', $coh);
         $coh = $this->createItem($manager,
+            'ArtsAppl',
+            [],
+            []);
+        $this->addReference('coh_artsAppl', $coh);
+        $coh = $this->createItem($manager,
+            'ArtsPlast',
+            [],
+            []);
+        $this->addReference('coh_artsPlast', $coh);
+        $coh = $this->createItem($manager,
+            'Documentation',
+            [],
+            []);
+        $this->addReference('coh_documentation', $coh);
+        $coh = $this->createItem($manager,
+            'EcoGest',
+            [],
+            []);
+        $this->addReference('coh_ecoGest', $coh);
+        $coh = $this->createItem($manager,
+            'EducMusChantChoral',
+            [],
+            []);
+        $this->addReference('coh_educMusChantChoral', $coh);
+        $coh = $this->createItem($manager,
+            'EMCCFOADM1',
+            [],
+            []);
+        $this->addReference('coh_EMCCFOADM1', $coh);
+        $coh = $this->createItem($manager,
             'Espagnol',
             [$this->getReference('disc_esp')],
             []);
         $this->addReference('coh_esp', $coh);
+        $coh = $this->createItem($manager,
+            'HG',
+            [$this->getReference('disc_hist')],
+            []);
+        $this->addReference('coh_hist', $coh);
+        $coh = $this->createItem($manager,
+            'Lettres',
+            [$this->getReference('disc_lettres')],
+            []);
+        $this->addReference('coh_lettres', $coh);
+        $coh = $this->createItem($manager,
+            'Maths',
+            [$this->getReference('disc_maths')],
+            []);
+        $this->addReference('coh_maths', $coh);
+        $coh = $this->createItem($manager,
+            'Philosophie',
+            [],
+            []);
+        $this->addReference('coh_philo', $coh);
+        $coh = $this->createItem($manager,
+            'PhyChi',
+            [$this->getReference('disc_phy')],
+            []);
+        $this->addReference('coh_phy', $coh);
+        $coh = $this->createItem($manager,
+            'SES',
+            [],
+            []);
+        $this->addReference('coh_ses', $coh);
+        $coh = $this->createItem($manager,
+            'SIgenie',
+            [],
+            []);
+        $this->addReference('coh_siGenie', $coh);
+        $coh = $this->createItem($manager,
+            'STMS',
+            [],
+            []);
+        $this->addReference('coh_stms', $coh);
+        $coh = $this->createItem($manager,
+            'SVT',
+            [$this->getReference('disc_svt')],
+            []);
+        $this->addReference('coh_svt', $coh);
 
         $coh = $this->createItem($manager,
             'crpe',

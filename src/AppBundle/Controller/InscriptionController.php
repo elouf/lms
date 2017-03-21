@@ -2,6 +2,8 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Inscription_c;
+use AppBundle\Entity\Inscription_d;
 use DateTime;
 use AppBundle\Entity\Inscription_coh;
 use AppBundle\Entity\User;
@@ -80,65 +82,73 @@ class InscriptionController extends Controller
             ))
             ->add('matiereEtu', ChoiceType::class, array(
                 'choices'  => array(
-                    'Anglais' => 0,
-                    'EMCCFOADM1' => 2,
-                    'Espagnol' => 3,
-                    'Histoire-Géographie' => 4,
-                    'Lettres modernes' => 5,
-                    'Mathématiques' => 6,
-                    'Sciences physiques et chimiques' => 7,
-                    'SVT' => 8
+                    'Anglais' => 'Anglais',
+                    'EMCCFOADM1' => 'EMCCFOADM1',
+                    'Espagnol' => 'Espagnol',
+                    'Histoire-Géographie' => 'HG',
+                    'Lettres modernes' => 'Lettres',
+                    'Mathématiques' => 'Maths',
+                    'Sciences physiques et chimiques' => 'PhyChi',
+                    'SVT' => 'SVT'
                 ),
                 'label' => "Matière",
                 'label_attr' => array('class' => 'col-sm-4')
             ))
             ->add('matiereForm', ChoiceType::class, array(
                 'choices'  => array(
-                    'Allemand' => 0,
-                    'Anglais' => 1,
-                    'Arts appliqués' => 2,
-                    'Arts plastiques' => 3,
-                    'Documentation' => 4,
-                    'Economie et gestion' => 5,
-                    'Education musicale et chant choral' => 6,
-                    'EMCCFOADM1' => 7,
-                    'Espagnol' => 8,
-                    'Histoire-Géographie' => 9,
-                    'Lettres modernes' => 10,
-                    'Mathématiques' => 11,
-                    'Philosophie' => 12,
-                    'Sciences économiques et sociales' => 13,
-                    'Sciences industrielles - Génie' => 14,
-                    'STMS - Biotechnologies' => 15,
-                    'Sciences physiques et chimiques' => 16,
-                    'SVT' => 17
+                    'Allemand' => 'Allemand',
+                    'Anglais' => 'Anglais',
+                    'Arts appliqués' => 'ArtsAppl',
+                    'Arts plastiques' => 'ArtsPlast',
+                    'Documentation' => 'Documentation',
+                    'Economie et gestion' => 'EcoGest',
+                    'Education musicale et chant choral' => 'EducMusChantChoral',
+                    'EMCCFOADM1' => 'EMCCFOADM1',
+                    'Espagnol' => 'Espagnol',
+                    'Histoire-Géographie' => 'HG',
+                    'Lettres modernes' => 'Lettres',
+                    'Mathématiques' => 'Maths',
+                    'Philosophie' => 'Philosophie',
+                    'Sciences économiques et sociales' => 'SES',
+                    'Sciences industrielles - Génie' => 'SIgenie',
+                    'STMS - Biotechnologies' => 'STMS',
+                    'Sciences physiques et chimiques' => 'PhyChi',
+                    'SVT' => 'SVT'
                 ),
                 'label' => "Matière",
                 'label_attr' => array('class' => 'col-sm-4')
             ))
             ->add('matiereProfStag', ChoiceType::class, array(
                 'choices'  => array(
-                    'Allemand' => 0,
-                    'Arts plastiques' => 1,
-                    'Arts appliqués' => 2,
-                    'Documentation' => 3,
-                    'Economie et gestion' => 4,
-                    'Education musicale et chant choral' => 5,
-                    'Espagnol' => 6,
-                    'Philosophie' => 7,
-                    'Sciences économiques et sociales' => 8,
-                    'Sciences industrielles - Génie' => 9,
-                    'STMS - Biotechnologies' => 10
+                    'Allemand' => 'Allemand',
+                    'Arts appliqués' => 'ArtsAppl',
+                    'Arts plastiques' => 'ArtsPlast',
+                    'Documentation' => 'Documentation',
+                    'Economie et gestion' => 'EcoGest',
+                    'Education musicale et chant choral' => 'EducMusChantChoral',
+                    'Espagnol' => 'Espagnol',
+                    'Philosophie' => 'Philosophie',
+                    'Sciences économiques et sociales' => 'SES',
+                    'Sciences industrielles - Génie' => 'SIgenie',
+                    'STMS - Biotechnologies' => 'STMS'
                 ),
                 'label' => "Matière",
                 'label_attr' => array('class' => 'col-sm-4')
             ))
-            ->add('options', ChoiceType::class, array(
+            ->add('optionsCours', ChoiceType::class, array(
                 'choices'  => array(
-                    'Anglais niveau B2 (gratuit)' => 0,
-                    'Langues Tell me More (payant)' => 1
+                    'Anglais niveau B2 (gratuit)' => 'Anglais B2'
                 ),
                 'label' => "Options",
+                'label_attr' => array('class' => 'col-sm-4'),
+                'multiple' => true,
+                'expanded' => true
+            ))
+            ->add('optionsDisc', ChoiceType::class, array(
+                'choices'  => array(
+                    'Langues Tell me More (payant)' => 'Langues Tell me More'
+                ),
+                'label' => " ",
                 'label_attr' => array('class' => 'col-sm-4'),
                 'multiple' => true,
                 'expanded' => true
@@ -164,50 +174,64 @@ class InscriptionController extends Controller
             $user->setInstitut($data['institut']);
 
             $em = $this->getDoctrine()->getManager();
-            //$em->persist($user);
+            $em->persist($user);
 
 
+            $nomCoh = "";
+            $role = "";
             if($data['typeUser'] == 0){
                 // Etudiant
+                $role = $em->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Etudiant'));
                 if($data['concours'] == 0){
                     // CRPE étudiant
-                    $coh = $em->getRepository('AppBundle:Cohorte')->findOneBy(array('nom' => 'crpe'));
-                    $role = $em->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Etudiant'));
-                    $inscr = new Inscription_coh();
-                    $inscr->setUser($user);
-                    $inscr->setCohorte($coh);
-                    $inscr->setDateInscription(new DateTime());
-                    $inscr->setRole($role);
-                    //$em->persist($inscr);
+                    $nomCoh = 'crpe';
                 }elseif($data['concours'] == 1){
                     // CAPES étudiant
-
+                    $nomCoh = $data['matiereEtu'];
                 }
             }elseif($data['typeUser'] == 1){
                 // Formateur
+                $role = $em->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Stagiaire'));
                 if($data['sectionEns'] == 0){
                     // CRPE formateur
-                    $coh = $em->getRepository('AppBundle:Cohorte')->findOneBy(array('nom' => 'crpe'));
-                    $role = $em->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Stagiaire'));
-                    $inscr = new Inscription_coh();
-                    $inscr->setUser($user);
-                    $inscr->setCohorte($coh);
-                    $inscr->setDateInscription(new DateTime());
-                    $inscr->setRole($role);
-                    //$em->persist($inscr);
+                    $nomCoh = 'crpe';
                 }elseif($data['sectionEns'] == 1){
                     // CAPES étudiant
-
+                    $nomCoh = $data['matiereForm'];
                 }
             }elseif($data['typeUser'] == 2){
                 // Prof stagiaire
+                $role = $em->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Enseignant'));
+                $nomCoh = $data['matiereProfStag'];
+            }
+            $coh = $em->getRepository('AppBundle:Cohorte')->findOneBy(array('nom' => $nomCoh));
+            $inscr = new Inscription_coh();
+            $inscr->setUser($user);
+            $inscr->setCohorte($coh);
+            $inscr->setDateInscription(new DateTime());
+            $inscr->setRole($role);
+            $em->persist($inscr);
 
+            foreach($data['optionsCours'] as $nomCours){
+                $cours = $em->getRepository('AppBundle:Cours')->findOneBy(array('nom' => $nomCours));
+                $inscrC = new Inscription_c();
+                $inscrC->setCours($cours);
+                $inscrC->setDateInscription(new DateTime());
+                $inscrC->setRole($role);
+                $inscrC->setUser($user);
+                $em->persist($inscrC);
+            }
+            foreach($data['optionsDisc'] as $nomDisc){
+                $disc = $em->getRepository('AppBundle:Discipline')->findOneBy(array('nom' => $nomDisc));
+                $inscrD = new Inscription_d();
+                $inscrD->setDiscipline($disc);
+                $inscrD->setDateInscription(new DateTime());
+                $inscrD->setRole($role);
+                $inscrD->setUser($user);
+                $em->persist($inscrD);
             }
 
-
             $em->flush();
-
-            dump($data['typeUser']);
 
             $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
             $routeName = $request->get('_route');
@@ -240,7 +264,7 @@ class InscriptionController extends Controller
                 )
                 */
             ;
-            //$this->get('mailer')->send($message);
+            $this->get('mailer')->send($message);
 
 
             return $this->redirectToRoute('registration', array('userId' => $user->getId()));

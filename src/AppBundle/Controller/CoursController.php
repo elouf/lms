@@ -203,6 +203,25 @@ class CoursController extends Controller
     }
 
     /**
+     * @Route("/getNbZoneRess_ajax", name="getNbZoneRess_ajax")
+     * @Method({"GET", "POST"})
+     */
+    public function getNbZoneRessAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+            $id = $request->request->get('idItem');
+
+            $ressource = $em->getRepository('AppBundle:Ressource')->findOneBy(array('id' => $id));
+            $zones = $em->getRepository('AppBundle:ZoneRessource')->findBy(array('ressource' => $ressource));
+
+            return new JsonResponse(array('action' =>'get nb zone avec cette ressource', 'nb' => count($zones)));
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
+    /**
      * @Route("/supprItem_ajax", name="supprItem_ajax")
      * @Method({"GET", "POST"})
      */
@@ -231,14 +250,6 @@ class CoursController extends Controller
                 );
             }else {
                 $ressource = $em->getRepository('AppBundle:' . $entityRessourceName)->findOneBy(array('id' => $id));
-
-                // on supprime les zones qui contenait l'item
-                $zones = $em->getRepository('AppBundle:ZoneRessource')->findBy(array('ressource' => $ressource));
-                for($i=0; $i<count($zones); $i++){
-                    $em->remove($zones[$i]);
-                }
-
-                // puis on supprime l'item
                 $em->remove($ressource);
                 $em->flush();
                 return new JsonResponse(array('action' =>'delete Zone', 'id' => $ressource->getId()));

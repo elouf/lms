@@ -169,6 +169,15 @@ class LoadCoursData extends AbstractFixture implements OrderedFixtureInterface
             0);
         $this->addReference('cours_crpe_fra_remed', $cours);
 
+        $cours = $this->createItem($manager,
+            'Anglais B2',
+            "Cours d'Anglais B2 (accès gratuit)",
+            'accueil',
+            'disciplines/disc_anglais.png',
+            $this->getReference('disc_angl'),
+            0);
+        $this->addReference('cours_anglais_b2', $cours);
+
         $manager->flush();
     }
 

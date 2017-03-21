@@ -31,7 +31,8 @@ class Corrige
     /**
      * @var Copie
      *
-     * @ORM\OneToOne(targetEntity="Copie")
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @ORM\OneToOne(targetEntity="Copie", cascade={"persist"})
      */
     private $copie;
 

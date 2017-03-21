@@ -229,6 +229,10 @@ textarea{
     padding: 6px 15px
 }
 
+[data-isvisible="false"] .titleBar, [data-isvisible="false"] .formCol, [data-isvisible="false"] .myBtn:not(.btnActivationCheck){
+    opacity: .3;
+}
+
 /* popup ajout ressources */
 .tableAddItem{
     width:100%;
@@ -430,7 +434,7 @@ textarea{
 .masqueDevoir{
     z-index: 10;
     background: #000;
-    opacity: .4;
+    opacity: .85;
     position: absolute;
     top:0;
     left:0;

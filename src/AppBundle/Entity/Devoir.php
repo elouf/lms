@@ -22,14 +22,6 @@ class Devoir extends Ressource
     private $duree;
 
     /**
-     * Durée en secondes
-     * @var int
-     *
-     * @ORM\Column(name="corrigeType", type="integer", nullable=true)
-     */
-    private $corrigeType;
-
-    /**
      * Set duree
      *
      * @param integer $duree
