@@ -53,9 +53,9 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
         }
     }
 
-    public function createItem(ObjectManager $manager, $username, $password, $firstname, $lastname, $email, $institut, $isSuperAdmin){
+    public function createItem(ObjectManager $manager, $password, $firstname, $lastname, $email, $institut, $isSuperAdmin){
         $item = new User();
-        $item->setUsername($username);
+        $item->setUsername($email);
         $item->setPlainPassword($password);
         $item->setFirstname($firstname);
         $item->setLastname($lastname);

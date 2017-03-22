@@ -12,7 +12,6 @@ class UserAdmin extends AbstractAdmin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->add('username', 'text')
             ->add('email', 'text')
             ->add('enabled')
         ;
@@ -33,8 +32,7 @@ class UserAdmin extends AbstractAdmin
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-            ->addIdentifier('username')
-            ->add('email')
+            ->addIdentifier('email')
             ->add('enabled')
         ;
     }

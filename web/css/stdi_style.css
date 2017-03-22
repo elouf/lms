@@ -137,6 +137,9 @@ a { font-family: inherit; color: inherit; }
     background: #ff9c00;
     padding: 0;
 }
+.btnZoom{
+    background: #0ca200 !important;
+}
 .btnDelete:not(.btnSupprElem){
     background: #c64d34 !important;
 }

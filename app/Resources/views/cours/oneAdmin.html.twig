@@ -431,7 +431,6 @@
                 });
             }
             function detectInput(elem){
-                console.log(elem.find('.btnSaveInputChange').length)
                 if(!elem.hasClass('inEdition')) {
                     elem.addClass('inEdition');
                     elem.find('.btnActionCol .btnDelete:first').before('<div class="myBtn btnSaveInputChange btnAdmin btnLeft"><i class="fa fa-floppy-o"></i></div>');
@@ -530,6 +529,8 @@
                     var dureeM = devoir.find('[data-champName=dureeMinutes] input').val();
                     var dateDebut = devoir.find('[data-champName=dateDebut] input').val();
                     var dateFin = devoir.find('[data-champName=dateFin] input').val();
+                    var mustReload = $(this).hasClass('mustReload');
+                    var idSection = $(this).closest('[data-idSection]').attr('data-idSection');
 
                     $.ajax({
                         type: 'POST',
@@ -546,8 +547,12 @@
                             dateFin: dateFin
                         },
                         success: function (data) {
-                            devoir.removeClass('inEdition');
-                            devoir.find('.btnSaveInputChange').remove();
+                            if(mustReload){
+                                window.location.href = window.location.href.replace( /[\?#].*|$/, "?idSection="+idSection );
+                            }else{
+                                devoir.removeClass('inEdition');
+                                devoir.find('.btnSaveInputChange').remove();
+                            }
                         }
                     });
                 });
@@ -980,7 +985,12 @@
                                     console.log("success");
                                     console.log(data);
                                     $('.modal').modal('toggle');
-                                    window.location.href = window.location.href.replace( /[\?#].*|$/, "?idSection="+idSection );
+                                    if(devoir.find('.btnSaveInputChange').length){
+                                        devoir.find('.btnSaveInputChange').addClass('mustReload');
+                                        devoir.find('.btnSaveInputChange').click();
+                                    }else{
+                                        window.location.href = window.location.href.replace( /[\?#].*|$/, "?idSection="+idSection );
+                                    }
                                 },
                                 error: function(xhr, status, error) {
                                     console.log("error");
@@ -1035,11 +1045,14 @@
                 var dateD = $(this).find('.evtDateD');
                 var dateF = $(this).find('.evtDateF');
                 dateD.datetimepicker({
-                    locale: 'fr'
+                    locale: 'fr',
+                    date: toJSDate(dateD.attr('data-date'))
                 });
+
                 dateF.datetimepicker({
                     locale: 'fr',
-                    useCurrent: false
+                    useCurrent: false,
+                    date: toJSDate(dateF.attr('data-date'))
                 });
                 dateD.on("dp.change", function (e) {
                     dateF.data("DateTimePicker").minDate(e.date);
@@ -1052,6 +1065,15 @@
                     detectInput(elem);
                 });
             });
+
+            function toJSDate(phpDateTime){
+                var dateTime = phpDateTime.split(" ");//dateTime[0] = date, dateTime[1] = time
+
+                var date = dateTime[0].split("-");
+                var time = dateTime[1].split(":");
+
+                return new Date(date[0], (date[1]-1), date[2], time[0], time[1], 0, 0);
+            }
 
             // champ durée
             $('.bootstrapNumber').bootstrapNumber();

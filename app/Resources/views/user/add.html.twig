@@ -16,6 +16,18 @@
         #form>div{
             margin-bottom: 15px;
         }
+        #form>div:last-of-type{
+            text-align: center;
+        }
+        #form>div>input{
+            max-width: 350px;
+        }
+        #form>div>*{
+            float: none;
+        }
+        #form>div>ul>li{
+            color: #c70c00;
+        }
         label{
             text-align: right;
         }
@@ -29,6 +41,9 @@
 
     <script>
         jQuery(document).ready(function () {
+
+            $('label').addClass('col-sm-4');
+
             loadEtudiant();
 
             $('#form_typeUser').on('change', function(){

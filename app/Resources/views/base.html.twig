@@ -100,7 +100,7 @@
                     <li><a href="{{ path('myCourses') }}">Les cours</a></li>
                     {% if app.user %}
                         <li>
-                            <a href="#" data-userId="{{ app.user.id }}">{{ app.user.username }}</a>
+                            <a href="#" data-userId="{{ app.user.id }}">{{ app.user.firstname }} {{ app.user.lastname }}</a>
                             <ul class="sub-menu">
                                 {% block vueAdmin %}{% endblock %}
                                 <li><a href="{{ path('calendrier') }}">Mon calendrier</a></li>

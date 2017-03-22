@@ -40,14 +40,13 @@ class InscriptionController extends Controller
                 'label_attr' => array('class' => 'col-sm-4'),
                 'attr' => array('class' => 'col-sm-8')
             ))
-            ->add('identifiant', TextType::class, array(
-                'label_attr' => array('class' => 'col-sm-4'),
-                'attr' => array('class' => 'col-sm-8')
-            ))
-            ->add('mdp', PasswordType::class, array(
-                'label' => 'Mot de passe',
-                'label_attr' => array('class' => 'col-sm-4'),
-                'attr' => array('class' => 'col-sm-8')
+            ->add('mdp', RepeatedType::class, array(
+                'type' => PasswordType::class,
+                'invalid_message' => 'Les mots de passe ne sont pas identiques',
+                'required' => true,
+                'first_options'  => array('label' => 'Mot de passe'),
+                'second_options' => array('label' => 'Confirmation du mot de passe'),
+                'options' => array('attr' => array('class' => 'col-sm-8'))
                 ))
             ->add('institut', EntityType::class, array(
                 'class' => 'AppBundle:Institut',
@@ -135,26 +134,18 @@ class InscriptionController extends Controller
                 'label' => "Matière",
                 'label_attr' => array('class' => 'col-sm-4')
             ))
-            ->add('optionsCours', ChoiceType::class, array(
-                'choices'  => array(
-                    'Anglais niveau B2 (gratuit)' => 'Anglais B2'
-                ),
-                'label' => "Options",
-                'label_attr' => array('class' => 'col-sm-4'),
-                'multiple' => true,
-                'expanded' => true
-            ))
             ->add('optionsDisc', ChoiceType::class, array(
                 'choices'  => array(
+                    'Aucune' => '0',
+                    'Anglais niveau B2 (gratuit)' => 'English',
                     'Langues Tell me More (payant)' => 'Langues Tell me More'
                 ),
-                'label' => " ",
-                'label_attr' => array('class' => 'col-sm-4'),
-                'multiple' => true,
-                'expanded' => true
+                'label' => "Options",
+                'label_attr' => array('class' => 'col-sm-4')
             ))
             ->add('submit', SubmitType::class, array(
-                'label' => 'Valider mon inscription'
+                'label' => 'Valider mon inscription',
+                'attr' => array('class' => 'btn btn-primary')
             ))
             ->getForm()
         ;
@@ -169,7 +160,7 @@ class InscriptionController extends Controller
             $user->setFirstname($data['prenom']);
             $user->setLastname($data['nom']);
             $user->setEmail($data['email']);
-            $user->setUsername($data['identifiant']);
+            $user->setUsername($data['email']);
             $user->setPlainPassword($data['mdp']);
             $user->setInstitut($data['institut']);
 
@@ -212,7 +203,7 @@ class InscriptionController extends Controller
             $inscr->setRole($role);
             $em->persist($inscr);
 
-            foreach($data['optionsCours'] as $nomCours){
+            /*foreach($data['optionsCours'] as $nomCours){
                 $cours = $em->getRepository('AppBundle:Cours')->findOneBy(array('nom' => $nomCours));
                 $inscrC = new Inscription_c();
                 $inscrC->setCours($cours);
@@ -220,15 +211,16 @@ class InscriptionController extends Controller
                 $inscrC->setRole($role);
                 $inscrC->setUser($user);
                 $em->persist($inscrC);
-            }
-            foreach($data['optionsDisc'] as $nomDisc){
-                $disc = $em->getRepository('AppBundle:Discipline')->findOneBy(array('nom' => $nomDisc));
+            }*/
+            if($data['optionsDisc'] != '0'){
+                $disc = $em->getRepository('AppBundle:Discipline')->findOneBy(array('nom' => $data['optionsDisc']));
                 $inscrD = new Inscription_d();
                 $inscrD->setDiscipline($disc);
                 $inscrD->setDateInscription(new DateTime());
                 $inscrD->setRole($role);
                 $inscrD->setUser($user);
                 $em->persist($inscrD);
+
             }
 
             $em->flush();

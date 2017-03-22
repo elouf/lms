@@ -327,11 +327,13 @@
                                                             </div>
                                                             {% if mode == "etu" %}
                                                                 <!-- On permet d'afficher la popup seulement si la date de fin n'est pas dépassée
+                                                                et si la date de début est au moins atteinte
                                                                 et si une copie n'a pas encore été déposée
                                                                 et si on a pas dépassé le temps alloué -->
                                                                 {% set duree = '+' ~ valR.duree ~ 'seconds' %}
                                                                 {% if val.zones.copieFichier[keyR] == "undefined"
                                                                     and  "now"|date('Ymd H:i:s') < valR.dateFin|date('Ymd H:i:s')
+                                                                    and  "now"|date('Ymd H:i:s') > valR.dateDebut|date('Ymd H:i:s')
                                                                 %}
                                                                     {% if val.zones.copie[keyR] == "undefined" or "now"|date('Ymd H:i:s') < val.zones.copie[keyR].dateCreation|date_modify(duree)|date('Ymd H:i:s') %}
                                                                         <div class="col-xs-3 text-right conteneurLiensSujets">
@@ -361,7 +363,7 @@
                                                                             {% endfor %}
                                                                         </td>
                                                                     </tr>
-                                                                    {% if (val.zones.corrigeType[keyR] != "undefined" and "now"|date('Ymd H:i:s') > valR.dateFin|date('Ymd H:i:s')) or val.zones.copieFichier[keyR] != "undefined" %}
+                                                                    {% if (val.zones.corrigeType[keyR] != "undefined" and "now"|date('Ymd H:i:s') > valR.dateFin|date('Ymd H:i:s')) %}
                                                                         <tr>
                                                                             <td>Corrigé type du devoir</td>
                                                                             <td>
