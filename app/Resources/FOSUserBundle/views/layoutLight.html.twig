@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block pageHeader %}
+    <div class="page-header">
+        <div class="container">
+            <h2 class="color3">Bienvenue sur e-educmaster.com</h2>
+            <ul class="breadcrumb">
+                <li class="color3">Réinitialiser son mot de passe</li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+
+{% block main %}
+
+    <div class="container mb-60 mt-20">
+        <div class="row">
+
+            {% if not app.user %}
+                {% block fos_user_content %}
+                {% endblock fos_user_content %}
+            {% endif %}
+
+        </div>
+    </div>
+{% endblock %}

@@ -44,6 +44,17 @@
 
             $('label').addClass('col-sm-4');
 
+            if($('#form_mdp_first').parent().find('ul').length){
+                $('#form_mdp_first').parent().find('ul').addClass('col-sm-8 text-center').appendTo($('#form_mdp_first').parent());
+            }
+            if($('#form_email').val()){
+                $('#form_email').parent().append('<ul class="col-sm-12 text-center"><li>Cet email appartient déjà à un compte sur la plateforme</li></ul>');
+            }
+
+            $('input').on('change', function(){
+                $('#form>div>ul').remove();
+            });
+
             loadEtudiant();
 
             $('#form_typeUser').on('change', function(){

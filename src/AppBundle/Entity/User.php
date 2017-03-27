@@ -116,4 +116,16 @@ class User extends BaseUser
     {
         return $this->institut;
     }
+
+    public function setEmail($email)
+    {
+        parent::setUsername($email);
+        return parent::setEmail($email);
+    }
+
+    public function setEmailCanonical($emailCanonical)
+    {
+        parent::setUsernameCanonical($emailCanonical);
+        return parent::setEmailCanonical($emailCanonical);
+    }
 }

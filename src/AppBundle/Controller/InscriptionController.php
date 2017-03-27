@@ -11,6 +11,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
@@ -36,7 +37,7 @@ class InscriptionController extends Controller
                 'label_attr' => array('class' => 'col-sm-4'),
                 'attr' => array('class' => 'col-sm-8')
             ))
-            ->add('email', TextType::class, array(
+            ->add('email', EmailType::class, array(
                 'label_attr' => array('class' => 'col-sm-4'),
                 'attr' => array('class' => 'col-sm-8')
             ))
@@ -155,111 +156,115 @@ class InscriptionController extends Controller
         if ($form->isValid()) {
             $data = $form->getData();
 
-            $user = new User();
-
-            $user->setFirstname($data['prenom']);
-            $user->setLastname($data['nom']);
-            $user->setEmail($data['email']);
-            $user->setUsername($data['email']);
-            $user->setPlainPassword($data['mdp']);
-            $user->setInstitut($data['institut']);
-
             $em = $this->getDoctrine()->getManager();
-            $em->persist($user);
+            $checkUser = $em->getRepository('AppBundle:User')->findOneBy(array('email' => $data['email']));
+            if(!$checkUser){
+                $user = new User();
+
+                $user->setFirstname($data['prenom']);
+                $user->setLastname($data['nom']);
+                $user->setEmail($data['email']);
+                $user->setPlainPassword($data['mdp']);
+                $user->setInstitut($data['institut']);
+
+                $em->persist($user);
 
 
-            $nomCoh = "";
-            $role = "";
-            if($data['typeUser'] == 0){
-                // Etudiant
-                $role = $em->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Etudiant'));
-                if($data['concours'] == 0){
-                    // CRPE étudiant
-                    $nomCoh = 'crpe';
-                }elseif($data['concours'] == 1){
-                    // CAPES étudiant
-                    $nomCoh = $data['matiereEtu'];
+                $nomCoh = "";
+                $role = "";
+                if($data['typeUser'] == 0){
+                    // Etudiant
+                    $role = $em->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Etudiant'));
+                    if($data['concours'] == 0){
+                        // CRPE étudiant
+                        $nomCoh = 'crpe';
+                    }elseif($data['concours'] == 1){
+                        // CAPES étudiant
+                        $nomCoh = $data['matiereEtu'];
+                    }
+                }elseif($data['typeUser'] == 1){
+                    // Formateur
+                    $role = $em->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Stagiaire'));
+                    if($data['sectionEns'] == 0){
+                        // CRPE formateur
+                        $nomCoh = 'crpe';
+                    }elseif($data['sectionEns'] == 1){
+                        // CAPES étudiant
+                        $nomCoh = $data['matiereForm'];
+                    }
+                }elseif($data['typeUser'] == 2){
+                    // Prof stagiaire
+                    $role = $em->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Enseignant'));
+                    $nomCoh = $data['matiereProfStag'];
                 }
-            }elseif($data['typeUser'] == 1){
-                // Formateur
-                $role = $em->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Stagiaire'));
-                if($data['sectionEns'] == 0){
-                    // CRPE formateur
-                    $nomCoh = 'crpe';
-                }elseif($data['sectionEns'] == 1){
-                    // CAPES étudiant
-                    $nomCoh = $data['matiereForm'];
+                $coh = $em->getRepository('AppBundle:Cohorte')->findOneBy(array('nom' => $nomCoh));
+                $inscr = new Inscription_coh();
+                $inscr->setUser($user);
+                $inscr->setCohorte($coh);
+                $inscr->setDateInscription(new DateTime());
+                $inscr->setRole($role);
+                $em->persist($inscr);
+
+                /*foreach($data['optionsCours'] as $nomCours){
+                    $cours = $em->getRepository('AppBundle:Cours')->findOneBy(array('nom' => $nomCours));
+                    $inscrC = new Inscription_c();
+                    $inscrC->setCours($cours);
+                    $inscrC->setDateInscription(new DateTime());
+                    $inscrC->setRole($role);
+                    $inscrC->setUser($user);
+                    $em->persist($inscrC);
+                }*/
+                if($data['optionsDisc'] != '0'){
+                    $disc = $em->getRepository('AppBundle:Discipline')->findOneBy(array('nom' => $data['optionsDisc']));
+                    $inscrD = new Inscription_d();
+                    $inscrD->setDiscipline($disc);
+                    $inscrD->setDateInscription(new DateTime());
+                    $inscrD->setRole($role);
+                    $inscrD->setUser($user);
+                    $em->persist($inscrD);
+
                 }
-            }elseif($data['typeUser'] == 2){
-                // Prof stagiaire
-                $role = $em->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Enseignant'));
-                $nomCoh = $data['matiereProfStag'];
+
+                $em->flush();
+
+                $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+                $routeName = $request->get('_route');
+
+                $message = \Swift_Message::newInstance()
+                    ->setSubject('[AFADEC] Confirmation de votre inscription')
+                    ->setFrom('contact.afadec@gmail.com')
+                    ->setTo($user->getEmail())
+                    ->setBody(
+                        $this->renderView(
+                            'user/registrationMail.html.twig',
+                            array(
+                                'prenom' => $user->getFirstname(),
+                                'nom' => $user->getLastname(),
+                                'id' => $user->getId(),
+                                'url' => str_replace($routeName, 'activation', $actual_link),
+                                'urlLogin' =>str_replace($routeName, 'login', $actual_link)
+                            )
+                        ),
+                        'text/html'
+                    )
+                    /*
+                     * If you also want to include a plaintext version of the message
+                    ->addPart(
+                        $this->renderView(
+                            'Emails/registration.txt.twig',
+                            array('name' => $name)
+                        ),
+                        'text/plain'
+                    )
+                    */
+                ;
+                $this->get('mailer')->send($message);
+
+
+                return $this->redirectToRoute('registration', array('userId' => $user->getId()));
             }
-            $coh = $em->getRepository('AppBundle:Cohorte')->findOneBy(array('nom' => $nomCoh));
-            $inscr = new Inscription_coh();
-            $inscr->setUser($user);
-            $inscr->setCohorte($coh);
-            $inscr->setDateInscription(new DateTime());
-            $inscr->setRole($role);
-            $em->persist($inscr);
-
-            /*foreach($data['optionsCours'] as $nomCours){
-                $cours = $em->getRepository('AppBundle:Cours')->findOneBy(array('nom' => $nomCours));
-                $inscrC = new Inscription_c();
-                $inscrC->setCours($cours);
-                $inscrC->setDateInscription(new DateTime());
-                $inscrC->setRole($role);
-                $inscrC->setUser($user);
-                $em->persist($inscrC);
-            }*/
-            if($data['optionsDisc'] != '0'){
-                $disc = $em->getRepository('AppBundle:Discipline')->findOneBy(array('nom' => $data['optionsDisc']));
-                $inscrD = new Inscription_d();
-                $inscrD->setDiscipline($disc);
-                $inscrD->setDateInscription(new DateTime());
-                $inscrD->setRole($role);
-                $inscrD->setUser($user);
-                $em->persist($inscrD);
-
-            }
-
-            $em->flush();
-
-            $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-            $routeName = $request->get('_route');
-
-            $message = \Swift_Message::newInstance()
-                ->setSubject('[AFADEC] Confirmation de votre inscription')
-                ->setFrom('contact.afadec@gmail.com')
-                ->setTo($user->getEmail())
-                ->setBody(
-                    $this->renderView(
-                        'user/registrationMail.html.twig',
-                        array(
-                            'prenom' => $user->getFirstname(),
-                            'nom' => $user->getLastname(),
-                            'id' => $user->getId(),
-                            'url' => str_replace($routeName, 'activation', $actual_link),
-                            'urlLogin' =>str_replace($routeName, 'login', $actual_link)
-                        )
-                    ),
-                    'text/html'
-                )
-                /*
-                 * If you also want to include a plaintext version of the message
-                ->addPart(
-                    $this->renderView(
-                        'Emails/registration.txt.twig',
-                        array('name' => $name)
-                    ),
-                    'text/plain'
-                )
-                */
-            ;
-            $this->get('mailer')->send($message);
 
 
-            return $this->redirectToRoute('registration', array('userId' => $user->getId()));
         }
 
         return $this->render('user/add.html.twig', ['form' => $form->createView()]);
