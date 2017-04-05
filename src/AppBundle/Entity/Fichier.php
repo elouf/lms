@@ -35,6 +35,13 @@ class Fichier
     private $nom;
 
     /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="dateCrea", type="datetime", nullable=true)
+     */
+    private $dateCrea;
+
+    /**
      * Get id
      *
      * @return int
@@ -90,5 +97,29 @@ class Fichier
     public function getNom()
     {
         return $this->nom;
+    }
+
+    /**
+     * Set dateCrea
+     *
+     * @param \DateTime $dateCrea
+     *
+     * @return Evenement
+     */
+    public function setDateCrea($dateCrea)
+    {
+        $this->dateCrea = $dateCrea;
+
+        return $this;
+    }
+
+    /**
+     * Get dateCrea
+     *
+     * @return \DateTime
+     */
+    public function getDateCrea()
+    {
+        return $this->dateCrea;
     }
 }

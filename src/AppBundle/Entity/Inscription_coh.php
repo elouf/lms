@@ -15,7 +15,7 @@ class Inscription_coh extends Inscription
 
     /**
      * @var Cohorte
-     * @ORM\Id
+     *
      * @ORM\ManyToOne(targetEntity="Cohorte")
      * @ORM\JoinColumn(name="cohorte_id", referencedColumnName="id")
      */

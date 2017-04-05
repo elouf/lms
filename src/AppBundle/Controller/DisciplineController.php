@@ -6,6 +6,7 @@ use AppBundle\Entity\Discipline;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class DisciplineController extends Controller
 {
@@ -64,7 +65,7 @@ class DisciplineController extends Controller
                 }
             }
         }
-        dump($coursesIndiv);
+
 
         $courses = array();
 
@@ -88,7 +89,7 @@ class DisciplineController extends Controller
                 $courses[$idx]["courses"] = array($coursesIndiv[$j]);
             }
         }
-
+        dump($courses);
         return $this->render('discipline/myCourses.html.twig', ['courses' => $courses]);
     }
 
@@ -115,4 +116,28 @@ class DisciplineController extends Controller
 
         return $this->render('discipline/one.html.twig', ['discipline' => $discipline, 'courses' => $courses]);
     }
+
+    /**
+     * @Route("/changeActivationDocsDisc_ajax", name="changeActivationDocsDisc_ajax")
+     */
+    public function changeActivationDocsDiscAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+
+            $id = $request->request->get('id');
+            $isVisible = $request->request->get('isVisible');
+
+            $disc = $em->getRepository('AppBundle:Discipline')->findOneBy(array('id' => $id));
+            $disc->setDocsActivated($isVisible == "false");
+
+            $em->persist($disc);
+            $em->flush();
+
+            return new JsonResponse(array('action' =>'change Visibility of documents', 'id' => $disc->getId(), 'isVisible' => $disc->getDocsActivated()));
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
 }

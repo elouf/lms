@@ -1,37 +1,33 @@
 <?php
 
-namespace AppBundle\DataFixtures\ORM;
+namespace AppBundle\DataFixtures\FromChamilo;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use AppBundle\Entity\Institut;
+use mysqli;
 
 class LoadInstitutData extends AbstractFixture implements OrderedFixtureInterface
 {
     public function load(ObjectManager $manager)
     {
-        $disc = $this->createItem($manager,
-            'ISFEC Lille',
-            'Lille');
-        $this->addReference('inst_6', $disc);
-        $disc = $this->createItem($manager,
-            'ISFEC Paris',
-            'Paris');
-        $this->addReference('inst_7', $disc);
-        $disc = $this->createItem($manager,
-            'ISFEC Nantes',
-            'Nantes');
-        $this->addReference('inst_8', $disc);
-        $disc = $this->createItem($manager,
-            'ISFEC Rennes',
-            'Rennes');
-        $this->addReference('inst_9', $disc);
-        $disc = $this->createItem($manager,
-            'ISFEC Angers',
-            'Angers');
-        $this->addReference('inst_10', $disc);
 
+        $chamiloConnect = new ChamiloConnect();
+
+        $queryInst = "SELECT * FROM _stdi_instituts ORDER by ID";
+        if ($resultInst = $chamiloConnect->getMysqli()->query($queryInst)) {
+            while ($inst = $resultInst->fetch_object()) {
+                $oneInst = $this->createItem($manager,
+                    $inst->nom,
+                    '');
+                $this->addReference('inst_'.$inst->id, $oneInst);
+            }
+
+            $resultInst->close();
+        }
+
+        $chamiloConnect->getMysqli()->close();
         $manager->flush();
     }
 

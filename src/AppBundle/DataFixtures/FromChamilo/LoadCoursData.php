@@ -26,9 +26,6 @@ class LoadCoursData extends AbstractFixture implements OrderedFixtureInterface
 
                 if ($resultCourse = $chamiloConnect->getMysqli()->query($queryCours)) {
                     while ($course = $resultCourse->fetch_object()) {
-                        echo '<li><a href="cours.php?id='.$course->id.'">'.$course->title.'</a></li>';
-
-
                         $cours = $this->createItem($manager,
                             $course->title,
                             'Cours de '.$course->title,

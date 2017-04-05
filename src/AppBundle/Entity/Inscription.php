@@ -12,6 +12,15 @@ use Doctrine\ORM\Mapping as ORM;
 class Inscription
 {
     /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer", unique=true)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
      * @var Role
      *
      * @ORM\ManyToOne(targetEntity="Role")
@@ -20,7 +29,7 @@ class Inscription
 
     /**
      * @var User
-     * @ORM\Id
+     *
      * @ORM\ManyToOne(targetEntity="User")
      */
     protected $user;

@@ -15,7 +15,7 @@ class Inscription_d extends Inscription
 
     /**
      * @var Discipline
-     * @ORM\Id
+     *
      * @ORM\ManyToOne(targetEntity="Discipline")
      */
     private $discipline;

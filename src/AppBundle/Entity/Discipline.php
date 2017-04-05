@@ -11,17 +11,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="discipline")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\DisciplineRepository")
  */
-class Discipline
+class Discipline extends DocContainer
 {
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
-
     /**
      * @var string
      *
@@ -63,16 +54,6 @@ class Discipline
     public function __toString()
     {
         return $this->getNom();
-    }
-
-    /**
-     * Get id
-     *
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
     }
 
     /**

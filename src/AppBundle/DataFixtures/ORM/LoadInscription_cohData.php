@@ -12,18 +12,23 @@ class LoadInscription_cohData extends AbstractFixture implements OrderedFixtureI
 {
     public function load(ObjectManager $manager)
     {
-        $this->createItem($manager,
+        $inscr = $this->createItem($manager,
             $this->getReference('role_etu'),
             $this->getReference('user_etudiant_1'),
             $this->getReference('coh_maths'));
-        $this->createItem($manager,
+        $this->addReference('inscr_01', $inscr);
+
+        $inscr = $this->createItem($manager,
             $this->getReference('role_etu'),
             $this->getReference('user_etudiant_1'),
             $this->getReference('coh_phy'));
+        $this->addReference('inscr_02', $inscr);
+
         $this->createItem($manager,
             $this->getReference('role_etu'),
             $this->getReference('user_etudiant_6'),
             $this->getReference('coh_crpe'));
+
         $this->createItem($manager,
             $this->getReference('role_etu'),
             $this->getReference('user_etudiant_6'),
@@ -44,6 +49,7 @@ class LoadInscription_cohData extends AbstractFixture implements OrderedFixtureI
         $item->setDateInscription(new DateTime());
         $item->setRole($role);
         $manager->persist($item);
+        return $item;
     }
 
     /**

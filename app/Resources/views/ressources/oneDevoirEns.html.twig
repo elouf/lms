@@ -57,7 +57,6 @@
                 dropZone:null,
                 dataType: 'json',
                 done: function (e, data) {
-                    console.log(e)
                     var etuId = $(this).closest('[data-userId]').attr('data-userId');
                     var destUrl = url+etuId+'/';
                     $.each(data.result.files, function (index, file) {
@@ -87,7 +86,7 @@
                 },
                 progressall: function (e, data) {
                     var progress = parseInt(data.loaded / data.total * 100, 10);
-                    $('#progressUpload').find('.progress-bar').css(
+                    $('.progress-bar').css(
                             'width',
                             progress + '%'
                     );

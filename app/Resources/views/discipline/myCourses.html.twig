@@ -5,6 +5,38 @@
 {% endblock %}
 
 {% block main %}
+
+    <script>
+        jQuery(document).ready(function () {
+
+            var uncheckedClass = 'fa-square-o';
+            var checkedClass = 'fa-check-square-o';
+
+            $('.activationDocBtn').click(function(){
+                var id = $(this).closest('[data-discId]').attr('data-discId');
+                var isVisible = $(this).hasClass(checkedClass);
+                var myBtn = $(this);
+                $.ajax({
+                    type: "POST",
+                    url: "{{path('changeActivationDocsDisc_ajax')}}",
+                    data: {
+                        id: id,
+                        isVisible: isVisible
+                    },
+                    dataType: "json",
+                    success: function (response) {
+                        if(isVisible){
+                            myBtn.removeClass(checkedClass).addClass(uncheckedClass);
+                            myBtn.closest('[data-activated]').attr('data-activated', "0");
+                        }else{
+                            myBtn.removeClass(uncheckedClass).addClass(checkedClass);
+                            myBtn.closest('[data-activated]').attr('data-activated', "1");
+                        }
+                    }
+                });
+            });
+        });
+    </script>
     <div class="container mt-140">
         <div class="row mt-20 mb-100">
             <div class="col-sm-12">
@@ -18,10 +50,38 @@
 
                 <div class="tab-content">
                     {% for key,val in courses %}
-                        <div role="tabpanel" class="tab-pane fade{% if loop.index == 1 %} in active{% endif %}" id="p1body{{ val.discipline.id }}" {% if loop.index == 1 %} style="padding-top: 0;" {% endif %}>
+                        <div data-discId="{{ val.discipline.id }}" role="tabpanel" class="tab-pane fade{% if loop.index == 1 %} in active{% endif %}" id="p1body{{ val.discipline.id }}" {% if loop.index == 1 %} style="padding-top: 0;" {% endif %}>
                             <div class="container mt-0 mb-60">
                                 <div class="row">
                                     <div class="col-sm-8">
+                                        {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                            <div class="course-list documentsDisc" data-activated="{{ val.discipline.docsActivated }}" style="margin-top: 0;">
+                                                <div class="course-media text-center mt-10">
+                                                    <i class="fa fa-file-o fa-3" aria-hidden="true"></i>
+                                                </div>
+                                                <div class="course-detail">
+                                                    <h4 class="heading">Documents</h4>
+                                                    <label class="ml-10"> Visibles pour les utilisateurs</label>
+                                                    <div class="myBtn btnAlone btnAdmin col-xs-1">
+                                                        {% if val.discipline.docsActivated %}
+                                                            <i class="activationDocBtn fa fa-check-square-o"></i>
+                                                        {% else %}
+                                                            <i class="activationDocBtn fa fa-square-o"></i>
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="resumeDocs mt-20 col-xs-12">
+                                                        <a href="{{ path('documents', {id: val.discipline.id}) }}" class="btn btn-primary btn-sm">Accéder</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% elseif val.discipline.docsActivated == 1 %}
+                                            <div class="course-list documentsDisc" style="margin-top: 0;">
+                                                <div class="course-detail">
+                                                    <h4 class="heading">Documents</h4>
+
+                                                </div>
+                                            </div>
+                                        {% endif %}
                                         {% for keyC,valC in val.courses %}
                                             <div class="course-list" style="margin-top: 0;">
                                                 <div class="course-media">

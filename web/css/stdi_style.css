@@ -198,6 +198,9 @@ a { font-family: inherit; color: inherit; }
     padding: 1px 5px !important;
     border: 1px solid #aaa;
 }
+.champAdmin.champError{
+    box-shadow: 1px 1px 2px 2px rgba(198, 16, 0, 0.5) inset;
+}
 textarea{
     resize: none;
 }
@@ -452,4 +455,29 @@ textarea{
 }
 .chrono_elem{
     padding: 5px;
+}
+
+
+/* documents */
+.documentsDisc:not([data-activated="1"]) .course-media,
+.documentsDisc:not([data-activated="1"]) label,
+.documentsDisc:not([data-activated="1"]) .resumeDocs,
+.documentsDisc:not([data-activated="1"]) .heading{
+    opacity: .3;
+}
+.course-list{
+    width: 100%;
+}
+.fa-3{
+    font-size: 3em;
+}
+.contentDocRess{
+    height: 100px;
+    padding-top: 20px;
+}
+.contentDocInfos{
+    padding: 10px 20px;
+}
+.filter-option{
+    color: #aaa;
 }
