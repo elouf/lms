@@ -24,7 +24,7 @@
                 $('.contentDocRess').hide();
                 $('.selectpicker').selectpicker('val', 'tous');
 
-                var idCours = $(this).closest('[data-coursId]').attr('data-coursId');
+                var idDisc = $(this).closest('[data-discId]').attr('data-discId');
 
                 $('.modal').modal();
                 $('.modal .modal-body').hide();
@@ -32,7 +32,7 @@
                 popup.show();
 
                 var folderLocation = 'var/upload/';
-                var url = '../'+folderLocation+'docs/cours/'+idCours+'/';
+                var url = '../'+folderLocation+'docs/disc/'+idDisc+'/';
 
                 $.ajax({
                     type: 'POST',
@@ -65,7 +65,7 @@
                                 async: false,
                                 dataType: "json",
                                 data: {
-                                    discId: idCours,
+                                    discId: idDisc,
                                     userId: $('[data-userId]').attr('data-userId'),
                                     url: '../'+folderLocation+myUrlTab[1],
                                     urlDest: url,

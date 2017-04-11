@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\AssocDocCours;
 use AppBundle\Entity\AssocDocDisc;
 use AppBundle\Entity\AssocDocInscr;
 use AppBundle\Entity\Discipline;
@@ -239,6 +240,100 @@ class DocumentController extends Controller
 
             $em->flush();
             return new JsonResponse(array('action' =>'upload Document for Discipline', 'id' => $discId, 'ext' => $ext));
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
+    /**
+     * @Route("/uploadDocCoursFile_ajax", name="uploadDocCoursFile_ajax")
+     */
+    public function uploadDocCoursFileAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+            $coursId = $request->request->get('coursId');
+            $url = utf8_encode($request->request->get('url'));
+            $urlDest = $request->request->get('urlDest');
+            $currentUrl = $request->request->get('currentUrl');
+            $userId = $request->request->get('userId');
+            $nom = $request->request->get('nom');
+            $description = $request->request->get('description');
+            $users = $request->request->get('users');
+
+
+            $urlTab = explode('/web', $currentUrl);
+            $urlDestTab = explode('/var', $urlDest);
+
+            $cours = $em->getRepository('AppBundle:Cours')->findOneBy(array('id' => $coursId));
+            $proprietaire = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
+
+            $doc = new Document();
+            $doc->setProprietaire($proprietaire);
+            $doc->setNom($nom);
+            $doc->setDescription($description);
+            $doc->setDateCrea(new DateTime());
+
+            $ext = pathinfo($url, PATHINFO_EXTENSION);
+            $rand = rand(1, 999999);
+            rename($url, $urlDest.'file'.$rand.'.'.$ext);
+
+            $doc->setUrl($urlTab[0].'/var'.$urlDestTab[1].'file'.$rand.'.'.$ext);
+            $em->persist($doc);
+
+            // on créée les associations avec les users. Si ils sont tous concernés, c'est qu'on est dans le cas d'une assocCours
+            //sinon c'est une assoc_doc
+            if(in_array("0", $users)){
+                $assocCours = new AssocDocCours();
+                $assocCours->setCours($cours);
+                $assocCours->setDocument($doc);
+                $em->persist($assocCours);
+            }else{
+                for($i=0; $i<count($users); $i++){
+                    $assocInscr = new AssocDocInscr();
+                    $assocInscr->setDocument($doc);
+
+                    $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $users[$i]));
+
+                    // on commence par voir si le user est inscrit à une cohorte qui est inscrite à ce cours
+                    $cohortes = $this->getDoctrine()->getRepository('AppBundle:Cohorte')->findAll();
+                    $estAssocie = false;
+                    foreach($cohortes as $cohorte){
+                        if($cohorte->getDisciplines()->contains($cours->getDiscipline()) || $cohorte->getCours()->contains($cours)){
+                            $inscrCoh = $this->getDoctrine()->getRepository('AppBundle:Inscription_coh')->findOneBy(array('user' => $user, 'cohorte' => $cohorte));
+                            if($inscrCoh){
+                                $assocInscr->setInscription($inscrCoh);
+                                $estAssocie = true;
+                                break 1;
+                            }
+                        }
+                    }
+
+                    // pas de cohorte, on cherche une inscription directe au cours
+                    if(!$estAssocie){
+                        $inscrD = $this->getDoctrine()->getRepository('AppBundle:Inscription_d')->findOneBy(array('user' => $user, 'discipline' => $cours->getDiscipline()));
+                        if($inscrD){
+                            $assocInscr->setInscription($inscrD);
+                            $estAssocie = true;
+                        }
+                    }
+                    if(!$estAssocie){
+                        $inscrC = $this->getDoctrine()->getRepository('AppBundle:Inscription_c')->findOneBy(array('user' => $user, 'cours' => $cours));
+                        if($inscrC){
+                            $assocInscr->setInscription($inscrC);
+                            $estAssocie = true;
+                        }
+                    }
+                    if($estAssocie){
+                        $em->persist($assocInscr);
+                    }
+
+
+                }
+            }
+
+            $em->flush();
+            return new JsonResponse(array('action' =>'upload Document for Cours', 'id' => $coursId, 'ext' => $ext));
         }
 
         return new JsonResponse('This is not ajax!', 400);
