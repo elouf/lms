@@ -84,7 +84,7 @@ class DocumentController extends Controller
     }
 
     /**
-     * @Route("/cours/{id}/documents", name="documentsCours")
+     * @Route("/courseDocs/{id}", name="courseDocs")
      */
     public function documentsByCoursAction (Request $request, $id)
     {

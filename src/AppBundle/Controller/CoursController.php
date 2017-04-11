@@ -283,4 +283,27 @@ class CoursController extends Controller
         return new JsonResponse('This is not ajax!', 400);
     }
 
+    /**
+     * @Route("/changeActivationDocsCours_ajax", name="changeActivationDocsCours_ajax")
+     */
+    public function changeActivationDocsCoursAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+
+            $id = $request->request->get('id');
+            $isVisible = $request->request->get('isVisible');
+
+            $cours = $em->getRepository('AppBundle:Cours')->findOneBy(array('id' => $id));
+            $cours->setDocsActivated($isVisible == "false");
+
+            $em->persist($cours);
+            $em->flush();
+
+            return new JsonResponse(array('action' =>'change Visibility of documents', 'id' => $cours->getId(), 'isVisible' => $cours->getDocsActivated()));
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
 }

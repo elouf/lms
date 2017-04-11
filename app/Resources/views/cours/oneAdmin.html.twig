@@ -1081,6 +1081,31 @@
                 var elem = $(this).closest('.courseElemAdmin');
                 detectInput(elem);
             });
+
+            // activation des documents
+            $('.activationDocBtn').click(function(){
+                var id = $(this).closest('[data-coursId]').attr('data-coursId');
+                var isVisible = $(this).hasClass(checkedClass);
+                var myBtn = $(this);
+                $.ajax({
+                    type: "POST",
+                    url: "{{path('changeActivationDocsCours_ajax')}}",
+                    data: {
+                        id: id,
+                        isVisible: isVisible
+                    },
+                    dataType: "json",
+                    success: function (response) {
+                        if(isVisible){
+                            myBtn.removeClass(checkedClass).addClass(uncheckedClass);
+                            myBtn.closest('[data-activated]').attr('data-activated', "0");
+                        }else{
+                            myBtn.removeClass(uncheckedClass).addClass(checkedClass);
+                            myBtn.closest('[data-activated]').attr('data-activated', "1");
+                        }
+                    }
+                });
+            });
         });
 
     </script>
@@ -1145,6 +1170,11 @@
                             </a>
                         </li>
                     {% endfor %}
+
+                    <!-- Documents -->
+                    <li role="presentation"  class="ongletAdmin">
+                        <a href="#sectionDocs" aria-controls="sectionDocs" role="tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-pencil fa-fw" aria-hidden="true"> </i>Documents</a>
+                    </li>
                 </ul>
             </div>
             <div class="col-md-9 col-sm-9 col-xs-12">
@@ -1213,6 +1243,27 @@
                         </div>
                     </div>
 
+                    <div role="tabpanel" class="tab-pane fade" id="sectionDocs">
+                        <div class="course-list documentsDisc" data-activated="{{ cours.docsActivated }}" style="margin-top: 0;">
+                            <div class="course-media text-center mt-10">
+                                <i class="fa fa-file-o fa-3" aria-hidden="true"></i>
+                            </div>
+                            <div class="course-detail">
+                                <h4 class="heading">Mes documents partagés</h4>
+                                <label class="ml-10"> Visibles pour les utilisateurs</label>
+                                <div class="myBtn btnAlone btnAdmin col-xs-1">
+                                    {% if cours.docsActivated %}
+                                        <i class="activationDocBtn fa fa-check-square-o"></i>
+                                    {% else %}
+                                        <i class="activationDocBtn fa fa-square-o"></i>
+                                    {% endif %}
+                                </div>
+                                <div class="resumeDocs mt-20 col-xs-12">
+                                    <a href="{{ path('courseDocs', {id: cours.id}) }}" class="btn btn-primary btn-sm">Accéder</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     <!--- administration des Zones des différentes sections (activation et tri)  -->
                     {% for key,val in zonesSections %}

@@ -270,11 +270,15 @@
                             <a href="#t1body{{ val.section.id }}" aria-controls="t1body{{ val.section.id }}" role="tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-pencil fa-fw" aria-hidden="true"> </i>{{ val.section.nom }}</a>
                         </li>
                     {% endfor %}
+                    {% if cours.docsActivated==1 %}
+                        <li role="presentation"  class="ongletSection">
+                            <a href="#sectionDocs" aria-controls="sectionDocs" role="tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-pencil fa-fw" aria-hidden="true"> </i>Documents</a>
+                        </li>
+                    {% endif %}
                 </ul>
             </div>
             <div class="col-sm-9">
                 <div class="tab-content">
-                    {% set firstDisplayed = 1 %}
                     {% for key,val in zonesSections if val.section.isVisible %}
                         <div role="tabpanel" data-idSection="{{ val.section.id }}" class="section tab-pane fade{% if loop.index == 1 %} in active {% endif %}" id="t1body{{ val.section.id }}">
                             <div class="editor">
@@ -460,7 +464,21 @@
                             </div>
                         </div>
                     {% endfor %}
-
+                    <div role="tabpanel" class="tab-pane fade" id="sectionDocs">
+                        {% if cours.docsActivated==1 %}
+                            <div class="course-list documentsDisc" data-activated="{{ cours.docsActivated }}" style="margin-top: 0;">
+                                <div class="course-media text-center mt-10">
+                                    <i class="fa fa-file-o fa-3" aria-hidden="true"></i>
+                                </div>
+                                <div class="course-detail">
+                                    <h4 class="heading">Mes documents partagés</h4>
+                                    <div class="resumeDocs mt-20 col-xs-12">
+                                        <a href="{{ path('courseDocs', {id: cours.id}) }}" class="btn btn-primary btn-sm">Accéder</a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
