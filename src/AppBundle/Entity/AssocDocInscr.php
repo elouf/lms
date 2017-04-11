@@ -23,17 +23,25 @@ class AssocDocInscr
 
     /**
      * @var Inscription
-     * @ORM\ManyToOne(targetEntity="Inscription", inversedBy="assocDoc")
+     * @ORM\ManyToOne(targetEntity="Inscription")
      * @ORM\JoinColumn(name="inscription_id", referencedColumnName="id", nullable=false)
      */
     private $inscription;
 
     /**
      * @var Document
-     * @ORM\ManyToOne(targetEntity="Document", inversedBy="assocInscription")
-     * @ORM\JoinColumn(name="doc_id", referencedColumnName="id", nullable=false)
+     * @ORM\ManyToOne(targetEntity="Document")
+     * @ORM\JoinColumn(name="doc_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $document;
+
+    /**
+     * @var Cours
+     *
+     * @ORM\ManyToOne(targetEntity="Cours")
+     * @ORM\JoinColumn(name="cours_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
+     */
+    private $cours;
 
     /**
      * Set inscription
@@ -81,5 +89,29 @@ class AssocDocInscr
     public function getDocument()
     {
         return $this->document;
+    }
+
+    /**
+     * Set cours
+     *
+     * @param Cours $cours
+     *
+     * @return AssocDocInscr
+     */
+    public function setCours($cours)
+    {
+        $this->cours = $cours;
+
+        return $this;
+    }
+
+    /**
+     * Get cours
+     *
+     * @return Cours
+     */
+    public function getCours()
+    {
+        return $this->cours;
     }
 }

@@ -1,0 +1,61 @@
+{% block commonJS %}
+    <script>
+        jQuery(document).ready(function () {
+
+            var config = {
+                configname:"lightConfig",
+                toolbar:
+                        [
+                            { name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript' ] },
+                            { name: 'paragraph',   items : [ 'NumberedList','BulletedList','-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'] },
+                            '/',
+                            { name: 'styles',      items : [ 'Font','FontSize' ] },
+                            { name: 'colors',      items : [ 'TextColor','BGColor' ] },
+                            { name: 'switch',      items : [ 'Switch' ] }
+                        ],
+                height: 100,
+                allowedContent: true
+            };
+            $('textarea.simpleEditor').ckeditor(config);
+
+            $('.nextStepPopup').click(function(){
+                if($('[data-champname="nom"]').val() != ""){
+                    $('.contentDocInfos').hide();
+                    $('.contentDocRess').show();
+                }else{
+                    $('[data-champname="nom"]').addClass('champError');
+                }
+            });
+            $('[data-champname="nom"]').on('input', function(){
+                $('[data-champname="nom"]').removeClass('champError');
+            });
+            $('.allSelected').click(function(){
+                setTimeout(function(){
+                    if($('.allSelected').closest('li').hasClass('selected')){
+                        $('.selectpicker').selectpicker('selectAll');
+                    }else{
+                        $('.selectpicker').selectpicker('deselectAll');
+                    }
+                }, 100)
+
+            });
+
+            $('.deleteDoc').click(function() {
+                var docId = $(this).closest('[data-docId]').attr('data-docId');
+                $.ajax({
+                    type: 'POST',
+                    url: "{{path('deleteDocument_ajax')}}",
+                    async: false,
+                    dataType: "json",
+                    data: {
+                        id: docId
+                    },
+                    success: function (data) {
+                    },
+                    error: function (xhr, status, error) {
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}

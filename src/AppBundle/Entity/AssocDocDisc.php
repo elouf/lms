@@ -23,15 +23,15 @@ class AssocDocDisc
 
     /**
      * @var Discipline
-     * @ORM\ManyToOne(targetEntity="Discipline", inversedBy="assocDoc")
+     * @ORM\ManyToOne(targetEntity="Discipline")
      * @ORM\JoinColumn(name="disc_id", referencedColumnName="id", nullable=false)
      */
     private $discipline;
 
     /**
      * @var Document
-     * @ORM\ManyToOne(targetEntity="Document", inversedBy="assocDisc")
-     * @ORM\JoinColumn(name="doc_id", referencedColumnName="id", nullable=false)
+     * @ORM\ManyToOne(targetEntity="Document")
+     * @ORM\JoinColumn(name="doc_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $document;
 

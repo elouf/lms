@@ -12,30 +12,11 @@ use Doctrine\ORM\Mapping as ORM;
 class DocContainer
 {
     /**
-     * @var int
-     *
-     * @ORM\Column(name="id", type="integer", unique=true)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
-
-    /**
      * @var bool
      *
      * @ORM\Column(name="docsActivated", type="boolean")
      */
     private $docsActivated = false;
-
-    /**
-     * Get id
-     *
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
 
     /**
      * Set docsActivated

@@ -23,15 +23,15 @@ class AssocDocCours
 
     /**
      * @var Cours
-     * @ORM\ManyToOne(targetEntity="Cours", inversedBy="assocDoc")
+     * @ORM\ManyToOne(targetEntity="Cours")
      * @ORM\JoinColumn(name="cours_id", referencedColumnName="id", nullable=false)
      */
     private $cours;
 
     /**
      * @var Document
-     * @ORM\ManyToOne(targetEntity="Document", inversedBy="assocCours")
-     * @ORM\JoinColumn(name="doc_id", referencedColumnName="id", nullable=false)
+     * @ORM\ManyToOne(targetEntity="Document")
+     * @ORM\JoinColumn(name="doc_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $document;
 

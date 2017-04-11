@@ -1,0 +1,63 @@
+<div class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+            <!--                  POPUP Ajout Document                     -->
+
+            <div class="modal-body" data-contentModal="appendDoc" data-idItem="" style="background:#aaa; background-size:cover">
+                <div class="row">
+                    <div class="bginverse">
+                        <div class="">
+                            <div class="contentDocInfos">
+                                <div class="row mb-10">
+                                    <div class="LabelAdmin col-sm-3">Nom</div>
+                                    <input data-champName="nom" class="champAdmin col-sm-9 col-xs-12" value=""/>
+                                </div>
+                                <div class="row mb-10">
+                                    <div class="LabelAdmin col-sm-3">Description</div>
+                                    <div class="noPadding col-sm-9  col-xs-12">
+                                        <textarea data-champName="description" id="descriptionNewDoc" class="simpleEditor editor champAdmin"></textarea>
+                                    </div>
+                                </div>
+                                <div class="row mb-10">
+                                    <div class="LabelAdmin col-sm-3">Destinataires</div>
+                                    <select class="selectpicker col-xs-9" data-style="MyBtnSelectPickeer" multiple>
+                                        <option title="Tous les inscrits" value="0" class="allSelected">Tous</option>
+                                        <option data-divider="true"></option>
+                                        {% for key,val in users %}
+                                            <option title="{{ val.firstname }} {{ val.lastname }}" class="addDocDest" value="{{ val.id }}">{{ val.firstname }} {{ val.lastname }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="row mb-10" style="text-align: center">
+                                    <div class="btn btn-sm btn-info mb-3 nextStepPopup">Suivant</div>
+                                </div>
+                            </div>
+                            <div class="contentDocRess">
+
+                                <div class="labelDoc col-sm-6 col-xs-12">
+                                    Fichier du document :
+                                </div>
+
+                                <div class="fileUploader col-sm-6 col-xs-12">
+                                    <span class="btn btn-success fileinput-button">
+                                        <i class="glyphicon glyphicon-plus"></i>
+                                        <span>Déposer mon fichier</span>
+                                        <input id="docUpload" type="file" name="files[]" multiple>
+                                    </span>
+
+                                    <div id="itemProgress" class="progress col-xs-12">
+                                        <div class="progress-bar progress-bar-success"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

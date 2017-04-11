@@ -3,9 +3,14 @@
 {% block pageHeader %}
     <div class="page-header">
         <div class="container">
-            <h2 class="color3">{{ discipline.nom }}</h2>
+            <h2 class="color3">Documents du cours</h2>
             <ul class="breadcrumb">
-                <li class="color3">Documents</li>
+                <li class="color3">
+                    <a href="{{ path('myCourses') }}" class="label label-info">{{ cours.discipline.nom }}</a>
+                    >
+                    <a href="{{ path('oneCours', {id: cours.id, mode: 'ens'}) }}" class="label label-info">{{ cours.nom }}</a>
+
+                </li>
             </ul>
         </div>
     </div>
@@ -24,7 +29,7 @@
                 $('.contentDocRess').hide();
                 $('.selectpicker').selectpicker('val', 'tous');
 
-                var idCours = $(this).closest('[data-coursId]').attr('data-coursId');
+                var idDisc = $(this).closest('[data-discId]').attr('data-discId');
 
                 $('.modal').modal();
                 $('.modal .modal-body').hide();
@@ -32,7 +37,7 @@
                 popup.show();
 
                 var folderLocation = 'var/upload/';
-                var url = '../'+folderLocation+'docs/cours/'+idCours+'/';
+                var url = '../'+folderLocation+'docs/disc/'+idDisc+'/';
 
                 $.ajax({
                     type: 'POST',
@@ -65,7 +70,7 @@
                                 async: false,
                                 dataType: "json",
                                 data: {
-                                    discId: idCours,
+                                    discId: idDisc,
                                     userId: $('[data-userId]').attr('data-userId'),
                                     url: '../'+folderLocation+myUrlTab[1],
                                     urlDest: url,
@@ -97,7 +102,7 @@
         });
     </script>
 
-    <div class="bgcolor3 pt-100 pb-100" data-discId="{{ discipline.id }}">
+    <div class="bgcolor3 pt-100 pb-100" data-coursId="{{ cours.id }}">
         {% include "documents/docArray.html.twig"
             with {documents:documents}
         %}

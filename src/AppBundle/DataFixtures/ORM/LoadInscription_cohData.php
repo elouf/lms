@@ -24,10 +24,11 @@ class LoadInscription_cohData extends AbstractFixture implements OrderedFixtureI
             $this->getReference('coh_phy'));
         $this->addReference('inscr_02', $inscr);
 
-        $this->createItem($manager,
+        $inscr = $this->createItem($manager,
             $this->getReference('role_etu'),
-            $this->getReference('user_etudiant_6'),
-            $this->getReference('coh_crpe'));
+            $this->getReference('user_etudiant_4'),
+            $this->getReference('coh_maths'));
+        $this->addReference('inscr_03', $inscr);
 
         $this->createItem($manager,
             $this->getReference('role_etu'),

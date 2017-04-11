@@ -54,21 +54,23 @@
                             <div class="container mt-0 mb-60">
                                 <div class="row">
                                     <div class="col-sm-8">
-                                        {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                        {% if app.user.hasRole('ROLE_SUPER_ADMIN') or val.discipline.docsActivated==1 %}
                                             <div class="course-list documentsDisc" data-activated="{{ val.discipline.docsActivated }}" style="margin-top: 0;">
                                                 <div class="course-media text-center mt-10">
                                                     <i class="fa fa-file-o fa-3" aria-hidden="true"></i>
                                                 </div>
                                                 <div class="course-detail">
-                                                    <h4 class="heading">Documents</h4>
-                                                    <label class="ml-10"> Visibles pour les utilisateurs</label>
-                                                    <div class="myBtn btnAlone btnAdmin col-xs-1">
-                                                        {% if val.discipline.docsActivated %}
-                                                            <i class="activationDocBtn fa fa-check-square-o"></i>
-                                                        {% else %}
-                                                            <i class="activationDocBtn fa fa-square-o"></i>
-                                                        {% endif %}
-                                                    </div>
+                                                    <h4 class="heading">Mes documents partagés</h4>
+                                                    {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                                        <label class="ml-10"> Visibles pour les utilisateurs</label>
+                                                        <div class="myBtn btnAlone btnAdmin col-xs-1">
+                                                            {% if val.discipline.docsActivated %}
+                                                                <i class="activationDocBtn fa fa-check-square-o"></i>
+                                                            {% else %}
+                                                                <i class="activationDocBtn fa fa-square-o"></i>
+                                                            {% endif %}
+                                                        </div>
+                                                    {% endif %}
                                                     <div class="resumeDocs mt-20 col-xs-12">
                                                         <a href="{{ path('documents', {id: val.discipline.id}) }}" class="btn btn-primary btn-sm">Accéder</a>
                                                     </div>
