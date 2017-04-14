@@ -1,34 +1,29 @@
-<div class="container">
-    <a class="openPopupUpload btn btn-primary btn-sm">Ajouter un document</a>
-    <div class="row">
-        <div class="col-sm-12">
-            <table class="table table-boxed">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Fichier</th>
-                        <th>Auteur</th>
-                        <th>Date de dépôt</th>
-                        <th></th>
+<div class="row">
+    <div class="col-sm-12">
+        <table class="docTable table table-boxed">
+            <thead>
+                <tr>
+                    <th>Nom du fichier</th>
+                    <th>Auteur</th>
+                    <th>Date de dépôt</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for key,val in docs %}
+                    <tr data-docId="{{ val.id }}">
+                        <td><a href="{{ val.url }}">{{ val.nom }}</a><i class="fa fa-info-circle infoDocument" aria-hidden="true"></i></td>
+                        <td>{{ val.proprietaire.firstname }} {{ val.proprietaire.lastName }}</td>
+                        <td data-text="{{ val.dateCrea|date("Y-m-d" ) }}">{{ val.dateCrea|localizeddate('none', 'none', null, null, 'd LLLL Y à h:mm' ) }}</td>
+                        <td>
+                            <a href="{{ val.url }}" class="btn btn-primary btn-sm" target="_blank">Télécharger</a>
+                            {% if app.user.id == val.proprietaire.id or app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                <a class="btn btn-sm btn-danger deleteDoc">Supprimer</a>
+                            {% endif %}
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    {% for key,val in documents %}
-                        <tr data-docId="{{ val.id }}">
-                            <th scope="row">{{ key+1 }}</th>
-                            <td><a href="{{ val.url }}">{{ val.nom }}</a></td>
-                            <td>{{ val.proprietaire.firstname }} {{ val.proprietaire.lastName }}</td>
-                            <td>{{ val.dateCrea|localizeddate('none', 'none', null, null, 'd LLLL Y à h:mm' ) }}</td>
-                            <td>
-                                <a href="{{ val.url }}" class="btn btn-primary btn-sm" target="_blank">Télécharger</a>
-                                {% if app.user.id == val.proprietaire.id %}
-                                    <a class="btn btn-sm btn-danger deleteDoc">Supprimer</a>
-                                {% endif %}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>

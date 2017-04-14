@@ -481,3 +481,37 @@ textarea{
 .filter-option{
     color: #aaa;
 }
+.infoDocument{
+    color: #0da500;
+    font-size: 17px;
+    cursor: pointer;
+    margin-left: 15px;
+}
+.infoDocument:hover{
+    opacity: .8;
+}
+.infoDocActived{
+    color: #2aabd2;
+}
+.descriptionPPline{
+    background: #eee;
+}
+.descriptionDocLineUC{
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    font-size: 14px;
+    font-weight: 600;
+}
+.couleurDocOption{
+    padding: 5px;
+    border-radius: 3px;
+    color: #fff;
+    float: right;
+    margin-top: -5px;
+}
+.couleurAdminOption{
+    background: #ff9c00;
+}
+.couleurEnsOption{
+    background: #2aabd2;
+}

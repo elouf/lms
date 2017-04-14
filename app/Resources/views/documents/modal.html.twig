@@ -20,13 +20,29 @@
                                         <textarea data-champName="description" id="descriptionNewDoc" class="simpleEditor editor champAdmin"></textarea>
                                     </div>
                                 </div>
+                                {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                    <div class="row mb-10">
+                                        <div class="LabelAdmin col-sm-3">Fichier important</div>
+                                        <div class="noPadding col-sm-9  col-xs-12">
+                                            <input data-champName="docIsImportant" class="" type="checkbox" />
+                                        </div>
+                                    </div>
+                                {% endif %}
                                 <div class="row mb-10">
                                     <div class="LabelAdmin col-sm-3">Destinataires</div>
-                                    <select class="selectpicker col-xs-9" data-style="MyBtnSelectPickeer" multiple>
+                                    <select class="selectpicker col-xs-9" data-style="MyBtnSelectPickeer" title="Aucun sélectionné..." multiple>
                                         <option title="Tous les inscrits" value="0" class="allSelected">Tous</option>
                                         <option data-divider="true"></option>
                                         {% for key,val in users %}
-                                            <option title="{{ val.firstname }} {{ val.lastname }}" class="addDocDest" value="{{ val.id }}">{{ val.firstname }} {{ val.lastname }}</option>
+                                            <option title="{{ val[0].firstname }} {{ val[0].lastname }}" class="addDocDest" value="{{ val[0].id }}"
+                                                    data-content="
+                                                        <span>{{ val[0].firstname }} {{ val[0].lastname }}</span>
+                                                        {% if val[0].hasRole('ROLE_SUPER_ADMIN') %}
+                                                            <span class='couleurDocOption couleurAdminOption'>Administrateur</span>
+                                                        {% elseif val[1]=="Enseignant" %}
+                                                            <span class='couleurDocOption couleurEnsOption'>Enseignant</span>
+                                                        {% endif %}
+                                                "></option>
                                         {% endfor %}
                                     </select>
                                 </div>

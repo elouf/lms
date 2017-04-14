@@ -10,16 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="assoc_doc_inscription")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\AssocDocInscrRepository")
  */
-class AssocDocInscr
+class AssocDocInscr extends AssocDocEntity
 {
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
 
     /**
      * @var Inscription
@@ -27,13 +19,6 @@ class AssocDocInscr
      * @ORM\JoinColumn(name="inscription_id", referencedColumnName="id", nullable=false)
      */
     private $inscription;
-
-    /**
-     * @var Document
-     * @ORM\ManyToOne(targetEntity="Document")
-     * @ORM\JoinColumn(name="doc_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     */
-    private $document;
 
     /**
      * @var Cours
@@ -65,30 +50,6 @@ class AssocDocInscr
     public function getInscription()
     {
         return $this->inscription;
-    }
-
-    /**
-     * Set document
-     *
-     * @param Document $document
-     *
-     * @return AssocDocInscr
-     */
-    public function setDocument($document)
-    {
-        $this->document = $document;
-
-        return $this;
-    }
-
-    /**
-     * Get document
-     *
-     * @return Document
-     */
-    public function getDocument()
-    {
-        return $this->document;
     }
 
     /**

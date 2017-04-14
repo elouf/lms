@@ -10,16 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="assoc_doc_disc")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\AssocDocDiscRepository")
  */
-class AssocDocDisc
+class AssocDocDisc extends AssocDocEntity
 {
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
 
     /**
      * @var Discipline
@@ -27,13 +19,6 @@ class AssocDocDisc
      * @ORM\JoinColumn(name="disc_id", referencedColumnName="id", nullable=false)
      */
     private $discipline;
-
-    /**
-     * @var Document
-     * @ORM\ManyToOne(targetEntity="Document")
-     * @ORM\JoinColumn(name="doc_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     */
-    private $document;
 
     /**
      * Set discipline
@@ -57,29 +42,5 @@ class AssocDocDisc
     public function getDiscipline()
     {
         return $this->discipline;
-    }
-
-    /**
-     * Set document
-     *
-     * @param Document $document
-     *
-     * @return AssocDocDisc
-     */
-    public function setDocument($document)
-    {
-        $this->document = $document;
-
-        return $this;
-    }
-
-    /**
-     * Get document
-     *
-     * @return Document
-     */
-    public function getDocument()
-    {
-        return $this->document;
     }
 }

@@ -10,16 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="assoc_doc_cours")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\AssocDocCoursRepository")
  */
-class AssocDocCours
+class AssocDocCours extends AssocDocEntity
 {
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
 
     /**
      * @var Cours
@@ -27,13 +19,6 @@ class AssocDocCours
      * @ORM\JoinColumn(name="cours_id", referencedColumnName="id", nullable=false)
      */
     private $cours;
-
-    /**
-     * @var Document
-     * @ORM\ManyToOne(targetEntity="Document")
-     * @ORM\JoinColumn(name="doc_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     */
-    private $document;
 
     /**
      * Set cours
@@ -57,29 +42,5 @@ class AssocDocCours
     public function getCours()
     {
         return $this->cours;
-    }
-
-    /**
-     * Set document
-     *
-     * @param Document $document
-     *
-     * @return AssocDocCours
-     */
-    public function setDocument($document)
-    {
-        $this->document = $document;
-
-        return $this;
-    }
-
-    /**
-     * Get document
-     *
-     * @return Document
-     */
-    public function getDocument()
-    {
-        return $this->document;
     }
 }

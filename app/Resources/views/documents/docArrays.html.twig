@@ -1,0 +1,26 @@
+<script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/jquery.tablesorter.min.js') }}"></script>
+<script>
+    jQuery(document).ready(function () {
+        $(".docTable").tablesorter();
+        $('th').click(function(){
+            $('.descriptionPPline').remove();
+            $('.infoDocActived').removeClass('infoDocActived');
+        });
+    });
+</script>
+<div class="container">
+    <a class="openPopupUpload btn btn-primary btn-sm">Ajouter un document</a>
+
+    {% if documentsImportants %}
+        <h3 class="heading text-center">Documents importants</h3>
+        {% include "documents/docArray.html.twig"
+        with {docs:documentsImportants}
+        %}
+        <br>
+        <h3 class="heading text-center">Autres documents</h3>
+    {% endif %}
+
+    {% include "documents/docArray.html.twig"
+    with {docs:documents}
+    %}
+</div>

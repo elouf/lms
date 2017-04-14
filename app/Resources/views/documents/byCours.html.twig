@@ -76,6 +76,7 @@
                                     urlDest: url,
                                     currentUrl: window.location.pathname,
                                     nom: $('[data-champname="nom"]').val(),
+                                    isImportant: $('[data-champname="docIsImportant"]').prop('checked'),
                                     description: CKEDITOR.instances[$('[data-champName=description]').attr('id')].getData(),
                                     users: usersSelected
                                 },
@@ -103,9 +104,7 @@
     </script>
 
     <div class="bgcolor3 pt-100 pb-100" data-coursId="{{ cours.id }}">
-        {% include "documents/docArray.html.twig"
-            with {documents:documents}
-        %}
+        {% include "documents/docArrays.html.twig" %}
     </div>
 
     {% include "documents/modal.html.twig"

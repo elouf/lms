@@ -57,6 +57,33 @@
                     }
                 });
             });
+            $('.infoDocument').click(function(){
+                if($(this).hasClass('infoDocActived')){
+                    $('.infoDocActived').removeClass('infoDocActived');
+                    $('.descriptionPPline').remove();
+                }else{
+                    var docId = $(this).closest('[data-docId]').attr('data-docId');
+                    var ligne = $(this).closest('tr');
+                    var myBtn = $(this);
+                    $.ajax({
+                        type: 'POST',
+                        url: "{{path('getDoc_ajax')}}",
+                        async: false,
+                        dataType: "json",
+                        data: {
+                            id: docId
+                        },
+                        success: function (data) {
+                            $('.infoDocActived').removeClass('infoDocActived');
+                            myBtn.addClass('infoDocActived');
+                            $('.descriptionPPline').remove();
+                            ligne.after('<tr class="descriptionPPline"><td class="descriptionDocLineUC">DESCRIPTION</td><td colspan="3">'+data['description']+'</td></tr>')
+                        },
+                        error: function (xhr, status, error) {
+                        }
+                    });
+                }
+            });
         });
     </script>
 {% endblock %}
