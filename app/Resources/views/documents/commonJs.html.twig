@@ -84,6 +84,22 @@
                     });
                 }
             });
+            $('.btnDocOpen').click(function(){
+                var docId = $(this).closest('[data-docId]').attr('data-docId');
+                $.ajax({
+                    type: 'POST',
+                    url: "{{path('userOpenDoc_ajax')}}",
+                    async: false,
+                    dataType: "json",
+                    data: {
+                        id: docId
+                    },
+                    success: function (data) {
+                    },
+                    error: function (xhr, status, error) {
+                    }
+                });
+            });
         });
     </script>
 {% endblock %}

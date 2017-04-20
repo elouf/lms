@@ -16,7 +16,7 @@
                         <td>{{ val.proprietaire.firstname }} {{ val.proprietaire.lastName }}</td>
                         <td data-text="{{ val.dateCrea|date("Y-m-d" ) }}">{{ val.dateCrea|localizeddate('none', 'none', null, null, 'd LLLL Y à h:mm' ) }}</td>
                         <td>
-                            <a href="{{ val.url }}" class="btn btn-primary btn-sm" target="_blank">Télécharger</a>
+                            <a href="{{ val.url }}" class="btn btn-primary btn-sm btnDocOpen" target="_blank">Télécharger</a>
                             {% if app.user.id == val.proprietaire.id or app.user.hasRole('ROLE_SUPER_ADMIN') %}
                                 <a class="btn btn-sm btn-danger deleteDoc">Supprimer</a>
                             {% endif %}

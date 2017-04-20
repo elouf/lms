@@ -6,13 +6,14 @@
             $('.descriptionPPline').remove();
             $('.infoDocActived').removeClass('infoDocActived');
         });
+        $('th[data-column="2"]').click();
     });
 </script>
 <div class="container">
     <a class="openPopupUpload btn btn-primary btn-sm">Ajouter un document</a>
 
     {% if documentsImportants %}
-        <h3 class="heading text-center">Documents importants</h3>
+        <h3 class="heading text-center">Documents épinglés</h3>
         {% include "documents/docArray.html.twig"
         with {docs:documentsImportants}
         %}

@@ -183,6 +183,14 @@ class CoursController extends Controller
             $cDevoirs[$i]['corrigesType'] = $repositoryCorrigeType;
         }
 
+        //Comme un accès aux documents du cours existe, on doit afficher l'info-bulle si certains n'ont pas été visités
+        $docController = new DocumentController();
+        /*       $docs = $docController->getDocsByCours($cours);
+
+               $documents = $docs[0];
+               $documentsImportants = $docs[1];
+               dump($docs);*/
+
         if($mode == "etu"){
             return $this->render('cours/one.html.twig', ['cours' => $cours, 'zonesSections' => $datas, 'mode' => 'etu']);
         }elseif($mode == "admin"){

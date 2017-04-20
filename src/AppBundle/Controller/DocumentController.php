@@ -7,6 +7,7 @@ use AppBundle\Entity\AssocDocDisc;
 use AppBundle\Entity\AssocDocInscr;
 use AppBundle\Entity\Discipline;
 use AppBundle\Entity\Document;
+use AppBundle\Entity\StatsUsersDocs;
 use DateTime;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -164,7 +165,58 @@ class DocumentController extends Controller
     {
         $cours = $this->getDoctrine()->getRepository('AppBundle:Cours')->findOneBy(array('id' => $id));
         $discipline = $cours->getDiscipline();
+        $cohortes = $this->getDoctrine()->getRepository('AppBundle:Cohorte')->findAll();
 
+        $docs = $this->getDocsByCours($cours);
+
+        $documents = $docs[0];
+        $documentsImportants = $docs[1];
+
+        // puis tous les users (ça permet d'afficher la combo-box des users destinataires des documents)
+        $users = array();
+        $admins = $this->getDoctrine()->getRepository('AppBundle:User')->findByRole('ROLE_SUPER_ADMIN');
+        foreach($admins as $admin){
+            if(!in_array($admin, $users)) {
+                array_push($users, [$admin, 'admin']);
+            }
+        }
+        if($cohortes){
+            foreach($cohortes as $cohorte){
+                if($cohorte->getDisciplines()->contains($discipline) || $cohorte->getCours()->contains($cours)){
+                    $inscrCohs = $this->getDoctrine()->getRepository('AppBundle:Inscription_coh')->findBy(array('cohorte' => $cohorte));
+                    foreach($inscrCohs as $inscrCoh){
+                        if(!in_array($inscrCoh->getUser(), $users)) {
+                            array_push($users, [$inscrCoh->getUser(), $inscrCoh->getRole()->getNom() ]);
+                        }
+                    }
+                }
+            }
+        }
+
+        $inscrDs = $this->getDoctrine()->getRepository('AppBundle:Inscription_d')->findBy(array('discipline' => $discipline));
+        if($inscrDs){
+            foreach($inscrDs as $inscrD){
+                if(!in_array($inscrD->getUser(), $users)) {
+                    array_push($users, [$inscrD->getUser(), $inscrD->getRole()->getNom()]);
+                }
+            }
+        }
+
+        $inscrCs = $this->getDoctrine()->getRepository('AppBundle:Inscription_c')->findBy(array('cours' => $cours));
+        if($inscrCs){
+            foreach($inscrCs as $inscrC){
+                if(!in_array($inscrC->getUser(), $users)) {
+                    array_push($users, [$inscrC->getUser(), $inscrC->getRole()->getNom()]);
+                }
+            }
+        }
+
+        return $this->render('documents/byCours.html.twig', ['cours' => $cours, 'documentsImportants' => $documentsImportants, 'documents' => $documents, 'users' => $users]);
+    }
+
+    public function getDocsByCours($cours){
+        $discipline = $cours->getDiscipline();
+        $cohortes = $this->getDoctrine()->getRepository('AppBundle:Cohorte')->findAll();
         $assocsCours = $this->getDoctrine()->getRepository('AppBundle:AssocDocCours')->findBy(array('cours' => $cours));
 
         // on récupère tous les documents liés au cours
@@ -184,7 +236,6 @@ class DocumentController extends Controller
         }
 
         // documents associés à une inscription à une cohorte (à laquelle le user est inscrit) inscrite au cours ou à la discipline qui la contient
-        $cohortes = $this->getDoctrine()->getRepository('AppBundle:Cohorte')->findAll();
         if($cohortes){
             foreach($cohortes as $cohorte){
                 if($cohorte->getDisciplines()->contains($discipline) || $cohorte->getCours()->contains($cours)){
@@ -264,47 +315,7 @@ class DocumentController extends Controller
                 }
             }
         }
-
-        // puis tous les users (ça permet d'afficher la combo-box des users destinataires des documents)
-        $users = array();
-        $admins = $this->getDoctrine()->getRepository('AppBundle:User')->findByRole('ROLE_SUPER_ADMIN');
-        foreach($admins as $admin){
-            if(!in_array($admin, $users)) {
-                array_push($users, [$admin, 'admin']);
-            }
-        }
-        if($cohortes){
-            foreach($cohortes as $cohorte){
-                if($cohorte->getDisciplines()->contains($discipline) || $cohorte->getCours()->contains($cours)){
-                    $inscrCohs = $this->getDoctrine()->getRepository('AppBundle:Inscription_coh')->findBy(array('cohorte' => $cohorte));
-                    foreach($inscrCohs as $inscrCoh){
-                        if(!in_array($inscrCoh->getUser(), $users)) {
-                            array_push($users, [$inscrCoh->getUser(), $inscrCoh->getRole()->getNom() ]);
-                        }
-                    }
-                }
-            }
-        }
-
-        $inscrDs = $this->getDoctrine()->getRepository('AppBundle:Inscription_d')->findBy(array('discipline' => $discipline));
-        if($inscrDs){
-            foreach($inscrDs as $inscrD){
-                if(!in_array($inscrD->getUser(), $users)) {
-                    array_push($users, [$inscrD->getUser(), $inscrD->getRole()->getNom()]);
-                }
-            }
-        }
-
-        $inscrCs = $this->getDoctrine()->getRepository('AppBundle:Inscription_c')->findBy(array('cours' => $cours));
-        if($inscrCs){
-            foreach($inscrCs as $inscrC){
-                if(!in_array($inscrC->getUser(), $users)) {
-                    array_push($users, [$inscrC->getUser(), $inscrC->getRole()->getNom()]);
-                }
-            }
-        }
-
-        return $this->render('documents/byCours.html.twig', ['cours' => $cours, 'documentsImportants' => $documentsImportants, 'documents' => $documents, 'users' => $users]);
+        return array($documents, $documentsImportants);
     }
 
     /**
@@ -536,6 +547,34 @@ class DocumentController extends Controller
 
             return new JsonResponse(array('action' =>'Get Document',
                 'id' => $docId, 'url' => $document->getUrl(), 'nom' => $document->getNom(), 'description' => $document->getDescription()));
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
+    /**
+     * @Route("/userOpenDoc_ajax", name="userOpenDoc_ajax")
+     */
+    public function userOpenDocAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+            $docId = $request->request->get('id');
+
+            $document = $em->getRepository('AppBundle:Document')->findOneBy(array('id' => $docId));
+            $user = $this->getUser();
+
+            $statUserDoc = new StatsUsersDocs();
+            $statUserDoc->setDocument($document);
+            $statUserDoc->setUser($user);
+            $statUserDoc->setDateAcces(new DateTime());
+
+            $em->persist($statUserDoc);
+
+            $em->flush();
+
+            return new JsonResponse(array('action' =>'Set Stat USer Doc',
+                'id' => $docId, 'user' => $user->getEmail(), 'nom' => $document->getNom()));
         }
 
         return new JsonResponse('This is not ajax!', 400);
