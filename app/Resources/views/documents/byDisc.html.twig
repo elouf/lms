@@ -18,12 +18,9 @@
     {% include 'documents/commonJs.html.twig' %}
     <script>
         jQuery(document).ready(function () {
-            var test = 'http://http://afadec.demo.studit.fr/lms/var/upload/files/test92770260.png';
-            console.log(test);
-            var test3 = $('[data-folderUpload]').attr('data-folderUpload');
-            console.log(test3)
-            var test2 = test.split(test3);
-            console.log(test2);
+            var steps = $('[data-uploadSteps]').attr('data-uploadSteps');
+            var upload_srcSteps = $('[data-uploadSrcSteps]').attr('data-uploadSrcSteps');
+
             $('.openPopupUpload').click(function() {
                 $('[data-champname="nom"]').removeClass('champError').val('');
                 $('.contentDocInfos').show();
@@ -38,7 +35,7 @@
                 popup.show();
 
                 var folderLocation = $('[data-folderUpload]').attr('data-folderUpload');
-                var url = '../'+folderLocation+'docs/disc/'+idDisc+'/';
+                var url = steps + folderLocation+'docs/disc/'+idDisc+'/';
 
                 $.ajax({
                     type: 'POST',
@@ -55,16 +52,14 @@
                 });
 
                 $('#docUpload').fileupload({
-                    url: $('[data-uploadSteps]').attr('data-uploadSteps')+folderLocation,
+                    url: steps + upload_srcSteps + folderLocation,
                     dropZone:null,
                     dataType: 'json',
                     done: function (e, data) {
                         $.each(data.result.files, function (index, file) {
 
                             var myUrlTab = file.url.split(folderLocation);
-                            console.log(folderLocation)
-                            console.log(myUrlTab);
-                            console.log(myUrlTab[1]);
+
                             var usersSelected = $('.selectpicker').val();
                             usersSelected.push($('[data-userId]').attr('data-userId'));
 
@@ -76,7 +71,7 @@
                                 data: {
                                     discId: idDisc,
                                     userId: $('[data-userId]').attr('data-userId'),
-                                    url: '../'+folderLocation+myUrlTab[1],
+                                    url: steps + folderLocation + myUrlTab[1],
                                     urlDest: url,
                                     currentUrl: window.location.pathname,
                                     nom: $('[data-champname="nom"]').val(),
