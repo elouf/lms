@@ -24,13 +24,16 @@
 
     <script>
         jQuery(document).ready(function () {
+            var steps = $('[data-uploadSteps]').attr('data-uploadSteps');
+            var upload_srcSteps = $('[data-uploadSrcSteps]').attr('data-uploadSrcSteps');
+
             var idCours = $('[data-coursId]').attr('data-coursId');
             var idDevoir = $('[data-idDevoir]').attr('data-idDevoir');
 
             var userId = $('[data-userId]').attr('data-userId');
 
-            var folderLocation = 'var/upload/';
-            var url = '../'+folderLocation+idCours+'/devoir/'+idDevoir+'/corriges/';
+            var folderLocation = $('[data-folderUpload]').attr('data-folderUpload');
+            var url = steps + folderLocation+idCours+'/devoir/'+idDevoir+'/corriges/';
 
             $('.corrigeUpload').each(function(){
                 var etuId = $(this).closest('[data-userId]').attr('data-userId');
@@ -51,7 +54,7 @@
             });
 
             $('.corrigeUpload').fileupload({
-                url: '../../../'+folderLocation,
+                url: steps + upload_srcSteps + folderLocation,
                 dropZone:null,
                 dataType: 'json',
                 done: function (e, data) {
@@ -68,7 +71,7 @@
                                 idDevoir: idDevoir,
                                 userId: userId,
                                 etuId: etuId,
-                                url: '../'+folderLocation+myUrlTab[1],
+                                url: steps + folderLocation + myUrlTab[1],
                                 urlDest: destUrl,
                                 currentUrl: window.location.pathname,
                                 etuId: etuId
@@ -96,7 +99,7 @@
         });
     </script>
 
-    <div class="container mt-10" data-coursId="{{ cours.id }}" data-idDevoir="{{ devoir.id }}">
+    <div class="container mt-10" data-coursId="{{ cours.id }}" data-idDevoir="{{ devoir.id }}" data-folderUpload="{{ folderUpload }}" data-uploadSteps="{{ uploadSteps }}" data-uploadSrcSteps="{{ uploadSrcSteps }}">
         <div class="alert alert-info mb-10">
             <p>Vous pouvez déposer un corrigé pour chaque copie déposée.</p>
         </div>

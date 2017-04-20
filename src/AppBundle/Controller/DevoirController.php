@@ -68,7 +68,10 @@ class DevoirController extends Controller
                 'devoir' => $devoir,
                 'devoirsEns' => $datas,
                 'sujets' => $sujets,
-                'corrigesType' => $corrigesType
+                'corrigesType' => $corrigesType,
+                'folderUpload' => $this->getParameter('upload_directory'),
+                'uploadSteps' => $this->getParameter('upload_steps'),
+                'uploadSrcSteps' => $this->getParameter('upload_srcSteps')
             ]);
     }
 
