@@ -160,7 +160,8 @@ class DocumentController extends Controller
             'documentsImportants' => $documentsImportants,
             'documents' => $documents,
             'users' => $users,
-            'folderUpload' => $this->getParameter('upload_directory')
+            'folderUpload' => $this->getParameter('upload_directory'),
+            'uploadSteps' => $this->getParameter('upload_steps')
         ]);
     }
 
@@ -222,7 +223,8 @@ class DocumentController extends Controller
             'documentsImportants' => $documentsImportants,
             'documents' => $documents,
             'users' => $users,
-            'folderUpload' => $this->getParameter('upload_directory')
+            'folderUpload' => $this->getParameter('upload_directory'),
+            'uploadSteps' => $this->getParameter('upload_steps')
         ]);
     }
 

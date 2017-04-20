@@ -54,7 +54,7 @@
                 });
 
                 $('#docUpload').fileupload({
-                    url: '../../../../'+folderLocation,
+                    url: '../'+$('[data-uploadSteps]').attr('data-uploadSteps')+folderLocation,
                     dropZone:null,
                     dataType: 'json',
                     done: function (e, data) {
