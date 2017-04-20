@@ -20,7 +20,9 @@
         jQuery(document).ready(function () {
             var test = 'http://http://afadec.demo.studit.fr/lms/var/upload/files/test92770260.png';
             console.log(test);
-            var test2 = test.split('var/upload/');
+            var test3 = $('[data-folderUpload]').attr('data-folderUpload');
+            console.log(test3)
+            var test2 = test.split(test3);
             console.log(test2);
             $('.openPopupUpload').click(function() {
                 $('[data-champname="nom"]').removeClass('champError').val('');
