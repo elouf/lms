@@ -35,6 +35,11 @@
     <script>
 
         jQuery(document).ready(function () {
+            var steps = $('[data-uploadSteps]').attr('data-uploadSteps');
+            var upload_srcSteps = $('[data-uploadSrcSteps]').attr('data-uploadSrcSteps');
+            var folderLocation = $('[data-folderUpload]').attr('data-folderUpload');
+            var upload_course = $('[data-courseUpload]').attr('data-courseUpload');
+
             var config = {
                 configname:"lightConfig",
                 toolbar:
@@ -822,8 +827,8 @@
                 $('.modal .modal-body[data-contentModal=uploadFile]').attr('data-idItem', lienId).show();
 
                 // si le folder n'existe pas, on le créé
-                var folderLocation = 'var/upload/';
-                var url = '../'+folderLocation+coursId+'/lien/'+lienId+'/';
+                var url = steps + folderLocation+coursId+'/lien/'+lienId+'/';
+
                 $.ajax({
                     type: 'POST',
                     url: "{{path('checkDirForUploadFile_ajax')}}",
@@ -860,7 +865,7 @@
 
 
                 $('#itemUpload').fileupload({
-                    url: '../../../../../'+folderLocation,
+                    url: steps + upload_srcSteps  + upload_course + folderLocation,
                     dropZone:null,
                     dataType: 'json',
                     done: function (e, data) {
@@ -874,20 +879,16 @@
                                 data: {
                                     itemId: lienId,
                                     type: file.type,
-                                    url: '../'+folderLocation+myUrlTab[1],
+                                    url: steps +folderLocation+myUrlTab[1],
                                     urlDest: url,
                                     unzipIfZip: $('[data-champName=unzipUploaded]').prop('checked'),
                                     currentUrl: window.location.pathname
                                 },
                                 success: function (data) {
-                                    console.log("success");
-                                    console.log(data);
                                     $('.modal').modal('toggle');
                                     lienUrlInput.val(data.newLien);
                                 },
                                 error: function(xhr, status, error) {
-                                    console.log("error");
-                                    console.log(data);
                                     $('.modal').modal('toggle');
                                 }
                             });
@@ -918,14 +919,14 @@
                 $('.modal .modal-body[data-contentModal=uploadFile]').attr('data-idItem', devoirId).show();
 
                 // si le folder n'existe pas, on le créé
-                var folderLocation = 'var/upload/';
                 var typeItem = "sujets";
                 var titreDefaut = "Sujet du devoir";
                 if($(this).hasClass("selectCorrigeTypeAddToDevoir")){
                     typeItem = "corrigeTypes";
                     titreDefaut = "Corrigé type du devoir";
                 }
-                var url = '../'+folderLocation+coursId+'/devoir/'+devoirId+'/'+typeItem+'/';
+                var url = steps + folderLocation+coursId+'/devoir/'+devoirId+'/'+typeItem+'/';
+
                 $.ajax({
                     type: 'POST',
                     url: "{{path('checkDirForUploadFile_ajax')}}",
@@ -962,7 +963,7 @@
                 $('.modal .modal-body[data-contentModal=uploadFile] [data-champName=uploadedFileName]').val(titreDefaut);
 
                 $('#itemUpload').fileupload({
-                    url: '../../../../../'+folderLocation,
+                    url: steps + upload_srcSteps  + upload_course + folderLocation,
                     dropZone:null,
                     dataType: 'json',
                     done: function (e, data) {
@@ -976,7 +977,7 @@
                                 data: {
                                     typeItem: typeItem,
                                     itemId: devoirId,
-                                    url: '../'+folderLocation+myUrlTab[1],
+                                    url: steps + folderLocation+myUrlTab[1],
                                     urlDest: url,
                                     currentUrl: window.location.pathname,
                                     nom: $('.modal .modal-body[data-contentModal=uploadFile] [data-champName=uploadedFileName]').val()
@@ -1111,7 +1112,7 @@
     </script>
 
 
-    <div class="container mt-140" data-coursId="{{ cours.id }}">
+    <div class="container mt-140" data-coursId="{{ cours.id }}" data-folderUpload="{{ folderUpload }}" data-uploadSteps="{{ uploadSteps }}" data-uploadSrcSteps="{{ uploadSrcSteps }}" data-courseUpload="{{ uploadCourse }}">
         <div class="row">
             <div class="col-sm-3">
                 <div class="course-intro">

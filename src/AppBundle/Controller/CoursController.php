@@ -192,7 +192,15 @@ class CoursController extends Controller
                dump($docs);*/
 
         if($mode == "etu"){
-            return $this->render('cours/one.html.twig', ['cours' => $cours, 'zonesSections' => $datas, 'mode' => 'etu']);
+            return $this->render('cours/one.html.twig', [
+                'cours' => $cours,
+                'zonesSections' => $datas,
+                'mode' => 'etu',
+                'folderUpload' => $this->getParameter('upload_directory'),
+                'uploadSteps' => $this->getParameter('upload_steps'),
+                'uploadSrcSteps' => $this->getParameter('upload_srcSteps'),
+                'uploadCourse' => $this->getParameter('upload_course')
+            ]);
         }elseif($mode == "admin"){
             return $this->render('cours/oneAdmin.html.twig',
                 [
@@ -203,10 +211,22 @@ class CoursController extends Controller
                     'groupes' => $cGroupes,
                     'libres' => $cLibres,
                     'typeLiens' => $repositoryTypeLiens,
-                    'categorieLiens' => $repositoryCategorieLiens
+                    'categorieLiens' => $repositoryCategorieLiens,
+                    'folderUpload' => $this->getParameter('upload_directory'),
+                    'uploadSteps' => $this->getParameter('upload_steps'),
+                    'uploadSrcSteps' => $this->getParameter('upload_srcSteps'),
+                    'uploadCourse' => $this->getParameter('upload_course')
                 ]);
         }elseif($mode == "ens") {
-            return $this->render('cours/one.html.twig', ['cours' => $cours, 'zonesSections' => $datas, 'mode' => 'ens']);
+            return $this->render('cours/one.html.twig', [
+                'cours' => $cours,
+                'zonesSections' => $datas,
+                'mode' => 'ens',
+                'folderUpload' => $this->getParameter('upload_directory'),
+                'uploadSteps' => $this->getParameter('upload_steps'),
+                'uploadSrcSteps' => $this->getParameter('upload_srcSteps'),
+                'uploadCourse' => $this->getParameter('upload_course')
+            ]);
         }
     }
 

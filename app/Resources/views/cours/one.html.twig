@@ -17,6 +17,11 @@
         var chrono;
         jQuery(document).ready(function () {
 
+            var steps = $('[data-uploadSteps]').attr('data-uploadSteps');
+            var upload_srcSteps = $('[data-uploadSrcSteps]').attr('data-uploadSrcSteps');
+            var folderLocation = $('[data-folderUpload]').attr('data-folderUpload');
+            var upload_course = $('[data-courseUpload]').attr('data-courseUpload');
+
             $('.btnOpenDevoir').click(function(){
                 var idItem = $(this).closest('[data-iditem]').attr('data-iditem');
                 var myBtn = $(this);
@@ -106,8 +111,7 @@
                             }
                         }
 
-                        var folderLocation = 'var/upload/';
-                        var url = '../'+folderLocation+$('[data-coursId]').attr('data-coursId')+'/devoir/'+idItem+'/copies/'+$('[data-userId]').attr('data-userId')+'/';
+                        var url = steps + folderLocation+$('[data-coursId]').attr('data-coursId')+'/devoir/'+idItem+'/copies/'+$('[data-userId]').attr('data-userId')+'/';
 
                         $.ajax({
                             type: 'POST',
@@ -124,7 +128,7 @@
                         });
 
                         $('#copieUpload').fileupload({
-                            url: '../../../../../'+folderLocation,
+                            url: steps + upload_srcSteps + upload_course + folderLocation,
                             dropZone:null,
                             dataType: 'json',
                             done: function (e, data) {
@@ -138,7 +142,7 @@
                                         data: {
                                             itemId: idItem,
                                             userId: $('[data-userId]').attr('data-userId'),
-                                            url: '../'+folderLocation+myUrlTab[1],
+                                            url: steps + folderLocation+myUrlTab[1],
                                             urlDest: url,
                                             currentUrl: window.location.pathname
                                         },
@@ -164,6 +168,7 @@
                                 .parent().addClass($.support.fileInput ? undefined : 'disabled');
                     },
                     error: function(xhr, status, error) {
+                        console.log('error upload devoir copie')
                     }
                 });
             });
@@ -235,7 +240,7 @@
         });
     </script>
 
-    <div class="container mt-140" data-coursId="{{ cours.id }}">
+    <div class="container mt-140" data-coursId="{{ cours.id }}" data-folderUpload="{{ folderUpload }}" data-uploadSteps="{{ uploadSteps }}" data-uploadSrcSteps="{{ uploadSrcSteps }}" data-courseUpload="{{ uploadCourse }}">
         <div class="row">
             <div class="col-sm-4">
                 <div class="course-intro">

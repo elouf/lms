@@ -26,13 +26,13 @@
         jQuery(document).ready(function () {
             var steps = $('[data-uploadSteps]').attr('data-uploadSteps');
             var upload_srcSteps = $('[data-uploadSrcSteps]').attr('data-uploadSrcSteps');
+            var folderLocation = $('[data-folderUpload]').attr('data-folderUpload');
 
             var idCours = $('[data-coursId]').attr('data-coursId');
             var idDevoir = $('[data-idDevoir]').attr('data-idDevoir');
 
             var userId = $('[data-userId]').attr('data-userId');
 
-            var folderLocation = $('[data-folderUpload]').attr('data-folderUpload');
             var url = steps + folderLocation+idCours+'/devoir/'+idDevoir+'/corriges/';
 
             $('.corrigeUpload').each(function(){
