@@ -412,15 +412,12 @@ class DocumentController extends Controller
                     if($estAssocie){
                         $em->persist($assocInscr);
                     }
-
-
                 }
             }
 
             $em->flush();
             return new JsonResponse(array('action' =>'upload Document for Discipline', 'id' => $discId, 'ext' => $ext));
         }
-
         return new JsonResponse('This is not ajax!', 400);
     }
 
@@ -469,11 +466,14 @@ class DocumentController extends Controller
                 $assocCours->setDocument($doc);
                 $assocCours->setIsImportant($isImportant);
                 $em->persist($assocCours);
+                $em->flush();
+                return new JsonResponse(array('action' =>'upload Document for Cours : All', 'id' => $coursId, 'ext' => $ext));
             }else{
                 for($i=0; $i<count($users); $i++){
                     $assocInscr = new AssocDocInscr();
                     $assocInscr->setDocument($doc);
                     $assocInscr->setIsImportant($isImportant);
+                    $assocInscr->setCours($cours);
 
                     $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $users[$i]));
 
@@ -509,15 +509,11 @@ class DocumentController extends Controller
                     if($estAssocie){
                         $em->persist($assocInscr);
                     }
-
-
                 }
+                $em->flush();
+                return new JsonResponse(array('action' =>'upload Document for Cours : not All', 'id' => $coursId, 'ext' => $ext, 'users'=> $users));
             }
-
-            $em->flush();
-            return new JsonResponse(array('action' =>'upload Document for Cours', 'id' => $coursId, 'ext' => $ext));
         }
-
         return new JsonResponse('This is not ajax!', 400);
     }
 
