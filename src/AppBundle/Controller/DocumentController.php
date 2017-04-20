@@ -155,7 +155,13 @@ class DocumentController extends Controller
             }
         }
 
-        return $this->render('documents/byDisc.html.twig', ['discipline' => $discipline, 'documentsImportants' => $documentsImportants, 'documents' => $documents, 'users' => $users]);
+        return $this->render('documents/byDisc.html.twig', [
+            'discipline' => $discipline,
+            'documentsImportants' => $documentsImportants,
+            'documents' => $documents,
+            'users' => $users,
+            'folderUpload' => $this->getParameter('upload_directory')
+        ]);
     }
 
     /**
@@ -211,7 +217,13 @@ class DocumentController extends Controller
             }
         }
 
-        return $this->render('documents/byCours.html.twig', ['cours' => $cours, 'documentsImportants' => $documentsImportants, 'documents' => $documents, 'users' => $users]);
+        return $this->render('documents/byCours.html.twig', [
+            'cours' => $cours,
+            'documentsImportants' => $documentsImportants,
+            'documents' => $documents,
+            'users' => $users,
+            'folderUpload' => $this->getParameter('upload_directory')
+        ]);
     }
 
     public function getDocsByCours($cours){

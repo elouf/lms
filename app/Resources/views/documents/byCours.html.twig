@@ -36,7 +36,7 @@
                 var popup = $('.modal .modal-body[data-contentModal=appendDoc]');
                 popup.show();
 
-                var folderLocation = 'var/upload/';
+                var folderLocation = $('[data-folderUpload]').attr('data-folderUpload');
                 var url = '../'+folderLocation+'docs/cours/'+idCours+'/';
 
                 $.ajax({
