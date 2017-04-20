@@ -54,6 +54,7 @@
                     dataType: 'json',
                     done: function (e, data) {
                         $.each(data.result.files, function (index, file) {
+                            console.log(file.url);
                             var myUrlTab = file.url.split(folderLocation);
 
                             var usersSelected = $('.selectpicker').val();
