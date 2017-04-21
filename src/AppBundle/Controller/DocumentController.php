@@ -22,6 +22,7 @@ class DocumentController extends Controller
      */
     public function documentsByDisciplineAction (Request $request, $id)
     {
+        $role = "etu";
         $discipline = $this->getDoctrine()->getRepository('AppBundle:Discipline')->findOneBy(array('id' => $id));
 
         $assocsDisc = $this->getDoctrine()->getRepository('AppBundle:AssocDocDisc')->findBy(array('discipline' => $discipline));
@@ -67,6 +68,9 @@ class DocumentController extends Controller
                     }else{
                         $inscrCoh = $this->getDoctrine()->getRepository('AppBundle:Inscription_coh')->findOneBy(array('user' => $this->getUser(), 'cohorte' => $cohorte));
                         if($inscrCoh){
+                            if($inscrCoh->getRole()->getNom() == "Enseignant"){
+                                $role = 'ens';
+                            }
                             $assocsInscr = $this->getDoctrine()->getRepository('AppBundle:AssocDocInscr')->findBy(array('inscription' => $inscrCoh, 'cours' => null));
                             for($i=0; $i<count($assocsInscr); $i++) {
                                 if($assocsInscr[$i]->getIsImportant()){
@@ -108,6 +112,9 @@ class DocumentController extends Controller
         }else{
             $inscrDis = $this->getDoctrine()->getRepository('AppBundle:Inscription_d')->findOneBy(array('user' => $this->getUser(), 'discipline' => $discipline));
             if($inscrDis){
+                if($inscrDis->getRole()->getNom() == "Enseignant"){
+                    $role = 'ens';
+                }
                 $assocsInscr = $this->getDoctrine()->getRepository('AppBundle:AssocDocInscr')->findBy(array('inscription' => $inscrDis, 'cours' => null));
                 for($i=0; $i<count($assocsInscr); $i++) {
                     if($assocsInscr[$i]->getIsImportant()){
@@ -138,7 +145,6 @@ class DocumentController extends Controller
                     $inscrCohs = $this->getDoctrine()->getRepository('AppBundle:Inscription_coh')->findBy(array('cohorte' => $cohorte));
                     foreach($inscrCohs as $inscrCoh){
                         if(!in_array($inscrCoh->getUser(), $users)) {
-
                             array_push($users, [$inscrCoh->getUser(), $inscrCoh->getRole()->getNom() ]);
                         }
                     }
@@ -155,11 +161,16 @@ class DocumentController extends Controller
             }
         }
 
+        if ($this->getUser()->hasRole('ROLE_SUPER_ADMIN')){
+            $role = "admin";
+        }
+
         return $this->render('documents/byDisc.html.twig', [
             'discipline' => $discipline,
             'documentsImportants' => $documentsImportants,
             'documents' => $documents,
             'users' => $users,
+            'role' => $role,
             'folderUpload' => $this->getParameter('upload_directory'),
             'uploadSteps' => $this->getParameter('upload_steps'),
             'uploadSrcSteps' => $this->getParameter('upload_srcSteps')
@@ -179,6 +190,10 @@ class DocumentController extends Controller
 
         $documents = $docs[0];
         $documentsImportants = $docs[1];
+        $role = $docs[2];
+        if ($this->getUser()->hasRole('ROLE_SUPER_ADMIN')){
+            $role = "admin";
+        }
 
         // puis tous les users (ça permet d'afficher la combo-box des users destinataires des documents)
         $users = array();
@@ -224,6 +239,7 @@ class DocumentController extends Controller
             'documentsImportants' => $documentsImportants,
             'documents' => $documents,
             'users' => $users,
+            'role' => $role,
             'folderUpload' => $this->getParameter('upload_directory'),
             'uploadSteps' => $this->getParameter('upload_steps'),
             'uploadSrcSteps' => $this->getParameter('upload_srcSteps')
@@ -231,6 +247,7 @@ class DocumentController extends Controller
     }
 
     public function getDocsByCours($cours){
+        $role = "etu";
         $discipline = $cours->getDiscipline();
         $cohortes = $this->getDoctrine()->getRepository('AppBundle:Cohorte')->findAll();
         $assocsCours = $this->getDoctrine()->getRepository('AppBundle:AssocDocCours')->findBy(array('cours' => $cours));
@@ -276,6 +293,9 @@ class DocumentController extends Controller
                     }else{
                         $inscrCoh = $this->getDoctrine()->getRepository('AppBundle:Inscription_coh')->findOneBy(array('user' => $this->getUser(), 'cohorte' => $cohorte));
                         if($inscrCoh){
+                            if($role == 'etu' && $inscrCoh->getRole()->getNom() == "Enseignant"){
+                                $role = 'ens';
+                            }
                             $assocsInscr = $this->getDoctrine()->getRepository('AppBundle:AssocDocInscr')->findBy(array('inscription' => $inscrCoh));
                             for($i=0; $i<count($assocsInscr); $i++) {
                                 if($assocsInscr[$i]->getIsImportant()){
@@ -317,6 +337,9 @@ class DocumentController extends Controller
         }else{
             $inscrDis = $this->getDoctrine()->getRepository('AppBundle:Inscription_d')->findOneBy(array('user' => $this->getUser(), 'discipline' => $discipline));
             if($inscrDis){
+                if($role == 'etu' && $inscrDis->getRole()->getNom() == "Enseignant"){
+                    $role = 'ens';
+                }
                 $assocsInscr = $this->getDoctrine()->getRepository('AppBundle:AssocDocInscr')->findBy(array('inscription' => $inscrDis));
                 for($i=0; $i<count($assocsInscr); $i++) {
                     if($assocsInscr[$i]->getIsImportant()){
@@ -331,7 +354,7 @@ class DocumentController extends Controller
                 }
             }
         }
-        return array($documents, $documentsImportants);
+        return array($documents, $documentsImportants, $role);
     }
 
     /**

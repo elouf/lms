@@ -1,9 +1,0 @@
-{% extends 'base.html.twig' %}
-
-{% block main %}
-    {% for discipline in disciplines %}
-        <a href="{{ path('oneDiscipline', {id: discipline.id}) }}" class="label label-info">{{ discipline.nom }}</a>
-    {% endfor %}
-
-
-{% endblock %}
