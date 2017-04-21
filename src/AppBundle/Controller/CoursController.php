@@ -43,8 +43,46 @@ class CoursController extends Controller
      */
     public function oneCoursAction (Request $request, $id, $mode)
     {
-        $repository = $this->getDoctrine()->getRepository('AppBundle:Cours');
-        $cours = $repository->find($id);
+        $cours = $this->getDoctrine()->getRepository('AppBundle:Cours')->find($id);
+        $discipline = $cours->getDiscipline();
+
+        // on corrige le statut du user. Si c'est un enseignant, il ne doit pas être en etu. Si ce n'est pas un admin, il ne doit pas être admin
+        if(!$this->getUser()->hasRole('ROLE_SUPER_ADMIN')){
+            $role = "";
+            $cohortes = $this->getDoctrine()->getRepository('AppBundle:Cohorte')->findAll();
+            if($cohortes){
+                foreach($cohortes as $cohorte){
+                    if($cohorte->getDisciplines()->contains($discipline) || $cohorte->getCours()->contains($cours)){
+                        $inscrCoh = $this->getDoctrine()->getRepository('AppBundle:Inscription_coh')->findOneBy(array('user' => $this->getUser(), 'cohorte' => $cohorte));
+                        if($inscrCoh){
+                            $role = $inscrCoh->getRole()->getNom();
+                            break;
+                        }
+                    }
+                }
+            }
+            if($role == ""){
+                $inscrDis = $this->getDoctrine()->getRepository('AppBundle:Inscription_d')->findOneBy(array('user' => $this->getUser(), 'discipline' => $discipline));
+                if($inscrDis) {
+                    $role = $inscrDis->getRole()->getNom();
+                }
+            }
+            if($role == ""){
+                $inscrC = $this->getDoctrine()->getRepository('AppBundle:Inscription_c')->findOneBy(array('user' => $this->getUser(), 'cours' => $cours));
+                if($inscrC) {
+                    $role = $inscrC->getRole()->getNom();
+                }
+            }
+            if($role == "Enseignant"){
+                $mode = 'ens';
+            }else{
+                $mode = 'etu';
+            }
+        }
+
+
+
+
 
         $repositoryTypeLiens = $this->getDoctrine()->getRepository('AppBundle:TypeLien')->findAll();
         $repositoryCategorieLiens = $this->getDoctrine()->getRepository('AppBundle:CategorieLien')->findAll();
@@ -92,7 +130,25 @@ class CoursController extends Controller
                         }
 
                         // on a pas besoin des copies du user si on est en mode admin, par contre en etu, oui
-                        if($mode == "etu"){
+                        if($mode == "admin"){
+
+                        }elseif($mode == 'ens'){
+                            // on compte le nombre de copies non corrigées
+                            $datas[$i]["zones"]["copiesDeposes"][$j] = 0;
+                            $datas[$i]["zones"]["corrigesDeposes"][$j] = 0;
+
+                            $copies = $this->getDoctrine()->getRepository('AppBundle:Copie')->findBy(array('devoir' => $ressource));
+                            for($u=0; $u<count($copies); $u++){
+                                $copieFichier = $this->getDoctrine()->getRepository('AppBundle:CopieFichier')->findOneBy(array('copie' => $copies[$u]));
+                                if($copieFichier){
+                                    $datas[$i]["zones"]["copiesDeposes"][$j]++;
+                                    $corrigeFichier = $this->getDoctrine()->getRepository('AppBundle:Corrige')->findOneBy(array('copie' => $copies[$u]));
+                                    if($corrigeFichier){
+                                        $datas[$i]["zones"]["corrigesDeposes"][$j]++;
+                                    }
+                                }
+                            }
+                        }else{
                             $datas[$i]["zones"]["copie"][$j] = "undefined";
                             $datas[$i]["zones"]["corrige"][$j] = "undefined";
                             $datas[$i]["zones"]["copieFichier"][$j] = "undefined";
@@ -112,22 +168,6 @@ class CoursController extends Controller
                                     $datas[$i]["zones"]["corrige"][$j] = $corrige;
                                     $corrigeFichier = $this->getDoctrine()->getRepository('AppBundle:CorrigeFichier')->findOneBy(array('corrige' => $corrige));
                                     $datas[$i]["zones"]["corrigeFichier"][$j] = $corrigeFichier;
-                                }
-                            }
-                        }elseif($mode == 'ens'){
-                            // on compte le nombre de copies non corrigées
-                            $datas[$i]["zones"]["copiesDeposes"][$j] = 0;
-                            $datas[$i]["zones"]["corrigesDeposes"][$j] = 0;
-
-                            $copies = $this->getDoctrine()->getRepository('AppBundle:Copie')->findBy(array('devoir' => $ressource));
-                            for($u=0; $u<count($copies); $u++){
-                                $copieFichier = $this->getDoctrine()->getRepository('AppBundle:CopieFichier')->findOneBy(array('copie' => $copies[$u]));
-                                if($copieFichier){
-                                    $datas[$i]["zones"]["copiesDeposes"][$j]++;
-                                    $corrigeFichier = $this->getDoctrine()->getRepository('AppBundle:Corrige')->findOneBy(array('copie' => $copies[$u]));
-                                    if($corrigeFichier){
-                                        $datas[$i]["zones"]["corrigesDeposes"][$j]++;
-                                    }
                                 }
                             }
                         }
@@ -191,17 +231,7 @@ class CoursController extends Controller
                $documentsImportants = $docs[1];
                dump($docs);*/
 
-        if($mode == "etu"){
-            return $this->render('cours/one.html.twig', [
-                'cours' => $cours,
-                'zonesSections' => $datas,
-                'mode' => 'etu',
-                'folderUpload' => $this->getParameter('upload_directory'),
-                'uploadSteps' => $this->getParameter('upload_steps'),
-                'uploadSrcSteps' => $this->getParameter('upload_srcSteps'),
-                'uploadCourse' => $this->getParameter('upload_course')
-            ]);
-        }elseif($mode == "admin"){
+        if($mode == "admin"){
             return $this->render('cours/oneAdmin.html.twig',
                 [
                     'cours' => $cours,
@@ -222,6 +252,16 @@ class CoursController extends Controller
                 'cours' => $cours,
                 'zonesSections' => $datas,
                 'mode' => 'ens',
+                'folderUpload' => $this->getParameter('upload_directory'),
+                'uploadSteps' => $this->getParameter('upload_steps'),
+                'uploadSrcSteps' => $this->getParameter('upload_srcSteps'),
+                'uploadCourse' => $this->getParameter('upload_course')
+            ]);
+        }else{
+            return $this->render('cours/one.html.twig', [
+                'cours' => $cours,
+                'zonesSections' => $datas,
+                'mode' => 'etu',
                 'folderUpload' => $this->getParameter('upload_directory'),
                 'uploadSteps' => $this->getParameter('upload_steps'),
                 'uploadSrcSteps' => $this->getParameter('upload_srcSteps'),

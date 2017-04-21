@@ -204,6 +204,9 @@ a { font-family: inherit; color: inherit; }
 textarea{
     resize: none;
 }
+textarea[readonly]{
+    background: none;
+}
 
 .ui-state-highlight {
     min-height: 30px;

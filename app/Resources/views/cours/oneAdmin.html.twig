@@ -76,11 +76,28 @@
                 allowedContent: true
             };
 
-            $('textarea.simpleEditor').ckeditor(config);
-            $('textarea.complexEditor').ckeditor(config2);
-
             var uncheckedClass = 'fa-square-o';
             var checkedClass = 'fa-check-square-o';
+
+            // les ckeditors ne sont pas chargés à l'init, sinon la page est bcp trop lourde à charger
+            $('.simpleEditor[readonly]').click(function(){
+                activateCK($(this), config);
+            });
+            $('.complexEditor[readonly]').click(function(){
+                activateCK($(this), config2);
+            });
+            function activateCK(editor, config){
+                editor.attr("readonly", false);
+                editor.ckeditor(config);
+                for (var i in CKEDITOR.instances) {
+                    //CKEDITOR.instances[i].unbind('change');
+                    CKEDITOR.instances[i].on('change', function() {
+                        var idItem = $(this).attr('name');
+                        var elem = $('#'+idItem).closest('.courseElemAdmin');
+                        detectInput(elem);
+                    });
+                }
+            }
 
             // click sur le check : affichage ou non de la zoneRessource
             $('.activationBtn').click(function () {
@@ -427,14 +444,14 @@
                 elem.find('.detailIconTypeLien i').remove();
                 elem.find('.detailIconTypeLien').append('<i class="fa '+$(this).find("option:selected").attr('data-icon')+'"></i>');
             });
-            for (var i in CKEDITOR.instances) {
+            /*for (var i in CKEDITOR.instances) {
                 CKEDITOR.instances[i].on('change', function() {
 
                     var idItem = $(this).attr('name');
                     var elem = $('#'+idItem).closest('.courseElemAdmin');
                     detectInput(elem);
                 });
-            }
+            }*/
             function detectInput(elem){
                 if(!elem.hasClass('inEdition')) {
                     elem.addClass('inEdition');

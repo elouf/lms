@@ -20,7 +20,7 @@
                                         <textarea data-champName="description" id="descriptionNewDoc" class="simpleEditor editor champAdmin"></textarea>
                                     </div>
                                 </div>
-                                {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                {% if role == 'admin' or role == 'ens' %}
                                     <div class="row mb-10">
                                         <div class="LabelAdmin col-sm-3">Fichier important</div>
                                         <div class="noPadding col-sm-9  col-xs-12">
