@@ -473,7 +473,10 @@
                     var id = lien.attr('data-idItem');
                     var nom = lien.find('[data-champName=nom]').val();
                     var url = lien.find('[data-champName=url]').val();
-                    var description = CKEDITOR.instances[lien.find('[data-champName=description]').attr('id')].getData();
+                    var description = lien.find('textarea[data-champName=description]').val();
+                    if(CKEDITOR.instances[lien.find('[data-champName=description]').attr('id')]){
+                        description = CKEDITOR.instances[lien.find('[data-champName=description]').attr('id')].getData();
+                    }
                     var typeLien = lien.find('[data-champName=typeLien]').val();
 
                     $.ajax({
@@ -499,7 +502,10 @@
                 console.log('changeGroupe : '+lien.hasClass('inEdition'))
                 lien.find('.btnSaveInputChange').click(function(){
                     var id = lien.attr('data-idItem');
-                    var description = CKEDITOR.instances[lien.find('[data-champName=description]').attr('id')].getData();
+                    var description = lien.find('textarea[data-champName=description]').val();
+                    if(CKEDITOR.instances[lien.find('[data-champName=description]').attr('id')]){
+                        description = CKEDITOR.instances[lien.find('[data-champName=description]').attr('id')].getData();
+                    }
 
                     $.ajax({
                         type: 'POST',
@@ -522,7 +528,11 @@
                 groupe.find('.btnSaveInputChange').click(function(){
                     var id = groupe.attr('data-idItem');
                     var nom = groupe.find('[data-champName=nom]').val();
-                    var description = CKEDITOR.instances[groupe.find('[data-champName=description]').attr('id')].getData();
+
+                    var description = groupe.find('textarea[data-champName=description]').val();
+                    if(CKEDITOR.instances[groupe.find('[data-champName=description]').attr('id')]){
+                        description = CKEDITOR.instances[groupe.find('[data-champName=description]').attr('id')].getData();
+                    }
 
                     $.ajax({
                         type: 'POST',
@@ -546,7 +556,10 @@
                 devoir.find('.btnSaveInputChange').click(function(){
                     var id = devoir.attr('data-idItem');
                     var nom = devoir.find('[data-champName=nom]').val();
-                    var description = CKEDITOR.instances[devoir.find('[data-champName=description]').attr('id')].getData();
+                    var description = devoir.find('textarea[data-champName=description]').val();
+                    if(CKEDITOR.instances[devoir.find('[data-champName=description]').attr('id')]){
+                        description = CKEDITOR.instances[devoir.find('[data-champName=description]').attr('id')].getData();
+                    }
                     var dureeH = devoir.find('[data-champName=dureeHeures] input').val();
                     var dureeM = devoir.find('[data-champName=dureeMinutes] input').val();
                     var dateDebut = devoir.find('[data-champName=dateDebut] input').val();
