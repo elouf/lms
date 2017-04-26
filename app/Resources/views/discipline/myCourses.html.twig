@@ -71,6 +71,9 @@
                                                             {% endif %}
                                                         </div>
                                                     {% endif %}
+                                                    {% if val.nbNewDocs != 0 %}
+                                                        <p class="newDocsP"><span class="newDocsPuce">{{ val.nbNewDocs }}</span> nouveaux documents</p>
+                                                    {% endif %}
                                                     <div class="resumeDocs mt-20 col-xs-12">
                                                         <a href="{{ path('documents', {id: val.discipline.id}) }}" class="btn btn-primary btn-sm">Accéder</a>
                                                     </div>

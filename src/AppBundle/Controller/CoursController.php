@@ -224,12 +224,16 @@ class CoursController extends Controller
         }
 
         //Comme un accès aux documents du cours existe, on doit afficher l'info-bulle si certains n'ont pas été visités
-        $docController = new DocumentController();
-        /*       $docs = $docController->getDocsByCours($cours);
+        $docs = $this->getDoctrine()->getRepository('AppBundle:Document')->findByCours($cours, $this->getUser());
+        $documents = array_merge($docs[0], $docs[1]);
 
-               $documents = $docs[0];
-               $documentsImportants = $docs[1];
-               dump($docs);*/
+        $nbNewDocs = 0;
+        foreach($documents as $doc){
+            $stat = $this->getDoctrine()->getRepository('AppBundle:StatsUsersDocs')->findBy(array('user' => $this->getUser(), 'document' => $doc));
+            if(!$stat){
+                $nbNewDocs++;
+            }
+        }
 
         if($mode == "admin"){
             return $this->render('cours/oneAdmin.html.twig',
@@ -245,7 +249,8 @@ class CoursController extends Controller
                     'folderUpload' => $this->getParameter('upload_directory'),
                     'uploadSteps' => $this->getParameter('upload_steps'),
                     'uploadSrcSteps' => $this->getParameter('upload_srcSteps'),
-                    'uploadCourse' => $this->getParameter('upload_course')
+                    'uploadCourse' => $this->getParameter('upload_course'),
+                    'nbNewDocs' => $nbNewDocs
                 ]);
         }elseif($mode == "ens") {
             return $this->render('cours/one.html.twig', [
@@ -255,7 +260,8 @@ class CoursController extends Controller
                 'folderUpload' => $this->getParameter('upload_directory'),
                 'uploadSteps' => $this->getParameter('upload_steps'),
                 'uploadSrcSteps' => $this->getParameter('upload_srcSteps'),
-                'uploadCourse' => $this->getParameter('upload_course')
+                'uploadCourse' => $this->getParameter('upload_course'),
+                'nbNewDocs' => $nbNewDocs
             ]);
         }else{
             return $this->render('cours/one.html.twig', [
@@ -265,7 +271,8 @@ class CoursController extends Controller
                 'folderUpload' => $this->getParameter('upload_directory'),
                 'uploadSteps' => $this->getParameter('upload_steps'),
                 'uploadSrcSteps' => $this->getParameter('upload_srcSteps'),
-                'uploadCourse' => $this->getParameter('upload_course')
+                'uploadCourse' => $this->getParameter('upload_course'),
+                'nbNewDocs' => $nbNewDocs
             ]);
         }
     }

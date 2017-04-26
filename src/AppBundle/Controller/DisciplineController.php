@@ -74,7 +74,7 @@ class DisciplineController extends Controller
             $courses[$i]["discipline"] = $disciplinesArray2Consider[$i];
             $courses[$i]["courses"] = $repositoryCours->findBy(array('discipline' => $disciplinesArray2Consider[$i]));
         }
-        // on lui ajoute les cours individuels (avec leurs disciplines
+        // on lui ajoute les cours individuels (avec leurs disciplines)
         for($j=0; $j<count($coursesIndiv); $j++){
             $discExists = false;
             for($k=0; $k<count($courses); $k++){
@@ -89,7 +89,23 @@ class DisciplineController extends Controller
                 $courses[$idx]["courses"] = array($coursesIndiv[$j]);
             }
         }
-        dump($courses);
+
+        // on recherche les infos liées aux ducuments
+        ////Comme un accès aux documents de la discipline existe, on doit afficher l'info-bulle si certains n'ont pas été visités
+        for($j=0; $j<count($courses); $j++){
+            $docs = $this->getDoctrine()->getRepository('AppBundle:Document')->findByDisc($courses[$j]["discipline"], $this->getUser());
+            $documents = array_merge($docs[0], $docs[1]);
+
+            $nbNewDocs = 0;
+            foreach($documents as $doc){
+                $stat = $this->getDoctrine()->getRepository('AppBundle:StatsUsersDocs')->findBy(array('user' => $this->getUser(), 'document' => $doc));
+                if(!$stat){
+                    $nbNewDocs++;
+                }
+            }
+            $courses[$j]["nbNewDocs"] = $nbNewDocs;
+        }
+
         return $this->render('discipline/myCourses.html.twig', ['courses' => $courses]);
     }
 

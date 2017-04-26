@@ -206,6 +206,7 @@ textarea{
 }
 textarea[readonly]{
     background: none;
+    width: 100%;
 }
 
 .ui-state-highlight {
@@ -517,4 +518,23 @@ textarea[readonly]{
 }
 .couleurEnsOption{
     background: #2aabd2;
+}
+.newDocsPuce{
+    background: #d1252c;
+    color: #fff;
+    font-weight: bold;
+    text-align: center;
+    padding: 5px 10px;
+    border-radius: 20px;
+}
+.newDocsP{
+    margin: 10px 0px;
+}
+.iconeNewDoc{
+    background: #d1252c;
+    color: #fff;
+    font-size: 15px;
+    margin-left: 15px;
+    border-radius: 20px;
+    padding: 2px;
 }

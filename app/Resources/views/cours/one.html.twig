@@ -485,6 +485,9 @@
                                 </div>
                                 <div class="course-detail">
                                     <h4 class="heading">Mes documents partagés</h4>
+                                    {% if nbNewDocs != 0 %}
+                                        <p class="newDocsP"><span class="newDocsPuce">{{ nbNewDocs }}</span> nouveaux documents</p>
+                                    {% endif %}
                                     <div class="resumeDocs mt-20 col-xs-12">
                                         <a href="{{ path('courseDocs', {id: cours.id}) }}" class="btn btn-primary btn-sm">Accéder</a>
                                     </div>
