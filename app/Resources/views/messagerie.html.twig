@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block pageHeader %}
+    <div class="page-header">
+        <div class="container">
+            <h2 class="color3">Messagerie</h2>
+            <ul class="breadcrumb">
+                <li class="color3">Mes messages</li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+
+{% block main %}
+    <script>
+        jQuery(document).ready(function () {
+
+        });
+    </script>
+    <div class="container pt-40 pb-40">
+        <a class="openPopupUpload btn btn-primary btn-sm">Envoyer un message</a>
+        <h3 class="heading text-center">Messages reçus</h3>
+        <div class="row">
+            <div class="col-sm-12">
+                <table class="docTable table table-boxed">
+                    <thead>
+                    <tr>
+                        <th>objet</th>
+                        <th>Auteur</th>
+                        <th>Date de réception</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for key,val in messages %}
+                        <tr data-msgId="{{ val.id }}">
+                            <td>
+                                {{ val.objet }}
+                            </td>
+                            <td>
+                                {{ val.expediteur.firstname }} {{ val.expediteur.lastname }}
+                            </td>
+                            <td>
+                                {{ val.dateCreation|localizeddate('none', 'none', null, null, 'd LLLL Y à h:mm' ) }}
+                            </td>
+                            <td>
+                                <a class="btn btn-xs btn-danger deleteDoc">Supprimer</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
