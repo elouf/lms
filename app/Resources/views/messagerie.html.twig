@@ -12,44 +12,304 @@
 {% endblock %}
 
 {% block main %}
+    <script src="{{ asset('vendors/jquery-ui/jquery-ui.min.js') }}" type=text/javascript></script>
+    <script src="{{ asset('educomp/ckeditor/ckeditor.js') }}"></script>
+    <script src="{{ asset('educomp/ckeditor/adapters/jquery.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/jquery.tablesorter.min.js') }}"></script>
     <script>
         jQuery(document).ready(function () {
+            var config = {
+                configname:"lightConfig",
+                toolbar:
+                        [
+                            { name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript' ] },
+                            { name: 'paragraph',   items : [ 'NumberedList','BulletedList','-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'] },
+                            '/',
+                            { name: 'styles',      items : [ 'Font','FontSize' ] },
+                            { name: 'colors',      items : [ 'TextColor','BGColor' ] },
+                            { name: 'switch',      items : [ 'Switch' ] }
+                        ],
+                height: 100,
+                allowedContent: true
+            };
+            $('textarea.simpleEditor').ckeditor(config);
 
+
+            $(".msgTable").tablesorter();
+            $('th').click(function () {
+                $('.contenuMsg').remove();
+                $('.infoDocActived').removeClass('infoDocActived');
+            });
+            $('th[data-typeCol="dateRecep"]').click();
+
+            $('.deleteMsg').click(function () {
+                var msgId = $(this).closest('[data-msgId]').attr('data-msgId');
+                $.ajax({
+                    type: 'POST',
+                    url: "{{path('deleteMsgUser_ajax')}}",
+                    async: false,
+                    dataType: "json",
+                    data: {
+                        id: msgId
+                    },
+                    success: function (data) {
+                        window.location.href = window.location.href;
+                    },
+                    error: function (xhr, status, error) {
+                    }
+                });
+            });
+
+            $('.infoDocument').click(function () {
+                if ($(this).hasClass('infoDocActived')) {
+                    $('.infoDocActived').removeClass('infoDocActived');
+                    $('.contenuMsg').remove();
+                } else {
+                    var msgId = $(this).closest('[data-msgId]').attr('data-msgId');
+                    var ligne = $(this).closest('tr');
+                    var myBtn = $(this);
+                    $.ajax({
+                        type: 'POST',
+                        url: "{{path('getMsg_ajax')}}",
+                        async: false,
+                        dataType: "json",
+                        data: {
+                            id: msgId
+                        },
+                        success: function (data) {
+                            $('.infoDocActived').removeClass('infoDocActived');
+                            myBtn.addClass('infoDocActived');
+                            $('.contenuMsg').remove();
+                            ligne.after('<tr class="contenuMsg"><td colspan="2" class="descriptionDocLineUC">MESSAGE</td><td colspan="4">' + data['contenu'] + '</td></tr>')
+                        },
+                        error: function (xhr, status, error) {
+                        }
+                    });
+                }
+            });
+
+            $('.openPopupSendMsg').click(function () {
+                $('.modal').modal();
+                $('.modal .modal-body').hide();
+                var popup = $('.modal .modal-body[data-contentModal=sendMsg]');
+                popup.show();
+            });
+
+            $('.filtreConditionneMsg, .sendMsg').hide();
+            $('.filtreMsg').click(function(){
+                $('.sendMsg').hide();
+                setTimeout(function(){
+                    $('.filtreConditionneMsg').hide();
+                    $('[data-filtreCond='+$('.selectpicker:eq(0)').val()+']').show();
+                    $('.noSelected').click();
+                }, 100);
+                updateBtnVisi();
+            });
+
+            $('[data-champName=objet]').on('change', function(){
+                updateBtnVisi();
+            });
+            CKEDITOR.instances["contenuNewMsg"].on('change', function() {
+                updateBtnVisi();
+            });
+            $('.filtreItemSelectMsg').click(function(){
+                updateBtnVisi();
+                var type = "";
+                var idItem;
+
+                if($('.selectpickerCoh').val() != 0){
+                    type = "cohorte";
+                    idItem = $('.selectpickerCoh').val();
+                }else if($('.selectpickerDis').val() != 0){
+                    type = "discipline";
+                    idItem = $('.selectpickerDis').val();
+                }else if($('.selectpickerCours').val() != 0){
+                    type = "cours";
+                    idItem = $('.selectpickerCours').val();
+                }
+                $.ajax({
+                    type: 'POST',
+                    url: "{{path('getFiltredUsers_ajax')}}",
+                    async: false,
+                    dataType: "json",
+                    data: {
+                        type: type,
+                        idItem: idItem
+                    },
+                    success: function (data) {
+                        console.log(data['users'])
+
+                    },
+                    error: function (xhr, status, error) {
+                    }
+                });
+            });
+
+            $('.sendMsg').click(function(){
+
+            });
+
+            function updateBtnVisi(){
+                setTimeout(function(){
+                    if($('[data-champName=objet]').val() == "" || CKEDITOR.instances["contenuNewMsg"].getData() == "" ||
+                            ($('.selectpickerCoh').val() == 0 && $('.selectpickerDis').val() == 0 && $('.selectpickerCours').val() == 0)){
+                        $('.sendMsg').hide();
+                    }else{
+                        $('.sendMsg').show();
+                    }
+                }, 100);
+
+            }
         });
     </script>
     <div class="container pt-40 pb-40">
-        <a class="openPopupUpload btn btn-primary btn-sm">Envoyer un message</a>
+        <a class="openPopupSendMsg btn btn-primary btn-sm"><i class="btnSendMsg fa fa-paper-plane-o" aria-hidden="true"></i></a>
         <h3 class="heading text-center">Messages reçus</h3>
         <div class="row">
             <div class="col-sm-12">
-                <table class="docTable table table-boxed">
+                <table class="msgTable table table-boxed">
                     <thead>
                     <tr>
+                        <th></th>
                         <th>objet</th>
+                        <th></th>
                         <th>Auteur</th>
-                        <th>Date de réception</th>
+                        <th data-typeCol="dateRecep">Date de réception</th>
                         <th></th>
                     </tr>
                     </thead>
                     <tbody>
                     {% for key,val in messages %}
-                        <tr data-msgId="{{ val.id }}">
+                        <tr data-msgId="{{ val[0].id }}"{% if val[1] is null %} class="trIsNew"{% endif %}>
                             <td>
-                                {{ val.objet }}
+                                <i class="fa fa-star-o iconeNewTr" aria-hidden="true"></i>
                             </td>
                             <td>
-                                {{ val.expediteur.firstname }} {{ val.expediteur.lastname }}
+                                {{ val[0].objet }}
                             </td>
                             <td>
-                                {{ val.dateCreation|localizeddate('none', 'none', null, null, 'd LLLL Y à h:mm' ) }}
+                                <i class="fa fa-envelope-open-o infoDocument" aria-hidden="true"></i>
                             </td>
                             <td>
-                                <a class="btn btn-xs btn-danger deleteDoc">Supprimer</a>
+                                {{ val[0].expediteur.firstname }} {{ val[0].expediteur.lastname }}
+                            </td>
+                            <td data-text="{{ val[0].dateCreation|localizeddate('none', 'none', null, null, 'YMMddhhmm' ) }}">
+                                {{ val[0].dateCreation|localizeddate('none', 'none', null, null, 'd LLLL Y à h:mm' ) }}
+                            </td>
+                            <td>
+                                <a class="btn btn-xs btn-danger deleteMsg">Supprimer</a>
                             </td>
                         </tr>
                     {% endfor %}
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="message">
+            <div class="modal-content">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+                <!--                  POPUP Envoi message                     -->
+
+                <div class="modal-body" data-contentModal="sendMsg" data-idItem="" style="background:#aaa; background-size:cover">
+                    <div class="row">
+                        <div class="bginverse">
+                            <div class="">
+                                <div class="contentDocInfos">
+                                    <div class="row mb-10">
+                                        <div class="LabelAdmin col-sm-3">Objet</div>
+                                        <input data-champName="objet" class="champAdmin col-sm-9 col-xs-12" value=""/>
+                                    </div>
+                                    <div class="row mb-10">
+                                        <div class="LabelAdmin col-sm-3">Contenu</div>
+                                        <div class="noPadding col-sm-9  col-xs-12">
+                                            <textarea data-champName="contenu" id="contenuNewMsg" class="simpleEditor editor champAdmin"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-10">
+                                        <div class="LabelAdmin col-sm-3">Filtrer par</div>
+                                        <select class="selectpicker col-xs-9 selectFilterMsg" data-style="MyBtnSelectPickeer" title="Aucun filtre sélectionné">
+                                            {% if cohortes|length > 0 %}
+                                                <option title="Cohortes" class="filtreMsg" value="cohortes" data-content="Par cohortes"></option>
+                                            {% endif %}
+                                            {% if disciplines|length > 0 %}
+                                                <option title="Disciplines" class="filtreMsg" value="disciplines" data-content="Par disciplines"></option>
+                                            {% endif %}
+                                            {% if cours|length > 0 %}
+                                                <option title="Cours" class="filtreMsg" value="cours" data-content="Par cours"></option>
+                                            {% endif %}
+                                        </select>
+                                    </div>
+                                    {% if cohortes|length > 0 %}
+                                        <div class="row mb-10 filtreConditionneMsg" data-filtreCond="cohortes">
+                                            <div class="LabelAdmin col-sm-3">Cohortes</div>
+                                            <select class="selectpicker col-xs-9 selectpickerCoh" data-style="MyBtnSelectPickeer" title="Aucune cohorte sélectionnée...">
+                                                <option title="Aucune cohorte sélectionnée..." value="0" class="noSelected">Aucune cohorte sélectionnée...</option>
+                                                <option data-divider="true"></option>
+                                                {% for key,val in cohortes %}
+                                                    <option title="{{ val.nom }}" class="cohSelectMsg filtreItemSelectMsg" value="{{ val.id }}"
+                                                            data-content="<span>{{ val.nom }}</span>"></option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    {% endif %}
+                                    {% if disciplines|length > 0 %}
+                                        <div class="row mb-10 filtreConditionneMsg" data-filtreCond="disciplines">
+                                            <div class="LabelAdmin col-sm-3">Disciplines</div>
+                                            <select class="selectpicker col-xs-9 selectpickerDis" data-style="MyBtnSelectPickeer" title="Aucune discipline sélectionnée...">
+                                                <option title="Aucune discipline sélectionnée..." value="0" class="noSelected">Aucune discipline sélectionnée...</option>
+                                                <option data-divider="true"></option>
+                                                {% for key,val in disciplines %}
+                                                    <option title="{{ val.nom }}" class="discSelectMsg filtreItemSelectMsg" value="{{ val.id }}"
+                                                            data-content="<span>{{ val.nom }}</span>"></option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    {% endif %}
+                                    {% if cours|length > 0 %}
+                                        <div class="row mb-10 filtreConditionneMsg" data-filtreCond="cours">
+                                            <div class="LabelAdmin col-sm-3">Cours</div>
+                                            <select class="selectpicker col-xs-9 selectpickerCours" data-style="MyBtnSelectPickeer" title="Aucun cours sélectionné...">
+                                                <option title="Aucun cours sélectionné..." value="0" class="noSelected">Aucun cours sélectionné...</option>
+                                                <option data-divider="true"></option>
+                                                {% for key,val in cours %}
+                                                    <option title="{{ val.nom }}" class="coursSelectMsg filtreItemSelectMsg" value="{{ val.id }}"
+                                                            data-content="<span>{{ val.nom }}</span>"></option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    {% endif %}
+                                    <div class="row mb-10" data-filtreCond="users">
+                                        <div class="LabelAdmin col-sm-3">Destinataires</div>
+                                        <select class="selectpicker col-xs-9 selectpickerUsers" data-style="MyBtnSelectPickeer" title="Aucun destinataire sélectionné..." multiple>
+                                            <option title="Tous les inscrits" value="0" class="allSelected">Tous</option>
+                                            <option data-divider="true"></option>
+                                            {% for key,val in users %}
+                                                <option title="{{ val.firstname }} {{ val.lastname }}" class="addDocDest" value="{{ val.id }}"
+                                                        data-content="
+                                                        <span data-userId='{{ val.id }}'>{{ val.firstname }} {{ val.lastname }}</span>
+                                                        {% if val.hasRole('ROLE_SUPER_ADMIN') %}
+                                                            <span class='couleurDocOption couleurAdminOption'>Administrateur</span>
+                                                        {% elseif val=="Enseignant" %}
+                                                            <span class='couleurDocOption couleurEnsOption'>Enseignant</span>
+                                                        {% endif %}
+                                                "></option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="row mb-10" style="text-align: center">
+                                        <div class="btn btn-sm btn-info mb-3 sendMsg"><i class="btnSendMsg fa fa-paper-plane-o" aria-hidden="true"></i></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

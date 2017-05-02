@@ -491,13 +491,10 @@ textarea[readonly]{
     cursor: pointer;
     margin-left: 15px;
 }
-.infoDocument:hover{
-    opacity: .8;
-}
-.infoDocActived{
+.infoDocActived, .infoDocument:hover{
     color: #2aabd2;
 }
-.descriptionPPline{
+.descriptionPPline, .contenuMsg{
     background: #eee;
 }
 .descriptionDocLineUC{
@@ -530,11 +527,27 @@ textarea[readonly]{
 .newDocsP{
     margin: 10px 0px;
 }
-.iconeNewDoc{
-    background: #d1252c;
+.iconeNewTr{
+    background: #0031d1;
     color: #fff;
-    font-size: 15px;
+    font-size: 12px;
     margin-left: 15px;
     border-radius: 20px;
     padding: 2px;
+    display: none;
+}
+.trIsNew{
+    background: #ecfbc9;
+    font-weight: bold;
+}
+.trIsNew .iconeNewTr{
+    display: inline-block;
+}
+.docTable td{
+    vertical-align: middle !important;
+}
+
+/* Messages */
+.btnSendMsg{
+    font-size: 20px;
 }

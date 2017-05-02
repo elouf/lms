@@ -10,11 +10,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class DisciplineController extends Controller
 {
-
     /**
-     * @Route("/myCourses", name="myCourses")
+     * @Route("/myCourses/{id}", defaults={"id" = 0}, name="myCourses")
      */
-    public function myCoursesAction (Request $request)
+    public function myCoursesAction (Request $request, $id)
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
@@ -106,7 +105,7 @@ class DisciplineController extends Controller
             $courses[$j]["nbNewDocs"] = $nbNewDocs;
         }
 
-        return $this->render('discipline/myCourses.html.twig', ['courses' => $courses]);
+        return $this->render('discipline/myCourses.html.twig', ['courses' => $courses, 'default' => $id]);
     }
 
     /**

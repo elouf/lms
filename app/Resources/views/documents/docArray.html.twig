@@ -3,28 +3,32 @@
         <table class="docTable table table-boxed">
             <thead>
                 <tr>
+                    <th></th>
                     <th>Nom du fichier</th>
+                    <th></th>
                     <th>Auteur</th>
-                    <th>Date de dépôt</th>
+                    <th data-typeCol="dateDepot">Date de dépôt</th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
                 {% for key,val in docs %}
-                    <tr data-docId="{{ val[0].id }}">
+                    <tr data-docId="{{ val[0].id }}"{% if val[1] == 1 %} class="trIsNew"{% endif %}>
                         <td>
-                            <a href="{{ val[0].url }}">{{ val[0].nom }}</a>
+                            <i class="fa fa-star-o iconeNewTr" aria-hidden="true"></i>
+                        </td>
+                        <td>
+                            <a href="{{ val[0].url }}" target="_blank">{{ val[0].nom }}</a>
+                        </td>
+                        <td>
                             <i class="fa fa-info-circle infoDocument" aria-hidden="true"></i>
-                            {% if val[1] == 1 %}
-                                <i class="fa fa-star-o iconeNewDoc" aria-hidden="true"></i>
-                            {% endif %}
                         </td>
                         <td>{{ val[0].proprietaire.firstname }} {{ val[0].proprietaire.lastName }}</td>
-                        <td data-text="{{ val[0].dateCrea|date("Y-m-d" ) }}">{{ val[0].dateCrea|localizeddate('none', 'none', null, null, 'd LLLL Y à h:mm' ) }}</td>
+                        <td data-text="{{ val[0].dateCrea|localizeddate('none', 'none', null, null, 'YMMddhhmm' ) }}">{{ val[0].dateCrea|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}</td>
                         <td>
-                            <a href="{{ val[0].url }}" class="btn btn-primary btn-sm btnDocOpen" target="_blank">Télécharger</a>
+                            <a href="{{ val[0].url }}" class="btn btn-primary btn-xs btnDocOpen" download>Télécharger</a>
                             {% if app.user.id == val[0].proprietaire.id or app.user.hasRole('ROLE_SUPER_ADMIN') %}
-                                <a class="btn btn-sm btn-danger deleteDoc">Supprimer</a>
+                                <a class="btn btn-xs btn-danger deleteDoc">Supprimer</a>
                             {% endif %}
                         </td>
                     </tr>

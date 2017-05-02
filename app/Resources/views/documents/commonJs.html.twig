@@ -77,7 +77,7 @@
                             $('.infoDocActived').removeClass('infoDocActived');
                             myBtn.addClass('infoDocActived');
                             $('.descriptionPPline').remove();
-                            ligne.after('<tr class="descriptionPPline"><td class="descriptionDocLineUC">DESCRIPTION</td><td colspan="3">'+data['description']+'</td></tr>')
+                            ligne.after('<tr class="descriptionPPline"><td colspan="2" class="descriptionDocLineUC">DESCRIPTION</td><td colspan="4">'+data['description']+'</td></tr>')
                         },
                         error: function (xhr, status, error) {
                         }
@@ -85,16 +85,18 @@
                 }
             });
             $('.btnDocOpen').click(function(){
-                var docId = $(this).closest('[data-docId]').attr('data-docId');
+                var doc = $(this).closest('[data-docId]');
+
                 $.ajax({
                     type: 'POST',
                     url: "{{path('userOpenDoc_ajax')}}",
                     async: false,
                     dataType: "json",
                     data: {
-                        id: docId
+                        id: doc.attr('data-docId')
                     },
                     success: function (data) {
+                        doc.removeClass('trIsNew');
                     },
                     error: function (xhr, status, error) {
                     }

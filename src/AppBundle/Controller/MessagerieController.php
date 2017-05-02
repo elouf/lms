@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class MessagerieController extends Controller
 {
@@ -22,10 +23,237 @@ class MessagerieController extends Controller
         foreach($assocsUserMsg as $assoc){
             $msg = $assoc->getMessage();
             if(!in_array($msg, $messages)){
-                array_push($messages, $msg);
+                array_push($messages, array($msg, $assoc->getDateLecture()));
             }
         }
 
-        return $this->render('messagerie.html.twig', ['messages' => $messages]);
+
+        $cohortes = array();
+        $disciplines = array();
+        $cours = array();
+
+        $users = $this->getDoctrine()->getRepository('AppBundle:User')->findAll();
+
+        $inscrCohs = $this->getDoctrine()->getRepository('AppBundle:Inscription_coh')->findBy(array('user' => $this->getUser()));
+        $inscrDiscs = $this->getDoctrine()->getRepository('AppBundle:Inscription_d')->findBy(array('user' => $this->getUser()));
+        $inscrCourss = $this->getDoctrine()->getRepository('AppBundle:Inscription_c')->findBy(array('user' => $this->getUser()));
+
+        if ($this->getUser()->hasRole('ROLE_SUPER_ADMIN')){
+            $inscrCohs = $this->getDoctrine()->getRepository('AppBundle:Inscription_coh')->findAll();
+            $inscrDiscs = $this->getDoctrine()->getRepository('AppBundle:Inscription_d')->findAll();
+            $inscrCourss = $this->getDoctrine()->getRepository('AppBundle:Inscription_c')->findAll();
+        }
+
+
+
+        if($inscrCourss) {
+            foreach ($inscrCourss as $inscrCours) {
+                if(!in_array($inscrCours->getCours(), $cours)) {
+                    array_push($cours, $inscrCours->getCours());
+                }
+            }
+        }
+        if($inscrDiscs) {
+            foreach ($inscrDiscs as $inscrDisc) {
+                $disc_parse = $inscrDisc->getDiscipline();
+                if(!in_array($disc_parse, $disciplines)) {
+                    array_push($disciplines, $disc_parse);
+
+                    $courss = $this->getDoctrine()->getRepository('AppBundle:Cours')->findBy(array('discipline' => $disc_parse));
+                    if($courss){
+                        foreach ($courss as $cours_parse) {
+                            if (!in_array($cours_parse, $cours)) {
+                                array_push($cours, $cours_parse);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if($inscrCohs) {
+            foreach ($inscrCohs as $inscrCoh) {
+                $coh_parse = $inscrCoh->getCohorte();
+                if(!in_array($coh_parse, $cohortes)) {
+                    array_push($cohortes, $coh_parse);
+
+                    foreach ($coh_parse->getDisciplines() as $disc) {
+                        if(!in_array($disc, $disciplines)) {
+                            array_push($disciplines, $disc);
+
+                            $courss = $this->getDoctrine()->getRepository('AppBundle:Cours')->findBy(array('discipline' => $disc));
+                            if($courss){
+                                foreach ($courss as $cours_parse) {
+                                    if (!in_array($cours_parse, $cours)) {
+                                        array_push($cours, $cours_parse);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    foreach ($coh_parse->getCours() as $cours_parse) {
+                        if (!in_array($cours_parse, $cours)) {
+                            array_push($cours, $cours_parse);
+                        }
+                    }
+                }
+            }
+        }
+
+        return $this->render('messagerie.html.twig', [
+            'messages' => $messages,
+            'cours' => $cours,
+            'disciplines' => $disciplines,
+            'cohortes' => $cohortes,
+            'users' => $users
+        ]);
+    }
+
+    /**
+     * @Route("/getMsg_ajax", name="getMsg_ajax")
+     */
+    public function getMsgAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+            $msgId = $request->request->get('id');
+
+            $message = $em->getRepository('AppBundle:Message')->findOneBy(array('id' => $msgId));
+
+            $em->flush();
+
+            return new JsonResponse(array('action' =>'Get Message',
+                'id' => $msgId, 'objet' => $message->getObjet(), 'contenu' => $message->getContenu(), 'expediteur' => $message->getExpediteur(), 'dateCreation' => $message->getDateCreation()));
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
+    /**
+     * @Route("/deleteMsgUser_ajax", name="deleteMsgUser_ajax")
+     */
+    public function deleteMsgUserAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+            $msgId = $request->request->get('id');
+
+            $message = $em->getRepository('AppBundle:Message')->findOneBy(array('id' => $msgId));
+            $assocsUserMsg = $this->getDoctrine()->getRepository('AppBundle:AssocUserMsg')->findBy(array('user' => $this->getUser(), 'message' => $message));
+
+            foreach($assocsUserMsg as $assoc) {
+                $em->remove($assoc);
+            }
+
+            $em->flush();
+
+            return new JsonResponse(array('action' =>'deleteMsgUser', 'id' => $msgId, 'user' => $this->getUser()->getId()));
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
+    /**
+     * @Route("/getFiltredUsers_ajax", name="getFiltredUsers_ajax")
+     */
+    public function getFiltredUsersAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+            $type = $request->request->get('type');
+            $id = $request->request->get('idItem');
+
+            $users = array();
+            $inscriptions = null;
+            $discipline = null;
+            $cohorte = null;
+            $cours = null;
+
+            if($type == "cohorte"){
+                $cohorte = $em->getRepository('AppBundle:Cohorte')->findOneBy(array('id' => $id));
+                $inscriptions = $em->getRepository('AppBundle:Inscription_coh')->findBy(array('cohorte' => $cohorte));
+            }else if($type == "discipline"){
+                $discipline = $em->getRepository('AppBundle:Discipline')->findOneBy(array('id' => $id));
+                $inscriptions = $em->getRepository('AppBundle:Inscription_d')->findBy(array('discipline' => $discipline));
+            }else if($type == "cours"){
+                $cours = $em->getRepository('AppBundle:Cours')->findOneBy(array('id' => $id));
+                $inscriptions = $em->getRepository('AppBundle:Inscription_c')->findBy(array('cours' => $cours));
+            }
+            if($inscriptions){
+                foreach ($inscriptions as $inscription) {
+                    $user = $inscription->getUser();
+                    if (!in_array($user, $users)) {
+                        array_push($users, $user->getId());
+                    }
+                }
+            }
+
+            if($type == "discipline"){
+                $cohortes = $em->getRepository('AppBundle:Cohorte')->findAll();
+                if($cohortes){
+                    foreach ($cohortes as $coh) {
+                        if (in_array($discipline, $coh->getDisciplines())) {
+                            $inscriptions = $em->getRepository('AppBundle:Inscription_coh')->findBy(array('cohorte' => $coh));
+                            if($inscriptions){
+                                foreach ($inscriptions as $inscription) {
+                                    $user = $inscription->getUser();
+                                    if (!in_array($user, $users)) {
+                                        array_push($users, $user->getId());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }else if($type == "cours"){
+                $cohortes = $em->getRepository('AppBundle:Cohorte')->findAll();
+                if($cohortes){
+                    foreach ($cohortes as $coh) {
+                        if (in_array($cours, $coh->getCours())) {
+                            $inscriptions = $em->getRepository('AppBundle:Inscription_coh')->findBy(array('cohorte' => $coh));
+                            if($inscriptions){
+                                foreach ($inscriptions as $inscription) {
+                                    $user = $inscription->getUser();
+                                    if (!in_array($user, $users)) {
+                                        array_push($users, $user->getId());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    foreach ($cohortes as $coh) {
+                        foreach ($coh->getDisciplines() as $disc) {
+                            if($cours->getDiscipline()->getId() == $disc->getId()){
+                                $inscriptions = $em->getRepository('AppBundle:Inscription_coh')->findBy(array('cohorte' => $coh));
+                                if($inscriptions){
+                                    foreach ($inscriptions as $inscription) {
+                                        $user = $inscription->getUser();
+                                        if (!in_array($user, $users)) {
+                                            array_push($users, $user->getId());
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                $discipline = $cours->getDiscipline();
+                $inscriptions = $em->getRepository('AppBundle:Inscription_d')->findBy(array('discipline' => $discipline));
+                if($inscriptions){
+                    foreach ($inscriptions as $inscription) {
+                        $user = $inscription->getUser();
+                        if (!in_array($user, $users)) {
+                            array_push($users, $user->getId());
+                        }
+                    }
+                }
+            }
+
+            $em->flush();
+
+            return new JsonResponse(array('action' =>'get Users filtred', 'users' => $users));
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
     }
 }
