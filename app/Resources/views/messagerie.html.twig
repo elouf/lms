@@ -80,6 +80,7 @@
                             $('.infoDocActived').removeClass('infoDocActived');
                             myBtn.addClass('infoDocActived');
                             $('.contenuMsg').remove();
+                            ligne.removeClass('trIsNew');
                             ligne.after('<tr class="contenuMsg"><td colspan="2" class="descriptionDocLineUC">MESSAGE</td><td colspan="4">' + data['contenu'] + '</td></tr>')
                         },
                         error: function (xhr, status, error) {
@@ -95,7 +96,7 @@
                 popup.show();
             });
 
-            $('.filtreConditionneMsg, .sendMsg').hide();
+            $('.filtreConditionneMsg, .sendMsg, [data-filtreCond=users]').hide();
             $('.filtreMsg').click(function(){
                 $('.sendMsg').hide();
                 setTimeout(function(){
@@ -114,48 +115,86 @@
             });
             $('.filtreItemSelectMsg').click(function(){
                 updateBtnVisi();
-                var type = "";
-                var idItem;
+                setTimeout(function(){
+                    var type = "";
+                    var idItem;
 
-                if($('.selectpickerCoh').val() != 0){
-                    type = "cohorte";
-                    idItem = $('.selectpickerCoh').val();
-                }else if($('.selectpickerDis').val() != 0){
-                    type = "discipline";
-                    idItem = $('.selectpickerDis').val();
-                }else if($('.selectpickerCours').val() != 0){
-                    type = "cours";
-                    idItem = $('.selectpickerCours').val();
-                }
-                $.ajax({
-                    type: 'POST',
-                    url: "{{path('getFiltredUsers_ajax')}}",
-                    async: false,
-                    dataType: "json",
-                    data: {
-                        type: type,
-                        idItem: idItem
-                    },
-                    success: function (data) {
-                        console.log(data['users'])
-
-                    },
-                    error: function (xhr, status, error) {
+                    if($('.selectpickerCoh').val() != 0){
+                        type = "cohorte";
+                        idItem = $('.selectpickerCoh').val();
+                    }else if($('.selectpickerDis').val() != 0){
+                        type = "discipline";
+                        idItem = $('.selectpickerDis').val();
+                    }else if($('.selectpickerCours').val() != 0){
+                        type = "cours";
+                        idItem = $('.selectpickerCours').val();
                     }
-                });
+                    $.ajax({
+                        type: 'POST',
+                        url: "{{path('getFiltredUsers_ajax')}}",
+                        async: false,
+                        dataType: "json",
+                        data: {
+                            type: type,
+                            idItem: idItem
+                        },
+                        success: function (data) {
+                            $('.addMsgDest').hide().addClass('toRemove');
+                            for(var i=0; i<data['users'].length; i++){
+                                $('.addMsgDest[value='+data['users'][i]+']').show().removeClass('toRemove');
+                            }
+                            $('.selectpickerUsers').selectpicker('refresh');
+                            $('.bootstrap-select.Users .toRemove').closest('li').remove();
+
+
+                            $('.allSelected').unbind('click').click(function(){
+                                setTimeout(function(){
+                                    if($('.allSelected').closest('li').hasClass('selected')){
+                                        $('.selectpicker').selectpicker('selectAll');
+                                    }else{
+                                        $('.selectpicker').selectpicker('deselectAll');
+                                    }
+                                }, 100)
+
+                            });
+                        },
+                        error: function (xhr, status, error) {
+                        }
+                    });
+                }, 100);
+
             });
 
             $('.sendMsg').click(function(){
+                var usersSelected = $('.selectpickerUsers').val();
 
+                $.ajax({
+                    type: 'POST',
+                    url: "{{path('sendMsg_ajax')}}",
+                    async: false,
+                    dataType: "json",
+                    data: {
+                        objet: $('[data-champname="objet"]').val(),
+                        contenu: CKEDITOR.instances["contenuNewMsg"].getData(),
+                        users: usersSelected
+                    },
+                    success: function (data) {
+                        $('.modal').modal('toggle');
+                        window.location.href = window.location.href;
+                    },
+                    error: function(xhr, status, error) {
+                        $('.modal').modal('toggle');
+                    }
+                });
             });
 
             function updateBtnVisi(){
                 setTimeout(function(){
                     if($('[data-champName=objet]').val() == "" || CKEDITOR.instances["contenuNewMsg"].getData() == "" ||
                             ($('.selectpickerCoh').val() == 0 && $('.selectpickerDis').val() == 0 && $('.selectpickerCours').val() == 0)){
-                        $('.sendMsg').hide();
+                        $('.sendMsg, [data-filtreCond=users]').hide();
                     }else{
-                        $('.sendMsg').show();
+                        $('.sendMsg, [data-filtreCond=users]').show();
                     }
                 }, 100);
 
@@ -290,7 +329,7 @@
                                             <option title="Tous les inscrits" value="0" class="allSelected">Tous</option>
                                             <option data-divider="true"></option>
                                             {% for key,val in users %}
-                                                <option title="{{ val.firstname }} {{ val.lastname }}" class="addDocDest" value="{{ val.id }}"
+                                                <option title="{{ val.firstname }} {{ val.lastname }}" class="addMsgDest" value="{{ val.id }}"
                                                         data-content="
                                                         <span data-userId='{{ val.id }}'>{{ val.firstname }} {{ val.lastname }}</span>
                                                         {% if val.hasRole('ROLE_SUPER_ADMIN') %}

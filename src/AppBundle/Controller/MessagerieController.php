@@ -2,6 +2,9 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\AssocUserMsg;
+use AppBundle\Entity\Message;
+use DateTime;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -120,6 +123,13 @@ class MessagerieController extends Controller
 
             $message = $em->getRepository('AppBundle:Message')->findOneBy(array('id' => $msgId));
 
+            $assocsUserMsg = $this->getDoctrine()->getRepository('AppBundle:AssocUserMsg')->findBy(array('user' => $this->getUser(), 'message' => $message));
+            if($assocsUserMsg){
+                foreach($assocsUserMsg as $assoc) {
+                    $assoc->setDateLecture(new DateTime());
+                }
+            }
+
             $em->flush();
 
             return new JsonResponse(array('action' =>'Get Message',
@@ -141,8 +151,10 @@ class MessagerieController extends Controller
             $message = $em->getRepository('AppBundle:Message')->findOneBy(array('id' => $msgId));
             $assocsUserMsg = $this->getDoctrine()->getRepository('AppBundle:AssocUserMsg')->findBy(array('user' => $this->getUser(), 'message' => $message));
 
-            foreach($assocsUserMsg as $assoc) {
-                $em->remove($assoc);
+            if($assocsUserMsg){
+                foreach($assocsUserMsg as $assoc) {
+                    $em->remove($assoc);
+                }
             }
 
             $em->flush();
@@ -182,7 +194,7 @@ class MessagerieController extends Controller
             if($inscriptions){
                 foreach ($inscriptions as $inscription) {
                     $user = $inscription->getUser();
-                    if (!in_array($user, $users)) {
+                    if (!in_array($user->getId(), $users)) {
                         array_push($users, $user->getId());
                     }
                 }
@@ -192,12 +204,12 @@ class MessagerieController extends Controller
                 $cohortes = $em->getRepository('AppBundle:Cohorte')->findAll();
                 if($cohortes){
                     foreach ($cohortes as $coh) {
-                        if (in_array($discipline, $coh->getDisciplines())) {
+                        if (in_array($discipline, $coh->getDisciplines()->toArray())) {
                             $inscriptions = $em->getRepository('AppBundle:Inscription_coh')->findBy(array('cohorte' => $coh));
                             if($inscriptions){
                                 foreach ($inscriptions as $inscription) {
                                     $user = $inscription->getUser();
-                                    if (!in_array($user, $users)) {
+                                    if (!in_array($user->getId(), $users)) {
                                         array_push($users, $user->getId());
                                     }
                                 }
@@ -209,12 +221,12 @@ class MessagerieController extends Controller
                 $cohortes = $em->getRepository('AppBundle:Cohorte')->findAll();
                 if($cohortes){
                     foreach ($cohortes as $coh) {
-                        if (in_array($cours, $coh->getCours())) {
+                        if (in_array($cours, $coh->getCours()->toArray())) {
                             $inscriptions = $em->getRepository('AppBundle:Inscription_coh')->findBy(array('cohorte' => $coh));
                             if($inscriptions){
                                 foreach ($inscriptions as $inscription) {
                                     $user = $inscription->getUser();
-                                    if (!in_array($user, $users)) {
+                                    if (!in_array($user->getId(), $users)) {
                                         array_push($users, $user->getId());
                                     }
                                 }
@@ -228,7 +240,7 @@ class MessagerieController extends Controller
                                 if($inscriptions){
                                     foreach ($inscriptions as $inscription) {
                                         $user = $inscription->getUser();
-                                        if (!in_array($user, $users)) {
+                                        if (!in_array($user->getId(), $users)) {
                                             array_push($users, $user->getId());
                                         }
                                     }
@@ -242,7 +254,7 @@ class MessagerieController extends Controller
                 if($inscriptions){
                     foreach ($inscriptions as $inscription) {
                         $user = $inscription->getUser();
-                        if (!in_array($user, $users)) {
+                        if (!in_array($user->getId(), $users)) {
                             array_push($users, $user->getId());
                         }
                     }
@@ -256,4 +268,52 @@ class MessagerieController extends Controller
 
         return new JsonResponse('This is not ajax!', 400);
     }
+
+    /**
+     * @Route("/sendMsg_ajax", name="sendMsg_ajax")
+     */
+    public function sendMsgAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+            $objet = $request->request->get('objet');
+            $contenu = $request->request->get('contenu');
+            $users = $request->request->get('users');
+
+            if (!in_array($this->getUser()->getId(), $users)) {
+                array_push($users, $this->getUser()->getId());
+            }
+
+            $message = new Message();
+
+            $message->setObjet($objet);
+            $message->setExpediteur($this->getUser());
+            $message->setDateCreation(new DateTime());
+            $message->setContenu($contenu);
+
+            $em->persist($message);
+
+            for($i=0; $i<count($users); $i++){
+                $assoc = new AssocUserMsg();
+                $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $users[$i]));
+                $assoc->setUser($user);
+                $assoc->setMessage($message);
+
+                if($user->getId() == $this->getUser()->getId()){
+                    $assoc->setDateLecture(new DateTime());
+                }
+                $em->persist($assoc);
+            }
+
+
+            $em->flush();
+
+            return new JsonResponse(array('action' =>'Create message',
+                'id' => $message->getId()));
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
+
 }
