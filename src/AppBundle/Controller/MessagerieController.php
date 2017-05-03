@@ -294,15 +294,17 @@ class MessagerieController extends Controller
             $em->persist($message);
 
             for($i=0; $i<count($users); $i++){
-                $assoc = new AssocUserMsg();
                 $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $users[$i]));
-                $assoc->setUser($user);
-                $assoc->setMessage($message);
+                if($user){
+                    $assoc = new AssocUserMsg();
+                    $assoc->setUser($user);
+                    $assoc->setMessage($message);
 
-                if($user->getId() == $this->getUser()->getId()){
-                    $assoc->setDateLecture(new DateTime());
+                    if($user->getId() == $this->getUser()->getId()){
+                        $assoc->setDateLecture(new DateTime());
+                    }
+                    $em->persist($assoc);
                 }
-                $em->persist($assoc);
             }
 
 
