@@ -60,6 +60,19 @@
             var monthNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
                 "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
             ];
+            jQuery(document).ready(function () {
+                $.ajax({
+                    type: 'POST',
+                    url: "{{path('getNbMsg_ajax')}}",
+                    async: false,
+                    dataType: "json",
+                    success: function (data) {
+                        $('.newMsgsPuce').text(data['nbMsgs']);
+                    },
+                    error: function (xhr, status, error) {
+                    }
+                });
+            });
         </script>
     {% endblock %}
 
@@ -104,7 +117,7 @@
                             <ul class="sub-menu">
                                 {% block vueAdmin %}{% endblock %}
                                 <li><a href="{{ path('calendrier') }}">Mon calendrier</a></li>
-                                <li><a href="{{ path('messagerie') }}">Messagerie</a></li>
+                                <li><a href="{{ path('messagerie') }}">Messagerie</a><span class="newDocsPuce newMsgsPuce"></span></li>
                                 <li><a href="#">Mon compte</a></li>
                                 <li><a href="{{ path('fos_user_security_logout') }}">Déconnexion</a></li>
                             </ul>

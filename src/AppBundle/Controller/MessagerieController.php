@@ -315,5 +315,23 @@ class MessagerieController extends Controller
         return new JsonResponse('This is not ajax!', 400);
     }
 
+    /**
+     * @Route("/getNbMsg_ajax", name="getNbMsg_ajax")
+     */
+    public function getNbMsgAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
 
+            $assocsUserMsg = $this->getDoctrine()->getRepository('AppBundle:AssocUserMsg')->findBy(array('user' => $this->getUser(), 'dateLecture' => null));
+
+            $nbMsgs = count($assocsUserMsg);
+            $em->flush();
+
+            return new JsonResponse(array('action' =>'Get Nb new Message',
+                'nbMsgs' => $nbMsgs));
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
 }

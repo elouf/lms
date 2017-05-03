@@ -551,3 +551,9 @@ textarea[readonly]{
 .btnSendMsg{
     font-size: 20px;
 }
+.newMsgsPuce {
+    position: absolute;
+    z-index: 9;
+    top: 5px;
+    right: 10px;
+}
