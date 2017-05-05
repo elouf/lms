@@ -63,7 +63,7 @@ class Evenement
      *
      * @param string $nom
      *
-     * @return Ressource
+     * @return Evenement
      */
     public function setNom($nom)
     {
@@ -87,7 +87,7 @@ class Evenement
      *
      * @param string $description
      *
-     * @return Ressource
+     * @return Evenement
      */
     public function setDescription($description)
     {

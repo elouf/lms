@@ -59,7 +59,7 @@ class Cours extends DocContainer
 
     /**
      * @var Discipline
-     *
+     * @ORM\Column(name="discipline_id", type="integer", nullable=false)
      * @ORM\ManyToOne(targetEntity="Discipline")
      */
     private $discipline;
