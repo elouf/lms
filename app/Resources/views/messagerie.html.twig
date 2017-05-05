@@ -18,6 +18,15 @@
     <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/jquery.tablesorter.min.js') }}"></script>
     <script>
         jQuery(document).ready(function () {
+            // tri du selectpicker des users
+            $('.selectpickerUsers option').sort(sort_option).appendTo('.selectpickerUsers');
+
+            function sort_option(a, b){
+                return ($(b).data('sort')) < ($(a).data('sort')) ? 1 : -1;
+            }
+
+            var forceAllUsers = false;
+
             var config = {
                 configname:"lightConfig",
                 toolbar:
@@ -60,14 +69,15 @@
                 });
             });
 
-            $('.infoDocument').click(function () {
-                if ($(this).hasClass('infoDocActived')) {
+            $('.openMsgBtn').click(function () {
+                var ligne = $(this).closest('tr');
+                var msgId = ligne.attr('data-msgId');
+                var myBtn = ligne.find('.infoDocument');
+
+                if (myBtn.hasClass('infoDocActived')) {
                     $('.infoDocActived').removeClass('infoDocActived');
                     $('.contenuMsg').remove();
                 } else {
-                    var msgId = $(this).closest('[data-msgId]').attr('data-msgId');
-                    var ligne = $(this).closest('tr');
-                    var myBtn = $(this);
                     $.ajax({
                         type: 'POST',
                         url: "{{path('getMsg_ajax')}}",
@@ -100,6 +110,15 @@
             $('.filtreMsg').click(function(){
                 $('.sendMsg').hide();
                 setTimeout(function(){
+                    if($('.selectpicker:eq(0)').val() == 'users'){
+                        forceAllUsers = true;
+                        $('.addMsgDest').show().removeClass('toRemove');
+                        $('.selectpickerUsers').selectpicker('refresh');
+                        gereAllSelected();
+                    }else{
+                        forceAllUsers = false;
+                    }
+
                     $('.filtreConditionneMsg').hide();
                     $('[data-filtreCond='+$('.selectpicker:eq(0)').val()+']').show();
                     $('.noSelected').click();
@@ -140,30 +159,32 @@
                         },
                         success: function (data) {
                             $('.addMsgDest').hide().addClass('toRemove');
+                            $('.addMsgDest .couleurDocOption').remove();
                             for(var i=0; i<data['users'].length; i++){
-                                $('.addMsgDest[value='+data['users'][i]+']').show().removeClass('toRemove');
+                                $('.addMsgDest[value='+data['users'][i][0]+']').show().removeClass('toRemove');
                             }
                             $('.selectpickerUsers').selectpicker('refresh');
                             $('.bootstrap-select.Users .toRemove').closest('li').remove();
 
-
-                            $('.allSelected').unbind('click').click(function(){
-                                setTimeout(function(){
-                                    if($('.allSelected').closest('li').hasClass('selected')){
-                                        $('.selectpicker').selectpicker('selectAll');
-                                    }else{
-                                        $('.selectpicker').selectpicker('deselectAll');
-                                    }
-                                }, 100)
-
-                            });
+                            for(var i=0; i<data['users'].length; i++){
+                                var userLigne = $('.addMsgDest span[data-userId='+data['users'][i][0]+']');
+                                if(data['users'][i][1] == "admin"){
+                                    userLigne.append('<span class="couleurDocOption couleurAdminOption">Administrateur</span>');
+                                }else if(data['users'][i][1] == "Enseignant"){
+                                    userLigne.append('<span class="couleurDocOption couleurEnsOption">Enseignant</span>');
+                                }
+                            }
+                            gereAllSelected();
                         },
                         error: function (xhr, status, error) {
                         }
                     });
+
                 }, 100);
 
             });
+
+            gereAllSelected();
 
             $('.sendMsg').click(function(){
                 var usersSelected = $('.selectpickerUsers').val();
@@ -188,13 +209,32 @@
                 });
             });
 
-            function updateBtnVisi(){
+            function gereAllSelected(){
+                $('.allSelected').unbind('click').click(function(){
+                    setTimeout(function(){
+                        if($('.allSelected').closest('li').hasClass('selected')){
+                            $('.selectpicker').selectpicker('selectAll');
+                        }else{
+                            $('.selectpicker').selectpicker('deselectAll');
+                        }
+                    }, 100)
+
+                });
+            }
+
+            function updateBtnVisi(type){
                 setTimeout(function(){
-                    if($('[data-champName=objet]').val() == "" || CKEDITOR.instances["contenuNewMsg"].getData() == "" ||
-                            ($('.selectpickerCoh').val() == 0 && $('.selectpickerDis').val() == 0 && $('.selectpickerCours').val() == 0)){
-                        $('.sendMsg, [data-filtreCond=users]').hide();
+                    if($('.selectpickerCoh').val() == 0 && $('.selectpickerDis').val() == 0 && $('.selectpickerCours').val() == 0 && !forceAllUsers){
+                        $('[data-filtreCond=users]').hide();
                     }else{
-                        $('.sendMsg, [data-filtreCond=users]').show();
+                        $('[data-filtreCond=users]').show();
+                    }
+
+                    if($('[data-champName=objet]').val() == "" || CKEDITOR.instances["contenuNewMsg"].getData() == "" ||
+                            ($('.selectpickerCoh').val() == 0 && $('.selectpickerDis').val() == 0 && $('.selectpickerCours').val() == 0 && !forceAllUsers)){
+                        $('.sendMsg').hide();
+                    }else{
+                        $('.sendMsg').show();
                     }
                 }, 100);
 
@@ -220,19 +260,19 @@
                     <tbody>
                     {% for key,val in messages %}
                         <tr data-msgId="{{ val[0].id }}"{% if val[1] is null %} class="trIsNew"{% endif %}>
-                            <td>
+                            <td class="openMsgBtn">
                                 <i class="fa fa-star-o iconeNewTr" aria-hidden="true"></i>
                             </td>
-                            <td>
+                            <td class="openMsgBtn">
                                 {{ val[0].objet }}
                             </td>
-                            <td>
+                            <td class="openMsgBtn">
                                 <i class="fa fa-envelope-open-o infoDocument" aria-hidden="true"></i>
                             </td>
-                            <td>
+                            <td class="openMsgBtn">
                                 {{ val[0].expediteur.firstname }} {{ val[0].expediteur.lastname }}
                             </td>
-                            <td data-text="{{ val[0].dateCreation|localizeddate('none', 'none', null, null, 'YMMddhhmm' ) }}">
+                            <td class="openMsgBtn" data-text="{{ val[0].dateCreation|localizeddate('none', 'none', null, null, 'YMMddhhmm' ) }}">
                                 {{ val[0].dateCreation|localizeddate('none', 'none', null, null, 'd LLLL Y à h:mm' ) }}
                             </td>
                             <td>
@@ -273,7 +313,10 @@
                                     <div class="row mb-10">
                                         <div class="LabelAdmin col-sm-3">Filtrer par</div>
                                         <select class="selectpicker col-xs-9 selectFilterMsg" data-style="MyBtnSelectPickeer" title="Aucun filtre sélectionné">
-                                            {% if cohortes|length > 0 %}
+                                            {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                                <option title="Tous" class="filtreMsg" value="users" data-content="Tous les utilisateurs"></option>
+                                            {% endif %}
+                                            {% if app.user.hasRole('ROLE_SUPER_ADMIN') and cohortes|length > 0 %}
                                                 <option title="Cohortes" class="filtreMsg" value="cohortes" data-content="Par cohortes"></option>
                                             {% endif %}
                                             {% if disciplines|length > 0 %}
@@ -325,18 +368,13 @@
                                     {% endif %}
                                     <div class="row mb-10" data-filtreCond="users">
                                         <div class="LabelAdmin col-sm-3">Destinataires</div>
-                                        <select class="selectpicker col-xs-9 selectpickerUsers" data-style="MyBtnSelectPickeer" title="Aucun destinataire sélectionné..." multiple>
-                                            <option title="Tous les inscrits" value="0" class="allSelected">Tous</option>
-                                            <option data-divider="true"></option>
+                                        <select class="selectpicker col-xs-9 selectpickerUsers" data-style="MyBtnSelectPickeer" title="Aucun destinataire sélectionné..." multiple data-live-search="true">
+                                            <option title="Tous les inscrits" value="0" class="allSelected" data-sort="00">Tous</option>
+                                            <option data-divider="true" data-sort="01"></option>
                                             {% for key,val in users %}
-                                                <option title="{{ val.firstname }} {{ val.lastname }}" class="addMsgDest" value="{{ val.id }}"
+                                                <option title="{{ val.firstname }} {{ val.lastname }}" class="addMsgDest" value="{{ val.id }}" data-sort="{{ val.lastname }}"
                                                         data-content="
                                                         <span data-userId='{{ val.id }}'>{{ val.firstname }} {{ val.lastname }}</span>
-                                                        {% if val.hasRole('ROLE_SUPER_ADMIN') %}
-                                                            <span class='couleurDocOption couleurAdminOption'>Administrateur</span>
-                                                        {% elseif val=="Enseignant" %}
-                                                            <span class='couleurDocOption couleurEnsOption'>Enseignant</span>
-                                                        {% endif %}
                                                 "></option>
                                             {% endfor %}
                                         </select>

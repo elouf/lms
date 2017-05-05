@@ -83,7 +83,7 @@ class Cours extends DocContainer
      */
     public function __toString()
     {
-        return $this->getNom();
+        return (string) $this->getNom();
     }
 
     /**

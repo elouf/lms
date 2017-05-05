@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\AssocUserMsg;
 use AppBundle\Entity\Message;
 use DateTime;
+use Proxies\__CG__\AppBundle\Entity\Inscription;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -181,6 +182,16 @@ class MessagerieController extends Controller
             $cohorte = null;
             $cours = null;
 
+            $users = array();
+            $users2Send = array();
+            $admins = $this->getDoctrine()->getRepository('AppBundle:User')->findByRole('ROLE_SUPER_ADMIN');
+            foreach($admins as $admin){
+                if(!in_array($admin, $users)) {
+                    array_push($users, $admin);
+                    array_push($users2Send, [$admin->getId(), 'admin']);
+                }
+            }
+
             if($type == "cohorte"){
                 $cohorte = $em->getRepository('AppBundle:Cohorte')->findOneBy(array('id' => $id));
                 $inscriptions = $em->getRepository('AppBundle:Inscription_coh')->findBy(array('cohorte' => $cohorte));
@@ -193,10 +204,9 @@ class MessagerieController extends Controller
             }
             if($inscriptions){
                 foreach ($inscriptions as $inscription) {
-                    $user = $inscription->getUser();
-                    if (!in_array($user->getId(), $users)) {
-                        array_push($users, $user->getId());
-                    }
+                    $check = $this->checkArrayUser($inscription, $users, $users2Send);
+                    $users = $check['users'];
+                    $users2Send = $check['users2send'];
                 }
             }
 
@@ -208,10 +218,9 @@ class MessagerieController extends Controller
                             $inscriptions = $em->getRepository('AppBundle:Inscription_coh')->findBy(array('cohorte' => $coh));
                             if($inscriptions){
                                 foreach ($inscriptions as $inscription) {
-                                    $user = $inscription->getUser();
-                                    if (!in_array($user->getId(), $users)) {
-                                        array_push($users, $user->getId());
-                                    }
+                                    $check = $this->checkArrayUser($inscription, $users, $users2Send);
+                                    $users = $check['users'];
+                                    $users2Send = $check['users2send'];
                                 }
                             }
                         }
@@ -225,10 +234,9 @@ class MessagerieController extends Controller
                             $inscriptions = $em->getRepository('AppBundle:Inscription_coh')->findBy(array('cohorte' => $coh));
                             if($inscriptions){
                                 foreach ($inscriptions as $inscription) {
-                                    $user = $inscription->getUser();
-                                    if (!in_array($user->getId(), $users)) {
-                                        array_push($users, $user->getId());
-                                    }
+                                    $check = $this->checkArrayUser($inscription, $users, $users2Send);
+                                    $users = $check['users'];
+                                    $users2Send = $check['users2send'];
                                 }
                             }
                         }
@@ -239,10 +247,9 @@ class MessagerieController extends Controller
                                 $inscriptions = $em->getRepository('AppBundle:Inscription_coh')->findBy(array('cohorte' => $coh));
                                 if($inscriptions){
                                     foreach ($inscriptions as $inscription) {
-                                        $user = $inscription->getUser();
-                                        if (!in_array($user->getId(), $users)) {
-                                            array_push($users, $user->getId());
-                                        }
+                                        $check = $this->checkArrayUser($inscription, $users, $users2Send);
+                                        $users = $check['users'];
+                                        $users2Send = $check['users2send'];
                                     }
                                 }
                             }
@@ -253,20 +260,36 @@ class MessagerieController extends Controller
                 $inscriptions = $em->getRepository('AppBundle:Inscription_d')->findBy(array('discipline' => $discipline));
                 if($inscriptions){
                     foreach ($inscriptions as $inscription) {
-                        $user = $inscription->getUser();
-                        if (!in_array($user->getId(), $users)) {
-                            array_push($users, $user->getId());
-                        }
+                        $check = $this->checkArrayUser($inscription, $users, $users2Send);
+                        $users = $check['users'];
+                        $users2Send = $check['users2send'];
                     }
                 }
             }
 
             $em->flush();
 
-            return new JsonResponse(array('action' =>'get Users filtred', 'users' => $users));
+            return new JsonResponse(array('action' =>'get Users filtred', 'users' => $users2Send));
         }
 
         return new JsonResponse('This is not ajax!', 400);
+    }
+
+    public function checkArrayUser($inscription, $users, $users2send){
+        $user = $inscription->getUser();
+        $role = $inscription->getRole()->getNom();
+        if (!in_array($user, $users)) {
+            array_push($users, $user);
+            array_push($users2send, [$user->getId(), $role]);
+        }elseif($role == 'Enseignant'){
+            for($i=0; $i<count($users2send); $i++){
+                if($users2send[$i][0] == $user->getId()){
+                    $users2send[$i][1] = $role;
+                    break;
+                }
+            }
+        }
+        return array("users" => $users, "users2send" => $users2send);
     }
 
     /**

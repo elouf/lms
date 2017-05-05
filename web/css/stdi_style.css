@@ -557,3 +557,9 @@ textarea[readonly]{
     top: 5px;
     right: 10px;
 }
+.openMsgBtn{
+    cursor: pointer;
+}
+[data-msgid]:hover{
+    background: #ebf6ff;
+}
