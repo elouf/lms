@@ -47,6 +47,14 @@ class Institut
     }
 
     /**
+     * __toString method
+     */
+    public function __toString()
+    {
+        return (string) $this->getNom();
+    }
+
+    /**
      * Set nom
      *
      * @param string $nom

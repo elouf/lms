@@ -380,6 +380,10 @@ textarea[readonly]{
     display: inline-block;
     vertical-align: top;
 }
+.course-session{
+    border: #456d94 2px solid;
+    background: #E0E9FF;
+}
 
 /* CRUD DES ITEMS */
 .listeItemContained{

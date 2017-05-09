@@ -1,6 +1,7 @@
 <?php
 namespace AppBundle\Admin;
 
+use AppBundle\Entity\Session;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
@@ -12,19 +13,56 @@ class CoursAdmin extends AbstractAdmin
     // EDIT and CREATE
     protected function configureFormFields(FormMapper $formMapper)
     {
+        $subject = $this->getSubject();
+
         $formMapper
-            ->with('Champs', array('class' => 'col-md-6'))
+            ->with('Informations', array('class' => 'col-md-6'))
                 ->add('nom', 'text')
                 ->add('cout', 'text')
                 ->add('imgFilePath', 'text')
-                ->add('description', 'textarea')
-                ->add('accueil', 'textarea')
+                ->add('description', 'textarea', array('attr' => array('class' => 'ckeditor')))
+                ->add('accueil', 'textarea', array('attr' => array('class' => 'ckeditor')))
             ->end()
             ->with('Architecture', array('class' => 'col-md-6'))
                 ->add('discipline', 'sonata_type_model')
                 ->add('cohortes')
-            ->end()
-        ;
+            ->end();
+
+
+        if ($subject instanceof Session) {
+            $formMapper
+                ->with('Session', array('class' => 'col-md-6'))
+                    ->add('dateDebut', 'sonata_type_datetime_picker', array(
+                        'dp_side_by_side'       => true,
+                        'dp_use_current'        => false,
+                        'dp_use_seconds'        => false,
+                        'dp_collapse'           => true,
+                        'dp_calendar_weeks'     => false,
+                        'dp_view_mode'          => 'days'))
+                    ->add('dateFin', 'sonata_type_datetime_picker', array(
+                        'dp_side_by_side'       => true,
+                        'dp_use_current'        => false,
+                        'dp_use_seconds'        => false,
+                        'dp_collapse'           => true,
+                        'dp_calendar_weeks'     => false,
+                        'dp_view_mode'          => 'days'))
+                    ->add('dateDebutAlerte', 'sonata_type_datetime_picker', array(
+                        'dp_side_by_side'       => true,
+                        'dp_use_current'        => false,
+                        'dp_use_seconds'        => false,
+                        'dp_collapse'           => true,
+                        'dp_calendar_weeks'     => false,
+                        'dp_view_mode'          => 'days'))
+                    ->add('dateFinAlerte', 'sonata_type_datetime_picker', array(
+                        'dp_side_by_side'       => true,
+                        'dp_use_current'        => false,
+                        'dp_use_seconds'        => false,
+                        'dp_collapse'           => true,
+                        'dp_calendar_weeks'     => false,
+                        'dp_view_mode'          => 'days'))
+                    ->end();
+        }
+
 
     }
 
@@ -47,10 +85,14 @@ class CoursAdmin extends AbstractAdmin
     // VIEW ALL IN TABLE
     protected function configureListFields(ListMapper $listMapper)
     {
+        $subject = $this->getSubject();
+        $isSession = $subject instanceof Session;
+
         $listMapper
             ->addIdentifier('nom')
             ->add('description')
             ->addIdentifier('discipline')
         ;
+
     }
 }

@@ -14,6 +14,9 @@ class UserAdmin extends AbstractAdmin
         $formMapper
             ->add('email', 'text')
             ->add('enabled')
+            ->add('firstname')
+            ->add('lastname')
+            ->add('institut', 'sonata_type_model')
         ;
 
     }
@@ -22,9 +25,14 @@ class UserAdmin extends AbstractAdmin
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
-            ->add('username')
             ->add('email')
             ->add('enabled')
+            ->add('firstname')
+            ->add('lastname')
+            ->add('institut', null, array(), 'entity', array(
+                'class'    => 'AppBundle\Entity\Institut',
+                'choice_label' => 'nom',
+            ))
         ;
     }
 
@@ -34,6 +42,8 @@ class UserAdmin extends AbstractAdmin
         $listMapper
             ->addIdentifier('email')
             ->add('enabled')
+            ->add('firstname')
+            ->add('lastname')
         ;
     }
 }

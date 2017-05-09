@@ -93,6 +93,8 @@ sonata_block:
             contexts: [admin]
 sonata_admin:
     title: Lms Admin
+    templates:
+        edit: adminCKedit.html.twig
 
 sendin_blue_api:
     api_key: <Your access key>

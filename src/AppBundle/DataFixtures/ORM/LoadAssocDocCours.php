@@ -16,24 +16,28 @@ class LoadAssocDocCoursData extends AbstractFixture implements OrderedFixtureInt
     {
         $ress = $this->createItem($manager,
             $this->getReference('cours_analyse'),
-            $this->getReference('doc_3')
+            $this->getReference('doc_3'),
+            true
             );
         $ress = $this->createItem($manager,
             $this->getReference('cours_alg'),
-            $this->getReference('doc_4')
+            $this->getReference('doc_4'),
+            false
         );
         $ress = $this->createItem($manager,
             $this->getReference('cours_alg'),
-            $this->getReference('doc_5')
+            $this->getReference('doc_5'),
+            false
         );
 
         $manager->flush();
     }
 
-    public function createItem(ObjectManager $manager, Cours $cours, Document $doc){
+    public function createItem(ObjectManager $manager, $cours, $doc, $isImportant){
         $item = new AssocDocCours();
         $item->setCours($cours);
         $item->setDocument($doc);
+        $item->setIsImportant($isImportant);
         $manager->persist($item);
         return $item;
     }

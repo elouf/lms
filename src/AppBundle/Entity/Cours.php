@@ -10,9 +10,14 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(name="cours")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\CoursRepository")
+ *
+ * @ORM\InheritanceType("SINGLE_TABLE")
+ * @ORM\DiscriminatorColumn(name="isSession", type="integer")
+ * @ORM\DiscriminatorMap({"0" = "Cours", "1" = "Session"})
  */
 class Cours extends DocContainer
 {
+
     /**
      * @var int
      *
@@ -59,7 +64,7 @@ class Cours extends DocContainer
 
     /**
      * @var Discipline
-     * @ORM\Column(name="discipline_id", type="integer", nullable=false)
+     *
      * @ORM\ManyToOne(targetEntity="Discipline")
      */
     private $discipline;
@@ -270,5 +275,10 @@ class Cours extends DocContainer
     public function getCohortes()
     {
         return $this->cohortes;
+    }
+
+    public function isSession()
+    {
+        return false;
     }
 }

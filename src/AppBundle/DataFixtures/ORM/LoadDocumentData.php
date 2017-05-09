@@ -31,7 +31,7 @@ class LoadDocumentData extends AbstractFixture implements OrderedFixtureInterfac
         $manager->flush();
     }
 
-    public function createItem(ObjectManager $manager, $url, $nom, $descr, $dateCrea, User $proprietaire){
+    public function createItem(ObjectManager $manager, $url, $nom, $descr, $dateCrea, $proprietaire){
         $item = new Document();
         $item->setUrl($url);
         $item->setNom($nom);

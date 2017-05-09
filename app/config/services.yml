@@ -23,11 +23,17 @@ services:
         arguments: [~, AppBundle\Entity\Discipline, ~]
         tags:
             - { name: sonata.admin, manager_type: orm, label: Disciplines, group: "Cours" }
+    admin.institut:
+        class: AppBundle\Admin\InstitutAdmin
+        arguments: [~, AppBundle\Entity\Institut, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: Instituts, group: "Utilisateurs" }
     admin.user:
         class: AppBundle\Admin\UserAdmin
         arguments: [~, AppBundle\Entity\User, ~]
         tags:
             - { name: sonata.admin, manager_type: orm, label: Utilisateurs, group: "Utilisateurs" }
+
 
     admin.categorieLien:
         class: AppBundle\Admin\CategorieLienAdmin

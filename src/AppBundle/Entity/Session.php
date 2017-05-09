@@ -13,6 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Session extends Cours
 {
+
     /**
      * @var string
      *
@@ -154,7 +155,7 @@ class Session extends Cours
      */
     public function setDateFinAlerte($dateFinAlerte)
     {
-        $this->dateFin = $dateFinAlerte;
+        $this->dateFinAlerte = $dateFinAlerte;
 
         return $this;
     }
@@ -167,5 +168,10 @@ class Session extends Cours
     public function getDateFinAlerte()
     {
         return $this->dateFinAlerte;
+    }
+
+    public function isSession()
+    {
+        return true;
     }
 }

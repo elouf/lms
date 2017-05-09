@@ -6,15 +6,14 @@ use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 
-class DisciplineAdmin extends AbstractAdmin
+class InstitutAdmin extends AbstractAdmin
 {
     // EDIT and CREATE
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
             ->add('nom', 'text')
-            ->add('description', 'textarea', array('attr' => array('class' => 'ckeditor')))
-            ->add('imgFilePath', 'text')
+            ->add('ville', 'text')
         ;
 
     }
@@ -24,6 +23,7 @@ class DisciplineAdmin extends AbstractAdmin
     {
         $datagridMapper
             ->add('nom')
+            ->add('ville')
         ;
     }
 
@@ -32,8 +32,7 @@ class DisciplineAdmin extends AbstractAdmin
     {
         $listMapper
             ->addIdentifier('nom')
-            ->add('description')
-            ->add('imgFilePath')
+            ->add('ville')
         ;
     }
 }

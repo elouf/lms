@@ -12,23 +12,27 @@ class Evt_userAdmin extends AbstractAdmin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->add('nom', 'text')
-            ->add('description', 'textarea')
-            ->add('user', 'sonata_type_model')
-            ->add('dateDebut', 'sonata_type_datetime_picker', array(
-                'dp_side_by_side'       => true,
-                'dp_use_current'        => false,
-                'dp_use_seconds'        => false,
-                'dp_collapse'           => true,
-                'dp_calendar_weeks'     => false,
-                'dp_view_mode'          => 'days'))
-            ->add('dateFin', 'sonata_type_datetime_picker', array(
-                'dp_side_by_side'       => true,
-                'dp_use_current'        => false,
-                'dp_use_seconds'        => false,
-                'dp_collapse'           => true,
-                'dp_calendar_weeks'     => false,
-                'dp_view_mode'          => 'days'))
+            ->with('Informations', array('class' => 'col-md-6'))
+                ->add('nom', 'text')
+                ->add('description', 'textarea', array('attr' => array('class' => 'ckeditor')))
+            ->end()
+            ->with('Paramètres', array('class' => 'col-md-6'))
+                ->add('user', 'sonata_type_model')
+                ->add('dateDebut', 'sonata_type_datetime_picker', array(
+                    'dp_side_by_side'       => true,
+                    'dp_use_current'        => false,
+                    'dp_use_seconds'        => false,
+                    'dp_collapse'           => true,
+                    'dp_calendar_weeks'     => false,
+                    'dp_view_mode'          => 'days'))
+                ->add('dateFin', 'sonata_type_datetime_picker', array(
+                    'dp_side_by_side'       => true,
+                    'dp_use_current'        => false,
+                    'dp_use_seconds'        => false,
+                    'dp_collapse'           => true,
+                    'dp_calendar_weeks'     => false,
+                    'dp_view_mode'          => 'days'))
+            ->end()
         ;
 
     }

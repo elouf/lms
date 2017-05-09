@@ -16,24 +16,28 @@ class LoadAssocDocDiscData extends AbstractFixture implements OrderedFixtureInte
     {
         $ress = $this->createItem($manager,
             $this->getReference('disc_maths'),
-            $this->getReference('doc_0')
+            $this->getReference('doc_0'),
+            true
             );
         $ress = $this->createItem($manager,
             $this->getReference('disc_lettres'),
-            $this->getReference('doc_1')
+            $this->getReference('doc_1'),
+            false
         );
         $ress = $this->createItem($manager,
             $this->getReference('disc_maths'),
-            $this->getReference('doc_2')
+            $this->getReference('doc_2'),
+            false
         );
 
         $manager->flush();
     }
 
-    public function createItem(ObjectManager $manager, Discipline $disc, Document $doc){
+    public function createItem(ObjectManager $manager, $disc, $doc, $isImportant){
         $item = new AssocDocDisc();
         $item->setDiscipline($disc);
         $item->setDocument($doc);
+        $item->setIsImportant($isImportant);
         $manager->persist($item);
         return $item;
     }

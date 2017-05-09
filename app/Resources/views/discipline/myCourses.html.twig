@@ -87,6 +87,22 @@
                                                 </div>
                                             </div>
                                         {% endif %}
+                                        {% for keyC,valC in val.sessions %}
+                                            <div class="course-list course-session" style="margin-top: 0;">
+                                                <div class="course-media">
+                                                    <img src="{{ asset('images/') }}{{ valC.imgFilePath }}" class="img-responsive course-img" alt="">
+                                                </div>
+                                                <div class="course-detail">
+                                                    <h4 class="heading">{{ valC.nom }}</h4>
+                                                    <ul class="course-features">
+                                                        <li><i class="fa fa-map-marker"></i> À distance</li>
+                                                        <li><i class="fa fa-clock-o"></i> 2 mois</li>
+                                                    </ul>
+                                                    <p class="brief">{{ valC.description }}</p>
+                                                    <a href="{{ path('oneCours', {id: valC.id, mode: 'etu'}) }}" class="btn btn-primary btn-sm">Entrer</a>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
                                         {% for keyC,valC in val.courses %}
                                             <div class="course-list" style="margin-top: 0;">
                                                 <div class="course-media">

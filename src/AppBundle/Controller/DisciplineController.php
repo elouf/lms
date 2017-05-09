@@ -65,13 +65,21 @@ class DisciplineController extends Controller
             }
         }
 
-
         $courses = array();
-
         // on construit le tableau des disciplines/cours complètes
         for($i=0; $i<count($disciplinesArray2Consider); $i++){
+            $courses[$i]["courses"] = array();
+            $courses[$i]["sessions"] = array();
             $courses[$i]["discipline"] = $disciplinesArray2Consider[$i];
-            $courses[$i]["courses"] = $repositoryCours->findBy(array('discipline' => $disciplinesArray2Consider[$i]));
+            $coursesT = $repositoryCours->findBy(array('discipline' =>$disciplinesArray2Consider[$i]));
+            for($j=0; $j<count($coursesT); $j++){
+                if(!$coursesT[$j]->isSession()) {
+                    array_push($courses[$i]["courses"], $coursesT[$j]);
+                }else{
+                    array_push($courses[$i]["sessions"], $coursesT[$j]);
+                }
+            }
+
         }
         // on lui ajoute les cours individuels (avec leurs disciplines)
         for($j=0; $j<count($coursesIndiv); $j++){

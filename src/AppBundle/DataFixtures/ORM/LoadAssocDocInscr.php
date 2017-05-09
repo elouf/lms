@@ -18,31 +18,36 @@ class LoadAssocDocInscrData extends AbstractFixture implements OrderedFixtureInt
         $ress = $this->createItem($manager,
             $this->getReference('inscr_01'),
             $this->getReference('doc_6'),
-            null
+            null,
+            false
             );
         $ress = $this->createItem($manager,
             $this->getReference('inscr_01'),
             $this->getReference('doc_7'),
-            null
+            null,
+            true
         );
         $ress = $this->createItem($manager,
             $this->getReference('inscr_02'),
             $this->getReference('doc_8'),
-            null
+            null,
+            false
         );
         $ress = $this->createItem($manager,
             $this->getReference('inscr_03'),
             $this->getReference('doc_9'),
-            $this->getReference('cours_alg')
+            $this->getReference('cours_alg'),
+            false
         );
 
         $manager->flush();
     }
 
-    public function createItem(ObjectManager $manager, Inscription $inscr, Document $doc, $cours){
+    public function createItem(ObjectManager $manager, $inscr, $doc, $cours, $isImportant){
         $item = new AssocDocInscr();
         $item->setInscription($inscr);
         $item->setDocument($doc);
+        $item->setIsImportant($isImportant);
         if($cours)
             $item->setCours($cours);
         $manager->persist($item);
