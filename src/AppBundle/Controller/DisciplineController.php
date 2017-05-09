@@ -7,6 +7,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Validator\Constraints\DateTime;
 
 class DisciplineController extends Controller
 {
@@ -76,7 +77,21 @@ class DisciplineController extends Controller
                 if(!$coursesT[$j]->isSession()) {
                     array_push($courses[$i]["courses"], $coursesT[$j]);
                 }else{
-                    array_push($courses[$i]["sessions"], $coursesT[$j]);
+                    $currentDate = new DateTime();
+                    $inscrSess = $this->getDoctrine()
+                        ->getRepository('AppBundle:Inscription_sess')
+                        ->findOneBy(array('user' => $this->getUser(), 'session' => $coursesT[$j]));
+
+                    if(($currentDate >= $coursesT[$j]->getDateDebut() &&
+                        $currentDate <= $coursesT[$j]->getDateFin() &&
+                        $inscrSess) ||
+                        $this->getUser()->hasRole('ROLE_SUPER_ADMIN')
+                    ){
+                        array_push($courses[$i]["sessions"], $coursesT[$j]);
+                    }elseif($currentDate < $coursesT[$j]->getDateDebut()){
+
+                    }
+
                 }
             }
 
