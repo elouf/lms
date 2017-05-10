@@ -77,6 +77,13 @@ class Cours extends DocContainer
     private $cohortes;
 
     /**
+     * @var Session
+     *
+     * @ORM\ManyToOne(targetEntity="Session")
+     */
+    private $session;
+
+    /**
      * Constructor
      */
     public function __construct() {
@@ -277,8 +284,27 @@ class Cours extends DocContainer
         return $this->cohortes;
     }
 
-    public function isSession()
+    /**
+     * Set session
+     *
+     * @param Session $session
+     *
+     * @return Cours
+     */
+    public function setSession($session)
     {
-        return false;
+        $this->session = $session;
+
+        return $this;
+    }
+
+    /**
+     * Get session
+     *
+     * @return Session
+     */
+    public function getSession()
+    {
+        return $this->session;
     }
 }

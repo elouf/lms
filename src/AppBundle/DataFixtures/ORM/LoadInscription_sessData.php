@@ -15,7 +15,7 @@ class LoadInscription_sessData extends AbstractFixture implements OrderedFixture
         $this->createItem($manager,
             $this->getReference('role_etu'),
             $this->getReference('user_etudiant_1'),
-            $this->getReference('sess_est_maths'));
+            $this->getReference('sess_est_2017'));
 
         $manager->flush();
     }

@@ -384,6 +384,10 @@ textarea[readonly]{
     border: #456d94 2px solid;
     background: #E0E9FF;
 }
+.course-sessionAlerte{
+    border: #d64600 2px solid;
+    background: #ffeae2;
+}
 
 /* CRUD DES ITEMS */
 .listeItemContained{

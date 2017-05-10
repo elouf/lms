@@ -40,6 +40,42 @@ class LoadCoursData extends AbstractFixture implements OrderedFixtureInterface
             0);
         $this->addReference('cours_analyse', $cours);
         $cours = $this->createItem($manager,
+            'Algèbre (Session d\'été)',
+            'Session estivale d\'algèbre du second degré',
+            '<p>Vous disposez ici de ressources d\'entraînement aux écrits du concours, sous différentes formes de
+                difficulté progressive pour vous aider à travailler en autonomie :</p>
+            <ul class="list-default">
+                <li>Des exercices de mise en route</li>
+                <li>Des exercices niveau Concours</li>
+                <li>Des sujets format concours</li>
+            </ul>
+            <p>Tous les exercices et sujets disposent bien sûr de leur corrigé, écrit ou vidéo. Pour certains exercices
+            plus difficiles, vous disposez aussi d\'indices aidant à la résolution, si besoin. Attention: Les formats
+            des sujets ont changé, les annales permettent de s\'entraîner surtout à l\'épreuve 1 "Résolution de
+            problème". Tenez en compte dans vos révisions. Bonne découverte !</p>',
+            'disciplines/disc_maths.png',
+            $this->getReference('disc_maths'),
+            0);
+        $this->addReference('cours_alg_esti', $cours);
+        $cours = $this->createItem($manager,
+            'Algèbre (Session d\'automne)',
+            'Session automnale d\'algèbre du second degré',
+            '<p>Vous disposez ici de ressources d\'entraînement aux écrits du concours, sous différentes formes de
+                difficulté progressive pour vous aider à travailler en autonomie :</p>
+            <ul class="list-default">
+                <li>Des exercices de mise en route</li>
+                <li>Des exercices niveau Concours</li>
+                <li>Des sujets format concours</li>
+            </ul>
+            <p>Tous les exercices et sujets disposent bien sûr de leur corrigé, écrit ou vidéo. Pour certains exercices
+            plus difficiles, vous disposez aussi d\'indices aidant à la résolution, si besoin. Attention: Les formats
+            des sujets ont changé, les annales permettent de s\'entraîner surtout à l\'épreuve 1 "Résolution de
+            problème". Tenez en compte dans vos révisions. Bonne découverte !</p>',
+            'disciplines/disc_maths.png',
+            $this->getReference('disc_maths'),
+            0);
+        $this->addReference('cours_alg_aut', $cours);
+        $cours = $this->createItem($manager,
             'Littérature',
             'Cours de Littérature du second degré',
             'accueil',

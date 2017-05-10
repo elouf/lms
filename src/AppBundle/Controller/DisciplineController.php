@@ -7,7 +7,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Validator\Constraints\DateTime;
+use DateTime;
 
 class DisciplineController extends Controller
 {
@@ -71,30 +71,30 @@ class DisciplineController extends Controller
         for($i=0; $i<count($disciplinesArray2Consider); $i++){
             $courses[$i]["courses"] = array();
             $courses[$i]["sessions"] = array();
+            $courses[$i]["sessionsAlerte"] = array();
             $courses[$i]["discipline"] = $disciplinesArray2Consider[$i];
             $coursesT = $repositoryCours->findBy(array('discipline' =>$disciplinesArray2Consider[$i]));
             for($j=0; $j<count($coursesT); $j++){
-                if(!$coursesT[$j]->isSession()) {
+                if(!$coursesT[$j]->getSession()) {
                     array_push($courses[$i]["courses"], $coursesT[$j]);
                 }else{
+                    $session = $coursesT[$j]->getSession();
                     $currentDate = new DateTime();
                     $inscrSess = $this->getDoctrine()
                         ->getRepository('AppBundle:Inscription_sess')
-                        ->findOneBy(array('user' => $this->getUser(), 'session' => $coursesT[$j]));
+                        ->findOneBy(array('user' => $this->getUser(), 'session' => $session));
 
-                    if(($currentDate >= $coursesT[$j]->getDateDebut() &&
-                        $currentDate <= $coursesT[$j]->getDateFin() &&
+                    if(($currentDate >= $session->getDateDebut() &&
+                        $currentDate <= $session->getDateFin() &&
                         $inscrSess) ||
                         $this->getUser()->hasRole('ROLE_SUPER_ADMIN')
                     ){
                         array_push($courses[$i]["sessions"], $coursesT[$j]);
-                    }elseif($currentDate < $coursesT[$j]->getDateDebut()){
-
+                    }elseif($currentDate < $session->getDateDebut() && $currentDate >= $session->getDateDebutAlerte() && $currentDate < $session->getDateFinAlerte()){
+                        array_push($courses[$i]["sessionsAlerte"], $session);
                     }
-
                 }
             }
-
         }
         // on lui ajoute les cours individuels (avec leurs disciplines)
         for($j=0; $j<count($coursesIndiv); $j++){
@@ -112,7 +112,7 @@ class DisciplineController extends Controller
             }
         }
 
-        // on recherche les infos liées aux ducuments
+        // on recherche les infos liées aux documents
         ////Comme un accès aux documents de la discipline existe, on doit afficher l'info-bulle si certains n'ont pas été visités
         for($j=0; $j<count($courses); $j++){
             $docs = $this->getDoctrine()->getRepository('AppBundle:Document')->findByDisc($courses[$j]["discipline"], $this->getUser());
@@ -127,7 +127,6 @@ class DisciplineController extends Controller
             }
             $courses[$j]["nbNewDocs"] = $nbNewDocs;
         }
-
         return $this->render('discipline/myCourses.html.twig', ['courses' => $courses, 'default' => $id]);
     }
 

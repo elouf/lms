@@ -11,8 +11,30 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(repositoryClass="AppBundle\Repository\SessionRepository")
  *
  */
-class Session extends Cours
+class Session
 {
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer", unique=true)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="nom", type="string", length=255, unique=false)
+     */
+    private $nom;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="description", type="text", nullable=true)
+     */
+    private $description;
 
     /**
      * @var string
@@ -20,6 +42,13 @@ class Session extends Cours
      * @ORM\Column(name="messageAlerts", type="text", nullable=true)
      */
     protected $messageAlerte;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="imgFilePath", type="text", nullable=true)
+     */
+    private $imgFilePath;
 
     /**
      * @var \DateTime
@@ -51,6 +80,72 @@ class Session extends Cours
 
 
     /**
+     * __toString method
+     */
+    public function __toString()
+    {
+        return (string) $this->getNom();
+    }
+
+    /**
+     * Get id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set nom
+     *
+     * @param string $nom
+     *
+     * @return Session
+     */
+    public function setNom($nom)
+    {
+        $this->nom = $nom;
+
+        return $this;
+    }
+
+    /**
+     * Get nom
+     *
+     * @return string
+     */
+    public function getNom()
+    {
+        return $this->nom;
+    }
+
+    /**
+     * Set description
+     *
+     * @param string $description
+     *
+     * @return Session
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Get description
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
      * Set messageAlerte
      *
      * @param string $messageAlerte
@@ -72,6 +167,30 @@ class Session extends Cours
     public function getMessageAlerte()
     {
         return $this->messageAlerte;
+    }
+
+    /**
+     * Set imgFilePath
+     *
+     * @param string $imgFilePath
+     *
+     * @return Session
+     */
+    public function setImgFilePath($imgFilePath)
+    {
+        $this->imgFilePath = $imgFilePath;
+
+        return $this;
+    }
+
+    /**
+     * Get imgFilePath
+     *
+     * @return string
+     */
+    public function getImgFilePath()
+    {
+        return $this->imgFilePath;
     }
 
     /**
@@ -168,10 +287,5 @@ class Session extends Cours
     public function getDateFinAlerte()
     {
         return $this->dateFinAlerte;
-    }
-
-    public function isSession()
-    {
-        return true;
     }
 }
