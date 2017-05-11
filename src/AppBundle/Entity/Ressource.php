@@ -11,7 +11,13 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\InheritanceType("JOINED")
  * @ORM\Table(name="ressource")
  * @ORM\DiscriminatorColumn(name="type", type="string")
- * @ORM\DiscriminatorMap({Ressource::TYPE_DEVOIR = "Devoir", Ressource::TYPE_LIEN = "Lien", Ressource::TYPE_GROUPE = "GroupeLiens", Ressource::TYPE_LIBRE = "RessourceLibre"})
+ * @ORM\DiscriminatorMap({
+ *     Ressource::TYPE_DEVOIR = "Devoir",
+ *     Ressource::TYPE_LIEN = "Lien",
+ *     Ressource::TYPE_GROUPE = "GroupeLiens",
+ *     Ressource::TYPE_LIBRE = "RessourceLibre",
+ *     Ressource::TYPE_FORUM = "Forum"
+ * })
  *
  */
 abstract class Ressource extends Evenement
@@ -20,6 +26,7 @@ abstract class Ressource extends Evenement
     const TYPE_LIEN    = 'lien';
     const TYPE_GROUPE = 'groupe';
     const TYPE_LIBRE    = 'libre';
+    const TYPE_FORUM   = 'forum';
 
     /**
      * @var Cours

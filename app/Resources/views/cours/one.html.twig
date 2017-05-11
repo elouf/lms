@@ -461,6 +461,24 @@
                                                         </div>
                                                     </div>
                                                 </li>
+                                            {% elseif val.zones.type[keyR] == "forum" %}
+                                                <!--
+                                                        FORUM
+                                                -->
+                                                <li data-idZone="{{ val.zones.containers[keyR].id }}"
+                                                    class="courseElem forum">
+                                                    <div class="row">
+
+                                                        <div class="itemInfos itemHeader col-xs-10">
+                                                            <div class="itemTitle">{{ valR.nom }}</div>
+                                                            <div class="itemDescription">{{ valR.description | raw }}</div>
+                                                        </div>
+
+                                                    </div>
+
+
+                                                </li>
+                                            {% endif %}
                                             {% elseif val.zones.type[keyR] == "libre" %}
                                                 <!--
                                                         LIBRE

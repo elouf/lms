@@ -89,6 +89,9 @@
             $('.complexEditor[readonly]').click(function(){
                 activateCK($(this), config2);
             });
+            $('.simpleEditor.toActivate').each(function(){
+                activateCK($(this), config);
+            });
             function activateCK(editor, config){
                 editor.attr("readonly", false);
                 editor.ckeditor(config);
@@ -199,7 +202,10 @@
                     typeItem = "libre";
                 }else if($(this).hasClass('addNewTypeGroupe')){
                     typeItem = "groupe";
+                }else if($(this).hasClass('addNewTypeForum')){
+                    typeItem = "forum";
                 }
+                console.log(typeItem)
                 $.ajax({
                     type: "POST",
                     url: "{{path('addZone_ajax')}}",
@@ -467,6 +473,8 @@
                         changeLibre(elem);
                     }else if(elem.attr('data-typeItem') == 'devoir'){
                         changeDevoir(elem);
+                    }else if(elem.attr('data-typeItem') == 'forum'){
+                        changeForum(elem);
                     }
                 }
             }
@@ -497,6 +505,33 @@
                         success: function (data) {
                             lien.removeClass('inEdition');
                             lien.find('.btnSaveInputChange').remove();
+                        }
+                    });
+                });
+            }
+            function changeForum(forum){
+                console.log('changeForum : '+forum.hasClass('inEdition'))
+                forum.find('.btnSaveInputChange').click(function(){
+                    var id = forum.attr('data-idItem');
+                    var nom = forum.find('[data-champName=nom]').val();
+                    var description = forum.find('textarea[data-champName=description]').val();
+                    if(CKEDITOR.instances[forum.find('[data-champName=description]').attr('id')]){
+                        description = CKEDITOR.instances[forum.find('[data-champName=description]').attr('id')].getData();
+                    }
+
+                    $.ajax({
+                        type: 'POST',
+                        url: "{{path('changeContentForum_ajax')}}",
+                        async: false,
+                        dataType: "json",
+                        data: {
+                            id: id,
+                            nom: nom,
+                            description: description
+                        },
+                        success: function (data) {
+                            forum.removeClass('inEdition');
+                            forum.find('.btnSaveInputChange').remove();
                         }
                     });
                 });
@@ -649,21 +684,20 @@
                     var selectedIdCat = $('[data-id=categorieLienInGroupeSelectPicker] [data-idcat]');
                     var categorieLienInGroupe = selectedIdCat.attr('data-idcat');
 
-                    var nomLien = $('[data-champName=groupeNewLien_nom]').val();
-                    var urlLien = $('[data-champName=groupeNewLien_url]').val();
+                    var nomLien = $('[data-contentModal=ajoutLienToGroupe] [data-champName=groupeNewLien_nom]').val();
+                    var urlLien = $('[data-contentModal=ajoutLienToGroupe] [data-champName=groupeNewLien_url]').val();
                     var descriptionLien = CKEDITOR.instances['newLienInGroupDescription'].getData();
                     var selectedIdType = $('[data-id=typeLienInGroupeSelectPicker] [data-idType]');
                     var typeLien = selectedIdType.attr('data-idType');
 
-
                     if(nomLienInGroupe == "" ) {
-                        $('[data-champName=nomLienInGroupe]').addClass('alertMustBeSet');
+                        $('[data-contentModal=ajoutLienToGroupe] [data-champName=nomLienInGroupe]').addClass('alertMustBeSet');
                     }else if(selectedIdCat.length == 0){
-                        $('[data-id=categorieLienInGroupeSelectPicker]').addClass('alertMustBeSet');
+                        $('[data-contentModal=ajoutLienToGroupe] [data-id=categorieLienInGroupeSelectPicker]').addClass('alertMustBeSet');
                     }else if(urlLien == ""){
-                        $('[data-champName=groupeNewLien_url]').addClass('alertMustBeSet');
+                        $('[data-contentModal=ajoutLienToGroupe] [data-champName=groupeNewLien_url]').addClass('alertMustBeSet');
                     }else if(selectedIdType.length == 0){
-                        $('[data-id=typeLienInGroupeSelectPicker]').addClass('alertMustBeSet');
+                        $('[data-contentModal=ajoutLienToGroupe] [data-id=typeLienInGroupeSelectPicker]').addClass('alertMustBeSet');
                     }else{
                         var groupeId = $(this).closest('[data-idGroupe]').attr('data-idGroupe');
                         $.ajax({
@@ -1244,6 +1278,7 @@
                             <li role="presentation" class="active"><a href="#btnListLien" aria-controls="btnListLien" role="tab" data-toggle="tab"><i class="fa fa-external-link  fa-fw"></i> Lien</a></li>
                             <li role="presentation"><a href="#btnListDevoir" aria-controls="btnListDevoir" role="tab" data-toggle="tab"><i class="fa fa-university fa-fw"></i> Devoir</a></li>
                             <li role="presentation"><a href="#btnListGroupe" aria-controls="btnListGroupe" role="tab" data-toggle="tab"><i class="fa fa-cubes fa-fw"></i> Groupe de liens</a></li>
+                            <li role="presentation"><a href="#btnListForum" aria-controls="btnListForum" role="tab" data-toggle="tab"><i class="fa fa-cubes fa-fw"></i> Forum</a></li>
                         </ul>
                         <div class="tab-content">
                             <div role="tabpanel" class="tab-pane fade in active" id="btnListLien">
@@ -1270,6 +1305,15 @@
                                         {% include "cours/adminGroupe.html.twig"
                                         with {nom:val.groupe.nom, description: val.groupe.description,
                                         zoneId: '0', itemId: val.groupe.id, inSection: 'false', liens: val.content}
+                                        %}
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <div role="tabpanel" class="tab-pane fade in active" id="btnListForum">
+                                <ul class="list-default courseElems">
+                                    {% for key,val in forums %}
+                                        {% include "cours/adminForum.html.twig"
+                                        with {forum:val, zoneId: '0', inSection: 'false'}
                                         %}
                                     {% endfor %}
                                 </ul>
@@ -1310,6 +1354,7 @@
                                         <option title="Nouvelle ressource" class="addNewItem addNewTypeLien">Lien</option>
                                         <option title="Nouvelle ressource" class="addNewItem addNewTypeGroupe">Groupe de liens</option>
                                         <option title="Nouvelle ressource" class="addNewItem addNewTypeLibre">Zone libre</option>
+                                        <option title="Nouvelle ressource" class="addNewItem addNewTypeForum">Forum</option>
                                         <option data-divider="true"></option>
                                         <option title="Nouvelle ressource" class="addExistingRessource">Ressource existante</option>
                                     </select>
@@ -1349,6 +1394,14 @@
                                             -->
                                             {% include "cours/adminLibre.html.twig"
                                             with {description: valR.description, visible: val.zones.containers[keyR].isVisible,
+                                            zoneId: val.zones.containers[keyR].id, itemId: valR.id, inSection: 'true'}
+                                            %}
+                                        {% elseif val.zones.type[keyR] == "forum" %}
+                                            <!--
+                                                                FORUM
+                                            -->
+                                            {% include "cours/adminForum.html.twig"
+                                            with {forum:valR, description: valR.description, visible: val.zones.containers[keyR].isVisible,
                                             zoneId: val.zones.containers[keyR].id, itemId: valR.id, inSection: 'true'}
                                             %}
                                         {% endif %}
@@ -1438,7 +1491,7 @@
                                 </tr>
                                 <tr>
                                     <td class="LabelAdmin">Description du lien</td>
-                                    <td><textarea id="editLienInGroupDescription" data-champName="groupeNewLien_description" class="simpleEditor editor champAdmin"></textarea></td>
+                                    <td><textarea id="editLienInGroupDescription" data-champName="groupeNewLien_description" class="simpleEditor editor champAdmin toActivate"></textarea></td>
                                 </tr>
                             </table>
                             <div class="myBtn inlineBtn btnAdmin btnAlone btnSaveEditLienInGroupe">Enregistrer ce lien</div>
@@ -1495,7 +1548,7 @@
                                         </tr>
                                         <tr>
                                             <td class="LabelAdmin">Description du lien</td>
-                                            <td><textarea id="newLienInGroupDescription" data-champName="groupeNewLien_description" class="simpleEditor editor champAdmin"></textarea></td>
+                                            <td><textarea id="newLienInGroupDescription" data-champName="groupeNewLien_description" class="simpleEditor editor champAdmin toActivate"></textarea></td>
                                         </tr>
                                     </table>
                                     <div class="myBtn inlineBtn btnAdmin btnAlone btnAddNewLienToGroupe">Ajouter ce nouveau lien</div>
@@ -1533,6 +1586,7 @@
                                 <li role="presentation" class="active"><a href="#btnListLienModal" aria-controls="btnListLienModal" role="tab" data-toggle="tab"><i class="fa fa-external-link  fa-fw"></i> Lien</a></li>
                                 <li role="presentation"><a href="#btnListDevoirModal" aria-controls="btnListDevoirModal" role="tab" data-toggle="tab"><i class="fa fa-university fa-fw"></i> Devoir</a></li>
                                 <li role="presentation"><a href="#btnListGroupeModal" aria-controls="btnListGroupeModal" role="tab" data-toggle="tab"><i class="fa fa-cubes fa-fw"></i> Groupe de liens</a></li>
+                                <li role="presentation"><a href="#btnListForumModal" aria-controls="btnListForumModal" role="tab" data-toggle="tab"><i class="fa fa-cubes fa-fw"></i> Forum</a></li>
                             </ul>
                             <div class="tab-content">
                                 <div role="tabpanel" class="tab-pane fade in active" id="btnListLienModal">
@@ -1589,6 +1643,23 @@
                                                                 </ul>
                                                             </td>
                                                         </tr>
+                                                    </table>
+                                                </td>
+                                                <td>
+                                                    <div class="myBtn btnAdmin btnAlone btnAddItem"><i class="fa fa-plus"></i></div>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </table>
+                                </div>
+                                <div role="tabpanel" class="tab-pane fade in active" id="btnListForumModal">
+                                    <table class="tableAddItem">
+                                        {% for key,val in forums %}
+                                            <tr class="item" data-typeItem="forum" data-idItem="{{ val.id }}">
+                                                <td>
+                                                    <table class="tableDetailItem">
+                                                        <tr><td class="nomChamp">Nom</td><td>{{ val.nom }}</td></tr>
+                                                        <tr><td class="nomChamp">Description</td><td>{{ val.description | raw }}</td></tr>
                                                     </table>
                                                 </td>
                                                 <td>

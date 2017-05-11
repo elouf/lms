@@ -1,0 +1,37 @@
+<li data-idZone="{{ zoneId }}"
+    data-idItem="{{ forum.id }}"
+    class="courseElemAdmin forumAdmin col-md-12"
+    data-typeItem="forum"
+    {% if inSection == 'true' %}
+        {% set isVisible = "false" %}
+        {% if  visible == 1 %}
+            {% set isVisible = "true" %}
+        {% endif %}
+        data-IsVisible="{{ isVisible }}"
+    {% endif %}
+>
+    <div class="titleBar">Forum</div>
+
+    {% if inSection == 'true' %}
+        {% include "cours/adminBtns.html.twig" with {visible: visible}  %}
+    {% else %}
+        <div class="btnActionCol col-md-1">
+            <ul>
+                <li class="myBtn btnDelete btnLeft btnSupprElem"><i class="fa fa-times"></i></li>
+            </ul>
+        </div>
+    {% endif %}
+
+    <div class="formCol col-md-11">
+        <div class="row">
+            <div class="LabelAdmin col-sm-3">Nom</div>
+            <input data-champName="nom" class="champAdmin col-sm-9 col-xs-12" value="{{ forum.nom }}"/>
+        </div>
+        <div class="row">
+            <div class="LabelAdmin col-sm-3">Description</div>
+            <div class="col-sm-9  col-xs-12 noPadding">
+                <textarea data-champName="description" id="zone_{{ zoneId }}_forum_{{ forum.id }}_descr" class="simpleEditor editor champAdmin" readonly>{{ forum.description }}</textarea>
+            </div>
+        </div>
+    </div>
+</li>

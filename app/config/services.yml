@@ -40,6 +40,16 @@ services:
             - { name: sonata.admin, manager_type: orm, label: Utilisateurs, group: "Utilisateurs" }
 
 
+    admin.forum:
+        class: AppBundle\Admin\ForumAdmin
+        arguments: [~, AppBundle\Entity\Forum, ~]
+        tags:
+            - { name: sonata.admin,manager_type: orm, label: Forums, group: "Ressources" }
+    admin.sujet:
+        class: AppBundle\Admin\ForumSujetAdmin
+        arguments: [~, AppBundle\Entity\ForumSujet, ~]
+        tags:
+            - { name: sonata.admin,manager_type: orm, label: Forums->Sujets, group: "Ressources" }
     admin.categorieLien:
         class: AppBundle\Admin\CategorieLienAdmin
         arguments: [~, AppBundle\Entity\CategorieLien, ~]

@@ -80,12 +80,8 @@ class CoursController extends Controller
             }
         }
 
-
-
-
-
-        $repositoryTypeLiens = $this->getDoctrine()->getRepository('AppBundle:TypeLien')->findAll();
-        $repositoryCategorieLiens = $this->getDoctrine()->getRepository('AppBundle:CategorieLien')->findAll();
+        $typeLiens = $this->getDoctrine()->getRepository('AppBundle:TypeLien')->findAll();
+        $categorieLiens = $this->getDoctrine()->getRepository('AppBundle:CategorieLien')->findAll();
 
         $sections = $this->getDoctrine()->getRepository('AppBundle:Section')->findBy(array('cours' => $cours), array('position' => 'ASC'));
 
@@ -109,7 +105,9 @@ class CoursController extends Controller
                     if($ressType == "lien"){
                         $datas[$i]["zones"]["type"][$j] = "lien";
                         $datas[$i]["zones"]["content"][$j] = $ressource;
-
+                    }elseif($ressType == "forum"){
+                        $datas[$i]["zones"]["type"][$j] = "forum";
+                        $datas[$i]["zones"]["content"][$j] = $ressource;
                     }elseif($ressType == "devoir"){
                         $datas[$i]["zones"]["type"][$j] = "devoir";
 
@@ -195,6 +193,7 @@ class CoursController extends Controller
 
         // on récupère aussi tout le contenu du cours
         $cLiens = $this->getDoctrine()->getRepository('AppBundle:Lien')->findBy(array('cours' => $cours));
+        $cForums = $this->getDoctrine()->getRepository('AppBundle:Forum')->findBy(array('cours' => $cours));
         $cLibres = $this->getDoctrine()->getRepository('AppBundle:RessourceLibre')->findBy(array('cours' => $cours));
 
         $cGroupesEntity = $this->getDoctrine()->getRepository('AppBundle:GroupeLiens')->findBy(array('cours' => $cours));
@@ -241,11 +240,12 @@ class CoursController extends Controller
                     'cours' => $cours,
                     'zonesSections' => $datas,
                     'liens' => $cLiens,
+                    'forums' => $cForums,
                     'devoirs' => $cDevoirs,
                     'groupes' => $cGroupes,
                     'libres' => $cLibres,
-                    'typeLiens' => $repositoryTypeLiens,
-                    'categorieLiens' => $repositoryCategorieLiens,
+                    'typeLiens' => $typeLiens,
+                    'categorieLiens' => $categorieLiens,
                     'folderUpload' => $this->getParameter('upload_directory'),
                     'uploadSteps' => $this->getParameter('upload_steps'),
                     'uploadSrcSteps' => $this->getParameter('upload_srcSteps'),
@@ -316,6 +316,8 @@ class CoursController extends Controller
                 $entityRessourceName = "Lien";
             }elseif($type == "libre"){
                 $entityRessourceName = "RessourceLibre";
+            }elseif($type == "forum"){
+                $entityRessourceName = "Forum";
             }
 
             if($entityRessourceName == ""){

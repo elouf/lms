@@ -31,6 +31,18 @@ class LoadZoneRessourceData extends AbstractFixture implements OrderedFixtureInt
             true,
             "",
             2);
+        $ress = $this->createItem($manager,
+            $this->getReference('sect_cours_alg_1'),
+            $this->getReference('forum_alg_1'),
+            true,
+            "",
+            3);
+        $ress = $this->createItem($manager,
+            $this->getReference('sect_cours_alg_1'),
+            $this->getReference('forum_alg_2'),
+            true,
+            "",
+            4);
 
         $ress = $this->createItem($manager,
             $this->getReference('sect_cours_alg_2'),
@@ -103,6 +115,12 @@ class LoadZoneRessourceData extends AbstractFixture implements OrderedFixtureInt
         $ress = $this->createItem($manager,
             $this->getReference('sect_cours_analyse_1'),
             $this->getReference('ress_cours_ana_1'),
+            true,
+            "",
+            0);
+        $ress = $this->createItem($manager,
+            $this->getReference('sect_cours_analyse_1'),
+            $this->getReference('forum_analyse_1'),
             true,
             "",
             0);

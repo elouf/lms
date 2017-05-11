@@ -126,7 +126,7 @@
                                                                 <li><i class="fa fa-bell-slash-o" aria-hidden="true"></i> {{ valC.session.dateFinAlerte|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}</li>
                                                             {% endif %}
                                                         </ul>
-                                                        <p class="brief">{{ valC.description }}</p>
+                                                        <p class="brief">{{ valC.description|raw }}</p>
                                                         <a href="{{ path('oneCours', {id: valC.id, mode: 'etu'}) }}" class="btn btn-primary btn-sm">Entrer</a>
                                                     </div>
                                                 </div>
@@ -165,7 +165,7 @@
                                                         <li><i class="fa fa-map-marker"></i> À distance</li>
                                                         <li><i class="fa fa-clock-o"></i> 2 mois</li>
                                                     </ul>
-                                                    <p class="brief">{{ valC.description }}</p>
+                                                    <p class="brief">{{ valC.description|raw }}</p>
                                                     <a href="{{ path('oneCours', {id: valC.id, mode: 'etu'}) }}" class="btn btn-primary btn-sm">Entrer</a>
                                                 </div>
                                             </div>

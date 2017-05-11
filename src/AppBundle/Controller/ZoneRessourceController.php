@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Devoir;
+use AppBundle\Entity\Forum;
 use AppBundle\Entity\GroupeLiens;
 use AppBundle\Entity\Lien;
 use AppBundle\Entity\Cours;
@@ -84,6 +85,8 @@ class ZoneRessourceController extends Controller
                 $entityRessourceName = "Lien";
             }elseif($typeItem == "libre"){
                 $entityRessourceName = "RessourceLibre";
+            }elseif($typeItem == "forum"){
+                $entityRessourceName = "Forum";
             }
 
             if($entityRessourceName == ""){
@@ -112,6 +115,8 @@ class ZoneRessourceController extends Controller
                         $ressource->setUrl("");
                     }elseif($typeItem == "libre"){
                         $ressource = new RessourceLibre();
+                    }elseif($typeItem == "forum"){
+                        $ressource = new Forum();
                     }
                     $ressource->setDescription("");
                     $ressource->setNom("");

@@ -119,6 +119,9 @@ a { font-family: inherit; color: inherit; }
 .groupeLiensAdmin .titleBar{
     background: #0048a2;
 }
+.forumAdmin .titleBar{
+    background: #45a29e;
+}
 .freeAdmin .titleBar{
     background: #a29820;
 }
