@@ -18,6 +18,11 @@ services:
         arguments: [~, AppBundle\Entity\Cours, ~]
         tags:
             - { name: sonata.admin, manager_type: orm, label: Cours, group: "Cours" }
+    admin.session:
+            class: AppBundle\Admin\SessionAdmin
+            arguments: [~, AppBundle\Entity\Session, ~]
+            tags:
+                - { name: sonata.admin, manager_type: orm, label: Session, group: "Cours" }
     admin.discipline:
         class: AppBundle\Admin\DisciplineAdmin
         arguments: [~, AppBundle\Entity\Discipline, ~]

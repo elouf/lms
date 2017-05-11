@@ -59,6 +59,14 @@ class Evenement
     }
 
     /**
+     * __toString method
+     */
+    public function __toString()
+    {
+        return (string) $this->getNom();
+    }
+
+    /**
      * Set nom
      *
      * @param string $nom

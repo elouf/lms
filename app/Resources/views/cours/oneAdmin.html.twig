@@ -40,6 +40,9 @@
             var folderLocation = $('[data-folderUpload]').attr('data-folderUpload');
             var upload_course = $('[data-courseUpload]').attr('data-courseUpload');
 
+            CKEDITOR.config.entities = false;
+            CKEDITOR.config.entities_latin = false;
+
             var config = {
                 configname:"lightConfig",
                 toolbar:

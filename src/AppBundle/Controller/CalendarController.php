@@ -111,11 +111,20 @@ class CalendarController extends Controller
 
         // on ajoute les evt de user
         $repositoryEvtU = $this->getDoctrine()->getRepository('AppBundle:Evt_user')->findBy(array('user'=> $this->getUser()));
-        foreach($repositoryEvtU as $evtU){
-            array_push($myEvents, array('evt' => $evtU, 'type' => 'userEvt'));
+        if($repositoryEvtU){
+            foreach($repositoryEvtU as $evtU){
+                array_push($myEvents, array('evt' => $evtU, 'type' => 'userEvt'));
+            }
         }
 
-        dump($myEvents);
+        // on ajoute les sessions
+        $sessions = $this->getDoctrine()->getRepository('AppBundle:Session')->findAll();
+        if($sessions){
+            foreach($sessions as $session){
+                array_push($myEvents, array('evt' => $session, 'type' => 'sessionEvt'));
+            }
+        }
+
         return $this->render('calendrier.html.twig', ['events' => $myEvents]);
     }
 }

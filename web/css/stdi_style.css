@@ -388,6 +388,11 @@ textarea[readonly]{
     border: #d64600 2px solid;
     background: #ffeae2;
 }
+.fdbackInscUserSess{
+    font-weight: bold;
+    margin-top: 0 !important;
+    color: #d64600 !important;
+}
 
 /* CRUD DES ITEMS */
 .listeItemContained{

@@ -1656,6 +1656,7 @@ blockquote footer{
     text-transform: uppercase;
     font-weight: 600;
     font-size: 13px;
+    margin-bottom: 3px;
 }
 
 .course-list .course-detail .course-features>li .fa{

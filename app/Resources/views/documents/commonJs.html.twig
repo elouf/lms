@@ -1,7 +1,8 @@
 {% block commonJS %}
     <script>
         jQuery(document).ready(function () {
-
+            CKEDITOR.config.entities = false;
+            CKEDITOR.config.entities_latin = false;
             var config = {
                 configname:"lightConfig",
                 toolbar:

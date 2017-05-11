@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Discipline;
+use AppBundle\Entity\Inscription_sess;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -72,6 +73,7 @@ class DisciplineController extends Controller
             $courses[$i]["courses"] = array();
             $courses[$i]["sessions"] = array();
             $courses[$i]["sessionsAlerte"] = array();
+            $courses[$i]["sessionsAlerteIsInscrit"] = array();
             $courses[$i]["discipline"] = $disciplinesArray2Consider[$i];
             $coursesT = $repositoryCours->findBy(array('discipline' =>$disciplinesArray2Consider[$i]));
             for($j=0; $j<count($coursesT); $j++){
@@ -84,6 +86,7 @@ class DisciplineController extends Controller
                         ->getRepository('AppBundle:Inscription_sess')
                         ->findOneBy(array('user' => $this->getUser(), 'session' => $session));
 
+                    // on est inscrit et les dates sont bonnes (ou on est admin)
                     if(($currentDate >= $session->getDateDebut() &&
                         $currentDate <= $session->getDateFin() &&
                         $inscrSess) ||
@@ -91,7 +94,9 @@ class DisciplineController extends Controller
                     ){
                         array_push($courses[$i]["sessions"], $coursesT[$j]);
                     }elseif($currentDate < $session->getDateDebut() && $currentDate >= $session->getDateDebutAlerte() && $currentDate < $session->getDateFinAlerte()){
+                        // la date de début n'est pas encore commencée, mais la date d'alerte oui : on doit permettre de s'inscrire si ce n'est pas fait
                         array_push($courses[$i]["sessionsAlerte"], $session);
+                        array_push($courses[$i]["sessionsAlerteIsInscrit"], $inscrSess != null);
                     }
                 }
             }
@@ -127,6 +132,7 @@ class DisciplineController extends Controller
             }
             $courses[$j]["nbNewDocs"] = $nbNewDocs;
         }
+
         return $this->render('discipline/myCourses.html.twig', ['courses' => $courses, 'default' => $id]);
     }
 
@@ -172,6 +178,37 @@ class DisciplineController extends Controller
             $em->flush();
 
             return new JsonResponse(array('action' =>'change Visibility of documents', 'id' => $disc->getId(), 'isVisible' => $disc->getDocsActivated()));
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
+    /**
+     * @Route("/inscrSess_ajax", name="inscrSess_ajax")
+     */
+    public function inscrSessAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+
+            $id = $request->request->get('id');
+
+            $session = $em->getRepository('AppBundle:Session')->findOneBy(array('id' => $id));
+
+            $role = $em->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Etudiant'));
+
+            $inscr = new Inscription_sess();
+            $inscr->setSession($session);
+            $inscr->setUser($this->getUser());
+            $inscr->setDateInscription(new DateTime());
+            if($role){
+                $inscr->setRole($role);
+            }
+
+            $em->persist($inscr);
+            $em->flush();
+
+            return new JsonResponse(array('action' =>'Inscription user session'));
         }
 
         return new JsonResponse('This is not ajax!', 400);
