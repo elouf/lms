@@ -474,11 +474,15 @@
                                                             <div class="itemDescription">{{ valR.description | raw }}</div>
                                                         </div>
 
+                                                        <div class="col-xs-2 text-right">
+                                                            <a class="btn btnLien btn-sm btn-warning" href="{{ path('forum', {id: valR.id}) }}">
+                                                                <i class="fa fa-comments-o" aria-hidden="true"></i>
+                                                            </a>
+                                                        </div>
                                                     </div>
 
 
                                                 </li>
-                                            {% endif %}
                                             {% elseif val.zones.type[keyR] == "libre" %}
                                                 <!--
                                                         LIBRE

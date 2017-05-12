@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(name="forum_sujet")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\ForumSujetRepository")
+ * @ORM\HasLifecycleCallbacks
  */
 class ForumSujet
 {
@@ -49,6 +50,13 @@ class ForumSujet
      * @ORM\ManyToOne(targetEntity="User")
      */
     private $createur;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="createdAt", type="datetime")
+     */
+    private $createdAt;
 
     /**
      * Get id
@@ -161,5 +169,39 @@ class ForumSujet
     public function getCreateur()
     {
         return $this->createur;
+    }
+
+    /**
+     * Gets triggered only on insert
+
+     * @ORM\PrePersist
+     */
+    public function onPrePersist()
+    {
+        $this->createdAt = new \DateTime("now");
+    }
+
+    /**
+     * Set createdAt
+     *
+     * @param \DateTime $createdAt
+     *
+     * @return ForumSujet
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * Get createdAt
+     *
+     * @return \DateTime
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
     }
 }

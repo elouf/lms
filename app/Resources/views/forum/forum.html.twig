@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+{% block pageHeader %}
+    <div class="page-header">
+        <div class="container">
+            <h2 class="color3">FORUM</h2>
+            <ul class="breadcrumb">
+                <li class="color3">
+                    <a href="{{ path('myCourses') }}" class="label label-info">{{ forum.cours.discipline.nom }}</a>
+                    >
+                    <a href="{{ path('oneCours', {id: forum.cours.id, mode: 'etu'}) }}" class="label label-info">{{ forum.cours.nom }}</a>
+                    >
+                    <a href="{{ path('forum', {id: forum.id}) }}" class="label label-info">{{ forum.nom }}</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+
+{% block main %}
+    <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/jquery.tablesorter.min.js') }}"></script>
+    <script>
+        jQuery(document).ready(function () {
+            $(".sujetsTable").tablesorter();
+            $('th[data-typeCol="dateLast"]').click();
+        });
+    </script>
+    <div class="container pt-40 pb-40">
+        <a href="{{ path('newForumSujet', {id: forum.id}) }}" class="btn btn-primary btn-sm"><i class="btnSendMsg fa fa-paper-plane-o" aria-hidden="true"></i></a>
+        <h3 class="heading text-center">Sujets</h3>
+        <div class="row">
+            <div class="col-sm-12">
+                <table class="sujetsTable table table-boxed">
+                    <thead>
+                    <tr>
+                        <th>Titre</th>
+                        <th>Créateur</th>
+                        <th>Date de création</th>
+                        <th>Réponses</th>
+                        <th data-typeCol="dateLast">Date du dernier message</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for key,val in sujets %}
+                        <tr data-sujetId="{{ val.sujet.id }}">
+                            <td>
+                                <a class="" href="{{ path('forumSujet', {id: val.sujet.id}) }}">
+                                    {{ val.sujet.titre }}
+                                </a>
+                            </td>
+                            <td class="openMsgBtn">
+                                {{ val.sujet.createur.firstname }} {{ val.sujet.createur.lastname }}
+                            </td>
+                            <td data-text="{{ val.sujet.createdAt|localizeddate('none', 'none', null, null, 'YMMddhhmm' ) }}">
+                                {{ val.sujet.createdAt|localizeddate('none', 'none', null, null, 'd LLLL Y à h:mm' ) }}
+                            </td>
+                            <td>
+                                {{ val.posts|length }}
+                            </td>
+                            <td>
+                                {% set lastMsgDate = val.sujet.createdAt %}
+                                {% for post in val.posts %}
+                                    {% if post.createdAt > lastMsgDate %}
+                                        {% set lastMsgDate = post.createdAt %}
+                                    {% endif %}
+
+                                {% endfor %}
+                                {{ lastMsgDate|localizeddate('none', 'none', null, null, 'd LLLL Y à h:mm' ) }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

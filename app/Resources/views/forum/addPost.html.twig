@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %}
+
+{% block pageHeader %}
+    <div class="page-header">
+        <div class="container">
+            <h2 class="color3">FORUM</h2>
+            <ul class="breadcrumb">
+                <li class="color3">
+                    <a href="{{ path('myCourses') }}" class="label label-info">{{ forum.cours.discipline.nom }}</a>
+                    >
+                    <a href="{{ path('oneCours', {id: forum.cours.id, mode: 'etu'}) }}" class="label label-info">{{ forum.cours.nom }}</a>
+                    >
+                    <a href="{{ path('forum', {id: forum.id}) }}" class="label label-info">{{ forum.nom }}</a>
+                    >
+                    <a href="{{ path('forumSujet', {id: sujet.id}) }}" class="label label-info">{{ sujet.titre }}</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+
+{% block main %}
+    <script src="{{ asset('vendors/jquery-ui/jquery-ui.min.js') }}" type=text/javascript></script>
+    <script src="{{ asset('educomp/ckeditor/ckeditor.js') }}"></script>
+    <script src="{{ asset('educomp/ckeditor/adapters/jquery.js') }}"></script>
+    {% include 'forum/commonJs.html.twig' %}
+    <script>
+        jQuery(document).ready(function () {
+            var sujetId = $('[data-sujetId]').attr('data-sujetId');
+
+            CKEDITOR.instances['sujetTexte'].on('change', function() {
+                $('.alertMustBeSet').removeClass('alertMustBeSet');
+            });
+
+            $('.btnSendSujet').click(function(){
+                $('.alertMustBeSet').removeClass('alertMustBeSet');
+                var texte = description = CKEDITOR.instances['sujetTexte'].getData();
+                if(texte == ""){
+                    $('[for=sujetTexte]').addClass('alertMustBeSet');
+                }
+                if(!$('.alertMustBeSet').length){
+                    $.ajax({
+                        type: "POST",
+                        url: "{{path('forumNewPost_ajax')}}",
+                        data: {
+                            id: sujetId,
+                            texte: texte
+                        },
+                        dataType: "json",
+                        success: function (response) {
+                            window.location.href = $('[data-sujetRedirection]').attr('data-sujetRedirection');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+    <div class="container pt-40 pb-40" data-sujetId="{{ sujet.id }}" data-sujetRedirection="{{ path('forumSujet', {id: sujet.id}) }}">
+
+        <h3 class="heading text-center">Nouveau message</h3>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="write-comment bockNewSujet">
+                    <form>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <textarea class="form-control simpleEditor" id="sujetTexte"></textarea>
+                                    <label for="sujetTexte">Message*</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="form-group text-center">
+                                    <a class="btn btn-primary btn-sm btnSendSujet"><i class="btnSendMsg fa fa-paper-plane-o" aria-hidden="true"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

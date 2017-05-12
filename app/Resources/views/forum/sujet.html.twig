@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block pageHeader %}
+    <div class="page-header">
+        <div class="container">
+            <h2 class="color3">SUJET</h2>
+            <ul class="breadcrumb">
+                <li class="color3">
+                    <a href="{{ path('myCourses') }}" class="label label-info">{{ sujet.forum.cours.discipline.nom }}</a>
+                    >
+                    <a href="{{ path('oneCours', {id: sujet.forum.cours.id, mode: 'etu'}) }}" class="label label-info">{{ sujet.forum.cours.nom }}</a>
+                    >
+                    <a href="{{ path('forum', {id: sujet.forum.id}) }}" class="label label-info">{{ sujet.forum.nom }}</a>
+                    >
+                    <a href="{{ path('forumSujet', {id: sujet.id}) }}" class="label label-info">{{ sujet.titre }}</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+
+{% block main %}
+    <script>
+        jQuery(document).ready(function () {
+
+        });
+    </script>
+    <div class="container pt-40 pb-40">
+        <a href="{{ path('newForumPost', {id: sujet.id}) }}" class="btn btn-primary btn-sm"><i class="btnPostMsg fa fa-paper-plane-o" aria-hidden="true"></i></a>
+        <h3 class="heading text-center">Messages</h3>
+        <div class="row">
+            {% for key,val in posts %}
+                <div class="col-sm-12">
+                    <div class="blog-single">
+                        <div class="headerPost">Envoyé le {{ val.createdAt|localizeddate('none', 'none', null, null, 'd LLLL Y à h:mm' ) }}</div>
+                        <div class="row">
+                            <div class="authorPost col-sm-2">
+                                <h5 class="heading">{{ val.auteur.firstname }} {{ val.auteur.lastname }}</h5>
+                            </div>
+                            <div class="contentPost col-sm-10">
+                                {{ val.texte|raw }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
