@@ -26,24 +26,25 @@
     {% include 'forum/commonJs.html.twig' %}
     <script>
         jQuery(document).ready(function () {
-            var sujetId = $('[data-sujetId]').attr('data-sujetId');
+            var postId = $('[data-postId]').attr('data-postId');
 
-            CKEDITOR.instances['sujetTexte'].on('change', function() {
+            CKEDITOR.instances['postTexte'].on('change', function() {
                 $('.alertMustBeSet').removeClass('alertMustBeSet');
             });
 
             $('.btnSendPost').click(function(){
+                console.log('tete')
                 $('.alertMustBeSet').removeClass('alertMustBeSet');
-                var texte = description = CKEDITOR.instances['sujetTexte'].getData();
+                var texte = description = CKEDITOR.instances['postTexte'].getData();
                 if(texte == ""){
                     $('[for=sujetTexte]').addClass('alertMustBeSet');
                 }
                 if(!$('.alertMustBeSet').length){
                     $.ajax({
                         type: "POST",
-                        url: "{{path('forumNewPost_ajax')}}",
+                        url: "{{path('forumEditPost_ajax')}}",
                         data: {
-                            id: sujetId,
+                            id: postId,
                             texte: texte
                         },
                         dataType: "json",
@@ -55,9 +56,9 @@
             });
         });
     </script>
-    <div class="container pt-40 pb-40" data-sujetId="{{ sujet.id }}" data-sujetRedirection="{{ path('forumSujet', {id: sujet.id}) }}">
+    <div class="container pt-40 pb-40" data-postId="{{ post.id }}" data-sujetRedirection="{{ path('forumSujet', {id: sujet.id}) }}">
 
-        <h3 class="heading text-center">Nouveau message</h3>
+        <h3 class="heading text-center">Modification du message</h3>
         <div class="row">
             <div class="col-sm-12">
                 <div class="write-comment bockNewSujet">
@@ -65,13 +66,15 @@
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="form-group">
-                                    <textarea class="form-control simpleEditor" id="sujetTexte"></textarea>
+                                    <textarea class="form-control simpleEditor" id="postTexte">{{ post.texte }}</textarea>
                                     <label for="sujetTexte">Message*</label>
                                 </div>
                             </div>
                             <div class="col-sm-12">
                                 <div class="form-group text-center">
-                                    <a class="btn btn-primary btn-sm btnSendPost"><i class="btnSendMsg fa fa-paper-plane-o" aria-hidden="true"></i></a>
+                                    <a class="btn btn-primary btn-sm btnSendPost">
+                                        <i class="btnUpdatePost fa fa-paper-plane-o" aria-hidden="true"></i>
+                                    </a>
                                 </div>
                             </div>
                         </div>

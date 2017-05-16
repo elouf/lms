@@ -23,6 +23,24 @@
         jQuery(document).ready(function () {
             $(".sujetsTable").tablesorter();
             $('th[data-typeCol="dateLast"]').click();
+
+            $('.deleteSujet').click(function() {
+                var sujetId = $(this).closest('[data-sujetId]').attr('data-sujetId');
+                $.ajax({
+                    type: 'POST',
+                    url: "{{path('deleteSujet_ajax')}}",
+                    async: false,
+                    dataType: "json",
+                    data: {
+                        id: sujetId
+                    },
+                    success: function (data) {
+                        window.location.href = window.location.href;
+                    },
+                    error: function (xhr, status, error) {
+                    }
+                });
+            });
         });
     </script>
     <div class="container pt-40 pb-40">
@@ -53,7 +71,7 @@
                                 {{ val.sujet.createur.firstname }} {{ val.sujet.createur.lastname }}
                             </td>
                             <td data-text="{{ val.sujet.createdAt|localizeddate('none', 'none', null, null, 'YMMddhhmm' ) }}">
-                                {{ val.sujet.createdAt|localizeddate('none', 'none', null, null, 'd LLLL Y à h:mm' ) }}
+                                {{ val.sujet.createdAt|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}
                             </td>
                             <td>
                                 {{ val.posts|length }}
@@ -67,6 +85,12 @@
 
                                 {% endfor %}
                                 {{ lastMsgDate|localizeddate('none', 'none', null, null, 'd LLLL Y à h:mm' ) }}
+                            </td>
+                            <td>
+                                <a href="{{ path('forumSujet', {id: val.sujet.id}) }}" class="btn btn-primary btn-xs">Entrer</a>
+                                {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                    <a class="btn btn-xs btn-danger deleteSujet">Supprimer</a>
+                                {% endif %}
                             </td>
                         </tr>
                     {% endfor %}

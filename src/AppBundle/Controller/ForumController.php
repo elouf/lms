@@ -87,6 +87,22 @@ class ForumController extends Controller
     }
 
     /**
+     * @Route("/forum/post/{id}/editPost", name="editForumPost")
+     */
+    public function editPostAction (Request $request, $id)
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        $post = $this->getDoctrine()->getRepository('AppBundle:ForumPost')->findOneBy(array('id' => $id));
+
+        return $this->render('forum/editPost.html.twig', [
+            'forum' => $post->getSujet()->getForum(),
+            'sujet' => $post->getSujet(),
+            'post' => $post
+        ]);
+    }
+
+    /**
      * @Route("/forumNewSujet_ajax", name="forumNewSujet_ajax")
      * @Method({"GET", "POST"})
      */
@@ -159,6 +175,35 @@ class ForumController extends Controller
     }
 
     /**
+     * @Route("/forumEditPost_ajax", name="forumEditPost_ajax")
+     * @Method({"GET", "POST"})
+     */
+    public function forumEditPostAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+
+            $id = $request->request->get('id');
+            $texte = $request->request->get('texte');
+
+            $post = $em->getRepository('AppBundle:ForumPost')->findOneBy(array('id' => $id));
+
+            $post->setTexte($texte);
+
+            $em->persist($post);
+
+            $em->flush();
+
+            return new JsonResponse(array(
+                    'action' =>'create forum post',
+                    'post' => $post->getId())
+            );
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
+    /**
      * @Route("/changeContentForum_ajax", name="changeContentForum_ajax")
      * @Method({"GET", "POST"})
      */
@@ -184,6 +229,44 @@ class ForumController extends Controller
             );
         }
 
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
+    /**
+     * @Route("/deleteSujet_ajax", name="deleteSujet_ajax")
+     */
+    public function deleteSujetAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+            $sujetId = $request->request->get('id');
+
+            $sujet = $em->getRepository('AppBundle:ForumSujet')->findOneBy(array('id' => $sujetId));
+
+            $em->remove($sujet);
+            $em->flush();
+
+            return new JsonResponse(array('action' =>'deleteSujet', 'id' => $sujetId));
+        }
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
+    /**
+     * @Route("/deletePost_ajax", name="deletePost_ajax")
+     */
+    public function deletePostAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+            $postId = $request->request->get('id');
+
+            $post = $em->getRepository('AppBundle:ForumPost')->findOneBy(array('id' => $postId));
+
+            $em->remove($post);
+            $em->flush();
+
+            return new JsonResponse(array('action' =>'deletePost', 'id' => $post));
+        }
         return new JsonResponse('This is not ajax!', 400);
     }
 }

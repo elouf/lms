@@ -185,13 +185,20 @@ a { font-family: inherit; color: inherit; }
     min-height: 150px !important;
     padding: 3px 6px !important;
     display: flex;
+    display: -webkit-flex;
+    display: -ms-flexbox;
     flex-direction: column;
+    -webkit-flex-direction: column;
+    -webkit-box-orient: vertical;
 }
 .formCol>.row{
     margin-left: 0;
     margin-right: 0;
     margin-bottom: 2px;
     flex: 1;
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    -ms-flex: 1;
 }
 .LabelAdmin{
     font-weight: bold;
@@ -570,14 +577,14 @@ label.alertMustBeSet{
 }
 
 /* Messages */
-.btnSendMsg, .btnPostMsg{
+.btnSendMsg, .btnPostMsg, .btnUpdatePost{
     font-size: 20px;
 }
 .newMsgsPuce {
     position: absolute;
     z-index: 9;
     top: 5px;
-    right: 10px;
+    right: 20px;
 }
 .openMsgBtn{
     cursor: pointer;
@@ -594,7 +601,21 @@ label.alertMustBeSet{
 }
 .headerPost{
     border-bottom: 1px dashed #d7d7d7;
-    text-align: right;
+    display: flex;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    flex-direction: row;
+    -webkit-flex-direction: row;
+    -webkit-box-orient: horizontal;
+    justify-content: flex-start;
+    -webkit-justify-content: flex-start;
+}
+.auteurPostOptions>*{
+    display: inline-block;
+    margin-left: 5px;
+}
+.datePost{
+    margin-left: auto;
 }
 .authorPost{
     border-right: 1px dashed #d7d7d7;
@@ -616,4 +637,86 @@ label.alertMustBeSet{
 }
 .bockNewSujet .form-group{
     margin-bottom: 0;
+}
+.fctAdminPost{
+    cursor: pointer;
+}
+.btnEditPost{
+    color: #d2aa10;
+}
+.btnDeletePost{
+    color: #d20100;
+}
+.updatedPostForumDate{
+    font-style: italic;
+    font-size: 12px;
+}
+
+
+/* MEDIA QUERIES */
+.logoAbsolute{
+    width: 316px;
+    position: absolute;
+    top:10px;
+    left:0;
+    display: none !important;
+}
+.logoGrand{
+    display: block !important;
+}
+@media screen and (max-width: 1200px){
+    .logoAbsolute{
+        left:-70px
+    }
+}
+@media screen and (max-width: 1100px){
+    .logoAbsolute{
+        width: 280px;
+        left:-20px
+    }
+}
+@media screen and (max-width: 992px){
+    .logoAbsolute{
+        width: 160px;
+        left:-80px;
+        top:25px;
+    }
+    .logoGrand{
+        display: none !important;
+    }
+    .logoPetit{
+        display: block !important;
+    }
+}
+@media screen and (max-width: 880px){
+    .logoAbsolute{
+        width: 80px;
+        left:-10px;
+        top:25px;
+    }
+    .logoGrand{
+        display: none !important;
+    }
+    .logoPetit{
+        display: none !important;
+    }
+    .logoToutPetit{
+        display: block !important;
+    }
+}
+@media screen and (max-width: 768px){
+    .logoAbsolute{
+        width: 316px;
+        left:0px;
+        top:10px;
+    }
+    .logoGrand{
+        display: block !important;
+    }
+    .logoPetit{
+        display: none !important;
+    }
+    .logoToutPetit{
+        display: none !important;
+    }
 }

@@ -329,7 +329,7 @@
                                                                     {{ valR.nom }}
                                                                 </div>
                                                                 <div class="ml-10">
-                                                                    Du {{ valR.dateDebut|localizeddate('none', 'none', null, null, 'd LLLL Y à h:mm' ) }} au {{ valR.dateFin|localizeddate('none', 'none', null, null, 'd LLLL Y à h:mm' ) }}
+                                                                    Du {{ valR.dateDebut|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }} au {{ valR.dateFin|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}
                                                                 </div>
                                                                 <div class="ml-10">
                                                                     Durée : {{ valR.duree//3600  }}h{{ (valR.duree - 3600*(valR.duree//3600))//60 }}min
@@ -388,7 +388,7 @@
                                                                     {% endif %}
                                                                     {% if val.zones.copie[keyR] != "undefined" %}
                                                                     <tr>
-                                                                        <td>Devoir commencé le {{ val.zones.copie[keyR].dateCreation|localizeddate('none', 'none', 'fr', null, 'd LLLL Y à h:mm' ) }}</td>
+                                                                        <td>Devoir commencé le {{ val.zones.copie[keyR].dateCreation|localizeddate('none', 'none', 'fr', null, 'd LLLL Y à H:mm' ) }}</td>
                                                                         <td>
                                                                             {% if val.zones.copieFichier[keyR] != "undefined" %}
                                                                                 <a class="btn btn-sm btn-warning" target="_blank" href="{{ val.zones.copieFichier[keyR].url }}">Ma copie</a>
@@ -398,7 +398,7 @@
                                                                     {% endif %}
                                                                     {% if val.zones.corrige[keyR] != "undefined" %}
                                                                         <tr>
-                                                                            <td>Corrigé déposé le {{ val.zones.corrige[keyR].dateRendu|localizeddate('none', 'none', null, null, 'd LLLL Y à h:mm' ) }}</td>
+                                                                            <td>Corrigé déposé le {{ val.zones.corrige[keyR].dateRendu|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}</td>
                                                                             <td>
                                                                                 {% if val.zones.corrigeFichier[keyR] != "undefined" %}
                                                                                     <a class="btn btn-sm btn-success" target="_blank" href="{{ val.zones.corrigeFichier[keyR].url }}">Ma copie corrigée</a>

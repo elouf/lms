@@ -40,6 +40,7 @@ class ForumSujet
     /**
      * @var Forum
      *
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @ORM\ManyToOne(targetEntity="Forum")
      */
     private $forum;
@@ -107,7 +108,7 @@ class ForumSujet
      *
      * @return ForumSujet
      */
-    public function setClosed($ouvert)
+    public function setOuvert($ouvert)
     {
         $this->ouvert = $ouvert;
 

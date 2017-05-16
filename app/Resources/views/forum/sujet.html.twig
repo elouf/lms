@@ -22,17 +22,47 @@
 {% block main %}
     <script>
         jQuery(document).ready(function () {
-
+            $('.btnDeletePost').click(function() {
+                var postId = $(this).closest('[data-postId]').attr('data-postId');
+                $.ajax({
+                    type: 'POST',
+                    url: "{{path('deletePost_ajax')}}",
+                    async: false,
+                    dataType: "json",
+                    data: {
+                        id: postId
+                    },
+                    success: function (data) {
+                        window.location.href = window.location.href;
+                    },
+                    error: function (xhr, status, error) {
+                    }
+                });
+            });
         });
     </script>
     <div class="container pt-40 pb-40">
-        <a href="{{ path('newForumPost', {id: sujet.id}) }}" class="btn btn-primary btn-sm"><i class="btnPostMsg fa fa-paper-plane-o" aria-hidden="true"></i></a>
+        {% if sujet.ouvert == 1 %}
+            <a href="{{ path('newForumPost', {id: sujet.id}) }}" class="btn btn-primary btn-sm"><i class="btnPostMsg fa fa-paper-plane-o" aria-hidden="true"></i></a>
+        {% endif %}
         <h3 class="heading text-center">Messages</h3>
         <div class="row">
             {% for key,val in posts %}
-                <div class="col-sm-12">
+                <div class="col-sm-12" data-postId="{{ val.id }}">
                     <div class="blog-single">
-                        <div class="headerPost">Envoyé le {{ val.createdAt|localizeddate('none', 'none', null, null, 'd LLLL Y à h:mm' ) }}</div>
+                        <div class="headerPost">
+                            <div class="auteurPostOptions">
+                                {% if val.auteur.id == app.user.id or app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                    <a href="{{ path('editForumPost', {id: val.id}) }}" class="btnEditPost fctAdminPost">Éditer</a>
+                                {% endif %}
+                                {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                    <div class="btnDeletePost fctAdminPost">Supprimer</div>
+                                {% endif %}
+                            </div>
+                            <div class="datePost">
+                                Envoyé le {{ val.createdAt|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="authorPost col-sm-2">
                                 <h5 class="heading">{{ val.auteur.firstname }} {{ val.auteur.lastname }}</h5>
@@ -40,6 +70,11 @@
                             <div class="contentPost col-sm-10">
                                 {{ val.texte|raw }}
                             </div>
+                            {% if val.updatedAt is not null %}
+                                <div class="col-sm-12 updatedPostForumDate text-right">
+                                    Mis à jour le {{ val.updatedAt|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>

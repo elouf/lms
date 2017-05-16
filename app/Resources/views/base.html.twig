@@ -94,7 +94,12 @@
                     <span class="sr-only">Toggle Menu</span>
                     <span>Menu</span>
                 </button>
-                <a class="navbar-brand" href="."><img src="{{ asset('educomp/images/logo.png') }}" alt=""></a> <!-- Replace with your Logo -->
+                <a class="navbar-brand logoPtf" href=".">
+                    <img src="{{ asset('educomp/images/logo_empty.png') }}" alt="">
+                    <img class="logoAbsolute logoGrand" src="{{ asset('educomp/images/logo.png') }}" alt="">
+                    <img class="logoAbsolute logoPetit" src="{{ asset('educomp/images/logo_petit.png') }}" alt="">
+                    <img class="logoAbsolute logoToutPetit" src="{{ asset('educomp/images/logo_1.png') }}" alt="">
+                </a> <!-- Replace with your Logo -->
 
             </div>
 
@@ -114,7 +119,7 @@
                     {% if app.user %}
                         <li>
                             <a href="#" data-userId="{{ app.user.id }}">{{ app.user.firstname }} {{ app.user.lastname }}</a>
-                            <ul class="sub-menu">
+                            <ul class="sub-menu" style="margin-left: -30px;">
                                 {% block vueAdmin %}{% endblock %}
                                 <li><a href="{{ path('calendrier') }}">Mon calendrier</a></li>
                                 <li><a href="{{ path('messagerie') }}">Messagerie</a><span class="newDocsPuce newMsgsPuce"></span></li>

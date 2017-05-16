@@ -150,12 +150,12 @@
                                 <th scope="row">{{ key+1 }}</th>
                                 <td>{{ val.copie.auteur.firstname }} {{ val.copie.auteur.lastname }}</td>
                                 <td>
-                                    {{ val.copie.dateCreation|localizeddate('none', 'none', null, null, 'd LLLL Y à h:mm' ) }}
+                                    {{ val.copie.dateCreation|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}
                                     <a class="btn btn-warning btn-sm" target="_blank" href="{{ val.copieFichier.url }}"><i class="fa fa-external-link fa-2x"></i></a>
                                 </td>
                                 <td>
                                     {% if val.corrige != "undefined" %}
-                                        {{ val.corrige.dateRendu|localizeddate('none', 'none', null, null, 'd LLLL Y à h:mm' ) }}
+                                        {{ val.corrige.dateRendu|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}
                                         <a class="btn btn-success btn-sm" target="_blank" href="{{ val.corrigeFichier.url }}"><i class="fa fa-external-link fa-2x"></i></a>
                                     {% endif %}
                                 </td>

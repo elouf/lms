@@ -33,6 +33,7 @@ class ForumPost
     /**
      * @var ForumSujet
      *
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @ORM\ManyToOne(targetEntity="ForumSujet")
      */
     private $sujet;
@@ -203,7 +204,7 @@ class ForumPost
      *
      * @return \DateTime
      */
-    public function getuUdatedAt()
+    public function getUpdatedAt()
     {
         return $this->updatedAt;
     }
