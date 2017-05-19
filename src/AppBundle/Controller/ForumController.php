@@ -27,16 +27,25 @@ class ForumController extends Controller
         $forum = $this->getDoctrine()->getRepository('AppBundle:Forum')->findOneBy(array('id' => $id));
 
         $sujets = array();
+        $sujetsepingles = array();
         $sujetsEntity = $this->getDoctrine()->getRepository('AppBundle:ForumSujet')->findBy(array('forum' => $forum));
 
+
         for($i=0; $i<count($sujetsEntity); $i++){
-            $sujets[$i]["sujet"] = $sujetsEntity[$i];
-            $sujets[$i]["posts"] = $this->getDoctrine()->getRepository('AppBundle:ForumPost')->findBy(array('sujet' => $sujetsEntity[$i]));
+            if($sujetsEntity[$i]->getEpingle()){
+                $sujetsepingles[$i]["sujet"] = $sujetsEntity[$i];
+                $sujetsepingles[$i]["posts"] = $this->getDoctrine()->getRepository('AppBundle:ForumPost')->findBy(array('sujet' => $sujetsEntity[$i]));
+            }else{
+                $sujets[$i]["sujet"] = $sujetsEntity[$i];
+                $sujets[$i]["posts"] = $this->getDoctrine()->getRepository('AppBundle:ForumPost')->findBy(array('sujet' => $sujetsEntity[$i]));
+            }
+
         }
 
         return $this->render('forum/forum.html.twig', [
             'forum' => $forum,
-            'sujets' => $sujets
+            'sujets' => $sujets,
+            'sujetsEpingles' => $sujetsepingles
         ]);
     }
 
@@ -68,21 +77,6 @@ class ForumController extends Controller
 
         return $this->render('forum/addSujet.html.twig', [
             'forum' => $forum
-        ]);
-    }
-
-    /**
-     * @Route("/forum/sujet/{id}/newPost", name="newForumPost")
-     */
-    public function newPostAction (Request $request, $id)
-    {
-        $this->denyAccessUnlessGranted('ROLE_USER');
-
-        $sujet = $this->getDoctrine()->getRepository('AppBundle:ForumSujet')->findOneBy(array('id' => $id));
-
-        return $this->render('forum/addPost.html.twig', [
-            'forum' => $sujet->getForum(),
-            'sujet' => $sujet
         ]);
     }
 

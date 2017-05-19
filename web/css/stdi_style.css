@@ -618,7 +618,6 @@ label.alertMustBeSet{
     margin-left: auto;
 }
 .authorPost{
-    border-right: 1px dashed #d7d7d7;
     height: 100%;
 }
 .authorPost .heading{
@@ -629,6 +628,7 @@ label.alertMustBeSet{
 .contentPost{
     color: #000;
     padding: 5px 15px;
+    border-left: 1px dashed #d7d7d7;
 }
 
 .bockNewSujet{

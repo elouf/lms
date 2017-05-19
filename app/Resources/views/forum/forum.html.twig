@@ -21,8 +21,10 @@
     <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/jquery.tablesorter.min.js') }}"></script>
     <script>
         jQuery(document).ready(function () {
-            $(".sujetsTable").tablesorter();
-            $('th[data-typeCol="dateLast"]').click();
+            $(".sujetsTable").tablesorter({
+                sortList: [[4,1]]
+            });
+            //$('th[data-typeCol="dateLast"]').click();
 
             $('.deleteSujet').click(function() {
                 var sujetId = $(this).closest('[data-sujetId]').attr('data-sujetId');
@@ -45,58 +47,20 @@
     </script>
     <div class="container pt-40 pb-40">
         <a href="{{ path('newForumSujet', {id: forum.id}) }}" class="btn btn-primary btn-sm"><i class="btnSendMsg fa fa-paper-plane-o" aria-hidden="true"></i></a>
-        <h3 class="heading text-center">Sujets</h3>
-        <div class="row">
-            <div class="col-sm-12">
-                <table class="sujetsTable table table-boxed">
-                    <thead>
-                    <tr>
-                        <th>Titre</th>
-                        <th>Créateur</th>
-                        <th>Date de création</th>
-                        <th>Réponses</th>
-                        <th data-typeCol="dateLast">Date du dernier message</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for key,val in sujets %}
-                        <tr data-sujetId="{{ val.sujet.id }}">
-                            <td>
-                                <a class="" href="{{ path('forumSujet', {id: val.sujet.id}) }}">
-                                    {{ val.sujet.titre }}
-                                </a>
-                            </td>
-                            <td class="openMsgBtn">
-                                {{ val.sujet.createur.firstname }} {{ val.sujet.createur.lastname }}
-                            </td>
-                            <td data-text="{{ val.sujet.createdAt|localizeddate('none', 'none', null, null, 'YMMddhhmm' ) }}">
-                                {{ val.sujet.createdAt|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}
-                            </td>
-                            <td>
-                                {{ val.posts|length }}
-                            </td>
-                            <td>
-                                {% set lastMsgDate = val.sujet.createdAt %}
-                                {% for post in val.posts %}
-                                    {% if post.createdAt > lastMsgDate %}
-                                        {% set lastMsgDate = post.createdAt %}
-                                    {% endif %}
+        <h3 class="heading text-center">Sujets de discussion</h3>
 
-                                {% endfor %}
-                                {{ lastMsgDate|localizeddate('none', 'none', null, null, 'd LLLL Y à h:mm' ) }}
-                            </td>
-                            <td>
-                                <a href="{{ path('forumSujet', {id: val.sujet.id}) }}" class="btn btn-primary btn-xs">Entrer</a>
-                                {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
-                                    <a class="btn btn-xs btn-danger deleteSujet">Supprimer</a>
-                                {% endif %}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        {% if sujetsEpingles %}
+            <h6 class="heading text-center">Sujets épinglés</h6>
+            {% include "forum/sujetsArray.html.twig"
+            with {sujets:sujetsEpingles}
+            %}
+            <br>
+            <h6 class="heading text-center">Autres sujets</h6>
+        {% endif %}
+
+        {% include "forum/sujetsArray.html.twig"
+        with {sujets:sujets}
+        %}
+
     </div>
 {% endblock %}

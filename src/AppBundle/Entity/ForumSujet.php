@@ -38,6 +38,13 @@ class ForumSujet
     private $ouvert = true;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="epingle", type="boolean")
+     */
+    private $epingle = false;
+
+    /**
      * @var Forum
      *
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -122,6 +129,29 @@ class ForumSujet
     public function getOuvert()
     {
         return $this->ouvert;
+    }
+
+    /**
+     * Set epingle
+     *
+     * @param boolean $epingle
+     *
+     * @return ForumSujet
+     */
+    public function setEpingle($epingle)
+    {
+        $this->epingle = $epingle;
+
+        return $this;
+    }
+    /**
+     * Get epingle
+     *
+     * @return bool
+     */
+    public function getEpingle()
+    {
+        return $this->epingle;
     }
 
     /**

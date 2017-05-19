@@ -40,6 +40,13 @@ class User extends BaseUser
      */
     protected $institut;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="phone", type="string", length=20, nullable = true)
+     */
+    protected $phone;
+
     public function __construct()
     {
         parent::__construct();
@@ -115,6 +122,30 @@ class User extends BaseUser
     public function getInstitut()
     {
         return $this->institut;
+    }
+
+    /**
+     * Set phone
+     *
+     * @param string $phone
+     *
+     * @return User
+     */
+    public function setPhone($phone)
+    {
+        $this->phone = $phone;
+
+        return $this;
+    }
+
+    /**
+     * Get phone
+     *
+     * @return string
+     */
+    public function getPhone()
+    {
+        return $this->phone;
     }
 
     public function setEmail($email)

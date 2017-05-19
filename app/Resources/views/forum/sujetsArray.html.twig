@@ -1,0 +1,53 @@
+<div class="row">
+    <div class="col-sm-12">
+        <table class="sujetsTable table table-boxed">
+            <thead>
+            <tr>
+                <th>Titre</th>
+                <th>Créateur</th>
+                <th>Date de création</th>
+                <th>Réponses</th>
+                <th data-typeCol="dateLast">Date du dernier message</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for key,val in sujets %}
+
+                {% set lastMsgDate = val.sujet.createdAt %}
+                {% for post in val.posts %}
+                    {% if post.createdAt > lastMsgDate %}
+                        {% set lastMsgDate = post.createdAt %}
+                    {% endif %}
+                {% endfor %}
+
+                <tr data-sujetId="{{ val.sujet.id }}">
+                    <td>
+                        <a class="" href="{{ path('forumSujet', {id: val.sujet.id}) }}">
+                            {{ val.sujet.titre }}
+                        </a>
+                    </td>
+                    <td class="openMsgBtn">
+                        {{ val.sujet.createur.firstname }} {{ val.sujet.createur.lastname }}
+                    </td>
+                    <td data-text="{{ val.sujet.createdAt|localizeddate('none', 'none', null, null, 'YMMddhhmm' ) }}">
+                        {{ val.sujet.createdAt|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}
+                    </td>
+                    <td>
+                        {{ val.posts|length }}
+                    </td>
+                    <td data-text="{{ lastMsgDate|localizeddate('none', 'none', null, null, 'YMMddhhmm' ) }}">
+                        {{ lastMsgDate|localizeddate('none', 'none', null, null, 'd LLLL Y à h:mm' ) }}
+                    </td>
+                    <td>
+                        <a href="{{ path('forumSujet', {id: val.sujet.id}) }}" class="btn btn-primary btn-xs">Entrer</a>
+                        {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                            <a class="btn btn-xs btn-danger deleteSujet">Supprimer</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
