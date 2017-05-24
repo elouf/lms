@@ -33,6 +33,7 @@ security:
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/faq, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/concours, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/cookies, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/metierEnseignant, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/afadec, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/, role: ROLE_USER }

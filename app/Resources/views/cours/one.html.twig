@@ -476,6 +476,28 @@
 
                                                         <div class="col-xs-2 text-right">
                                                             <a class="btn btnLien btn-sm btn-warning" href="{{ path('forum', {id: valR.id}) }}">
+                                                                <i class="fa fa-users" aria-hidden="true"></i>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+
+
+                                                </li>
+                                            {% elseif val.zones.type[keyR] == "chat" %}
+                                                <!--
+                                                        CHAT
+                                                -->
+                                                <li data-idZone="{{ val.zones.containers[keyR].id }}"
+                                                    class="courseElem chat">
+                                                    <div class="row">
+
+                                                        <div class="itemInfos itemHeader col-xs-10">
+                                                            <div class="itemTitle">{{ valR.nom }}</div>
+                                                            <div class="itemDescription">{{ valR.description | raw }}</div>
+                                                        </div>
+
+                                                        <div class="col-xs-2 text-right">
+                                                            <a target="_blank" class="btn btnLien btn-sm btn-warning" href="{{ path('chat', {id: valR.id}) }}">
                                                                 <i class="fa fa-comments-o" aria-hidden="true"></i>
                                                             </a>
                                                         </div>

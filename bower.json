@@ -2,9 +2,9 @@
   "name": "stdiLMS",
   "homepage": "https://github.com/elouf/lms",
   "authors": [
-    "elouf <erwannig.louf@gmail.com>"
+    "elouf <erwannig@studit.fr>"
   ],
-  "description": "stdi LMS based on Symfony",
+  "description": "studit LMS based on Symfony",
   "main": "",
   "license": "MIT",
   "private": true,
@@ -24,6 +24,7 @@
     "blueimp-file-upload": "^9.15.0",
     "fullcalendar": "^3.2.0",
     "eonasdan-bootstrap-datetimepicker": "^4.17.47",
-    "tablesorter": "jquery.tablesorter#^2.28.7"
+    "tablesorter": "jquery.tablesorter#^2.28.7",
+    "ckeditor": "^4.6.2"
   }
 }

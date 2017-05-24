@@ -40,6 +40,16 @@ class DefaultController extends Controller
     }
 
     /**
+     * @Route("/cookies", name="cookies")
+     */
+    public function cookiesAction(Request $request)
+    {
+        return $this->render('pagesFixes/cookies.html.twig', [
+            'base_dir' => realpath($this->getParameter('kernel.root_dir').'/..'),
+        ]);
+    }
+
+    /**
      * @Route("/metierEnseignant", name="metierEnseignant")
      */
     public function metierEnseignantAction(Request $request)

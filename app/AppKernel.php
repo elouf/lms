@@ -33,6 +33,9 @@ class AppKernel extends Kernel
 
             // SENDINBLUE
             new SendinBlue\SendinBlueApiBundle\SendinBlueApiBundle(),
+
+            //CKEDITOR
+            new Ivory\CKEditorBundle\IvoryCKEditorBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {

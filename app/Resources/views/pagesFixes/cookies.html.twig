@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block pageHeader %}
+    <div class="page-header">
+        <div class="container">
+            <h2 class="color3">Cookies</h2>
+            <ul class="breadcrumb">
+                <li class="color3">Information</li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+
+{% block main %}
+    <div class="container mt-100 mb-80">
+        <div class="row">
+            <div class="col-sm-12">
+                <h3 class="heading"><span class="color2">www.afadec.fr</span> implante des cookies dans votre ordinateur :</h3>
+                <ul class="list-styled">
+                    <li>
+                        <span class="heading">Cookie 1/</span>
+                        <p>Il stocke des informations relatives à votre navigation sur notre site (les pages que vous avez consultées, la date et l'heure de la consultation, etc.). Nous pourrons lire ces informations lors de vos prochaines visites.
+                            La durée de conservation de ces informations dans votre ordinateur est de 1 heure. Ce cookie ne nous permet pas de vous identifier.</p>
+                    </li>
+
+                    <li>
+                        <span class="heading">Cookie 2/</span>
+                        <p>Il enregistre des informations relatives à votre navigation sur notre site, et stocke des informations que vous avez saisies durant votre visite : toutes les données saisies dans les formulaires (login, mot de passe, mots-clé de recherche, etc.).</p>
+                    </li>
+
+                </ul>
+
+                <p>Ainsi, vous n'aurez pas besoin, lors de votre prochaine visite, de les saisir à nouveau. Nous pourrons les consulter lors de vos prochaines visites.</p>
+                <p>La durée de conservation de ces informations dans votre ordinateur est illimitée à moins que vous ne les supprimiez depuis votre navigateur.</p>
+                <p>Nous vous informons que vous pouvez vous opposer à l'enregistrement de "cookies" en configurant votre navigateur de la manière suivante :</p>
+
+                <h5>Pour <span class="color2">Mozilla firefox</span> :</h5>
+                <ol class="list-styled">
+                    <li>Choisissez le menu "outil" puis "Options"</li>
+                    <li>Cliquez sur l'icône "vie privée"</li>
+                    <li>Repérez le menu "cookie" et sélectionnez les options qui vous conviennent</li>
+                </ol>
+                <h5>Pour <span class="color2">Microsoft Internet Explorer</span> :</h5>
+                <ol class="list-styled">
+                    <li>choisissez le menu "Outils"puis "Options Internet"</li>
+                    <li>cliquez sur l'onglet "Confidentialité"</li>
+                    <li>sélectionnez le niveau souhaité à l'aide du curseur.</li>
+                </ol>
+                <h5>Pour <span class="color2">Opéra</span> 6.0 et au-delà :</h5>
+                <ol class="list-styled">
+                    <li>choisissez le menu "Fichier">"Préférences"</li>
+                    <li>Vie Privée</li>
+                </ol>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

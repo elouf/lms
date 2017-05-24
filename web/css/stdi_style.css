@@ -122,6 +122,9 @@ a { font-family: inherit; color: inherit; }
 .forumAdmin .titleBar{
     background: #45a29e;
 }
+.chatAdmin .titleBar{
+    background: #d98500;
+}
 .freeAdmin .titleBar{
     background: #a29820;
 }
@@ -651,6 +654,8 @@ label.alertMustBeSet{
     font-style: italic;
     font-size: 12px;
 }
+
+/* chat */
 
 
 /* MEDIA QUERIES */

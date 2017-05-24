@@ -24,8 +24,8 @@
 
 {% block main %}
     <script src="{{ asset('vendors/jquery-ui/jquery-ui.min.js') }}" type=text/javascript></script>
-    <script src="{{ asset('educomp/ckeditor/ckeditor.js') }}"></script>
-    <script src="{{ asset('educomp/ckeditor/adapters/jquery.js') }}"></script>
+    <script src="{{ asset('vendors/ckeditor/ckeditor.js') }}"></script>
+    <script src="{{ asset('vendors/ckeditor/adapters/jquery.js') }}"></script>
 
     <script type="text/javascript" src="{{ asset('vendors/moment/min/moment.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('vendors/moment/min/moment-with-locales.min.js') }}"></script>
@@ -204,6 +204,8 @@
                     typeItem = "groupe";
                 }else if($(this).hasClass('addNewTypeForum')){
                     typeItem = "forum";
+                }else if($(this).hasClass('addNewTypeChat')){
+                    typeItem = "chat";
                 }
                 console.log(typeItem)
                 $.ajax({
@@ -475,6 +477,8 @@
                         changeDevoir(elem);
                     }else if(elem.attr('data-typeItem') == 'forum'){
                         changeForum(elem);
+                    }else if(elem.attr('data-typeItem') == 'chat'){
+                        changeChat(elem);
                     }
                 }
             }
@@ -509,19 +513,19 @@
                     });
                 });
             }
-            function changeForum(forum){
-                console.log('changeForum : '+forum.hasClass('inEdition'))
-                forum.find('.btnSaveInputChange').click(function(){
-                    var id = forum.attr('data-idItem');
-                    var nom = forum.find('[data-champName=nom]').val();
-                    var description = forum.find('textarea[data-champName=description]').val();
-                    if(CKEDITOR.instances[forum.find('[data-champName=description]').attr('id')]){
-                        description = CKEDITOR.instances[forum.find('[data-champName=description]').attr('id')].getData();
+            function changeChat(chat){
+                console.log('changeChat : '+chat.hasClass('inEdition'))
+                chat.find('.btnSaveInputChange').click(function(){
+                    var id = chat.attr('data-idItem');
+                    var nom = chat.find('[data-champName=nom]').val();
+                    var description = chat.find('textarea[data-champName=description]').val();
+                    if(CKEDITOR.instances[chat.find('[data-champName=description]').attr('id')]){
+                        description = CKEDITOR.instances[chat.find('[data-champName=description]').attr('id')].getData();
                     }
 
                     $.ajax({
                         type: 'POST',
-                        url: "{{path('changeContentForum_ajax')}}",
+                        url: "{{path('changeContentChat_ajax')}}",
                         async: false,
                         dataType: "json",
                         data: {
@@ -530,8 +534,8 @@
                             description: description
                         },
                         success: function (data) {
-                            forum.removeClass('inEdition');
-                            forum.find('.btnSaveInputChange').remove();
+                            chat.removeClass('inEdition');
+                            chat.find('.btnSaveInputChange').remove();
                         }
                     });
                 });
@@ -1279,6 +1283,7 @@
                             <li role="presentation"><a href="#btnListDevoir" aria-controls="btnListDevoir" role="tab" data-toggle="tab"><i class="fa fa-university fa-fw"></i> Devoir</a></li>
                             <li role="presentation"><a href="#btnListGroupe" aria-controls="btnListGroupe" role="tab" data-toggle="tab"><i class="fa fa-cubes fa-fw"></i> Groupe de liens</a></li>
                             <li role="presentation"><a href="#btnListForum" aria-controls="btnListForum" role="tab" data-toggle="tab"><i class="fa fa-cubes fa-fw"></i> Forum</a></li>
+                            <li role="presentation"><a href="#btnListChat" aria-controls="btnListChat" role="tab" data-toggle="tab"><i class="fa fa-cubes fa-fw"></i> Chat</a></li>
                         </ul>
                         <div class="tab-content">
                             <div role="tabpanel" class="tab-pane fade in active" id="btnListLien">
@@ -1314,6 +1319,15 @@
                                     {% for key,val in forums %}
                                         {% include "cours/adminForum.html.twig"
                                         with {forum:val, zoneId: '0', inSection: 'false'}
+                                        %}
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <div role="tabpanel" class="tab-pane fade in active" id="btnListChat">
+                                <ul class="list-default courseElems">
+                                    {% for key,val in chats %}
+                                        {% include "cours/adminChat.html.twig"
+                                        with {chat:val, zoneId: '0', inSection: 'false'}
                                         %}
                                     {% endfor %}
                                 </ul>
@@ -1355,6 +1369,7 @@
                                         <option title="Nouvelle ressource" class="addNewItem addNewTypeGroupe">Groupe de liens</option>
                                         <option title="Nouvelle ressource" class="addNewItem addNewTypeLibre">Zone libre</option>
                                         <option title="Nouvelle ressource" class="addNewItem addNewTypeForum">Forum</option>
+                                        <option title="Nouvelle ressource" class="addNewItem addNewTypeChat">Chat</option>
                                         <option data-divider="true"></option>
                                         <option title="Nouvelle ressource" class="addExistingRessource">Ressource existante</option>
                                     </select>
@@ -1396,12 +1411,12 @@
                                             with {description: valR.description, visible: val.zones.containers[keyR].isVisible,
                                             zoneId: val.zones.containers[keyR].id, itemId: valR.id, inSection: 'true'}
                                             %}
-                                        {% elseif val.zones.type[keyR] == "forum" %}
+                                        {% elseif val.zones.type[keyR] == "chat" %}
                                             <!--
-                                                                FORUM
+                                                                CHAT
                                             -->
-                                            {% include "cours/adminForum.html.twig"
-                                            with {forum:valR, description: valR.description, visible: val.zones.containers[keyR].isVisible,
+                                            {% include "cours/adminChat.html.twig"
+                                            with {chat:valR, description: valR.description, visible: val.zones.containers[keyR].isVisible,
                                             zoneId: val.zones.containers[keyR].id, itemId: valR.id, inSection: 'true'}
                                             %}
                                         {% endif %}
@@ -1587,6 +1602,7 @@
                                 <li role="presentation"><a href="#btnListDevoirModal" aria-controls="btnListDevoirModal" role="tab" data-toggle="tab"><i class="fa fa-university fa-fw"></i> Devoir</a></li>
                                 <li role="presentation"><a href="#btnListGroupeModal" aria-controls="btnListGroupeModal" role="tab" data-toggle="tab"><i class="fa fa-cubes fa-fw"></i> Groupe de liens</a></li>
                                 <li role="presentation"><a href="#btnListForumModal" aria-controls="btnListForumModal" role="tab" data-toggle="tab"><i class="fa fa-cubes fa-fw"></i> Forum</a></li>
+                                <li role="presentation"><a href="#btnListChatModal" aria-controls="btnListChatModal" role="tab" data-toggle="tab"><i class="fa fa-cubes fa-fw"></i> Chat</a></li>
                             </ul>
                             <div class="tab-content">
                                 <div role="tabpanel" class="tab-pane fade in active" id="btnListLienModal">
@@ -1656,6 +1672,23 @@
                                     <table class="tableAddItem">
                                         {% for key,val in forums %}
                                             <tr class="item" data-typeItem="forum" data-idItem="{{ val.id }}">
+                                                <td>
+                                                    <table class="tableDetailItem">
+                                                        <tr><td class="nomChamp">Nom</td><td>{{ val.nom }}</td></tr>
+                                                        <tr><td class="nomChamp">Description</td><td>{{ val.description | raw }}</td></tr>
+                                                    </table>
+                                                </td>
+                                                <td>
+                                                    <div class="myBtn btnAdmin btnAlone btnAddItem"><i class="fa fa-plus"></i></div>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </table>
+                                </div>
+                                <div role="tabpanel" class="tab-pane fade in active" id="btnListChatModal">
+                                    <table class="tableAddItem">
+                                        {% for key,val in chats %}
+                                            <tr class="item" data-typeItem="chat" data-idItem="{{ val.id }}">
                                                 <td>
                                                     <table class="tableDetailItem">
                                                         <tr><td class="nomChamp">Nom</td><td>{{ val.nom }}</td></tr>

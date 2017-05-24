@@ -1,6 +1,7 @@
 <?php
 namespace AppBundle\Admin;
 
+use Ivory\CKEditorBundle\Form\Type\CKEditorType;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
@@ -14,9 +15,13 @@ class SessionAdmin extends AbstractAdmin
         $formMapper
             ->with('Informations', array('class' => 'col-md-6'))
                 ->add('nom', 'text')
-                ->add('description', 'textarea', array('attr' => array('class' => 'ckeditor')))
+                ->add('description', CKEditorType::class, array(
+                    'config_name' => 'my_simple_config'
+                ))
                 ->add('imgFilePath', 'text')
-                ->add('messageAlerte', 'textarea', array('attr' => array('class' => 'ckeditor')))
+                ->add('messageAlerte', CKEditorType::class, array(
+                    'config_name' => 'my_simple_config'
+                ))
             ->end()
             ->with('Timing', array('class' => 'col-md-6'))
                 ->add('dateDebut', 'sonata_type_datetime_picker', array(

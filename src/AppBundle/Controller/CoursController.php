@@ -108,6 +108,9 @@ class CoursController extends Controller
                     }elseif($ressType == "forum"){
                         $datas[$i]["zones"]["type"][$j] = "forum";
                         $datas[$i]["zones"]["content"][$j] = $ressource;
+                    }elseif($ressType == "chat"){
+                        $datas[$i]["zones"]["type"][$j] = "chat";
+                        $datas[$i]["zones"]["content"][$j] = $ressource;
                     }elseif($ressType == "devoir"){
                         $datas[$i]["zones"]["type"][$j] = "devoir";
 
@@ -194,6 +197,7 @@ class CoursController extends Controller
         // on récupère aussi tout le contenu du cours
         $cLiens = $this->getDoctrine()->getRepository('AppBundle:Lien')->findBy(array('cours' => $cours));
         $cForums = $this->getDoctrine()->getRepository('AppBundle:Forum')->findBy(array('cours' => $cours));
+        $cChats = $this->getDoctrine()->getRepository('AppBundle:Chat')->findBy(array('cours' => $cours));
         $cLibres = $this->getDoctrine()->getRepository('AppBundle:RessourceLibre')->findBy(array('cours' => $cours));
 
         $cGroupesEntity = $this->getDoctrine()->getRepository('AppBundle:GroupeLiens')->findBy(array('cours' => $cours));
@@ -241,6 +245,7 @@ class CoursController extends Controller
                     'zonesSections' => $datas,
                     'liens' => $cLiens,
                     'forums' => $cForums,
+                    'chats' => $cChats,
                     'devoirs' => $cDevoirs,
                     'groupes' => $cGroupes,
                     'libres' => $cLibres,
@@ -318,6 +323,8 @@ class CoursController extends Controller
                 $entityRessourceName = "RessourceLibre";
             }elseif($type == "forum"){
                 $entityRessourceName = "Forum";
+            }elseif($type == "chat"){
+                $entityRessourceName = "Chat";
             }
 
             if($entityRessourceName == ""){

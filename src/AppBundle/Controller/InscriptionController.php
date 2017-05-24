@@ -41,6 +41,12 @@ class InscriptionController extends Controller
                 'label_attr' => array('class' => 'col-sm-4'),
                 'attr' => array('class' => 'col-sm-8')
             ))
+            ->add('phone', TextType::class, array(
+                'label' => 'Numéro de téléphone',
+                'required' => false,
+                'label_attr' => array('class' => 'col-sm-4'),
+                'attr' => array('class' => 'col-sm-8')
+            ))
             ->add('mdp', RepeatedType::class, array(
                 'type' => PasswordType::class,
                 'invalid_message' => 'Les mots de passe ne sont pas identiques',
@@ -165,6 +171,7 @@ class InscriptionController extends Controller
                 $user->setLastname($data['nom']);
                 $user->setEmail($data['email']);
                 $user->setPlainPassword($data['mdp']);
+                $user->setPhone($data['phone']);
                 $user->setInstitut($data['institut']);
 
                 $em->persist($user);
@@ -205,15 +212,6 @@ class InscriptionController extends Controller
                 $inscr->setRole($role);
                 $em->persist($inscr);
 
-                /*foreach($data['optionsCours'] as $nomCours){
-                    $cours = $em->getRepository('AppBundle:Cours')->findOneBy(array('nom' => $nomCours));
-                    $inscrC = new Inscription_c();
-                    $inscrC->setCours($cours);
-                    $inscrC->setDateInscription(new DateTime());
-                    $inscrC->setRole($role);
-                    $inscrC->setUser($user);
-                    $em->persist($inscrC);
-                }*/
                 if($data['optionsDisc'] != '0'){
                     $disc = $em->getRepository('AppBundle:Discipline')->findOneBy(array('nom' => $data['optionsDisc']));
                     $inscrD = new Inscription_d();

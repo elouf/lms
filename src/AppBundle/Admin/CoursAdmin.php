@@ -7,6 +7,7 @@ use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Symfony\Component\Form\FormBuilder;
+use Ivory\CKEditorBundle\Form\Type\CKEditorType;
 
 class CoursAdmin extends AbstractAdmin
 {
@@ -18,8 +19,12 @@ class CoursAdmin extends AbstractAdmin
                 ->add('nom', 'text')
                 ->add('cout', 'text')
                 ->add('imgFilePath', 'text')
-                ->add('description', 'textarea', array('attr' => array('class' => 'ckeditor')))
-                ->add('accueil', 'textarea', array('attr' => array('class' => 'ckeditor')))
+                ->add('description', CKEditorType::class, array(
+                    'config_name' => 'my_simple_config'
+                ))
+                ->add('accueil', CKEditorType::class, array(
+                    'config_name' => 'my_simple_config'
+                ))
             ->end()
             ->with('Architecture', array('class' => 'col-md-6'))
                 ->add('discipline', 'sonata_type_model')

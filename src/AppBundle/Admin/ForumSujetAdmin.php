@@ -17,6 +17,7 @@ class ForumSujetAdmin extends AbstractAdmin
             ->with('Informations', array('class' => 'col-md-6'))
                 ->add('titre', 'text')
                 ->add('ouvert')
+                ->add('epingle')
             ->end()
             ->with('Architecture', array('class' => 'col-md-6'))
                 ->add('forum', 'sonata_type_model', array(
@@ -31,6 +32,7 @@ class ForumSujetAdmin extends AbstractAdmin
         $datagridMapper
             ->add('titre')
             ->add('ouvert')
+            ->add('epingle')
             ->add('forum', null, array(), 'entity', array(
                 'class'    => 'AppBundle\Entity\Forum',
                 'choice_label' => 'nom',
@@ -44,6 +46,7 @@ class ForumSujetAdmin extends AbstractAdmin
         $listMapper
             ->addIdentifier('titre')
             ->add('ouvert')
+            ->add('epingle')
             ->add('forum')
         ;
     }

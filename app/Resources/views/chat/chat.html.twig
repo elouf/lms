@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block pageHeader %}
+    <div class="page-header">
+        <div class="container">
+            <h2 class="color3">CHAT</h2>
+            <ul class="breadcrumb">
+                <li class="color3">
+                    <a href="{{ path('myCourses') }}" class="label label-info">{{ chat.cours.discipline.nom }}</a>
+                    >
+                    <a href="{{ path('oneCours', {id: chat.cours.id, mode: 'etu'}) }}" class="label label-info">{{ chat.cours.nom }}</a>
+                    >
+                    <a href="{{ path('chat', {id: chat.id}) }}" class="label label-info">{{ chat.nom }}</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+
+{% block main %}
+    <script type="text/javascript" src="{{ asset('vendors/rivets/dist/rivets.bundled.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('vendors/sightglass/index.js') }}"></script>
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="{{ asset('js/chat/utils.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/chat/client.js') }}"></script>
+    <script>
+        jQuery(document).ready(function () {
+
+        });
+    </script>
+    <div class="container pt-40 pb-40">
+
+
+    </div>
+{% endblock %}
