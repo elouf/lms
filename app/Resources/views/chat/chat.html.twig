@@ -18,18 +18,43 @@
 {% endblock %}
 
 {% block main %}
-    <script type="text/javascript" src="{{ asset('vendors/rivets/dist/rivets.bundled.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('vendors/sightglass/index.js') }}"></script>
-    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
-    <script type="text/javascript" src="{{ asset('js/chat/utils.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('js/chat/client.js') }}"></script>
-    <script>
-        jQuery(document).ready(function () {
-
-        });
-    </script>
-    <div class="container pt-40 pb-40">
-
+    <div class="container pt-40 pb-40" data-userId="{{ app.user.id }}" data-chatId="{{ chat.id }}">
+        <div class="chat">
+            <div class="row contentRow">
+                <div class="col-xs-9 colMsgs"></div>
+                <div class="col-xs-3 colUsers"></div>
+            </div>
+            <div class="row msgRow">
+                <div class="col-xs-10 colMsg"></div>
+                <div class="col-xs-2 colBtn"></div>
+            </div>
+        </div>
 
     </div>
+    {{ ws_client() }}
+    <script>
+        jQuery(document).ready(function () {
+            var userId = $('[data-userId]').attr('data-userId');
+            var chatId = $('[data-chatId]').attr('data-chatId');
+
+            var webSocket = WS.connect("ws://127.0.0.1:1338");
+            webSocket.on("socket/connect", function(session){
+                $('.colUsers').append('<div class="usrChat">test</div>');
+
+                session.subscribe("app/chat/"+chatId+'/user/'+userId, function(uri, payload){
+                    console.log("Received message", payload.msg);
+                });
+
+                session.publish("app/chat/"+chatId+'/user/'+userId, {msg: "This is a message!"});
+
+                session.unsubscribe("app/chat/"+chatId+'/user/'+userId);
+
+                session.publish("app/chat/"+chatId+'/user/'+userId, {msg: "I won't see this"});
+            });
+
+            webSocket.on("socket/disconnect", function(error){
+                console.log("Disconnected for " + error.reason + " with code " + error.code);
+            });
+        });
+    </script>
 {% endblock %}

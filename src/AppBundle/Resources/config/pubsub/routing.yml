@@ -1,0 +1,9 @@
+app_topic_chat:
+    channel: app/chat/{chatid}/user/{userid}
+    handler:
+        callback: 'app.topic' #related to the getName() of your topic
+    requirements:
+        chatid:
+            pattern: "[0-9]+"
+        userid:
+            pattern: "[0-9]+"

@@ -76,3 +76,6 @@ services:
         arguments: [~, AppBundle\Entity\Evt_cours, ~]
         tags:
             - { name: sonata.admin, manager_type: orm, label: Evènements de cours, group: "Calendrier" }
+
+    chat.topic_sample_service:
+        class: AppBundle\Service\Chat\ChatTopic

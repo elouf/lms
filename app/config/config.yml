@@ -43,6 +43,13 @@ twig:
     form_themes:
         - 'SonataCoreBundle:Form:datepicker.html.twig'
 
+# assetic configuration
+assetic:
+    debug:          '%kernel.debug%'
+    use_controller: '%kernel.debug%'
+    filters:
+        cssrewrite: ~
+
 #enable intl extensions
 services:
     twig.extension.intl:
@@ -113,3 +120,12 @@ ivory_ck_editor:
                       { name: 'links',       items : [ 'Link','Unlink' ] },
                       { name: 'insert',      items : [ 'Image','Flash','Table','HorizontalRule','Smiley','SpecialChar' ] }
                     ]
+gos_web_socket:
+    topics:
+        - "@chat.topic_sample_service"
+    server:
+        port: 1338        #The port the socket server will listen on
+        host: 127.0.0.1   #The host ip to bind to
+        router:
+            resources:
+                - "@AppBundle/Resources/config/pubsub/routing.yml"
