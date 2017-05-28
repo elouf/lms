@@ -1,6 +1,7 @@
 <?php
 namespace AppBundle\Service\Chat;
 
+use Gos\Bundle\WebSocketBundle\Client\ClientManipulatorInterface;
 use Gos\Bundle\WebSocketBundle\Topic\TopicInterface;
 use Ratchet\ConnectionInterface;
 use Ratchet\Wamp\Topic;
@@ -8,6 +9,16 @@ use Gos\Bundle\WebSocketBundle\Router\WampRequest;
 
 class ChatTopic implements TopicInterface
 {
+    protected $clientManipulator;
+
+    /**
+     * @param ClientManipulatorInterface $clientManipulator
+     */
+    public function __construct(ClientManipulatorInterface $clientManipulator)
+    {
+        $this->clientManipulator = $clientManipulator;
+    }
+
     /**
      * This will receive any Subscription requests for this topic.
      *
@@ -18,8 +29,10 @@ class ChatTopic implements TopicInterface
      */
     public function onSubscribe(ConnectionInterface $connection, Topic $topic, WampRequest $request)
     {
+        $user = $this->clientManipulator->getClient($connection);
+        //GosUserId : $connection->resourceId
         //this will broadcast the message to ALL subscribers of this topic.
-        $topic->broadcast(['msg' => $connection->resourceId . " has joined " . $topic->getId()]);
+        $topic->broadcast(['type' => "subscribe", 'user' => $user]);
     }
 
     /**
@@ -56,9 +69,11 @@ class ChatTopic implements TopicInterface
             if ($topic->getId() === 'acme/channel/shout')
      	       //shout something to all subs.
         */
-
+        $user = $this->clientManipulator->getClient($connection);
         $topic->broadcast([
             'msg' => $event,
+            'type' => 'publish',
+            'user' => $user
         ]);
     }
 

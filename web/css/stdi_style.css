@@ -656,7 +656,107 @@ label.alertMustBeSet{
 }
 
 /* chat */
+.chatIHM{
+    border: 3px #456d94 solid;
+    background: #eee;
+}
+.chatIHM .row{
+    margin: 0;
+}
+.chatIHM .contentRow{
+    height: 600px;
+    border-bottom: 3px #456d94 solid;
+}
+.chatIHM .msgRow{
+    height: 38px;
+}
+.chatIHM .colMsgs{
+    border-right: 3px #456d94 solid;
+}
+.chatIHM .colMsg{
+    height: 100%;
+    padding: 0;
+}
+.chatIHM .colMsg input{
+    height: 100%;
+    border: none;
+}
+.chatIHM .colBtn{
+    padding: 0;
+    background: #fff;
+}
+.chatIHM .colBtn .btn{
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+}
+.chatIHM .colMsgs, .chatIHM .colUsers{
+    height: 100%;
+    overflow-y: auto;
+}
 
+.chatIHM .colUsers{
+    padding: 0;
+}
+.chatIHM .usrChatRow{
+    border-bottom: dashed #aaa 2px;
+    padding: 5px;
+}
+.chatIHM .usrChat{
+    border-radius: 5px;
+    background: #ff9c00;
+    color: #fff;
+    margin: 3px;
+    display: inline-block;
+    padding: 3px 10px;
+    text-align: center;
+    font-size: 10px;
+}
+.chatIHM .colMsgs table{
+    width: 100%;
+}
+.chatIHM .msgChatRow{
+    border-bottom: 1px #ddd dashed;
+}
+.chatIHM .msgChat{
+    padding: 5px 0;
+}
+.chatIHM .userTDchat{
+    width: 140px;
+    vertical-align: top;
+    padding: 5px 0px;
+}
+
+/* Emailing */
+.emailingIHM{
+    border: 3px #456d94 solid;
+    background: #eee;
+}
+.colReglages{
+    border-right: 3px #456d94 solid;
+    height: 100%;
+    overflow-y: auto;
+}
+.colUsersFiltres{
+    overflow-y: auto;
+    height: 100%;
+}
+.emailingIHM{
+    height: 600px;
+}
+.colUsersFiltres{
+    padding-right: 0;
+}
+.checkUserEmailing, .usrEmailing, .checkFiltreEmailing, .filtreEmailing{
+    display: inline-block;
+    cursor: pointer;
+}
+.checkUserEmailing, .checkFiltreEmailing{
+    margin-right: 5px;
+}
+.usrEmailingRow, .filtreEmailingRow{
+    padding: 5px 0;
+    border-bottom: dashed 1px #aaa;
+}
 
 /* MEDIA QUERIES */
 .logoAbsolute{
@@ -723,5 +823,30 @@ label.alertMustBeSet{
     }
     .logoToutPetit{
         display: none !important;
+    }
+}
+@media screen and (max-height: 1000px){
+    .chatIHM .contentRow, .emailingIHM {
+        height: 490px;
+    }
+}
+@media screen and (max-height: 900px){
+    .chatIHM .contentRow, .emailingIHM {
+        height: 450px;
+    }
+}
+@media screen and (max-height: 800px){
+    .chatIHM .contentRow, .emailingIHM {
+        height: 380px;
+    }
+}
+@media screen and (max-height: 700px){
+    .chatIHM .contentRow, .emailingIHM {
+        height: 350px;
+    }
+}
+@media screen and (max-height: 600px){
+    .chatIHM .contentRow, .emailingIHM {
+        height: 300px;
     }
 }

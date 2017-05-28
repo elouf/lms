@@ -2,6 +2,8 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\AssocUserChatSession;
+use AppBundle\Entity\ChatPost;
 use AppBundle\Entity\Forum;
 use AppBundle\Entity\ForumPost;
 use AppBundle\Entity\ForumSujet;
@@ -26,8 +28,14 @@ class ChatController extends Controller
 
         $chat = $this->getDoctrine()->getRepository('AppBundle:Chat')->findOneBy(array('id' => $id));
 
+        $assocs = $this->getDoctrine()->getRepository('AppBundle:AssocUserChatSession')->findBy(array('chat' => $chat));
+
+        $posts = $this->getDoctrine()->getRepository('AppBundle:ChatPost')->findBy(array('chat' => $chat), array('createdAt' => 'ASC'));
+
         return $this->render('chat/chat.html.twig', [
-            'chat' => $chat
+            'chat' => $chat,
+            'assocs' => $assocs,
+            'posts' => $posts
         ]);
     }
 
@@ -54,6 +62,145 @@ class ChatController extends Controller
             return new JsonResponse(array(
                 'action' =>'change Chat content',
                 'chat' => $chat)
+            );
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
+    /**
+     * @Route("/subsrcribeChat_ajax", name="subsrcribeChat_ajax")
+     * @Method({"GET", "POST"})
+     */
+    public function subsrcribeChatAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+
+            $session = $request->request->get('session');
+            $userId = $request->request->get('userId');
+            $chatId = $request->request->get('chatId');
+
+            $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
+            $chat = $em->getRepository('AppBundle:Chat')->findOneBy(array('id' => $chatId));
+
+            $assoc = $em->getRepository('AppBundle:AssocUserChatSession')->findOneBy(array('user' => $user, 'chat' => $chat));
+            $userReturn = $user->getFirstname().' '.$user->getLastname();
+            $userId = $user->getId();
+            if($assoc->getSession() == "temp"){
+                $assoc->setSession($session);
+            }else{
+                $userReturn = "otherOne";
+            }
+
+            $em->persist($assoc);
+            $em->flush();
+
+            return new JsonResponse(array(
+                    'action' =>'subscribe User to Chat',
+                    'user' => $userReturn,
+                    'userId' => $userId)
+            );
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
+    /**
+     * @Route("/getChatUserBySessionession_ajax", name="getChatUserBySessionession_ajax")
+     * @Method({"GET", "POST"})
+     */
+    public function getChatUserBySessionessionAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+
+            $session = $request->request->get('session');
+            $chatId = $request->request->get('chatId');
+
+            $chat = $em->getRepository('AppBundle:Chat')->findOneBy(array('id' => $chatId));
+
+            $assoc = $em->getRepository('AppBundle:AssocUserChatSession')->findOneBy(array('session' => $session, 'chat' => $chat));
+            $user = $assoc->getUser();
+
+            $em->flush();
+
+            return new JsonResponse(array(
+                    'action' =>'get Chat User by session',
+                    'user' => $user->getFirstname().' '.$user->getLastname(),
+                    'userId' =>$user->getId())
+            );
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
+    /**
+     * @Route("/cleanAssocUserChat_ajax", name="cleanAssocUserChat_ajax")
+     * @Method({"GET", "POST"})
+     */
+    public function cleanAssocUserChatAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+
+            $userId = $request->request->get('userId');
+            $chatId = $request->request->get('chatId');
+
+            $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
+            $chat = $em->getRepository('AppBundle:Chat')->findOneBy(array('id' => $chatId));
+
+            $assoc = $em->getRepository('AppBundle:AssocUserChatSession')->findOneBy(array('user' => $user, 'chat' => $chat));
+
+            $newAssoc = new AssocUserChatSession();
+            $newAssoc->setChat($chat);
+            $newAssoc->setUser($user);
+            $newAssoc->setSession("temp");
+            $em->persist($newAssoc);
+
+            if($assoc){
+                $em->remove($assoc);
+            }
+            $em->flush();
+
+            return new JsonResponse(array(
+                    'action' =>'clean association of User to Chat',
+                    'user' => $user->getFirstname().' '.$user->getLastname())
+            );
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
+    /**
+     * @Route("/publishChatPost_ajax", name="publishChatPost_ajax")
+     * @Method({"GET", "POST"})
+     */
+    public function publishChatPostAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+
+            $session = $request->request->get('session');
+            $chatId = $request->request->get('chatId');
+            $message = $request->request->get('message');
+
+            $chat = $em->getRepository('AppBundle:Chat')->findOneBy(array('id' => $chatId));
+
+            $assoc = $em->getRepository('AppBundle:AssocUserChatSession')->findOneBy(array('session' => $session, 'chat' => $chat));
+            $user = $assoc->getUser();
+
+            $newPost = new ChatPost();
+            $newPost->setAuteur($user);
+            $newPost->setChat($chat);
+            $newPost->setTexte($message);
+            $em->persist($newPost);
+
+            $em->flush();
+
+            return new JsonResponse(array(
+                    'action' =>'publish Chat Post',
+                    'user' => $user->getFirstname().' '.$user->getLastname())
             );
         }
 

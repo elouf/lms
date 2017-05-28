@@ -121,6 +121,9 @@
                         <li>
                             <a href="#" data-userId="{{ app.user.id }}">{{ app.user.firstname }} {{ app.user.lastname }}</a>
                             <ul class="sub-menu" style="margin-left: -30px;">
+                                {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                    <li><a href="{{ path('emailing') }}">Emailing</a></li>
+                                {% endif %}
                                 {% block vueAdmin %}{% endblock %}
                                 <li><a href="{{ path('calendrier') }}">Mon calendrier</a></li>
                                 <li><a href="{{ path('messagerie') }}">Messagerie</a><span class="newDocsPuce newMsgsPuce"></span></li>

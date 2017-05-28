@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block pageHeader %}
+    <div class="page-header">
+        <div class="container">
+            <h2 class="color3">Emailing</h2>
+            <ul class="breadcrumb">
+                <li class="color3">Filtres les utilisateurs et envois groupés</li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+
+{% block main %}
+    <script>
+        jQuery(document).ready(function () {
+            $('.usrEmailing').click(function(){
+                var checkbox = $(this).closest('.usrEmailingRow').find('.checkUserEmailing');
+                checkbox.trigger('click');
+            });
+        });
+    </script>
+
+    <div class="container mt-100 mb-40">
+        <div class="row emailingIHM">
+            <div class="col-xs-8 colReglages">
+                <div class="filtreEmailingRow">
+                    <input class="checkFiltreEmailing" type="checkbox" />
+                    <div class="filtreEmailing">Tous les utilisateurs inscrits à une session</div>
+                    <select class="selectpicker col-xs-6" data-style="MyBtnSelectPickeer" title="Choisir une session" multiple>
+                        {% for key,val in sessions %}
+                            <option title="{{ val.nom }}" class="addNewItem addFiltredSession">{{ val.nom }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="col-xs-4 colUsersFiltres">
+                {% for key,val in users %}
+                    <div class="usrEmailingRow">
+                        <input class="checkUserEmailing" type="checkbox" />
+                        <div class="usrEmailing" data-userId="{{ val.id }}">{{ val.firstname }} {{ val.lastname }}</div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

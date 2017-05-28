@@ -19,14 +19,33 @@
 
 {% block main %}
     <div class="container pt-40 pb-40" data-userId="{{ app.user.id }}" data-chatId="{{ chat.id }}">
-        <div class="chat">
+        <div class="chatIHM">
             <div class="row contentRow">
-                <div class="col-xs-9 colMsgs"></div>
-                <div class="col-xs-3 colUsers"></div>
+                <div class="col-xs-9 colMsgs">
+                    <table>
+                        {% for key,val in posts %}
+                            <tr class="msgChatRow">
+                                <td class="userTDchat"><div class="usrChat">{{ val.auteur.firstname }} {{ val.auteur.lastname }}</div></td>
+                                <td class="msgChat">{{ val.texte }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+                <div class="col-xs-3 colUsers">
+                    {% for key,val in assocs %}
+                        <div class="usrChatRow">
+                            <div class="usrChat" data-userId="{{ val.user.id }}">{{ val.user.firstname }} {{ val.user.lastname }}</div>
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
             <div class="row msgRow">
-                <div class="col-xs-10 colMsg"></div>
-                <div class="col-xs-2 colBtn"></div>
+                <div class="col-xs-10 colMsg">
+                    <input class="col-xs-12" value="" type="text" />
+                </div>
+                <div class="col-xs-2 colBtn text-right">
+                    <a class="btn btn-primary btn-sm"><i class="btnSendMsg fa fa-paper-plane-o" aria-hidden="true"></i></a>
+                </div>
             </div>
         </div>
 
@@ -37,23 +56,109 @@
             var userId = $('[data-userId]').attr('data-userId');
             var chatId = $('[data-chatId]').attr('data-chatId');
 
-            var webSocket = WS.connect("ws://127.0.0.1:1338");
-            webSocket.on("socket/connect", function(session){
-                $('.colUsers').append('<div class="usrChat">test</div>');
+            // on commence par nettoyer la table des associations entre le user et le chat
+            $.ajax({
+                type: "POST",
+                url: "{{path('cleanAssocUserChat_ajax')}}",
+                data: {
+                    userId: userId,
+                    chatId: chatId
+                },
+                dataType: "json",
+                success: function (response) {
 
-                session.subscribe("app/chat/"+chatId+'/user/'+userId, function(uri, payload){
-                    console.log("Received message", payload.msg);
-                });
+                    var webSocket = WS.connect("ws://127.0.0.1:1338");
+                    webSocket.on("socket/connect", function(session){
+                        // user is connected to websocket
 
-                session.publish("app/chat/"+chatId+'/user/'+userId, {msg: "This is a message!"});
+                        session.subscribe("app/chat/"+chatId, function(uri, payload){
+                            console.log(payload.user)
+                            if(payload.type == "subscribe"){
+                                var sessionDB = payload.user;
 
-                session.unsubscribe("app/chat/"+chatId+'/user/'+userId);
+                                // c'est une souscription mais il faut qu'on vérifie si c'est bien nous car
+                                // ce code est exécuté sinon sur tous les postes connectés au websocket
+                                $.ajax({
+                                    type: "POST",
+                                    url: "{{path('subsrcribeChat_ajax')}}",
+                                    data: {
+                                        userId: userId,
+                                        session: sessionDB,
+                                        chatId: chatId
+                                    },
+                                    dataType: "json",
+                                    success: function (response) {
+                                        if(response['user'] != 'otherOne'){
+                                            if(!$('[data-userId='+response['userId']+']').length){
+                                                $('.colUsers').append('<div class="usrChatRow">' +
+                                                        '<div class="usrChat" data-userId="'+response['userId']+'">'+response['user']+'</div>' +
+                                                        '</div>');
+                                            }
+                                        }else{
+                                            // c'est quelqu'un d'autre qui s'est subscribé, on lui laisse le
+                                            // temps d'être dans la base et on va le chercher
+                                            setTimeout(function(){
+                                                $.ajax({
+                                                    type: "POST",
+                                                    url: "{{path('getChatUserBySessionession_ajax')}}",
+                                                    data: {
+                                                        session: sessionDB,
+                                                        chatId: chatId
+                                                    },
+                                                    dataType: "json",
+                                                    success: function (response) {
+                                                        if(!$('[data-userId='+response['userId']+']').length) {
+                                                            $('.colUsers').append('<div class="usrChatRow">' +
+                                                                    '<div class="usrChat" data-userId="'+response['userId']+'>' + response['user'] + '</div>' +
+                                                                    '</div>');
+                                                        }
+                                                    }
+                                                });
+                                            },2000);
 
-                session.publish("app/chat/"+chatId+'/user/'+userId, {msg: "I won't see this"});
-            });
+                                        }
+                                        //session.unsubscribe("app/chat/"+chatId);
+                                    }
+                                });
+                            }else if(payload.type == "publish"){
+                                var message = payload.msg["msg"];
+                                $.ajax({
+                                    type: "POST",
+                                    url: "{{path('publishChatPost_ajax')}}",
+                                    data: {
+                                        session: payload.user,
+                                        chatId:  chatId,
+                                        message: message
+                                    },
+                                    dataType: "json",
+                                    success: function (response) {
+                                        $('.colMsgs table').append('<tr class="msgChatRow">' +
+                                                '<td class="userTDchat"><div class="usrChat">'+response['user']+'</div></td>' +
+                                                '<td class="msgChat">'+message+'</td>' +
+                                                '</tr>');
+                                        var n = $('.colMsgs').height();
+                                        $('.colMsgs').animate({ scrollTop: n }, 200);
+                                    }
+                                });
+                            }
 
-            webSocket.on("socket/disconnect", function(error){
-                console.log("Disconnected for " + error.reason + " with code " + error.code);
+                            $('.colBtn .btn').unbind('click').click(function(){
+                                var msg = $('.colMsg input').val();
+                                if(msg == ""){
+
+                                }else{
+                                    session.publish("app/chat/"+chatId, {msg: msg});
+                                }
+                            });
+                        });
+
+                    });
+
+                    webSocket.on("socket/disconnect", function(error){
+                        console.log("Disconnected for " + error.reason + " with code " + error.code);
+                    });
+
+                }
             });
         });
     </script>
