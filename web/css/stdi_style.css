@@ -727,7 +727,7 @@ label.alertMustBeSet{
 }
 
 /* Emailing */
-.emailingIHM{
+.emailingIHM, .emailingMSG{
     border: 3px #456d94 solid;
     background: #eee;
 }
@@ -742,6 +742,7 @@ label.alertMustBeSet{
 }
 .emailingIHM{
     height: 600px;
+    margin-bottom: 15px;
 }
 .colUsersFiltres{
     padding-right: 0;
@@ -756,6 +757,18 @@ label.alertMustBeSet{
 .usrEmailingRow, .filtreEmailingRow{
     padding: 5px 0;
     border-bottom: dashed 1px #aaa;
+}
+
+#emailingSujet{
+    width: 100%;
+}
+.emailingIHM .bootstrap-select{
+    width: 100%;
+}
+
+/* MENTIONS L2GALES */
+.cookiesIHM p, .cookiesIHM li{
+    text-transform: none !important;
 }
 
 /* MEDIA QUERIES */

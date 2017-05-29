@@ -184,17 +184,22 @@ class ChatController extends Controller
             $session = $request->request->get('session');
             $chatId = $request->request->get('chatId');
             $message = $request->request->get('message');
+            $userId = $request->request->get('userId');
+
+            $userConnected = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
 
             $chat = $em->getRepository('AppBundle:Chat')->findOneBy(array('id' => $chatId));
 
             $assoc = $em->getRepository('AppBundle:AssocUserChatSession')->findOneBy(array('session' => $session, 'chat' => $chat));
             $user = $assoc->getUser();
 
-            $newPost = new ChatPost();
-            $newPost->setAuteur($user);
-            $newPost->setChat($chat);
-            $newPost->setTexte($message);
-            $em->persist($newPost);
+            if($user->getId() != $userConnected->getId()){
+                $newPost = new ChatPost();
+                $newPost->setAuteur($user);
+                $newPost->setChat($chat);
+                $newPost->setTexte($message);
+                $em->persist($newPost);
+            }
 
             $em->flush();
 

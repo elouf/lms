@@ -25,6 +25,7 @@ class AssocUserChatSession
     /**
      * @var User
      *
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @ORM\ManyToOne(targetEntity="User")
      */
     protected $user;
@@ -32,7 +33,7 @@ class AssocUserChatSession
     /**
      * @var string
      *
-     * @ORM\Column(name="session", type="string", length=255, unique=true)
+     * @ORM\Column(name="session", type="string", length=255, unique=false)
      */
     private $session;
 

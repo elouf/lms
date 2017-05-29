@@ -40,6 +40,7 @@ class ChatPost
     /**
      * @var User
      *
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @ORM\ManyToOne(targetEntity="User")
      */
     private $auteur;

@@ -89,7 +89,7 @@
                                     dataType: "json",
                                     success: function (response) {
                                         if(response['user'] != 'otherOne'){
-                                            if(!$('[data-userId='+response['userId']+']').length){
+                                            if(!$('.colUsers [data-userId='+response['userId']+']').length){
                                                 $('.colUsers').append('<div class="usrChatRow">' +
                                                         '<div class="usrChat" data-userId="'+response['userId']+'">'+response['user']+'</div>' +
                                                         '</div>');
@@ -107,10 +107,11 @@
                                                     },
                                                     dataType: "json",
                                                     success: function (response) {
-                                                        if(!$('[data-userId='+response['userId']+']').length) {
-                                                            $('.colUsers').append('<div class="usrChatRow">' +
-                                                                    '<div class="usrChat" data-userId="'+response['userId']+'>' + response['user'] + '</div>' +
-                                                                    '</div>');
+                                                        if(!$('.colUsers [data-userId='+response['userId']+']').length) {
+                                                            var chaine = '<div class="usrChatRow">' +
+                                                                    '<div class="usrChat" data-userId="'+response["userId"]+'">' + response["user"] + '</div>' +
+                                                                    '</div>';
+                                                            $('.colUsers').append(chaine);
                                                         }
                                                     }
                                                 });
@@ -128,7 +129,8 @@
                                     data: {
                                         session: payload.user,
                                         chatId:  chatId,
-                                        message: message
+                                        message: message,
+                                        userId: userId
                                     },
                                     dataType: "json",
                                     success: function (response) {
