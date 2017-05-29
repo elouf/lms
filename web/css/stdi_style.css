@@ -663,12 +663,17 @@ label.alertMustBeSet{
 .chatIHM .row{
     margin: 0;
 }
+.headerChat{
+    background: #456d94;
+    color: #fff;
+    text-align: center;
+}
 .chatIHM .contentRow{
-    height: 600px;
+    height: 500px;
     border-bottom: 3px #456d94 solid;
 }
 .chatIHM .msgRow{
-    height: 38px;
+
 }
 .chatIHM .colMsgs{
     border-right: 3px #456d94 solid;
@@ -688,6 +693,7 @@ label.alertMustBeSet{
 .chatIHM .colBtn .btn{
     border-bottom-right-radius: 0;
     border-top-right-radius: 0;
+    width: 100%;
 }
 .chatIHM .colMsgs, .chatIHM .colUsers{
     height: 100%;
@@ -840,26 +846,26 @@ label.alertMustBeSet{
 }
 @media screen and (max-height: 1000px){
     .chatIHM .contentRow, .emailingIHM {
-        height: 490px;
+        height: 390px;
     }
 }
 @media screen and (max-height: 900px){
     .chatIHM .contentRow, .emailingIHM {
-        height: 450px;
+        height: 350px;
     }
 }
 @media screen and (max-height: 800px){
     .chatIHM .contentRow, .emailingIHM {
-        height: 380px;
+        height: 280px;
     }
 }
 @media screen and (max-height: 700px){
     .chatIHM .contentRow, .emailingIHM {
-        height: 350px;
+        height: 250px;
     }
 }
 @media screen and (max-height: 600px){
     .chatIHM .contentRow, .emailingIHM {
-        height: 300px;
+        height: 200px;
     }
 }

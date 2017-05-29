@@ -18,8 +18,20 @@
 {% endblock %}
 
 {% block main %}
+    <script src="{{ asset('vendors/jquery-ui/jquery-ui.min.js') }}" type=text/javascript></script>
+    <script src="{{ asset('vendors/ckeditor/ckeditor.js') }}"></script>
+    <script src="{{ asset('vendors/ckeditor/adapters/jquery.js') }}"></script>
+    {% include 'forum/commonJs.html.twig' %}
     <div class="container pt-40 pb-40" data-userId="{{ app.user.id }}" data-chatId="{{ chat.id }}">
         <div class="chatIHM">
+            <div class="row headerChat">
+                <div class="col-xs-9">
+                    Conversation
+                </div>
+                <div class="col-xs-3">
+                    Participants
+                </div>
+            </div>
             <div class="row contentRow">
                 <div class="col-xs-9 colMsgs">
                     <table>
@@ -41,7 +53,7 @@
             </div>
             <div class="row msgRow">
                 <div class="col-xs-10 colMsg">
-                    <input class="col-xs-12" value="" type="text" />
+                    <textarea class="form-control simpleEditor" id="chatPostText"></textarea>
                 </div>
                 <div class="col-xs-2 colBtn text-right">
                     <a class="btn btn-primary btn-sm"><i class="btnSendMsg fa fa-paper-plane-o" aria-hidden="true"></i></a>
@@ -145,11 +157,12 @@
                             }
 
                             $('.colBtn .btn').unbind('click').click(function(){
-                                var msg = $('.colMsg input').val();
-                                if(msg == ""){
+                                var message = CKEDITOR.instances['chatPostText'].getData();
+                                if(message == ""){
 
                                 }else{
-                                    session.publish("app/chat/"+chatId, {msg: msg});
+                                    session.publish("app/chat/"+chatId, {msg: message});
+                                    CKEDITOR.instances['chatPostText'].setData('');
                                 }
                             });
                         });
