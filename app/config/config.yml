@@ -7,10 +7,6 @@ imports:
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: fr
-    upload_directory: 'var/upload/'
-    upload_steps: '../'
-    upload_srcSteps: '../../'
-    upload_course: '../../'
 
 framework:
     #esi:             ~
