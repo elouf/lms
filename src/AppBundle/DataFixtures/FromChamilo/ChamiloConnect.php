@@ -7,10 +7,10 @@ use mysqli;
 
 class ChamiloConnect
 {
-    protected $host = "127.0.0.1";
-    protected $user = "chamilo";
-    protected $password = "chamilo";
-    protected $database = "chamilo";
+    protected $host = ;
+    protected $user = ;
+    protected $password = ;
+    protected $database = ;
     protected $mysqli;
 
     protected $connect;
