@@ -13,6 +13,13 @@
 {% endblock %}
 
 {% block main %}
+    <script>
+        jQuery(document).ready(function () {
+            $(function () {
+                $(document).tooltip();
+            });
+        });
+    </script>
     <div class="container mt-40 mb-40">
         <div class="row">
             <div class="col-sm-12">
@@ -23,9 +30,15 @@
 
     <div class="clearfix"></div>
 
-    <div class="process-1 pt-60 pb-60" data-parallax="scroll" data-image-src="{{ asset('educomp/images/cta-background.jpg') }}">
+    <div class="process-1 pt-60 pb-60" data-parallax="scroll"
+         data-image-src="{{ asset('educomp/images/cta-background.jpg') }}">
         <div class="container">
-            <p class="inverse font20">Si l’enseignant garde une forte responsabilité pour transmettre, il ne le peut qu’en se faisant éducateur, apte à rejoindre chaque élève, dans ses besoins et ses aspirations. Ses compétences professionnelles se déploient dans le cadre d’un projet éducatif, dont il connaît et reconnaît les fondements et les visées. Tous les enseignants sont appelés à accompagner leurs élèves sur un chemin de croissance humaine. Les enseignants chrétiens, au nom de leur baptême, contribuent à l’annonce de l’Evangile.</p>
+            <p class="inverse font20"><i>Si l’enseignant garde une forte responsabilité pour transmettre, il ne le peut
+                    qu’en se faisant éducateur, apte à rejoindre chaque élève, dans ses besoins et ses aspirations. Ses
+                    compétences professionnelles se déploient dans le cadre d’un projet éducatif, dont il connaît et
+                    reconnaît les fondements et les visées. Tous les enseignants sont appelés à accompagner leurs élèves
+                    sur un chemin de croissance humaine. Les enseignants chrétiens, au nom de leur baptême, contribuent
+                    à l’annonce de l’Evangile.</i></p>
         </div>
     </div>
 
@@ -47,20 +60,34 @@
                 <img class="img-responsive hidden-lg" src="{{ asset('educomp/images/8.png') }}"/>
             </div>
             <div class="col-sm-9">
-                <p>L’école catholique a besoin de l’engagement de celles et ceux qui, librement, désirent y travailler comme enseignant. Dans les académies, des services d’accueil et de recrutement sont proposés en vue du recrutement des enseignants des établissements en contrat avec l’Education nationale. <span class="s2">1</span>L’accueil des candidats par des chefs d’établissement en vue de l’accord collégial<span class="s2">2 </span>permet d’envisager comment le projet personnel de chacun peut s’inscrire dans la proposition éducative spécifique de l’école catholique. Si l’école catholique s’enrichit des singularités de chacun, les enseignants s’engagent à respecter les orientations éducatives de l’enseignement catholique et à contribuer à leur mise en œuvre. Parmi eux, les croyants sont sollicités, avec les autres acteurs chrétiens de la communauté éducative, pour participer aux propositions de formation chrétienne, tout en cherchant à associer le plus grand nombre de membres de la communauté. Les écoles veillent à accompagner les enseignants pour une bonne intégration dans l’institution dans laquelle ils s’engagent, notamment à leur début de carrière. Ainsi le chef d’établissement qui accueille un enseignant lui présente le projet éducatif de l’école concernée.</p>
-                <p>La formation initiale et continue vise à développer les compétences nécessaires à une profession qui, dans l’école catholique, articule enseignement, éducation et questionnement sur le sens. Statutairement, les enseignants des établissements associés à l’Etat par contrat sont des agents publics, rémunérés par l’Etat. S’ils n’ont pas de lien salarial avec l’OGEC, ils font toutefois partie de la communauté professionnelle de l’établissement et participent donc à la mise en place et à la vie des instances représentatives du personnel.</p>
-            </div>
-        </div>
-    </div>
+                <p>L’école catholique a besoin de l’engagement de celles et ceux qui, librement, désirent y
+                    travailler comme enseignant. Dans les académies, des services d’accueil et de recrutement sont
+                    proposés en vue du recrutement des enseignants des établissements en contrat avec l’Education
+                    nationale.
 
+                    <a href="#nbp1" class="studitBlueFC" title="Les SAAR sont les Services d’Aide et d’Accueil au
+                    Recrutement
+                    ."><sup>1</sup>L’accueil des candidats</a> par des chefs d’établissement en vue de <a href="#nbp2"
+                            class="studitBlueFC"
+                            title="L’accord collégial (délivré par le collège des chefs d’établissement) donne aux maîtres la garantie qu’ils recevront l’accord individuel d’un chef d’établissement pour obtenir un contrat ou effectuer des suppléances.">l’accord
+                        collégial</a><sup>2</sup> permet
+                    d’envisager comment le projet personnel de chacun peut s’inscrire dans la proposition éducative
+                    spécifique de l’école catholique. Si l’école catholique s’enrichit des singularités de chacun, les
+                    enseignants s’engagent à respecter les orientations éducatives de l’enseignement catholique et à
+                    contribuer à leur mise en œuvre. Parmi eux, les croyants sont sollicités, avec les autres acteurs
+                    chrétiens de la communauté éducative, pour participer aux propositions de formation chrétienne, tout
+                    en cherchant à associer le plus grand nombre de membres de la communauté. Les écoles veillent à
+                    accompagner les enseignants pour une bonne intégration dans l’institution dans laquelle ils
+                    s’engagent, notamment à leur début de carrière. Ainsi le chef d’établissement qui accueille un
+                    enseignant lui présente le projet éducatif de l’école concernée.
+                </p>
 
-
-    <div class="bgcolor2 mt-100 mb-0">
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-12 motto">
-                    <img src="{{ asset('educomp/images/motto.png') }}" class="motto-img hidden-xs" alt=""><p class="motto-text">Un enseignant passeur de savoirs et de cultures, investi dans une équipe pour mettre en œuvre le projet pédagogique.</p>
-                </div>
+                <p>La formation initiale et continue vise à développer les compétences nécessaires à une profession
+                    qui, dans l’école catholique, articule enseignement, éducation et questionnement sur le sens.
+                    Statutairement, les enseignants des établissements associés à l’Etat par contrat sont des agents
+                    publics, rémunérés par l’Etat. S’ils n’ont pas de lien salarial avec l’OGEC, ils font toutefois
+                    partie de la communauté professionnelle de l’établissement et participent donc à la mise en place et
+                    à la vie des instances représentatives du personnel.</p>
             </div>
         </div>
     </div>
@@ -68,59 +95,205 @@
     <div class="container mt-40 mb-40">
         <div class="row">
             <div class="col-sm-12">
-                <h4 class="heading">Un enseignant passeur de savoirs et de cultures, investi dans une équipe pour mettre en œuvre le projet pédagogique.</h4>
-                <p><span class="color2">Tout en respectant l’autonomie des disciplines, il est indispensable que les savoirs puissent dialoguer entre eux. </span>La culture ne vise pas seulement l’acquisition de savoir faire pragmatiques, même si ceux-ci s’avèrent indispensables, notamment au regard de l’insertion professionnelle. La culture vise aussi à permettre à chacun de se situer devant les questions existentielles qui, aujourd’hui comme toujours, traversent la société et toute vie humaine. Devant ces interrogations, les chemins de réponse ne peuvent engager une seule discipline. Les professeurs des écoles, maîtrisant l’ensemble des programmes, doivent profiter de leur polyvalence pour faire dialoguer les savoirs. En second degré, cette nécessité requiert un travail d’équipe.<exp>4 </exp>Tout enseignant ne peut travailler à la didactique des disciplines, et à ses démarches pédagogiques, que dans le cadre d’une collaboration régulière avec ses pairs.</p>
-                <p><span class="color2">Les enseignants doivent aussi participer à l’instauration de liens entre les différentes unités pédagogiques, </span>qui, à l’échelle des établissements, se rencontrent dans les instances de concertation pédagogique. Le socle commun de connaissances de compétences et de culture concerne solidairement l’école et le collège.<exp>5 </exp>Les articulations entre le collège et le lycée, comme entre celui-ci et l’enseignement supérieur, sont aussi une nécessité croissante. La formation des maîtres et l’animation des réseaux ou bassins d’établissement doivent prendre en compte cette dimension de plus en plus forte du métier de professeur.</p>
-                <p>La transmission des savoirs n’épuise pas la profession d’enseignant. Toute culture s’inscrit dans une société, à la recherche d’un art de vivre dans un projet commun, comportant une visée éthique. Les méthodes pédagogiques sont choisies en cohérence avec les visées du projet éducatif de l’établissement. <span class="color2">Tout professeur est nécessairement un éducateur.</span></p>
+                <h4 class="heading">Un enseignant passeur de savoirs et de cultures, investi dans une équipe pour mettre
+                    en œuvre le projet pédagogique.</h4>
+
+                <p><span class="color2">La transmission des savoirs reste au cœur du métier  des enseignants.</span>Le
+                    <a href="#nbp3" class="studitBlueFC" title="Défini à la rentrée de Septembre 2016 comme le socle
+                    commun de connaissances, de
+                    compétences et de culture.">socle commun</a><sup>3</sup> fixe le cadre général et les professeurs
+                    s’emparent des programmes pour répondre aux besoins concrets des élèves qui leur sont confiés.
+                    Les acquisitions du socle commun permettent
+                    d’entrer dans les spécialisations progressives développées dans les formations dispensées dans les
+                    lycées. Les enseignants s’appuient, pour la transmission, sur les initiatives de formation et
+                    d’animation institutionnelle proposées par l’Enseignement catholique ainsi que sur les conseils
+                    donnés par les corps d’inspection. Ces savoirs, et les moyens de les transmettre évoluent
+                    rapidement. A cet égard, il revient à l’enseignant d’actualiser ses connaissances et sa pédagogie
+                    comme d’intégrer les éléments de la culture numérique nécessaire à l’exercice de son métier. Par
+                    ailleurs, si, en raison de la révolution numérique, les enseignants ne sont plus les seuls
+                    détenteurs de la connaissance, ils gardent un rôle essentiel pour accompagner leurs élèves dans
+                    l’acquisition d’un savoir organisé et réfléchi et dans l’édification de leur culture.
+                </p>
+
+                <p>La spécialisation des savoirs peut conduire à une approche fragmentée de la réalité. <span class="color2">Tout en
+                    respectant l’autonomie des disciplines, il est indispensable que les savoirs puissent dialoguer
+                    entre eux.</span> La culture ne vise pas seulement l’acquisition de savoir faire pragmatiques, même si
+                    ceux-ci s’avèrent indispensables, notamment au regard de l’insertion professionnelle. La culture
+                    vise aussi à permettre à chacun de se situer devant les questions existentielles qui, aujourd’hui
+                    comme toujours, traversent la société et toute vie humaine. Devant ces interrogations, les chemins
+                    de réponse ne peuvent engager une seule discipline. Les professeurs des écoles, maîtrisant
+                    l’ensemble des programmes, doivent profiter de leur polyvalence pour faire dialoguer les savoirs. En
+                    second degré, cette nécessité requiert un <a href="#nbp4" class="studitBlueFC"
+                                                                 title="Les dispositifs tels que les Enseignements Pratiques Interdisciplinaires, l’Enseignement Intégré des Sciences et de la Technologie, en collège,  ou les Travaux Personnels Encadrés, en lycée,  sont des opportunités intéressantes. C’est aussi le cas de l’approche modulaire et de la pluridisciplinarité dans l’enseignement agricole.">travail
+                        d’équipe</a><sup>4</sup>. Tout enseignant ne peut
+                    travailler
+                    à la
+                    didactique des disciplines, et à ses démarches pédagogiques, que dans le cadre d’une collaboration
+                    régulière avec ses pairs.
+                </p>
+
+                <p><span class="color2">Les enseignants doivent aussi participer à l’instauration de liens entre les différentes unités
+                    pédagogiques</span>, qui, à l’échelle des établissements, se rencontrent dans les instances de
+                        concertation
+                    pédagogique. Le socle commun de connaissances de compétences et de culture concerne solidairement
+                    <a href="#nbp5" class="studitBlueFC"
+                       title="Dans le cadre de la réforme des cycles de 2015, le cycle III comporte désormais le CM1, le CM2 et la 6ème.">l’école
+                        et le collège</a>
+                    <exp>5</exp>
+                    . Les articulations entre le collège et le lycée, comme
+                    entre
+                    celui-ci et
+                    l’enseignement supérieur, sont aussi une nécessité croissante. La formation des maîtres et
+                    l’animation des réseaux ou bassins d’établissement doivent prendre en compte cette dimension de plus
+                    en plus forte du métier de professeur.
+                </p>
+
+                <p>La transmission des savoirs n’épuise pas la profession d’enseignant. Toute culture s’inscrit dans une
+                    société, à la recherche d’un art de vivre dans un projet commun, comportant une visée éthique. Les
+                    méthodes pédagogiques sont choisies en cohérence avec les visées du projet éducatif de
+                    l’établissement. <span class="color2">Tout professeur est nécessairement un éducateur.</span></p>
             </div>
         </div>
     </div>
 
-
-    <div class="bgcolor2 mt-100 mb-0">
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-12 motto">
-                    <img src="{{ asset('educomp/images/motto.png') }}" class="motto-img hidden-xs" alt=""><p class="motto-text">Un éducateur dans une communauté éducative accueillante et ouverte, au service d’un projet d’établissement</p>
-                </div>
-            </div>
-        </div>
-    </div>
     <div class="container mt-40 mb-40">
         <div class="row">
             <div class="col-sm-12">
-                <h4 class="heading">Un éducateur dans une communauté éducative accueillante et ouverte, au service d’un projet d’établissement</h4>
-                    <p>Tout acte de transmission est un acte de relation. <span class="color2">Il revient à tout enseignant d’installer une relation éducative confiante et bienveillante. </span>Celle-ci est, pour les élèves, la condition de l’estime de soi, indispensable pour être acteur de sa formation et pour se mettre en projet. Les disciplines ne sont pas transmises à des individus isolés, mais à des personnes en relation, vivant dans cette société qu’est la classe. Dans ces conditions, toute discipline contribue à la « formation intégrale de la personne », dans ses dimensions intellectuelle, physique, affective, relationnelle, morale et spirituelle. La formation morale et civique ne s’opère donc pas uniquement dans un horaire dédié à un enseignement spécialisé. Attentif aux relations interpersonnelles qui se nouent au sein de la classe, l’enseignant veille à faire de celle-ci un lieu d’apprentissage de la civilité et de la citoyenneté républicaine. Il s’agit d’y privilégier l’entraide et la solidarité, plutôt que la rivalité et la compétition. Il s’agit de former à la liberté responsable et d’éviter toute assistance passive. Ainsi la classe, comme l’ensemble des lieux de vie d’un établissement, contribue-t-elle à construire du lien social.</p>
-                <p><span class="color2">Dans une école ouverte à tous, au sein d’une société plurielle, l’enseignant veille à l’accueil et à l’accompagnement de chacun.</span> L’école catholique a certes besoin de maîtres spécialisés et de classes créées pour répondre à des besoins éducatifs particuliers. Mais la différenciation pédagogique se joue d’abord au sein de chaque classe. Tous les enseignants participent donc à la mise en place de l’école inclusive. Dans ce cadre, ils collaborent avec les AVS.<exp>6</exp></p>
-                <p>Beaucoup de classes accueillent des enfants et des jeunes de diverses cultures et de diverses religions. Les enseignants travaillent à favoriser l’intégration de chacun par la maîtrise de la langue et l’appropriation de savoirs partagés. En même temps, il leur appartient, dans leur enseignement, de souligner combien toute culture s’élabore dans un processus dynamique, qui sait, progressivement, assimiler des apports divers reçus comme des richesses. Dans les établissements dont le recrutement est plus homogène, la découverte de la diversité est aussi une nécessité, pour préparer à vivre dans une société marquée par un fort brassage. Une telle attitude est fondatrice pour éduquer à la fraternité.</p>
-                <p>L’enseignant mène aussi une évaluation régulière des élèves. La démarche vise certes à mesurer l’appropriation de ce qui a été transmis. Mais l’acte d’évaluation est aussi un acte de relation, qui engage un regard sur la personne. <span class="color2">L’évaluation ne peut être conçue comme un jugement définitif, qui risque de disqualifier l’élève. </span>Il s’agit d’aider chacun à percevoir des limites et des lacunes, afin d’indiquer des voies de progrès. Et ce travail permet aussi aux enseignants d’adapter leurs méthodes d’apprentissage. L’évaluation concerne aussi le comportement des élèves et conduit les enseignants à appliquer des sanctions appropriées, à visée éducative.</p>
-                <p>Le même regard doit habiter l’accompagnement à l’orientation auquel tout enseignant doit contribuer. Le système scolaire doit encore faire évoluer les procédures d’orientation pour qu’il ne soit plus un processus de sélection, de « tri », où l’élève « est orienté ». <span class="color2">L’élève doit être accompagné pour « s’orienter », par une démarche construite au fil de la scolarité</span> pour mieux connaître ses compétences et chercher une voie d’orientation, certes adaptée à ses possibilités, mais aussi à ses aspirations.</p>
-                <p>L’ensemble des tâches éducatives qui font pleinement partie du métier de professeur ne peuvent s’assumer qu’en collaboration avec tous les acteurs de la communauté éducative. Au-delà du travail nécessaire entre enseignants, il est indispensable que ceux-ci travaillent régulièrement avec les personnels de l’établissement. C’est pourquoi enseignants et les personnels d’éducation se rencontrent régulièrement pour réfléchir à la cohérence de leurs pratiques.</p>
-                <p><span class="color2">La relation entre les enseignants et les parents est aussi primordiale.</span> Les enseignants veillent aux relations qu’ils entretiennent avec les parents (et réciproquement) pour remplir pleinement leurs rôles pédagogique et éducatif. Ils sont amenés à les rencontrer personnellement dans le cadre du suivi scolaire. La responsabilité éducative partagée entre la famille et l’école s’exerce aussi lors d’activités auxquelles les parents contribuent, et également au travers de la participation de l’ensemble des familles à la vie de l’établissement par l’intermédiaire de l’APEL.</p>
-                <p>Ces multiples collaborations sont favorisées par l’organisation et l’animation de l’établissement sous la responsabilité du chef d’établissement. Pour permettre l’engagement de chacun, celui-ci fait en sorte que les enseignants soient régulièrement consultés dans les instances qu’il met en place à cet effet, qu’ils trouvent dans l’établissement un réel accompagnement et qu’ils puissent rendre compte de leur action. <span class="color2">Ainsi les enseignants</span> exercent leur fonction au sein de la communauté éducative en lien avec tous les acteurs et participent de façon différenciée à la mise en œuvre du projet d’établissement, élaboré à partir des orientations fixées par le projet éducatif.</p>
+                <h4 class="heading">Un éducateur dans une communauté éducative accueillante et ouverte, au service d’un
+                    projet d’établissement</h4>
+
+                <p>Tout acte de transmission est un acte de relation. <span class="color2">Il revient à tout enseignant d’installer une
+                    relation éducative confiante et bienveillante.</span> Celle-ci est, pour les élèves, la condition de
+                    l’estime de soi, indispensable pour être acteur de sa formation et pour se mettre en projet. Les
+                    disciplines ne sont pas transmises à des individus isolés, mais à des personnes en relation, vivant
+                    dans cette société qu’est la classe. Dans ces conditions, toute discipline contribue à la «
+                    formation intégrale de la personne », dans ses dimensions intellectuelle, physique, affective,
+                    relationnelle, morale et spirituelle. La formation morale et civique ne s’opère donc pas uniquement
+                    dans un horaire dédié à un enseignement spécialisé. Attentif aux relations interpersonnelles qui se
+                    nouent au sein de la classe, l’enseignant veille à faire de celle-ci un lieu d’apprentissage de la
+                    civilité et de la citoyenneté républicaine. Il s’agit d’y privilégier l’entraide et la solidarité,
+                    plutôt que la rivalité et la compétition. Il s’agit de former à la liberté responsable et d’éviter
+                    toute assistance passive. Ainsi la classe, comme l’ensemble des lieux de vie d’un établissement,
+                    contribue-t-elle à construire du lien social.
+                </p>
+
+                <p><span class="color2">Dans une école ouverte à tous, au sein d’une société plurielle, l’enseignant veille à l’accueil et à
+                    l’accompagnement de chacun.</span> L’école catholique a certes besoin de maîtres spécialisés et de
+                    classes
+                    créées pour répondre à des besoins éducatifs particuliers. Mais la différenciation pédagogique se
+                    joue d’abord au sein de chaque classe. Tous les enseignants participent donc à la mise en place de
+                    l’école inclusive. Dans ce cadre, ils collaborent avec les <a href="#nbp6" class="studitBlueFC"
+                                                                                  title="AVS. Assistants de Vie Scolaire.">AVS</a><sup>6</sup>.
+                </p>
+
+                <p>Beaucoup de classes accueillent des enfants et des jeunes de diverses cultures et de diverses
+                    religions. Les enseignants travaillent à favoriser l’intégration de chacun par la maîtrise de la
+                    langue et l’appropriation de savoirs partagés. En même temps, il leur appartient, dans leur
+                    enseignement, de souligner combien toute culture s’élabore dans un processus dynamique, qui sait,
+                    progressivement, assimiler des apports divers reçus comme des richesses. Dans les établissements
+                    dont le recrutement est plus homogène, la découverte de la diversité est aussi une nécessité, pour
+                    préparer à vivre dans une société marquée par un fort brassage. Une telle attitude est fondatrice
+                    pour éduquer à la fraternité.</p>
+
+                <p>L’enseignant mène aussi une évaluation régulière des élèves. La démarche vise certes à mesurer
+                    l’appropriation de ce qui a été transmis. Mais l’acte d’évaluation est aussi un acte de relation,
+                    qui engage un regard sur la personne. <span class="color2">L’évaluation ne peut être conçue comme un jugement définitif,
+                    qui risque de disqualifier l’élève.</span> Il s’agit d’aider chacun à percevoir des limites et des
+                        lacunes,
+                    afin d’indiquer des voies de progrès. Et ce travail permet aussi aux enseignants d’adapter leurs
+                    méthodes d’apprentissage. L’évaluation concerne aussi le comportement des élèves et conduit les
+                    enseignants à appliquer des sanctions appropriées, à visée éducative.</p>
+
+                <p>Le même regard doit habiter l’accompagnement à l’orientation auquel tout enseignant doit contribuer.
+                    Le système scolaire doit encore faire évoluer les procédures d’orientation pour qu’il ne soit plus
+                    un processus de sélection, de « tri », où l’élève « est orienté ». <span class="color2">L’élève doit être accompagné pour
+                    « s’orienter », par une démarche construite au fil de la scolarité</span> pour mieux connaître ses
+                    compétences et chercher une voie d’orientation, certes adaptée à ses possibilités, mais aussi à ses
+                    aspirations.</p>
+
+                <p>L’ensemble des tâches éducatives qui font pleinement partie du métier de professeur ne peuvent
+                    s’assumer qu’en collaboration avec tous les acteurs de la communauté éducative. Au-delà du travail
+                    nécessaire entre enseignants, il est indispensable que ceux-ci travaillent régulièrement avec les
+                    personnels de l’établissement. C’est pourquoi enseignants et les personnels d’éducation se
+                    rencontrent régulièrement pour réfléchir à la cohérence de leurs pratiques.</p>
+
+                <p><span class="color2">La relation entre les enseignants et les parents est aussi primordiale.</span> Les
+                        enseignants veillent aux
+                    relations qu’ils entretiennent avec les parents (et réciproquement) pour remplir pleinement leurs
+                    rôles pédagogique et éducatif. Ils sont amenés à les rencontrer personnellement dans le cadre du
+                    suivi scolaire. La responsabilité éducative partagée entre la famille et l’école s’exerce aussi lors
+                    d’activités auxquelles les parents contribuent, et également au travers de la participation de
+                    l’ensemble des familles à la vie de l’établissement par l’intermédiaire de l’APEL.</p>
+
+                <p>Ces multiples collaborations sont favorisées par l’organisation et l’animation de l’établissement
+                    sous la responsabilité du chef d’établissement. Pour permettre l’engagement de chacun, celui-ci fait
+                    en sorte que les enseignants soient régulièrement consultés dans les instances qu’il met en place à
+                    cet effet, qu’ils trouvent dans l’établissement un réel accompagnement et qu’ils puissent rendre
+                    compte de leur action. <span class="color2">Ainsi les enseignants exercent leur fonction au sein de la communauté
+                    éducative en lien avec tous les acteurs et participent de façon différenciée à la mise en œuvre du
+                    projet d’établissement, élaboré à partir des orientations fixées par le projet éducatif.</span></p>
             </div>
         </div>
     </div>
 
-    <div class="bgcolor2 mt-100 mb-0">
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-12 motto">
-                    <img src="{{ asset('educomp/images/motto.png') }}" class="motto-img hidden-xs" alt=""><p class="motto-text">Une personne invitée à s’engager pour le projet éducatif de l’établissement et à le promouvoir.</p>
-                </div>
-            </div>
-        </div>
-    </div>
     <div class="container mt-40 mb-40">
         <div class="row">
             <div class="col-sm-12">
-                <h4 class="heading">Une personne invitée à s’engager pour le projet éducatif de l’établissement et à le promouvoir.</h4>
-                <p>La volonté d’enseigner dans une école catholique engage à exercer sa tâche professionnelle dans le cadre d’un projet éducatif, porté par l’ensemble des acteurs de la communauté éducative. Le chef d’établissement a la responsabilité de s’assurer que chacun participe à l’élaboration, puis à la relecture du projet. C’est là l’une des attributions du conseil d’établissement qui comprend des représentants de tous les membres de la communauté.</p>
-                <p><span class="color2">Tout enseignant, lorsqu’il est accueilli, doit pouvoir connaître et reconnaître les fondements et les visées de l’engagement éducatif de l’école catholique.</span> La formation initiale et continue, le travail en équipe et en réseau donnent l’occasion d’approfondir les projets des différents établissements, au sein des diverses tutelles diocésaines ou congréganistes. <span class="color2">La proposition éducative spécifique<exp>7</exp> des écoles catholiques repose sur la conception chrétienne de la personne et de son éducation.</span> Elle concerne l’ensemble des enseignants, dans l’exercice concret de leur métier, tel qu’il vient d’être décrit. Les échanges avec le chef d’établissement permettent de déterminer la nature et les modalités des engagements pris. Des enseignants peuvent aussi s’engager dans des instances de l’Enseignement catholique extérieures à l’établissement.</p>
-                <p>Cette proposition éducative spécifique, visant à la formation intégrale de la personne, est nécessairement attentive à la dimension religieuse de toute culture humaine et aux besoins spirituels de la personne. C’est l’objet du projet d’animation pastorale élaboré à partir du projet éducatif de l’établissement. Celui-ci comprend divers volets permettant aux enseignants qui le souhaitent d’y participer librement.</p>
-                <p>La culture scolaire française fait peu de place à la connaissance des religions, en dépit de la volonté régulièrement affirmée d’y inclure la « prise en compte du fait religieux ». C’est pourquoi les écoles catholiques proposent habituellement des <span class="color2">cours de culture religieuse</span>, au-delà des programmes et des horaires officiels qui incluent désormais la « prise en compte du fait religieux ». Les enseignants sont les premiers concernés pour s’y engager s’ils le souhaitent.</p>
-                <p>L’école catholique, comme tout lieu d’Eglise, se doit de proposer explicitement la foi chrétienne, dans le plus grand respect de conscience. Cela passe par le témoignage des chrétiens de la communauté qui, dans diverses occasions, peuvent accepter de rendre compte de leur foi pour une première annonce. Une formation chrétienne plus structurée nécessite de construire des propositions catéchétiques. Les établissements peuvent préparer aux sacrements, proposent des temps forts, initient à la vie de prière et invitent à célébrer le Christ. Ces activités pastorales se vivent en lien avec l’Eglise diocésaine. Ces propositions d’initiation et de formation chrétiennes bénéficient des compétences des membres de l’équipe d’animation pastorale, et notamment des adjoint(e)s et animateurs / trices en pastorale scolaire. Mais elle ne peut être laissée aux seuls spécialistes. Cela relève de la responsabilité de l’ensemble des chrétiens de la communauté et donc des enseignants concernés.</p>
-                <p>Le métier d’enseignant est aujourd’hui complexe. S’y préparer et entretenir régulièrement ses compétences professionnelles implique de fortes exigences. De nombreux sondages d’opinion soulignent heureusement la confiance des élèves et des familles envers les professeurs. Et les jeunes sont d’autant plus reconnaissants si, au-delà de l’expertise professionnelle, ils rencontrent des adultes désireux de témoigner de ce qui les fait vivre, pour ouvrir des horizons de sens.</p>
+                <h4 class="heading">Une personne invitée à s’engager pour le projet éducatif de l’établissement et à le
+                    promouvoir.</h4>
+
+                <p>La volonté d’enseigner dans une école catholique engage à exercer sa tâche professionnelle dans le
+                    cadre d’un projet éducatif, porté par l’ensemble des acteurs de la communauté éducative. Le chef
+                    d’établissement a la responsabilité de s’assurer que chacun participe à l’élaboration, puis à la
+                    relecture du projet. C’est là l’une des attributions du conseil d’établissement qui comprend des
+                    représentants de tous les membres de la communauté.</p>
+
+                <p><span class="color2">Tout enseignant, lorsqu’il est accueilli, doit pouvoir connaître et reconnaître les fondements et les
+                    visées de l’engagement éducatif de l’école catholique.</span> La formation initiale et continue, le
+                        travail
+                    en équipe et en réseau donnent l’occasion d’approfondir les projets des différents établissements,
+                    au sein des diverses tutelles diocésaines ou congréganistes. <span class="color2"><a href="#nbp7" class="studitBlueFC"
+                                                                                    title="Le Statut de l’Enseignement catholique parle de la « proposition éducative qualifiée », précisant « qu’elle constitue ce que la loi désigne comme le « caractère propre. » (Article 18)">La
+                        proposition éducative
+                        spécifique</a><sup>7</sup>
+                    des
+                    écoles catholiques repose sur la conception chrétienne de la personne et de son éducation.</span> Elle
+                    concerne l’ensemble des enseignants, dans l’exercice concret de leur métier, tel qu’il vient d’être
+                    décrit. Les échanges avec le chef d’établissement permettent de déterminer la nature et les
+                    modalités des engagements pris. Des enseignants peuvent aussi s’engager dans des instances de
+                    l’Enseignement catholique extérieures à l’établissement.
+                </p>
+
+                <p>Cette proposition éducative spécifique, visant à la formation intégrale de la personne, est
+                    nécessairement attentive à la dimension religieuse de toute culture humaine et aux besoins
+                    spirituels de la personne. C’est l’objet du projet d’animation pastorale élaboré à partir du projet
+                    éducatif de l’établissement. Celui-ci comprend divers volets permettant aux enseignants qui le
+                    souhaitent d’y participer librement.</p>
+
+                <p>La culture scolaire française fait peu de place à la connaissance des religions, en dépit de la
+                    volonté régulièrement affirmée d’y inclure la « prise en compte du fait religieux ». C’est pourquoi
+                    les écoles catholiques proposent habituellement des <span class="color2">cours de culture
+                        religieuse</span>, au-delà des
+                    programmes et des horaires officiels qui incluent désormais la « prise en compte du fait religieux
+                    ». Les enseignants sont les premiers concernés pour s’y engager s’ils le souhaitent.</p>
+
+                <p>L’école catholique, comme tout lieu d’Eglise, se doit de proposer explicitement la foi chrétienne,
+                    dans le plus grand respect de conscience. Cela passe par le témoignage des chrétiens de la
+                    communauté qui, dans diverses occasions, peuvent accepter de rendre compte de leur foi pour une
+                    première annonce. Une formation chrétienne plus structurée nécessite de construire des propositions
+                    catéchétiques. Les établissements peuvent préparer aux sacrements, proposent des temps forts,
+                    initient à la vie de prière et invitent à célébrer le Christ. Ces activités pastorales se vivent en
+                    lien avec l’Eglise diocésaine. Ces propositions d’initiation et de formation chrétiennes bénéficient
+                    des compétences des membres de l’équipe d’animation pastorale, et notamment des adjoint(e)s et
+                    animateurs / trices en pastorale scolaire. Mais elle ne peut être laissée aux seuls spécialistes.
+                    Cela relève de la responsabilité de l’ensemble des chrétiens de la communauté et donc des
+                    enseignants concernés..</p>
+
+                <p>Le métier d’enseignant est aujourd’hui complexe. S’y préparer et entretenir régulièrement ses
+                    compétences professionnelles implique de fortes exigences. De nombreux sondages d’opinion soulignent
+                    heureusement la confiance des élèves et des familles envers les professeurs. Et les jeunes sont
+                    d’autant plus reconnaissants si, au-delà de l’expertise professionnelle, ils rencontrent des adultes
+                    désireux de témoigner de ce qui les fait vivre, pour ouvrir des horizons de sens.</p>
             </div>
         </div>
     </div>
@@ -130,13 +303,39 @@
         <div class="row">
             <div class="col-sm-12">
                 <hr/>
-                <p>1 • <span class="s4">Les SAAR sont les Services d’Aide et d’Accueil au Recrutement.</span></p>
-                <p>2 • <span class="s4">L’accord collégial (délivré par le collège des chefs d’établissement) donne aux maîtres la garantie qu’ils recevront l’accord individuel d’un chef d’établissement pour obtenir un contrat ou effectuer des suppléances.</span></p>
-                <p>3 • <span class="s4">Défini à la rentrée de Septembre 2016 comme le socle commun de connaissances, de compétences et de culture.</span></p>
-                <p>4 • <span class="s4">Les dispositifs tels que les Enseignements Pratiques Interdisciplinaires, l’Enseignement Intégré des Sciences et de la Technologie, en collège, ou les Travaux Personnels Encadrés, en lycée, sont des opportunités intéressantes. C’est aussi le cas de l’approche modulaire et de la pluridisciplinarité dans l’enseignement agricole.</p>
-                <p>5 • <span class="s4">Dans le cadre de la réforme des cycles de 2015, le cycle III comporte désormais le CM1, le CM2 et la 6<exp>ème</exp></span>.</p>
-                <p>6 • <span class="s4">AVS. Assistants de Vie Scolaire.</span></p>
-                <p>7 • <span class="s4">Le Statut de l’Enseignement catholique parle de la « proposition éducative qualifiée », précisant « qu’elle constitue ce que la loi désigne comme le <i>« caractère propre. »</i> (Article 18)</span></p>
+                <p><a id="nbp1" class="anchor100"></a>1 • <span class="s4">Les SAAR sont les Services d’Aide et
+                            d’Accueil au
+                        Recrutement
+                        .</span></p>
+
+                <p><a id="nbp2" class="anchor100"></a>2 • <span class="s4">L’accord collégial (délivré par
+                        le collège des chefs
+                        d’établissement) donne aux maîtres la garantie qu’ils recevront l’accord individuel d’un chef d’établissement pour obtenir un contrat ou effectuer des suppléances.</span>
+                </p>
+
+                <p><a id="nbp3" class="anchor100"></a>3 • <span class="s4">Défini à la rentrée de Septembre
+                        2016 comme le socle commun de
+                        connaissances, de compétences et de culture.</span>
+                </p>
+
+                <p><a id="nbp4" class="anchor100"></a>4 • <span class="s4">Les dispositifs tels que les
+                        Enseignements Pratiques
+                        Interdisciplinaires, l’Enseignement Intégré des Sciences et de la Technologie, en collège,
+                        ou les Travaux Personnels Encadrés, en lycée,  sont des opportunités intéressantes. C’est
+                        aussi le cas de l’approche modulaire et de la pluridisciplinarité dans l’enseignement
+                        agricole.</span></p>
+
+                <p><a id="nbp5" class="anchor100"></a>5 • <span class="s4">Dans le cadre de la réforme des
+                        cycles de 2015, le cycle III comporte
+                        désormais le CM1, le CM2 et la 6<sup>ème</sup></span>.</p>
+
+                <p><a id="nbp6" class="anchor100"></a>6 • <span class="s4">AVS. Assistants de Vie Scolaire
+                        .</span></p>
+
+                <p><a id="nbp7" class="anchor100"></a>7 • <span class="s4">Le Statut de l’Enseignement
+                        catholique parle de la « proposition
+                        éducative qualifiée », précisant « qu’elle constitue ce que la loi désigne comme le <i>«
+                            caractère propre. »</i> (Article 18)</span></p>
             </div>
         </div>
     </div>

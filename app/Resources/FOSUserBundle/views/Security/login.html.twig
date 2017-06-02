@@ -6,14 +6,33 @@
         <aside class="applynow-widget">
             <img src="{{ asset('educomp/images/applynow.png') }}" class="img-responsive center-block hidden-xs" alt="">
             <div class="apply-info">
-                <h4 class="heading text-center">CONNECTEZ VOUS</h4>
+                {% set datetimeStart = '2017-07-01' %}
+                {% if "now"|date('Y-m-d') >= datetimeStart|date('Y-m-d') %}
+                    <h4 class="heading text-center">CONNECTEZ VOUS</h4>
 
-                {% include "FOSUserBundle:Security:login_content.html.twig" %}
+                    {% include "FOSUserBundle:Security:login_content.html.twig" %}
 
-                <hr/>
-                <a href="{{ path('fos_user_resetting_request') }}">Mot de passe oublié ?</a>
-                <br/>
-                <a href="{{ path('inscription') }}">Créer un compte</a>
+                    <hr/>
+                    <a href="{{ path('fos_user_resetting_request') }}">Mot de passe oublié ?</a>
+                    <br/>
+                    <a class="btn btn-primary btn-sm" href="{{ path('inscription') }}">Créer un compte</a>{{ date()|date('d') }}
+                {% else %}
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="icon-box-5">            <!-- ***** Icon Box Style 5 ***** -->
+                                <div class="icon-box-icon">
+                                    <i class="fa fa-rocket" aria-hidden="true"></i>
+                                </div>
+                                <div class="icon-box-content">
+                                    <h5 class="heading">S'INSCRIRE</h5>
+                                    <p>La plateforme de l’AFADEC ouvre bientôt, inscrivez-vous dès maintenant pour être prévenu en priorité.</p>
+                                    <a class="btn btn-primary btn-sm" href="{{ path('inscription') }}">Créer un compte</a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                {% endif %}
             </div>
         </aside>
     </div>

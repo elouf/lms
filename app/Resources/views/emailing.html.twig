@@ -39,7 +39,6 @@
                 $('.checkUserEmailing:checked').each(function(){
                    users.push($(this).closest('.usrEmailingRow').find('.usrEmailing').attr('data-userId'));
                 });
-                console.log('test')
                 $.ajax({
                     type: 'POST',
                     url: "{{path('emailingSendMail_ajax')}}",

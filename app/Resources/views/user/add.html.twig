@@ -3,7 +3,7 @@
 {% block pageHeader %}
     <div class="page-header">
         <div class="container">
-            <h2 class="color3">Inscription</h2>
+            <h2 class="color3">Inscription sur la plateforme de l'AFADEC</h2>
             <ul class="breadcrumb">
                 <li class="color3">Je créé mon compte</li>
             </ul>
@@ -13,28 +13,35 @@
 
 {% block main %}
     <style>
-        #form>div{
+        #form > div {
             margin-bottom: 15px;
         }
-        #form>div:last-of-type{
+
+        #form > div:last-of-type {
             text-align: center;
         }
-        #form>div>input{
+
+        #form > div > input {
             max-width: 350px;
         }
-        #form>div>*{
+
+        #form > div > * {
             float: none;
         }
-        #form>div>ul>li{
+
+        #form > div > ul > li {
             color: #c70c00;
         }
-        label{
+
+        label {
             text-align: right;
         }
-        input[type=checkbox]{
+
+        input[type=checkbox] {
             margin-right: 2px;
         }
-        input[type=checkbox]:not(:first-child){
+
+        input[type=checkbox]:not(:first-child) {
             margin-left: 15px;
         }
     </style>
@@ -44,58 +51,60 @@
 
             $('label').addClass('col-sm-4');
 
-            if($('#form_mdp_first').parent().find('ul').length){
+            if ($('#form_mdp_first').parent().find('ul').length) {
                 $('#form_mdp_first').parent().find('ul').addClass('col-sm-8 text-center').appendTo($('#form_mdp_first').parent());
             }
-            if($('#form_email').val()){
+            if ($('#form_email').val()) {
                 $('#form_email').parent().append('<ul class="col-sm-12 text-center"><li>Cet email appartient déjà à un compte sur la plateforme</li></ul>');
             }
 
-            $('input').on('change', function(){
+            $('input').on('change', function () {
                 $('#form>div>ul').remove();
             });
 
             loadEtudiant();
 
-            $('#form_typeUser').on('change', function(){
-                if($(this).val() == 0){
+            $('#form_typeUser').on('change', function () {
+                if ($(this).val() == 0) {
                     loadEtudiant();
-                }else if($(this).val() == 1){
+                } else if ($(this).val() == 1) {
                     loadFormateur();
-                }else{
+                } else {
                     loadProf();
                 }
             });
-            $('#form_concours').on('change', function(){
-                if($(this).val() == 0){
+            $('#form_concours').on('change', function () {
+                if ($(this).val() == 0) {
                     // 1er degré
                     $('#form_matiereEtu, #form_matiereForm, #form_matiereProfStag').parent().hide();
-                }else if($(this).val() == 1){
+                } else if ($(this).val() == 1) {
                     // 2nd degré
                     $('#form_matiereEtu').parent().show();
                 }
             });
-            $('#form_sectionEns').on('change', function(){
-                if($(this).val() == 0){
+            $('#form_sectionEns').on('change', function () {
+                if ($(this).val() == 0) {
                     // 1er degré
                     $('#form_matiereEtu, #form_matiereForm, #form_matiereProfStag').parent().hide();
-                }else if($(this).val() == 1){
+                } else if ($(this).val() == 1) {
                     // 2nd degré
                     $('#form_matiereForm').parent().show();
                 }
             });
 
-            function loadEtudiant(){
+            function loadEtudiant() {
                 $('#form_sectionEns').parent().hide();
                 $('#form_matiereEtu, #form_matiereForm, #form_matiereProfStag').parent().hide();
                 $('#form_concours').parent().show().val(0);
             }
-            function loadFormateur(){
+
+            function loadFormateur() {
                 $('#form_sectionEns').parent().show();
                 $('#form_matiereEtu, #form_matiereForm, #form_matiereProfStag').parent().hide();
                 $('#form_concours').parent().hide();
             }
-            function loadProf(){
+
+            function loadProf() {
                 $('#form_sectionEns').parent().hide();
                 $('#form_matiereEtu, #form_matiereForm').parent().hide();
                 $('#form_matiereProfStag').parent().show();
@@ -107,13 +116,28 @@
 
     <div class="container mt-10 mb-40">
         <div class="text-justify">
+            <h4 class="heading">Pourquoi <span class="color2">s'inscrire ?</span></h4>
+
+            <p>Vous êtes étudiants en Master MEEF, vous êtes professeur stagiaire, vous êtes formateur dans un ISFEC…
+                L’AFADEC vous accompagne dans votre parcours (conférences vidéos en ligne, concours blancs, exercices,
+                sessions de travail ou de révision, documents de référence….etc. ).
+            </p>
+
+            <p>
+                Si vous préparez les concours d’enseignement de la session 2018 nous vous proposerons un travail de deux
+                semaines en juillet (17-30) ou en août (16-29). La première démarche à faire est de s’inscrire sur la
+                plate-forme.
+            </p>
             <h4 class="heading">Comment <span class="color2">s'inscrire ?</span></h4>
-            <p><span class="color2">L’inscription se fait en ligne, sur cette interface dédiée, où vous pouvez créer votre compte pour accéder ensuite aux ressources vous concernant sur la plateforme.</span></p>
-            <p>Il n’y a pas de période d’inscription, vous pouvez le faire <span class="color2">TOUT AU LONG DE L’ANNÉE.</span></p>
-            <p>En cas de problème ou de question : contact.afadec@gmail.com</p>
+
+            <p>Créez votre compte MAINTENANT. Dès l’ouverture de la plate-forme vous serez personnellement averti.</p>
+
+            <p>En cas de problème ou de question : <a class="studitBlueFC" href="mailTo:contact.afadec@gmail
+                .com">contact.afadec@gmail.com</a></p>
         </div>
         <div>
             <h4 class="heading">Renseigner <span class="color2">mes informations</span></h4>
+
             <div class="container">
                 <div class="row">
                     {{ form(form) }}

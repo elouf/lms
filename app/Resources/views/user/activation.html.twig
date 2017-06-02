@@ -19,10 +19,16 @@
 
                 <p>Bonjour {{ user.firstname }} {{ user.lastname }}! Votre compte est bien activé.</p>
 
-                <p>Vous pouvez maintenant vous authentifier sur <a href="{{ path('homepage') }}">la page d'accueil</a></p>
+                {% set datetimeStart = '2017-07-01' %}
+                {% if "now"|date('Y-m-d') >= datetimeStart|date('Y-m-d') %}
+                    <p>Vous pouvez maintenant vous authentifier sur <a href="{{ path('homepage') }}">la page d'accueil</a></p>
+                {% else %}
+                    <p>Vous serez averti prochainement de l’ouverture de la plateforme.</p>
+                {% endif %}
 
                 <p>Merci!</p>
                 <p>L'équipe AFADEC</p>
+                <p><a class="studitBlueFC" href="mailTo:contact.afadec@gmail.com">contact.afadec@gmail.com</a></p>
             </div>
         </div>
     </div>

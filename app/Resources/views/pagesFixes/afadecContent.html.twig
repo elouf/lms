@@ -1,36 +1,35 @@
-
 <div class="container mt-100 mb-40">
     <div class="row">
         <div class="col-sm-8">
             <h4 class="heading">Qui <span class="color2">sommes nous ?</span></h4>
-            <p>Association de la formation à distance de l’enseignement catholique, créée en mars 2011 par le SGEC (secrétariat général de l’enseignement catholique) et l’UDESCA (union nationale des établissements supérieurs de l’enseignement catholique) pour accompagner la préparation au concours des futurs enseignants des écoles, collèges et lycées de l’enseignement privé catholique.</p>
-            <p>Cet accompagnement se fait sous forme de E-LEARNING, via une plateforme de formation à distance : http://www.afadec.fr L’AFADEC fait produire par des enseignants spécialistes des ressources de préparation et d’entraînement au concours d’enseignement du 1er degré (CRPE) et du 2d degré (CAFEP) et les médiatise pour les mettre à disposition des étudiants à distance.</p>
-            <p>Elle propose également des sessions de travail tutoré en ligne, notamment durant les vacances estivales.</p>
-            <p>Elle organise enfin périodiquement des concours blancs écrits et oraux permettant aux étudiants de s’entraîner dans des conditions proches de celles des épreuves du concours.</p>
-            <p>Pour les professeurs stagiaires des disciplines dites à “petits effectifs “(ex : allemande, éco-gestion, économie, etc) l’AFADEC offre aux équipes chargées de la formation en didactique, sa plate-forme pour la mise en ligne de documents et l’organisation de classes virtuelles.</p>
+
+            <p><span class="color2">Association de la formation à distance de l’enseignement catholique</span>, créée en
+                mars 2011 par le SGEC (secrétariat général de l’enseignement catholique) et l’UDESCA (union nationale
+                des établissements supérieurs de l’enseignement catholique) pour accompagner la <span
+                        class="color2">préparation au
+                concours des futurs enseignants</span> des écoles, collèges et lycées de l’enseignement privé
+                catholique.</p>
+
+            <p>Cet accompagnement se fait sous forme de <span class="color2">E-LEARNING</span>, via une plateforme de
+                formation à
+                distance :
+                <a class="studitBlueFC" href="http://www.afadec.fr">http://www.afadec.fr</a></p>
+
+            <p>L’AFADEC fait
+                produire
+                par
+                des enseignants spécialistes des ressources de préparation et d’entraînement au concours d’enseignement
+                du 1er degré (CRPE) et du 2d degré (CAFEP) et les médiatise pour les mettre à disposition des étudiants
+                à distance. </p>
+
+            <p>Elle propose également des sessions de travail tutoré en ligne ainsi que des sessions de concours blancs
+                ouvertes aux étudiants qui le souhaitent.</p>
+
+            <p>L’AFADEC accompagne enfin le travail de formation didactique pour certaines disciplines à destination des
+                professeurs stagiaires.</p>
         </div>
         <div class="col-sm-4">
-            <h4 class="heading">Nous <span class="color2">contacter</span></h4>
-            <form id="main-contact-form">
-                <div class="form-group">
-                    <label for="contact-name">Votre nom</label>
-                    <input id="contact-name" type="text" class="form-control" name="name">
-                </div>
-                <div class="form-group">
-                    <label for="contact-email">Votre e-mail</label>
-                    <input id="contact-email" type="text" class="form-control" name="email">
-                </div>
-                <div class="form-group">
-                    <label for="contact-number">Sujet</label>
-                    <input id="contact-number" type="text" class="form-control" name="subject">
-                </div>
-                <div class="form-group">
-                    <label for="contact-message">Votre message</label>
-                    <textarea id="contact-message" class="form-control" rows="6" name="message"></textarea>
-                </div>
-                <p id="status"></p>
-                <button type="submit" name="submit" class="btn btn-primary">Envoyer</button>
-            </form>
+            {% include "pagesFixes/nousContacter.html.twig" %}
         </div>
     </div>
 </div>
@@ -41,22 +40,40 @@
     <div class="container">
         <div class="row">
             <div class="col-sm-12 motto">
-                <img src="{{ asset('educomp/images/motto.png') }}" class="motto-img hidden-xs" alt=""><p class="motto-text">À qui s’adresse la plateforme ?</p>
+                <img src="{{ asset('educomp/images/motto.png') }}" class="motto-img hidden-xs" alt="">
+
+                <p class="motto-text">À qui s’adresse la plateforme ?</p>
             </div>
         </div>
     </div>
 </div>
 
-<div class="process-1 mt-0 pt-60 pb-60" data-parallax="scroll" data-image-src="{{ asset('educomp/images/cta-background.jpg') }}">
+<div class="process-1 mt-0 pt-60 pb-60" data-parallax="scroll"
+     data-image-src="{{ asset('educomp/images/cta-background.jpg') }}">
     <div class="container">
-        <p class="inverse">Tous ceux qui veulent préparer un concours de recrutement pour l’enseignement primaire ou secondaire peuvent bénéficier des formations à distance dispensées sur le site afadec.fr Ces formations sont conçues par l’AFADEC à destination des étudiants des établissements (universités catholiques et instituts de formation rattachés) préparant un Master MEEF et souhaitant compléter leur formation par des cours à distance, notamment :</p>
+        <p class="inverse"><b>Tous ceux qui veulent préparer un concours de recrutement pour l’enseignement primaire ou
+                secondaire</b> peuvent bénéficier des formations à distance dispensées sur le site <a
+                    class="studitYellowFC" href="http://www.afadec.fr">afadec.fr</a> Ces formations sont conçues par
+            l’AFADEC à destination des étudiants des établissements (universités catholiques et instituts de formation
+            rattachés) préparant un Master MEEF et souhaitant compléter leur formation par des cours à distance,
+            notamment :</p>
         <ul class="list-default inverse">
             <li>À tous les étudiants préparant le concours de recrutement de professeurs des écoles (CRPE) ;</li>
-            <li>À tous les étudiants préparant les concours de recrutement de professeurs certifiés (CAPES/CAFEP) dans l’une des 7 discpiplines portées par la plateforme (mathématiques, lettres modernes, histoire-géographie, anglais, espagnol, SVT et physique-chimie);</li>
-            <li>Aux professeurs préparant l’agrégation interne d’histoire-géographie</li>
-            <li>Aux professeurs stagiaires qui bénéficient d’une formation didactique pour les disciplines dites « rares » : allemand, espagnol, philosophie, documentation, SES, STMS biotechnologie, Sciences industrielles, Economie et gestion, Arts plastiques, Arts appliqués.</li>
+            <li>À tous les étudiants préparant les concours de recrutement de professeurs certifiés (CAPES/CAFEP) dans
+                l’une des 8 disciplines portées par la plateforme (mathématiques, lettres modernes, histoire-géographie,
+                anglais, espagnol, EMCC, SVT et physique-chimie) ;
+            </li>
+            <li>Aux professeurs stagiaires qui bénéficient d’une formation didactique pour les disciplines dites « rares
+                » : allemand, espagnol, philosophie, documentation, SES, STMS biotechnologie, Sciences industrielles,
+                Economie et gestion, Arts plastiques, Arts appliqués.
+            </li>
         </ul>
-        <p class="inverse">Que vous sortiez de licence ou que vous soyez en reconversion de carrière, étudiant ou en poste, la plateforme est là pour vous aider dans votre préparation du concours. La plateforme s’adresse également aux professeurs et enseignants des universités et instituts partenaires souhaitant disposer d’appuis pédagogiques permettant d’illustrer leurs cours et d’y renvoyer les étudiants.</p>
+        <p class="inverse">Que vous sortiez de licence ou que vous soyez en reconversion de carrière, étudiant ou en
+            poste, la plateforme est là pour vous aider dans votre préparation du concours.</p>
+
+        <p class="inverse">La plateforme s’adresse également aux professeurs et enseignants des universités et instituts
+            partenaires souhaitant disposer d’appuis pédagogiques permettant d’illustrer leurs cours et d’y renvoyer les
+            étudiants.</p>
     </div>
 </div>
 
@@ -64,14 +81,23 @@
     <div class="row">
         <div class="col-sm-9">
             <h4 class="heading">L'équipe</h4>
-            <p>L’équipe se compose de 2 permanents, dont les bureaux se trouvent au 277 rue Saint Jacques 75005 Paris, au siège du SGEC. L’activité de l’équipe repose essentiellement sur :</p>
+
+            <p>L’équipe se compose de 2 permanents, dont les bureaux se trouvent au 277 rue Saint Jacques 75005 Paris,
+                au siège du SGEC. L’activité de l’équipe repose essentiellement sur :</p>
             <ul class="list-default">
                 <li>la recherche d’auteurs et de ressources</li>
-                <li>la médiatisation et scénarisation pédagogique de ces ressources pour les rendre compatibles avec du e-learning</li>
+                <li>la médiatisation et scénarisation pédagogique de ces ressources pour les rendre compatibles avec du
+                    e-learning
+                </li>
                 <li>la mise en ligne des ressources et l’administration de la plateforme</li>
                 <li>la relation avec les usagers via l’adresse de référence : contact.afadec@gmail.com</li>
             </ul>
-            <p>L’objectif de l’association est de développer l’offre de ressources d’accompagnement à la préparation aux concours d’enseignement, dans chaque discipline et sur un champ disciplinaire de plus en plus vaste. Le travail de l’association repose sur la collaboration avec un réseau d’enseignants aussi divers et étendu que possible. Les enseignants qui participent à ce projet viennent de la France entière et d’horizons divers : universités et instituts de formation catholiques ; universités publiques ; lycées privés ou publics. Ils sont tous spécialistes de leur discipline et titulaires des concours d’enseignement.</p>
+            <p>L’objectif de l’association est de développer l’offre de ressources d’accompagnement à la préparation aux
+                concours d’enseignement, dans chaque discipline et sur un champ disciplinaire de plus en plus vaste. Le
+                travail de l’association repose sur la collaboration avec un réseau d’enseignants aussi divers et étendu
+                que possible. Les enseignants qui participent à ce projet viennent de la France entière et d’horizons
+                divers : universités et instituts de formation catholiques ; universités publiques ; lycées privés ou
+                publics. Ils sont tous spécialistes de leur discipline et titulaires des concours d’enseignement.</p>
         </div>
         <div class="col-sm-3">
             <figure class="effect-sadie">
@@ -82,7 +108,8 @@
                     <li><a href="{{ path('concours') }}">Concours</a></li>
                     <li><a href="{{ path('faq') }}">FAQ</a></li>
                     <li><a href="{{ path('metierEnseignant') }}">Le métier d'enseignant</a></li>
-                    <li><a href="http://www.e-educmaster.com/data_AFADEC/2d_degre/accueil_CATHO.pdf">Comment s'inscrire ?</a></li>
+                    <li><a href="http://www.e-educmaster.com/data_AFADEC/2d_degre/accueil_CATHO.pdf">Comment s'inscrire
+                            ?</a></li>
                 </ul>
             </figure>
         </div>
@@ -93,11 +120,22 @@
     <div class="row">
         <div class="col-sm-12">
             <h4 class="heading">Mentions Légales</h4>
-            <p>L'AFADEC (Association de la Formation A Distance de l'Enseignement Catholique) administre cette plateforme, dont l'objectif est d'accompagner la préparation aux concours d’enseignement des étudiants inscrits dans les masters Enseignement, Éducation et Formation des universités et instituts catholiques.</p>
-            <p>Les informations recueillies (nom, prénom, discipline, adresse mail, numéro de téléphone, lieu d'inscription, année de Master) sont nécessaires pour votre inscription.</p>
+
+            <p>L'AFADEC (Association de la Formation A Distance de l'Enseignement Catholique) administre cette
+                plateforme, dont l'objectif est d'accompagner la préparation aux concours d’enseignement des étudiants
+                inscrits dans les masters Enseignement, Éducation et Formation des universités et instituts
+                catholiques.</p>
+
+            <p>Les informations recueillies (nom, prénom, discipline, adresse mail, numéro de téléphone, lieu
+                d'inscription, année de Master) sont nécessaires pour votre inscription.</p>
+
             <p>Elles font l'objet d'un traitement informatique et sont destinées au secrétariat de l'association.</p>
-            <p>En application des articles 39 et suivants de la loi du 6 janvier 1978 modifiée, vous bénéficiez d'un droit d'accès et de rectification aux informations qui vous concernent.</p>
-            <p>Si vous souhaitez exercer ce droit et obtenir communication des informations vous concernant, veuillez vous adresser à : <a href="mailTo:contact.afadec@gmail.com">contact.AFADEC@gmail.com</a></p>
+
+            <p>En application des articles 39 et suivants de la loi du 6 janvier 1978 modifiée, vous bénéficiez d'un
+                droit d'accès et de rectification aux informations qui vous concernent.</p>
+
+            <p>Si vous souhaitez exercer ce droit et obtenir communication des informations vous concernant, veuillez
+                vous adresser à : <a href="mailTo:contact.afadec@gmail.com">contact.AFADEC@gmail.com</a></p>
         </div>
     </div>
 </div>

@@ -27,7 +27,6 @@ class InscriptionController extends Controller
      */
     public function inscriptionAction (Request $request)
     {
-
         $form = $this->createFormBuilder()
             ->add('nom', TextType::class, array(
                 'label_attr' => array('class' => 'col-sm-4'),
@@ -141,7 +140,7 @@ class InscriptionController extends Controller
                 'label' => "Matière",
                 'label_attr' => array('class' => 'col-sm-4')
             ))
-            ->add('optionsDisc', ChoiceType::class, array(
+            /*->add('optionsDisc', ChoiceType::class, array(
                 'choices'  => array(
                     'Aucune' => '0',
                     'Anglais niveau B2 (gratuit)' => 'English',
@@ -149,7 +148,7 @@ class InscriptionController extends Controller
                 ),
                 'label' => "Options",
                 'label_attr' => array('class' => 'col-sm-4')
-            ))
+            ))*/
             ->add('submit', SubmitType::class, array(
                 'label' => 'Valider mon inscription',
                 'attr' => array('class' => 'btn btn-primary')
@@ -212,7 +211,7 @@ class InscriptionController extends Controller
                 $inscr->setRole($role);
                 $em->persist($inscr);
 
-                if($data['optionsDisc'] != '0'){
+                /*if($data['optionsDisc'] != '0'){
                     $disc = $em->getRepository('AppBundle:Discipline')->findOneBy(array('nom' => $data['optionsDisc']));
                     $inscrD = new Inscription_d();
                     $inscrD->setDiscipline($disc);
@@ -221,7 +220,7 @@ class InscriptionController extends Controller
                     $inscrD->setUser($user);
                     $em->persist($inscrD);
 
-                }
+                }*/
 
                 $em->flush();
 

@@ -772,10 +772,30 @@ label.alertMustBeSet{
     width: 100%;
 }
 
-/* MENTIONS L2GALES */
+/* Pages fixes */
+/*.icon-box-5{
+    margin: 0;
+}
+.icon-box-5::before {
+    top:120px;
+    height: calc(100% - 120px);
+}*/
 .cookiesIHM p, .cookiesIHM li{
     text-transform: none !important;
 }
+.studitBlueFC{
+    color: #006eb3;
+}
+.studitYellowFC{
+    color: #edfc94;;
+}
+.anchor100{
+    display: block;
+    position: relative;
+    top: -100px;
+    visibility: hidden;
+}
+
 
 /* MEDIA QUERIES */
 .logoAbsolute{
