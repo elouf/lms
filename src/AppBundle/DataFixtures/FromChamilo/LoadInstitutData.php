@@ -8,15 +8,12 @@ use Doctrine\Common\Persistence\ObjectManager;
 use AppBundle\Entity\Institut;
 use mysqli;
 
-class LoadInstitutData extends AbstractFixture implements OrderedFixtureInterface
+class LoadInstitutData extends ChamiloConnect implements OrderedFixtureInterface
 {
     public function load(ObjectManager $manager)
     {
-
-        $chamiloConnect = new ChamiloConnect();
-
         $queryInst = "SELECT * FROM _stdi_instituts ORDER by ID";
-        if ($resultInst = $chamiloConnect->getMysqli()->query($queryInst)) {
+        if ($resultInst = $this->getMysqli()->query($queryInst)) {
             while ($inst = $resultInst->fetch_object()) {
                 $oneInst = $this->createItem($manager,
                     $inst->nom,
@@ -27,7 +24,7 @@ class LoadInstitutData extends AbstractFixture implements OrderedFixtureInterfac
             $resultInst->close();
         }
 
-        $chamiloConnect->getMysqli()->close();
+        $this->getMysqli()->close();
         $manager->flush();
     }
 

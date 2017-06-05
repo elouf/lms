@@ -65,6 +65,7 @@ class Cours extends DocContainer
     /**
      * @var Discipline
      *
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @ORM\ManyToOne(targetEntity="Discipline")
      */
     private $discipline;

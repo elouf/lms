@@ -8,23 +8,20 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use AppBundle\Entity\Cours;
 
-class LoadCoursData extends AbstractFixture implements OrderedFixtureInterface
+class LoadCoursData extends ChamiloConnect implements OrderedFixtureInterface
 {
 
     public function load(ObjectManager $manager)
     {
-
-        $chamiloConnect = new ChamiloConnect();
-
         $queryDisc = "SELECT * FROM course_category ORDER by ID";
-        if ($resultDisc = $chamiloConnect->getMysqli()->query($queryDisc)) {
+        if ($resultDisc = $this->getMysqli()->query($queryDisc)) {
             while ($disc = $resultDisc->fetch_object()) {
 
                 $discRef = $this->getReference('disc_'.$disc->id);
 
                 $queryCours = "SELECT * FROM course WHERE category_code='".$disc->code."'";
 
-                if ($resultCourse = $chamiloConnect->getMysqli()->query($queryCours)) {
+                if ($resultCourse = $this->getMysqli()->query($queryCours)) {
                     while ($course = $resultCourse->fetch_object()) {
                         $cours = $this->createItem($manager,
                             $course->title,
@@ -53,7 +50,7 @@ class LoadCoursData extends AbstractFixture implements OrderedFixtureInterface
             $resultDisc->close();
         }
 
-        $chamiloConnect->getMysqli()->close();
+        $this->getMysqli()->close();
 
         $manager->flush();
     }

@@ -8,14 +8,12 @@ use Doctrine\Common\Persistence\ObjectManager;
 use AppBundle\Entity\Discipline;
 use mysqli;
 
-class LoadDisciplineData extends AbstractFixture implements OrderedFixtureInterface
+class LoadDisciplineData extends ChamiloConnect implements OrderedFixtureInterface
 {
     public function load(ObjectManager $manager)
     {
-        $chamiloConnect = new ChamiloConnect();
-
         $queryDisc = "SELECT * FROM course_category ORDER by ID";
-        if ($resultDisc = $chamiloConnect->getMysqli()->query($queryDisc)) {
+        if ($resultDisc = $this->getMysqli()->query($queryDisc)) {
             while ($disc = $resultDisc->fetch_object()) {
                 $oneDisc = $this->createItem($manager,
                     explode('_', $disc->name)[0],
@@ -27,7 +25,7 @@ class LoadDisciplineData extends AbstractFixture implements OrderedFixtureInterf
             $resultDisc->close();
         }
 
-        $chamiloConnect->getMysqli()->close();
+        $this->getMysqli()->close();
         $manager->flush();
     }
 
