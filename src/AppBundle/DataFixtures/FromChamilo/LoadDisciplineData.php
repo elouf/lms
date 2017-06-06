@@ -8,7 +8,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use AppBundle\Entity\Discipline;
 use mysqli;
 
-class LoadDisciplineData extends ChamiloConnect implements OrderedFixtureInterface
+class LoadDisciplineData extends LoadChamiloConnect implements OrderedFixtureInterface
 {
     public function load(ObjectManager $manager)
     {

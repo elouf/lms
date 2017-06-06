@@ -18,7 +18,7 @@ class LoadCohorteData extends AbstractFixture implements OrderedFixtureInterface
         $coh = $this->createItem($manager, 'Documentation');
         $coh = $this->createItem($manager, 'EcoGest');
         $coh = $this->createItem($manager, 'EducMusChantChoral');
-        $coh = $this->createItem($manager, 'EMCCFOADM1');
+        $coh = $this->createItem($manager, 'EMCC');
         $coh = $this->createItem($manager, 'Espagnol');
         $coh = $this->createItem($manager, 'HG');
         $coh = $this->createItem($manager, 'Lettres');

@@ -2,13 +2,14 @@
 
 namespace AppBundle\DataFixtures\Common;
 
+use AppBundle\DataFixtures\FromChamilo\LoadChamiloConnect;
 use AppBundle\Entity\Institut;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use AppBundle\Entity\User;
 
-class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
+class LoadUserData extends LoadChamiloConnect implements OrderedFixtureInterface
 {
 
     public function load(ObjectManager $manager)

@@ -8,7 +8,7 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use AppBundle\Entity\Cours;
 
-class LoadCoursData extends ChamiloConnect implements OrderedFixtureInterface
+class LoadCoursData extends LoadChamiloConnect implements OrderedFixtureInterface
 {
 
     public function load(ObjectManager $manager)

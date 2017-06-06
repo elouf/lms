@@ -9,7 +9,7 @@ use mysqli;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class ChamiloConnect extends AbstractFixture implements FixtureInterface, ContainerAwareInterface
+class LoadChamiloConnect extends AbstractFixture implements FixtureInterface, ContainerAwareInterface
 {
     protected $host;
     protected $user;
