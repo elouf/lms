@@ -24,11 +24,6 @@ class ChamiloConnect extends AbstractFixture implements FixtureInterface, Contai
 
     protected $connect;
 
-    public function __construct()
-    {
-
-    }
-
     public function getMysqli()
     {
         return $this->mysqli;
@@ -43,6 +38,7 @@ class ChamiloConnect extends AbstractFixture implements FixtureInterface, Contai
         $this->password = $this->container->getParameter('distant_password');
         $this->connect = mysqli_connect($this->host, $this->user, $this->password, $this->database) or die("Couldn't connect to the destination database!");
         $this->mysqli = new mysqli($this->host, $this->user, $this->password, $this->database);
+        $this->mysqli->set_charset("utf8");
 
         /* Vérification de la connexion */
         if (mysqli_connect_errno()) {

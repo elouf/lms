@@ -88,7 +88,7 @@ class InscriptionController extends Controller
             ->add('matiereEtu', ChoiceType::class, array(
                 'choices'  => array(
                     'Anglais' => 'Anglais',
-                    'EMCCFOADM1' => 'EMCCFOADM1',
+                    'EMCC' => 'EMCC',
                     'Espagnol' => 'Espagnol',
                     'Histoire-Géographie' => 'HG',
                     'Lettres modernes' => 'Lettres',
@@ -108,7 +108,7 @@ class InscriptionController extends Controller
                     'Documentation' => 'Documentation',
                     'Economie et gestion' => 'EcoGest',
                     'Education musicale et chant choral' => 'EducMusChantChoral',
-                    'EMCCFOADM1' => 'EMCCFOADM1',
+                    'EMCC' => 'EMCC',
                     'Espagnol' => 'Espagnol',
                     'Histoire-Géographie' => 'HG',
                     'Lettres modernes' => 'Lettres',
