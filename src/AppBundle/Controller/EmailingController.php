@@ -55,4 +55,35 @@ class EmailingController extends Controller
         return new JsonResponse('This is not ajax!', 400);
     }
 
+    /**
+     * @Route("/emailingSendAdminMail_ajax", name="emailingSendAdminMail_ajax")
+     */
+    public function emailingSendAdminMailAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+            $objet = $request->request->get('sujet');
+            $message = $request->request->get('message');
+            $email = $request->request->get('email');
+            $nom = $request->request->get('nom');
+
+            $message = \Swift_Message::newInstance()
+                ->setSubject("Message Plateforme : ".$objet)
+                ->setFrom($email)
+                ->setCC('contact.afadec@gmail.com')
+                ->setBody(
+                    "De : ".$nom." (".$email.")<br>".
+                    $message,
+                    'text/html'
+                )
+            ;
+            $this->get('mailer')->send($message);
+
+            $em->flush();
+
+            return new JsonResponse(array('action' =>'Send mail'));
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
 }
