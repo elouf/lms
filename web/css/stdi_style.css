@@ -795,6 +795,9 @@ label.alertMustBeSet{
     top: -100px;
     visibility: hidden;
 }
+ul.list-default>li.studitWhiteFC:before{
+    color: #fff;
+}
 
 
 /* MEDIA QUERIES */
