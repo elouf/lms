@@ -804,6 +804,10 @@ ul.list-default>li.studitWhiteFC:before{
 .champError{
     box-shadow: 1px 1px 2px 2px rgba(198, 16, 0, 0.5) inset;
 }
+.studitParalax70>.container{
+    margin-left: 20px;
+    width: 70%;
+}
 
 
 /* MEDIA QUERIES */
