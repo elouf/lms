@@ -12,7 +12,7 @@ class LoadDisciplineData extends LoadChamiloConnect implements OrderedFixtureInt
 {
     public function load(ObjectManager $manager)
     {
-        $queryDisc = "SELECT * FROM course_category ORDER by ID";
+        $queryDisc = "SELECT * FROM course_category WHERE keepForStudit='1' ORDER by ID";
         if ($resultDisc = $this->getMysqli()->query($queryDisc)) {
             while ($disc = $resultDisc->fetch_object()) {
                 $oneDisc = $this->createItem($manager,

@@ -8,22 +8,24 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use AppBundle\Entity\Cours;
 
-class LoadCoursData extends LoadChamiloConnect implements OrderedFixtureInterface
+class LoadRessourcesData extends LoadChamiloConnect implements OrderedFixtureInterface
 {
 
     public function load(ObjectManager $manager)
     {
-        $queryDisc = "SELECT * FROM course_category ORDER by ID";
+        $queryDisc = "SELECT * FROM course_category WHERE keepForStudit='1' ORDER by ID";
         if ($resultDisc = $this->getMysqli()->query($queryDisc)) {
             while ($disc = $resultDisc->fetch_object()) {
+                $oneDisc = $this->createDisc($manager,
+                    explode('_', $disc->name)[0],
+                    'La discipline '.explode('_', $disc->name)[0],
+                    'disciplines/'.explode('_', $disc->name)[1].'.png');
 
-                $discRef = $this->getReference('disc_'.$disc->id);
-
-                $queryCours = "SELECT * FROM course WHERE category_code='".$disc->code."'";
+                $queryCours = "SELECT * FROM course WHERE category_code='".$disc->code."' AND keepForStudit='1'";
 
                 if ($resultCourse = $this->getMysqli()->query($queryCours)) {
                     while ($course = $resultCourse->fetch_object()) {
-                        $cours = $this->createItem($manager,
+                        $cours = $this->createCours($manager,
                             $course->title,
                             'Cours de '.$course->title,
                             '<p>Vous disposez ici de ressources d\'entraînement aux écrits du concours, sous différentes formes de
@@ -37,10 +39,9 @@ class LoadCoursData extends LoadChamiloConnect implements OrderedFixtureInterfac
                             plus difficiles, vous disposez aussi d\'indices aidant à la résolution, si besoin. Attention: Les formats
                             des sujets ont changé, les annales permettent de s\'entraîner surtout à l\'épreuve 1 "Résolution de
                             problème". Tenez en compte dans vos révisions. Bonne découverte !</p>',
-                            'disciplines/disc_maths.png',
-                            $discRef,
+                            'cours/'.$course->imgFilePath,
+                            $oneDisc,
                             0);
-                        $this->addReference('cours_'.$course->id, $cours);
 
                     }
                 }
@@ -55,7 +56,7 @@ class LoadCoursData extends LoadChamiloConnect implements OrderedFixtureInterfac
         $manager->flush();
     }
 
-    public function createItem(ObjectManager $manager, $nom, $descr, $accueil, $imgFilePath, Discipline $disc, $cout){
+    public function createCours(ObjectManager $manager, $nom, $descr, $accueil, $imgFilePath, Discipline $disc, $cout){
         $item = new Cours();
         $item->setNom($nom);
         $item->setDescription($descr);
@@ -63,6 +64,15 @@ class LoadCoursData extends LoadChamiloConnect implements OrderedFixtureInterfac
         $item->setImgFilePath($imgFilePath);
         $item->setCout($cout);
         $item->setDiscipline($disc);
+        $manager->persist($item);
+        return $item;
+    }
+
+    public function createDisc(ObjectManager $manager, $nom, $descr, $imgFilePath){
+        $item = new Discipline();
+        $item->setNom($nom);
+        $item->setDescription($descr);
+        $item->setImgFilePath($imgFilePath);
         $manager->persist($item);
         return $item;
     }

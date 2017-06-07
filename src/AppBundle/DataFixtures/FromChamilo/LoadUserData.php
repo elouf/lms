@@ -2,20 +2,30 @@
 
 namespace AppBundle\DataFixtures\Common;
 
-use AppBundle\DataFixtures\FromChamilo\LoadChamiloConnect;
-use AppBundle\Entity\Institut;
-use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
+use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use AppBundle\Entity\User;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class LoadUserData extends LoadChamiloConnect implements OrderedFixtureInterface
+class LoadUserData extends AbstractFixture implements FixtureInterface, ContainerAwareInterface
 {
+
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
+
+    public function setContainer(ContainerInterface $container = null)
+    {
+        $this->container = $container;
+    }
 
     public function load(ObjectManager $manager)
     {
         $this->createItem($manager,
-            'jeSuisAfadec2017',
+            $this->container->getParameter('admin_password_init'),
             'Admin',
             'AFADEC',
             'contact.afadec@gmail.com',
