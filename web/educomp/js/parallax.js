@@ -39,7 +39,6 @@
 
   function Parallax(element, options) {
     var self = this;
-
     if (typeof options == 'object') {
       delete options.refresh;
       delete options.render;
@@ -51,7 +50,6 @@
     if (!this.imageSrc && this.$element.is('img')) {
       this.imageSrc = this.$element.attr('src');
     }
-
     var positions = (this.position + '').toLowerCase().match(/\S+/g) || [];
 
     if (positions.length < 1) {
