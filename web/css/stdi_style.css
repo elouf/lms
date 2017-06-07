@@ -780,6 +780,9 @@ label.alertMustBeSet{
     top:120px;
     height: calc(100% - 120px);
 }*/
+.breadcrumb{
+    background-color: rgba(112, 112, 112, .7);
+}
 .cookiesIHM p, .cookiesIHM li{
     text-transform: none !important;
 }
