@@ -3,19 +3,27 @@
 namespace AppBundle\DataFixtures\FromChamilo;
 
 use AppBundle\Entity\Discipline;
+use AppBundle\Entity\Lien;
+use AppBundle\Entity\Section;
+use AppBundle\Entity\ZoneRessource;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use AppBundle\Entity\Cours;
+use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 class LoadRessourcesData extends LoadChamiloConnect implements OrderedFixtureInterface
 {
 
     public function load(ObjectManager $manager)
     {
-
-        if (file_exists('http://www.e-educmaster.com/chamilo/stdi/xml/donnees.xml')) {
-            $xml = simplexml_load_file('http://www.e-educmaster.com/chamilo/stdi/xml/donnees.xml');
+        $donneesXMLfile = '/Users/stdi/Desktop/donnees.xml';
+        $output = new ConsoleOutput();
+        $progress = new ProgressBar($output, 50);
+        $progress->start();
+        if (file_exists($donneesXMLfile)) {
+            $xml = simplexml_load_file($donneesXMLfile);
             $queryDisc = "SELECT * FROM course_category WHERE keepForStudit='1' ORDER by ID";
             if ($resultDisc = $this->getMysqli()->query($queryDisc)) {
                 while ($disc = $resultDisc->fetch_object()) {
@@ -48,80 +56,60 @@ class LoadRessourcesData extends LoadChamiloConnect implements OrderedFixtureInt
 
                             foreach ($xml->children() as $xmlC) {
                                 if ($xmlC['id'] == $course->id) {
+                                    $numSection = 0;
                                     foreach ($xmlC->children() as $rub) {
-                                        //$rub['nom']
+                                        $section = $this->createSection($manager, $rub['nom'], $cours, $numSection);
+                                        $numSection++;
+                                        $numRess = 0;
+
                                         foreach ($rub->children() as $col) {
+
                                             foreach ($col->children() as $elem) {
+                                                $progress->advance();
                                                 if ($elem->type == 'devoirs') {
 
                                                 } elseif ($elem->type == 'Lien') {
-                                                    echo '<tr data-idElem="' . $elem->id . '" data-type="lien">';
-                                                    echo '<td>Lien</td>';
-                                                    $queryLink = "SELECT * FROM c_link WHERE c_id='" . $course->id . "'
-                                                    AND id='" . $elem->id . "'";
+                                                    $queryLink = "SELECT * FROM c_link WHERE c_id='" . $course->id . "' AND id='" . $elem->id . "'";
+
                                                     if ($resultLink = $this->getMysqli()->query($queryLink)) {
                                                         $link = $resultLink->fetch_object();
-                                                        //$link->url   $link->title
+                                                        if($link->enabled){
+                                                            $lien = $this->createLien($manager, $link->title, "", $cours, $link->url, $this->getReference('typelien_http'));
+                                                            $zone = $this->createZone($manager, $section, $lien, $link->studitVisible == 1, "", $numRess);
 
-                                                        if ($link->enabled == 0) {
-                                                            echo '<td><div class="btn btnActivate">Garder</div></td>';
-                                                        } else {
-                                                            echo '<td><div class="btn btnDelete">Supprimer</div></td>';
-                                                        }
-                                                        if ($link->studitVisible == 0) {
-                                                            echo '<td><div class="btn btnDisplay">Afficher</div></td>';
-                                                        } else {
-                                                            echo '<td><div class="btn btnHide">Masquer</div></td>';
+                                                            $numRess++;
                                                         }
                                                         $resultLink->close();
                                                     }
 
-                                                } elseif ($elem->type == 'parcours') {
-                                                    echo '<tr data-idElem="' . $elem->id . '" data-type="parcours">';
-                                                    echo '<td>Parcours</td>';
-                                                    $queryParc = "SELECT * FROM c_lp WHERE c_id='" . $course->id . "' AND id='" . $elem->id . "'";
+                                                } /*elseif ($elem->type == 'parcours') {
+                                                    $queryParc = "SELECT * FROM c_lp WHERE c_id='" . $course->id . "' AND id='" . $elem->id . "'  AND enabled='1'";
                                                     if ($resultParc = $this->getMysqli()->query($queryParc)) {
                                                         $parc = $resultParc->fetch_object();
-
-                                                        echo '<td><p>' . $parc->name . '</p>';
+                                                        // $parc->name   $parc->studitVisible
 
                                                         $queryParcItem = "SELECT * FROM c_lp_item WHERE c_id='" . $course->id . "' AND lp_id='" . $parc->id . "'";
 
                                                         if ($resultParcItem = $this->getMysqli()->query($queryParcItem)) {
-                                                            echo '<ul>';
                                                             while ($pItem = $resultParcItem->fetch_object()) {
                                                                 $queryLink = "SELECT * FROM c_link WHERE id='" . $pItem->path . "' AND c_id='" . $course->id . "'";
 
                                                                 if ($resultLink = $this->getMysqli()->query($queryLink)) {
                                                                     $link = $resultLink->fetch_object();
-                                                                    echo '<li><a target="_blank" href="' . $link->url . '">' . $pItem->title . '</a></li>';
+                                                                    // $link->url    $link->title
                                                                 } else {
-                                                                    echo '<li>' . $pItem->title . '</li>';
+                                                                    // $pItem->title
                                                                 }
                                                             }
                                                             echo '</ul>';
                                                             $resultParcItem->close();
                                                         }
-                                                        echo '</td>';
-
-                                                        if ($parc->enabled == 0) {
-                                                            echo '<td><div class="btn btnActivate">Garder</div></td>';
-                                                        } else {
-                                                            echo '<td><div class="btn btnDelete">Supprimer</div></td>';
-                                                        }
-                                                        if ($parc->studitVisible == 0) {
-                                                            echo '<td><div class="btn btnDisplay">Afficher</div></td>';
-                                                        } else {
-                                                            echo '<td><div class="btn btnHide">Masquer</div></td>';
-                                                        }
                                                         $resultParc->close();
                                                     }
-                                                }
-                                                echo '</tr>';
+                                                    $numRess++;
+                                                }*/
                                             }
                                         }
-
-                                        echo '</table></div></div>';
                                     }
 
                                 }
@@ -136,9 +124,9 @@ class LoadRessourcesData extends LoadChamiloConnect implements OrderedFixtureInt
                 $resultDisc->close();
             }
         } else {
-
+            echo "Fichier n'existe pas : ".$donneesXMLfile."\n";
         }
-
+        $progress->finish();
         $this->getMysqli()->close();
 
         $manager->flush();
@@ -167,6 +155,41 @@ class LoadRessourcesData extends LoadChamiloConnect implements OrderedFixtureInt
         return $item;
     }
 
+    public function createSection(ObjectManager $manager, $nom, $cours, $position){
+        $item = new Section();
+        $item->setNom($nom);
+        $item->setCours($cours);
+        $item->setIsVisible(true);
+        $item->setPictoFilePath('fa-pencil');
+        $item->setPosition($position);
+        $manager->persist($item);
+        return $item;
+    }
+
+    public function createLien(ObjectManager $manager, $nom, $description, $cours, $url, $typeLien){
+        $item = new Lien();
+        $item->setNom($nom);
+        $item->setCours($cours);
+        $item->setDescription($description);
+        $item->setUrl($url);
+        $item->setTypeLien($typeLien);
+        $manager->persist($item);
+        return $item;
+    }
+
+    public function createZone(ObjectManager $manager, $section, $ressource, $isVisible, $description, $position){
+        $item = new ZoneRessource();
+        $item->setSection($section);
+        if($ressource != null){
+            $item->setRessource($ressource);
+        }
+        $item->setIsVisible($isVisible);
+        $item->setPosition($position);
+        $item->setDescription($description);
+        $manager->persist($item);
+        return $item;
+    }
+
     /**
      * Get the order of this fixture
      *
@@ -176,6 +199,6 @@ class LoadRessourcesData extends LoadChamiloConnect implements OrderedFixtureInt
     {
         // the order in which fixtures will be loaded
         // the lower the number, the sooner that this fixture is loaded
-        return 2;
+        return 3;
     }
 }
