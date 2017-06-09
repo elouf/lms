@@ -141,6 +141,10 @@ class LoadRessourcesData extends LoadChamiloConnect implements OrderedFixtureInt
                                                 }
                                             }
                                         }
+
+                                        if($numRess == 0){
+                                            $section->setIsVisible(false);
+                                        }
                                     }
 
                                 }
@@ -195,13 +199,28 @@ class LoadRessourcesData extends LoadChamiloConnect implements OrderedFixtureInt
         return $item;
     }
 
+    function endswith($string, $test) {
+        $strlen = strlen($string);
+        $testlen = strlen($test);
+        if ($testlen > $strlen) return false;
+        return substr_compare($string, $test, $strlen - $testlen, $testlen) === 0;
+    }
+
     public function createLien(ObjectManager $manager, $nom, $description, $cours, $url, $typeLien){
         $item = new Lien();
         $item->setNom($nom);
         $item->setCours($cours);
         $item->setDescription($description);
         $item->setUrl($url);
-        $item->setTypeLien($typeLien);
+        if ($this->endswith($url, '_op/index.html') || $this->endswith($url, '_op') || $this->endswith($url, '_op/')) {
+            $item->setTypeLien($this->getReference('typelien_opale'));
+        }elseif($this->endswith($url, '_wbm/index.html') || $this->endswith($url, '_wbm') || $this->endswith($url, '_wbm/')){
+            $item->setTypeLien($this->getReference('typelien_webmedia'));
+        }elseif($this->endswith($url, '.pdf')){
+            $item->setTypeLien($this->getReference('typelien_pdf'));
+        }else{
+            $item->setTypeLien($typeLien);
+        }
         $manager->persist($item);
         return $item;
     }
