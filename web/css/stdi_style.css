@@ -808,8 +808,12 @@ ul.list-default>li.studitWhiteFC:before{
     margin-left: 20px;
     width: 65%;
 }
+.studitParalax55>.container{
+    margin-left: 43%;
+    width: 55%;
+}
 .studitParalaxOpa50>.container{
-    background: rgba(0, 0, 0, .5);
+    background: rgba(0, 0, 0, .4);
 }
 
 /* MEDIA QUERIES */
