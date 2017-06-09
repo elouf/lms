@@ -101,27 +101,31 @@ class LoadRessourcesData extends LoadChamiloConnect implements OrderedFixtureInt
                                                     }
 
                                                 } /*elseif ($elem->type == 'parcours') {
-                                                    $queryParc = "SELECT * FROM c_lp WHERE c_id='" . $course->id . "' AND id='" . $elem->id . "'  AND enabled='1'";
+                                                    $queryParc = "SELECT * FROM c_lp WHERE c_id='" . $course->id . "' AND id='" . $elem->id . "'";
                                                     if ($resultParc = $this->getMysqli()->query($queryParc)) {
                                                         $parc = $resultParc->fetch_object();
                                                         // $parc->name   $parc->studitVisible
 
-                                                        $queryParcItem = "SELECT * FROM c_lp_item WHERE c_id='" . $course->id . "' AND lp_id='" . $parc->id . "'";
+                                                        if($parc->enabled){
+                                                            $queryParcItem = "SELECT * FROM c_lp_item WHERE c_id='" . $course->id . "' AND lp_id='" . $parc->id . "'";
 
-                                                        if ($resultParcItem = $this->getMysqli()->query($queryParcItem)) {
-                                                            while ($pItem = $resultParcItem->fetch_object()) {
-                                                                $queryLink = "SELECT * FROM c_link WHERE id='" . $pItem->path . "' AND c_id='" . $course->id . "'";
+                                                            if ($resultParcItem = $this->getMysqli()->query($queryParcItem)) {
+                                                                while ($pItem = $resultParcItem->fetch_object()) {
+                                                                    $queryLink = "SELECT * FROM c_link WHERE id='" . $pItem->path . "' AND c_id='" . $course->id . "'";
 
-                                                                if ($resultLink = $this->getMysqli()->query($queryLink)) {
-                                                                    $link = $resultLink->fetch_object();
-                                                                    // $link->url    $link->title
-                                                                } else {
-                                                                    // $pItem->title
+                                                                    if ($resultLink = $this->getMysqli()->query($queryLink)) {
+                                                                        $link = $resultLink->fetch_object();
+                                                                        // $link->url    $link->title
+                                                                    } else {
+                                                                        // $pItem->title
+                                                                    }
                                                                 }
+                                                                echo '</ul>';
+                                                                $resultParcItem->close();
                                                             }
-                                                            echo '</ul>';
-                                                            $resultParcItem->close();
                                                         }
+
+
                                                         $resultParc->close();
                                                     }
                                                     $numRess++;
