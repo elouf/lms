@@ -19,10 +19,15 @@ class LoadRessourcesData extends LoadChamiloConnect implements OrderedFixtureInt
     public function load(ObjectManager $manager)
     {
         $donneesXMLfile = 'http://www.e-educmaster.com/chamilo/stdi/xml/donnees.xml';
+        $file_headers = @get_headers($donneesXMLfile);
         $output = new ConsoleOutput();
         $progress = new ProgressBar($output, 50);
         $progress->start();
-        if (file_exists($donneesXMLfile)) {
+        if($file_headers[0] == 'HTTP/1.0 404 Not Found'){
+            echo "The file $donneesXMLfile does not exist\n";
+        } else if ($file_headers[0] == 'HTTP/1.0 302 Found' && $file_headers[7] == 'HTTP/1.0 404 Not Found'){
+            echo "The file $donneesXMLfile does not exist, and I got redirected to a custom 404 page..\n";
+        } else {
             $xml = simplexml_load_file($donneesXMLfile);
             $queryDisc = "SELECT * FROM course_category WHERE keepForStudit='1' ORDER by ID";
             if ($resultDisc = $this->getMysqli()->query($queryDisc)) {
@@ -129,8 +134,6 @@ class LoadRessourcesData extends LoadChamiloConnect implements OrderedFixtureInt
 
                 $resultDisc->close();
             }
-        } else {
-            echo "Fichier n'existe pas : ".$donneesXMLfile."\n";
         }
         $progress->finish();
         $this->getMysqli()->close();
