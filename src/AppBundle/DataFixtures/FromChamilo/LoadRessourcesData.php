@@ -18,7 +18,7 @@ class LoadRessourcesData extends LoadChamiloConnect implements OrderedFixtureInt
 
     public function load(ObjectManager $manager)
     {
-        $donneesXMLfile = '/Users/stdi/Desktop/donnees.xml';
+        $donneesXMLfile = 'http://www.e-educmaster.com/chamilo/stdi/xml/donnees.xml';
         $output = new ConsoleOutput();
         $progress = new ProgressBar($output, 50);
         $progress->start();
