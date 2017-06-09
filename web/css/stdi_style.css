@@ -808,7 +808,9 @@ ul.list-default>li.studitWhiteFC:before{
     margin-left: 20px;
     width: 70%;
 }
-
+.studitParalaxOpa50>.container{
+    background: rgba(0, 0, 0, .5);
+}
 
 /* MEDIA QUERIES */
 .logoAbsolute{

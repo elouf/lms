@@ -36,9 +36,15 @@ class LoadRessourcesData extends LoadChamiloConnect implements OrderedFixtureInt
 
                     if ($resultCourse = $this->getMysqli()->query($queryCours)) {
                         while ($course = $resultCourse->fetch_object()) {
+                            $courseTitle = $course->title;
+
+                            if($course->studitNewName != ''){
+                                $courseTitle = $course->studitNewName;
+                            }
+
                             $cours = $this->createCours($manager,
-                                $course->title,
-                                'Cours de ' . $course->title,
+                                $courseTitle,
+                                '',
                                 '<p>Vous disposez ici de ressources d\'entraînement aux écrits du concours, sous différentes formes de
                                 difficulté progressive pour vous aider à travailler en autonomie :</p>
                             <ul class="list-default">
