@@ -32,8 +32,15 @@ class LoadRessourcesData extends LoadChamiloConnect implements OrderedFixtureInt
             $queryDisc = "SELECT * FROM course_category WHERE keepForStudit='1' ORDER by ID";
             if ($resultDisc = $this->getMysqli()->query($queryDisc)) {
                 while ($disc = $resultDisc->fetch_object()) {
+
+                    $discName = explode('_', $disc->name)[0];
+
+                    if($disc->studitNewName != ''){
+                        $discName = $disc->studitNewName;
+                    }
+
                     $oneDisc = $this->createDisc($manager,
-                        explode('_', $disc->name)[0],
+                        $discName,
                         'La discipline ' . explode('_', $disc->name)[0],
                         'disciplines/' . explode('_', $disc->name)[1] . '.png');
 
