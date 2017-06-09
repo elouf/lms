@@ -2,7 +2,9 @@
 
 namespace AppBundle\DataFixtures\FromChamilo;
 
+use AppBundle\Entity\AssocGroupeLiens;
 use AppBundle\Entity\Discipline;
+use AppBundle\Entity\GroupeLiens;
 use AppBundle\Entity\Lien;
 use AppBundle\Entity\Section;
 use AppBundle\Entity\ZoneRessource;
@@ -32,7 +34,6 @@ class LoadRessourcesData extends LoadChamiloConnect implements OrderedFixtureInt
             $queryDisc = "SELECT * FROM course_category WHERE keepForStudit='1' ORDER by ID";
             if ($resultDisc = $this->getMysqli()->query($queryDisc)) {
                 while ($disc = $resultDisc->fetch_object()) {
-
                     $discName = explode('_', $disc->name)[0];
 
                     if($disc->studitNewName != ''){
@@ -43,7 +44,6 @@ class LoadRessourcesData extends LoadChamiloConnect implements OrderedFixtureInt
                         $discName,
                         'La discipline ' . explode('_', $disc->name)[0],
                         'disciplines/' . explode('_', $disc->name)[1] . '.png');
-
                     $queryCours = "SELECT * FROM course WHERE category_code='" . $disc->code . "' AND keepForStudit='1'";
 
                     if ($resultCourse = $this->getMysqli()->query($queryCours)) {
@@ -71,7 +71,6 @@ class LoadRessourcesData extends LoadChamiloConnect implements OrderedFixtureInt
                                 'cours/' . $course->imgFilePath,
                                 $oneDisc,
                                 0);
-
                             foreach ($xml->children() as $xmlC) {
                                 if ($xmlC['id'] == $course->id) {
                                     $numSection = 0;
@@ -90,46 +89,56 @@ class LoadRessourcesData extends LoadChamiloConnect implements OrderedFixtureInt
                                                     $queryLink = "SELECT * FROM c_link WHERE c_id='" . $course->id . "' AND id='" . $elem->id . "'";
 
                                                     if ($resultLink = $this->getMysqli()->query($queryLink)) {
-                                                        $link = $resultLink->fetch_object();
-                                                        if($link->enabled){
-                                                            $lien = $this->createLien($manager, $link->title, "", $cours, $link->url, $this->getReference('typelien_http'));
-                                                            $zone = $this->createZone($manager, $section, $lien, $link->studitVisible == 1, "", $numRess);
+                                                        if($resultLink->num_rows){
+                                                            $link = $resultLink->fetch_object();
+                                                            if($link->enabled){
+                                                                $lien = $this->createLien($manager, $link->title, "", $cours, $link->url, $this->getReference('typelien_http'));
+                                                                $zone = $this->createZone($manager, $section, $lien, $link->studitVisible == 1, "", $numRess);
 
-                                                            $numRess++;
+                                                                $numRess++;
+                                                            }
                                                         }
+
                                                         $resultLink->close();
                                                     }
 
-                                                } /*elseif ($elem->type == 'parcours') {
+                                                } elseif ($elem->type == 'parcours') {
                                                     $queryParc = "SELECT * FROM c_lp WHERE c_id='" . $course->id . "' AND id='" . $elem->id . "'";
                                                     if ($resultParc = $this->getMysqli()->query($queryParc)) {
                                                         $parc = $resultParc->fetch_object();
-                                                        // $parc->name   $parc->studitVisible
 
                                                         if($parc->enabled){
                                                             $queryParcItem = "SELECT * FROM c_lp_item WHERE c_id='" . $course->id . "' AND lp_id='" . $parc->id . "'";
 
                                                             if ($resultParcItem = $this->getMysqli()->query($queryParcItem)) {
+
+                                                                $groupe = $this->createGroupe($manager, $parc->name, '', $cours);
+                                                                $zone = $this->createZone($manager, $section, $groupe, $parc->studitVisible == 1, "", $numRess);
+
+                                                                $numRess++;
+                                                                $posLink = 0;
                                                                 while ($pItem = $resultParcItem->fetch_object()) {
                                                                     $queryLink = "SELECT * FROM c_link WHERE id='" . $pItem->path . "' AND c_id='" . $course->id . "'";
 
                                                                     if ($resultLink = $this->getMysqli()->query($queryLink)) {
-                                                                        $link = $resultLink->fetch_object();
-                                                                        // $link->url    $link->title
+                                                                        if($resultLink->num_rows){
+                                                                            $link = $resultLink->fetch_object();
+                                                                            $lien = $this->createLien($manager, $link->title, "", $cours, $link->url, $this->getReference('typelien_http'));
+                                                                            $assoc = $this->createAssocGroupeLien($manager, $lien, $groupe, $link->title, $this->getReference('categorielien_intitule'), $posLink);
+                                                                            $posLink++;
+                                                                        }
                                                                     } else {
+                                                                        //echo "--------PasLink (" . $pItem->title . " ".$course->title.")\n";
                                                                         // $pItem->title
                                                                     }
                                                                 }
-                                                                echo '</ul>';
                                                                 $resultParcItem->close();
                                                             }
                                                         }
-
-
                                                         $resultParc->close();
                                                     }
                                                     $numRess++;
-                                                }*/
+                                                }
                                             }
                                         }
                                     }
@@ -193,6 +202,26 @@ class LoadRessourcesData extends LoadChamiloConnect implements OrderedFixtureInt
         $item->setDescription($description);
         $item->setUrl($url);
         $item->setTypeLien($typeLien);
+        $manager->persist($item);
+        return $item;
+    }
+
+    public function createGroupe(ObjectManager $manager, $nom, $description, $cours){
+        $item = new GroupeLiens();
+        $item->setNom($nom);
+        $item->setCours($cours);
+        $item->setDescription($description);
+        $manager->persist($item);
+        return $item;
+    }
+
+    public function createAssocGroupeLien(ObjectManager $manager, $lien, $groupe, $nom, $categorieLien, $position){
+        $item = new AssocGroupeLiens();
+        $item->setLien($lien);
+        $item->setGroupe($groupe);
+        $item->setNom($nom);
+        $item->setCategorieLien($categorieLien);
+        $item->setPosition($position);
         $manager->persist($item);
         return $item;
     }
