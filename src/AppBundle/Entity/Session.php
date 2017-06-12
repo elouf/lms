@@ -21,13 +21,6 @@ class Session extends Evenement
     protected $messageAlerte;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="imgFilePath", type="text", nullable=true)
-     */
-    private $imgFilePath;
-
-    /**
      * @var \DateTime
      *
      * @ORM\Column(name="dateDebutAlerte", type="datetime", nullable=true)
@@ -63,30 +56,6 @@ class Session extends Evenement
     public function getMessageAlerte()
     {
         return $this->messageAlerte;
-    }
-
-    /**
-     * Set imgFilePath
-     *
-     * @param string $imgFilePath
-     *
-     * @return Session
-     */
-    public function setImgFilePath($imgFilePath)
-    {
-        $this->imgFilePath = $imgFilePath;
-
-        return $this;
-    }
-
-    /**
-     * Get imgFilePath
-     *
-     * @return string
-     */
-    public function getImgFilePath()
-    {
-        return $this->imgFilePath;
     }
 
     /**

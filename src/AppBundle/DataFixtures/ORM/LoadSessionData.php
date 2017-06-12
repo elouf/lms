@@ -24,18 +24,6 @@ class LoadSessionData extends AbstractFixture implements OrderedFixtureInterface
         $dateFAl->setDate(2017, 5, 15);
         $session = $this->createItem($manager,
             'Session estivale 2017',
-            '<p>Vous disposez ici de ressources d\'entraînement aux écrits du concours, sous différentes formes de
-                difficulté progressive pour vous aider à travailler en autonomie :</p>
-            <ul class="list-default">
-                <li>Des exercices de mise en route</li>
-                <li>Des exercices niveau Concours</li>
-                <li>Des sujets format concours</li>
-            </ul>
-            <p>Tous les exercices et sujets disposent bien sûr de leur corrigé, écrit ou vidéo. Pour certains exercices
-            plus difficiles, vous disposez aussi d\'indices aidant à la résolution, si besoin. Attention: Les formats
-            des sujets ont changé, les annales permettent de s\'entraîner surtout à l\'épreuve 1 "Résolution de
-            problème". Tenez en compte dans vos révisions. Bonne découverte !</p>',
-            'disciplines/disc_maths.png',
             $dateD,
             $dateF,
             $dateDAl,
@@ -54,18 +42,6 @@ class LoadSessionData extends AbstractFixture implements OrderedFixtureInterface
         $dateFAl->setDate(2017, 9, 15);
         $session = $this->createItem($manager,
             'Session automnale 2017',
-            '<p>Vous disposez ici de ressources d\'entraînement aux écrits du concours, sous différentes formes de
-                difficulté progressive pour vous aider à travailler en autonomie :</p>
-            <ul class="list-default">
-                <li>Des exercices de mise en route</li>
-                <li>Des exercices niveau Concours</li>
-                <li>Des sujets format concours</li>
-            </ul>
-            <p>Tous les exercices et sujets disposent bien sûr de leur corrigé, écrit ou vidéo. Pour certains exercices
-            plus difficiles, vous disposez aussi d\'indices aidant à la résolution, si besoin. Attention: Les formats
-            des sujets ont changé, les annales permettent de s\'entraîner surtout à l\'épreuve 1 "Résolution de
-            problème". Tenez en compte dans vos révisions. Bonne découverte !</p>',
-            'disciplines/disc_maths.png',
             $dateD,
             $dateF,
             $dateDAl,
@@ -77,12 +53,10 @@ class LoadSessionData extends AbstractFixture implements OrderedFixtureInterface
         $manager->flush();
     }
 
-    public function createItem(ObjectManager $manager, $nom, $descr, $imgFilePath,
+    public function createItem(ObjectManager $manager, $nom,
                                $dateD, $dateF, $dateDAl, $dateFAl, $messageAl){
         $item = new Session();
         $item->setNom($nom);
-        $item->setDescription($descr);
-        $item->setImgFilePath($imgFilePath);
         $item->setDateDebut($dateD);
         $item->setDateFin($dateF);
         $item->setDateDebutAlerte($dateDAl);

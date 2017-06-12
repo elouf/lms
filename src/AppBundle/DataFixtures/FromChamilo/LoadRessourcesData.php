@@ -71,6 +71,9 @@ class LoadRessourcesData extends LoadChamiloConnect implements OrderedFixtureInt
                                 'cours/' . $course->imgFilePath,
                                 $oneDisc,
                                 0);
+                            if(strpos($cours->getNom(), "session estivale")){
+
+                            }
                             foreach ($xml->children() as $xmlC) {
                                 if ($xmlC['id'] == $course->id) {
                                     $numSection = 0;

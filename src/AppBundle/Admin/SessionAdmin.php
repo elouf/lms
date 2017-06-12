@@ -15,10 +15,9 @@ class SessionAdmin extends AbstractAdmin
         $formMapper
             ->with('Informations', array('class' => 'col-md-6'))
                 ->add('nom', 'text')
-                ->add('description', CKEditorType::class, array(
+                /*->add('description', CKEditorType::class, array(
                     'config_name' => 'my_simple_config'
-                ))
-                ->add('imgFilePath', 'text')
+                ))*/
                 ->add('messageAlerte', CKEditorType::class, array(
                     'config_name' => 'my_simple_config'
                 ))
@@ -71,7 +70,6 @@ class SessionAdmin extends AbstractAdmin
         $listMapper
             ->addIdentifier('nom')
             ->add('messageAlerte')
-            ->add('imgFilePath')
         ;
     }
 }
