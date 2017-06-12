@@ -85,7 +85,6 @@ class DisciplineController extends Controller
                     $inscrSess = $this->getDoctrine()
                         ->getRepository('AppBundle:Inscription_sess')
                         ->findOneBy(array('user' => $this->getUser(), 'session' => $session));
-
                     // on est inscrit et les dates sont bonnes (ou on est admin)
                     if(($currentDate >= $session->getDateDebut() &&
                         $currentDate <= $session->getDateFin() &&
@@ -95,7 +94,7 @@ class DisciplineController extends Controller
                         array_push($courses[$i]["sessions"], $coursesT[$j]);
                     }elseif($currentDate < $session->getDateDebut() && $currentDate >= $session->getDateDebutAlerte() && $currentDate < $session->getDateFinAlerte()){
                         // la date de début n'est pas encore commencée, mais la date d'alerte oui : on doit permettre de s'inscrire si ce n'est pas fait
-                        array_push($courses[$i]["sessionsAlerte"], $session);
+                        array_push($courses[$i]["sessionsAlerte"], $coursesT[$j]);
                         array_push($courses[$i]["sessionsAlerteIsInscrit"], $inscrSess != null);
                     }
                 }
