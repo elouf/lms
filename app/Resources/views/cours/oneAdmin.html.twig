@@ -1314,7 +1314,7 @@
                                     {% endfor %}
                                 </ul>
                             </div>
-                            <div role="tabpanel" class="tab-pane fade in active" id="btnListForum">
+                            <div role="tabpanel" class="tab-pane fade in" id="btnListForum">
                                 <ul class="list-default courseElems">
                                     {% for key,val in forums %}
                                         {% include "cours/adminForum.html.twig"
@@ -1323,7 +1323,7 @@
                                     {% endfor %}
                                 </ul>
                             </div>
-                            <div role="tabpanel" class="tab-pane fade in active" id="btnListChat">
+                            <div role="tabpanel" class="tab-pane fade in" id="btnListChat">
                                 <ul class="list-default courseElems">
                                     {% for key,val in chats %}
                                         {% include "cours/adminChat.html.twig"
@@ -1668,7 +1668,7 @@
                                         {% endfor %}
                                     </table>
                                 </div>
-                                <div role="tabpanel" class="tab-pane fade in active" id="btnListForumModal">
+                                <div role="tabpanel" class="tab-pane fade in" id="btnListForumModal">
                                     <table class="tableAddItem">
                                         {% for key,val in forums %}
                                             <tr class="item" data-typeItem="forum" data-idItem="{{ val.id }}">
@@ -1685,7 +1685,7 @@
                                         {% endfor %}
                                     </table>
                                 </div>
-                                <div role="tabpanel" class="tab-pane fade in active" id="btnListChatModal">
+                                <div role="tabpanel" class="tab-pane fade in" id="btnListChatModal">
                                     <table class="tableAddItem">
                                         {% for key,val in chats %}
                                             <tr class="item" data-typeItem="chat" data-idItem="{{ val.id }}">

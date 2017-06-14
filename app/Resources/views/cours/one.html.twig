@@ -444,8 +444,11 @@
                                                 <li data-idZone="{{ val.zones.containers[keyR].id }}"
                                                     class="courseElem groupsRessource">
                                                     <div class="row">
-                                                        <div class="itemHeader itemTitle col-lg-5">{{ val.zones.groupe[keyR].nom }}</div>
-                                                        <div class="col-lg-7 text-right">
+                                                        <div class="itemInfos itemHeader col-xs-10">
+                                                            <div class="itemTitle">{{ val.zones.groupe[keyR].nom }}</div>
+                                                            <div class="itemDescription">{{ val.zones.groupe[keyR].description | raw }}</div>
+                                                        </div>
+                                                        <div class="col-xs-12 text-right">
                                                         {% for keyG,valG in val.zones.content[keyR] %}
                                                             <a class="btnLienGroupeRessource btn btn-xs"
                                                                style="background-color: {{ valG.categorieLien.couleur }};" target="_blank"
