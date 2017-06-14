@@ -8,11 +8,6 @@ services:
 #        class: AppBundle\Directory\ClassName
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
 
-    admin.cohorte:
-        class: AppBundle\Admin\CohorteAdmin
-        arguments: [~, AppBundle\Entity\Cohorte, ~]
-        tags:
-            - { name: sonata.admin, manager_type: orm, label: Cohortes, group: "Cours" }
     admin.cours:
         class: AppBundle\Admin\CoursAdmin
         arguments: [~, AppBundle\Entity\Cours, ~]
@@ -28,17 +23,48 @@ services:
         arguments: [~, AppBundle\Entity\Discipline, ~]
         tags:
             - { name: sonata.admin, manager_type: orm, label: Disciplines, group: "Cours" }
-    admin.institut:
-        class: AppBundle\Admin\InstitutAdmin
-        arguments: [~, AppBundle\Entity\Institut, ~]
-        tags:
-            - { name: sonata.admin, manager_type: orm, label: Instituts, group: "Utilisateurs" }
-    admin.user:
-        class: AppBundle\Admin\UserAdmin
-        arguments: [~, AppBundle\Entity\User, ~]
-        tags:
-            - { name: sonata.admin, manager_type: orm, label: Utilisateurs, group: "Utilisateurs" }
 
+    admin.evtUser:
+        class: AppBundle\Admin\Evt_userAdmin
+        arguments: [~, AppBundle\Entity\Evt_user, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: Evènements utilisateurs, group: "Calendrier" }
+    admin.evtDiscipline:
+        class: AppBundle\Admin\Evt_disciplineAdmin
+        arguments: [~, AppBundle\Entity\Evt_discipline, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: Evènements de discipline, group: "Calendrier" }
+    admin.evtCours:
+        class: AppBundle\Admin\Evt_coursAdmin
+        arguments: [~, AppBundle\Entity\Evt_cours, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: Evènements de cours, group: "Calendrier" }
+
+    admin.cohorte:
+            class: AppBundle\Admin\CohorteAdmin
+            arguments: [~, AppBundle\Entity\Cohorte, ~]
+            tags:
+                - { name: sonata.admin, manager_type: orm, label: Cohortes, group: "Inscriptions" }
+    admin.inscrCoh:
+        class: AppBundle\Admin\InscrCohAdmin
+        arguments: [~, AppBundle\Entity\Inscription_coh, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: Inscription cohorte, group: "Inscriptions" }
+    admin.inscrDiscipline:
+        class: AppBundle\Admin\InscrDisciplineAdmin
+        arguments: [~, AppBundle\Entity\Inscription_d, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: Inscription discipline, group: "Inscriptions" }
+    admin.inscrCours:
+        class: AppBundle\Admin\InscrCoursAdmin
+        arguments: [~, AppBundle\Entity\Inscription_c, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: Inscription cours, group: "Inscriptions" }
+    admin.roles:
+        class: AppBundle\Admin\RoleAdmin
+        arguments: [~, AppBundle\Entity\Role, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: Roles, group: "Inscriptions" }
 
     admin.forum:
         class: AppBundle\Admin\ForumAdmin
@@ -61,21 +87,16 @@ services:
         tags:
             - { name: sonata.admin,manager_type: orm, label: Types de liens, group: "Ressources" }
 
-    admin.evtUser:
-        class: AppBundle\Admin\Evt_userAdmin
-        arguments: [~, AppBundle\Entity\Evt_user, ~]
+    admin.institut:
+        class: AppBundle\Admin\InstitutAdmin
+        arguments: [~, AppBundle\Entity\Institut, ~]
         tags:
-            - { name: sonata.admin, manager_type: orm, label: Evènements utilisateurs, group: "Calendrier" }
-    admin.evtDiscipline:
-        class: AppBundle\Admin\Evt_disciplineAdmin
-        arguments: [~, AppBundle\Entity\Evt_discipline, ~]
+            - { name: sonata.admin, manager_type: orm, label: Instituts, group: "Utilisateurs" }
+    admin.user:
+        class: AppBundle\Admin\UserAdmin
+        arguments: [~, AppBundle\Entity\User, ~]
         tags:
-            - { name: sonata.admin, manager_type: orm, label: Evènements de discipline, group: "Calendrier" }
-    admin.evtCours:
-        class: AppBundle\Admin\Evt_coursAdmin
-        arguments: [~, AppBundle\Entity\Evt_cours, ~]
-        tags:
-            - { name: sonata.admin, manager_type: orm, label: Evènements de cours, group: "Calendrier" }
+            - { name: sonata.admin, manager_type: orm, label: Utilisateurs, group: "Utilisateurs" }
 
     chat.topic_sample_service:
         class: AppBundle\Service\Chat\ChatTopic

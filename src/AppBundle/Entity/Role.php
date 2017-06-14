@@ -30,6 +30,14 @@ class Role
 
 
     /**
+     * __toString method
+     */
+    public function __toString()
+    {
+        return (string) $this->getNom();
+    }
+
+    /**
      * Get id
      *
      * @return int

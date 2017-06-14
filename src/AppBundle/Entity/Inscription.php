@@ -43,6 +43,24 @@ class Inscription
     private $dateInscription;
 
     /**
+     * __toString method
+     */
+    public function __toString()
+    {
+        return 'Inscription '.$this->getId();
+    }
+
+    /**
+     * Get id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
      * Set role
      *
      * @param Role $role
