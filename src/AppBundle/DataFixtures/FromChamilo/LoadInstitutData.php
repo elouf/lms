@@ -14,11 +14,13 @@ class LoadInstitutData extends LoadChamiloConnect implements OrderedFixtureInter
     {
         $queryInst = "SELECT * FROM _stdi_instituts ORDER by ID";
         if ($resultInst = $this->getMysqli()->query($queryInst)) {
+            $cpt = 0;
             while ($inst = $resultInst->fetch_object()) {
                 $oneInst = $this->createItem($manager,
                     $inst->nom,
                     '');
-                $this->addReference('inst_'.$inst->id, $oneInst);
+                $this->addReference('inst_'.$cpt, $oneInst);
+                $cpt++;
             }
 
             $resultInst->close();
