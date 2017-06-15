@@ -13,14 +13,71 @@ class EmailingController extends Controller
     /**
      * @Route("/emailing", name="emailing")
      */
-    public function myCalendarAction (Request $request)
+    public function emailingAction (Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
 
-        $users = $this->getDoctrine()->getRepository('AppBundle:User')->findAll();
-        $sessions = $this->getDoctrine()->getRepository('AppBundle:Session')->findAll();
+        $users = $this->getDoctrine()->getRepository('AppBundle:User')->findBy(array(), array('lastname' => 'ASC'));
+        $sessions = $this->getDoctrine()->getRepository('AppBundle:Session')->findBy(array(), array('nom' => 'ASC'));
+        $cohortes = $this->getDoctrine()->getRepository('AppBundle:Cohorte')->findBy(array(), array('nom' => 'ASC'));
 
-        return $this->render('emailing.html.twig', ['users' => $users, 'sessions' => $sessions]);
+        return $this->render('emailing.html.twig', ['users' => $users, 'sessions' => $sessions, 'cohortes' => $cohortes]);
+    }
+
+    /**
+     * @Route("/applyFiltersEmailing_ajax", name="applyFiltersEmailing_ajax")
+     */
+    public function applyFiltersEmailingAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+            $sessionsSubscribed = $request->request->get('sessionsSubscribed');
+            $sessionsUnSubscribed = $request->request->get('sessionsUnSubscribed');
+            $cohSubscribed = $request->request->get('cohSubscribed');
+            $cohUnSubscribed = $request->request->get('cohUnSubscribed');
+
+            $users = array();
+            $notUsers = array();
+
+            for($i=0; $i<count($sessionsSubscribed); $i++){
+                $session = $this->getDoctrine()->getRepository('AppBundle:Session')->findOneBy(array('id' => $sessionsSubscribed[$i]));
+                if($session){
+                    $inscrs = $this->getDoctrine()->getRepository('AppBundle:Inscription_sess')->findBy(array('session' => $session));
+                    if($inscrs){
+                        foreach($inscrs as $inscr){
+                            array_push($users, $inscr->getUser()->getId());
+                        }
+                    }
+                }
+            }
+            for($i=0; $i<count($sessionsUnSubscribed); $i++){
+                $session = $this->getDoctrine()->getRepository('AppBundle:Session')->findOneBy(array('id' => $sessionsUnSubscribed[$i]));
+                if($session){
+                    $inscrs = $this->getDoctrine()->getRepository('AppBundle:Inscription_sess')->findBy(array('session' => $session));
+                    if($inscrs){
+                        foreach($inscrs as $inscr){
+                            array_push($notUsers, $inscr->getUser()->getId());
+                        }
+                    }
+                }
+            }
+
+            for($i=0; $i<count($cohSubscribed); $i++){
+                $cohorte = $this->getDoctrine()->getRepository('AppBundle:Cohorte')->findOneBy(array('id' => $cohSubscribed[$i]));
+                if($cohorte){
+                    $inscrs = $this->getDoctrine()->getRepository('AppBundle:Inscription_coh')->findBy(array('cohorte' => $cohorte));
+                    if($inscrs){
+                        foreach($inscrs as $inscr){
+                            array_push($users, $inscr->getUser()->getId());
+                        }
+                    }
+                }
+            }
+
+            return new JsonResponse(array('action' =>'Send mail', 'users' => $users, 'notUsers' => $notUsers));
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
     }
 
     /**

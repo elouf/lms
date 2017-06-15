@@ -23,13 +23,57 @@
             });
 
             $('.btnApplyFiltersEmailing').click(function(){
+                $('.checkUserEmailing').prop('checked', false);
+                var sessionsSubscribed = [];
+                var sessionsUnSubscribed = [];
+                var cohSubscribed = [];
+                var cohUnSubscribed = [];
                 $('.checkFiltreEmailing:checked').each(function(){
                     if($(this).closest('.usersSubscribedSession').length){
-
+                        $(this).closest('.usersSubscribedSession').find('.addFiltredSession[aria-selected="true"]').each(function(){
+                            sessionsSubscribed.push($(this).find('[data-idSess]').attr('data-idSess'));
+                        });
                     }else if($(this).closest('.usersNotSubscribedSession').length){
+                        $(this).closest('.usersNotSubscribedSession').find('.addFiltredSession[aria-selected="true"]').each(function(){
+                            sessionsUnSubscribed.push($(this).find('[data-idSess]').attr('data-idSess'));
+                        });
+                    }else if($(this).closest('.usersSubscribedCohorte').length){
+                        $(this).closest('.usersSubscribedCohorte').find('.addFiltredCohorte[aria-selected="true"]').each(function(){
+                            cohSubscribed.push($(this).find('[data-idCoh]').attr('data-idCoh'));
+                        });
+                    }else if($(this).closest('.usersUnSubscribedCohorte').length){
+                        $(this).closest('.usersUnSubscribedCohorte').find('.addFiltredCohorte[aria-selected="true"]').each(function(){
+                            cohUnSubscribed.push($(this).find('[data-idCoh]').attr('data-idCoh'));
+                        });
+                    }
+                });
+                $.ajax({
+                    type: 'POST',
+                    url: "{{path('applyFiltersEmailing_ajax')}}",
+                    async: false,
+                    dataType: "json",
+                    data: {
+                        sessionsSubscribed: sessionsSubscribed,
+                        sessionsUnSubscribed:sessionsUnSubscribed,
+                        cohSubscribed: cohSubscribed,
+                        cohUnSubscribed: cohUnSubscribed
+                    },
+                    success: function (data) {
+                        if(data.notUsers.length){
+                            $('.checkUserEmailing').prop('checked', true);
+                            for(i=0; i<data.notUsers.length; i++){
+                                var chek = $('.usrEmailing[data-userId='+data.notUsers[i]+']').closest('.usrEmailingRow').find('.checkUserEmailing').prop('checked', false);
+                            }
+                        }else if(data.users.length){
+                            for(i=0; i<data.users.length; i++){
+                                $('.usrEmailing[data-userId='+data.users[i]+']').closest('.usrEmailingRow').find('.checkUserEmailing').prop('checked', true);
+                            }
+                        }
+
 
                     }
                 });
+
             });
 
             $('.btnSendMsg').click(function(){
@@ -68,7 +112,7 @@
                     <div class="col-sm-6">
                         <select class="selectpicker col-xs-6" data-style="MyBtnSelectPickeer" title="Choisir une session" multiple>
                             {% for key,val in sessions %}
-                                <option title="{{ val.nom }}" class="addNewItem addFiltredSession">{{ val.nom }}</option>
+                                <option class="addNewItem addFiltredSession" data-content="<span data-idSess='{{ val.id }}'>{{ val.nom }}</span>"></option>
                             {% endfor %}
                         </select>
                     </div>
@@ -81,7 +125,33 @@
                     <div class="col-sm-6">
                         <select class="selectpicker col-xs-6" data-style="MyBtnSelectPickeer" title="Choisir une session" multiple>
                             {% for key,val in sessions %}
-                                <option title="{{ val.nom }}" class="addNewItem addFiltredSession">{{ val.nom }}</option>
+                                <option class="addNewItem addFiltredSession" data-content="<span data-idSess='{{ val.id }}'>{{ val.nom }}</span>"></option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="filtreEmailingRow row usersSubscribedCohorte">
+                    <div class="col-sm-6">
+                        <input class="checkFiltreEmailing" type="checkbox" />
+                        <div class="filtreEmailing">Tous les utilisateurs inscrits à une cohorte</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <select class="selectpicker col-xs-6" data-style="MyBtnSelectPickeer" title="Choisir une cohorte" multiple>
+                            {% for key,val in cohortes %}
+                                <option class="addNewItem addFiltredCohorte" data-content="<span data-idCoh='{{ val.id }}'>{{ val.nom }}</span>"></option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="filtreEmailingRow row usersUnSubscribedCohorte">
+                    <div class="col-sm-6">
+                        <input class="checkFiltreEmailing" type="checkbox" />
+                        <div class="filtreEmailing">Tous les utilisateurs non inscrits à une cohorte</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <select class="selectpicker col-xs-6" data-style="MyBtnSelectPickeer" title="Choisir une cohorte" multiple>
+                            {% for key,val in cohortes %}
+                                <option class="addNewItem addFiltredCohorte" data-content="<span data-idCoh='{{ val.id }}'>{{ val.nom }}</span>"></option>
                             {% endfor %}
                         </select>
                     </div>
@@ -98,7 +168,7 @@
                 {% for key,val in users %}
                     <div class="usrEmailingRow">
                         <input class="checkUserEmailing" type="checkbox" />
-                        <div class="usrEmailing" data-userId="{{ val.id }}">{{ val.firstname }} {{ val.lastname }}</div>
+                        <div class="usrEmailing" data-userId="{{ val.id }}">{{ val.lastname }} {{ val.firstname }}</div>
                     </div>
                 {% endfor %}
             </div>
