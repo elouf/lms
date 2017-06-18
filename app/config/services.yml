@@ -60,6 +60,11 @@ services:
         arguments: [~, AppBundle\Entity\Inscription_c, ~]
         tags:
             - { name: sonata.admin, manager_type: orm, label: Inscription cours, group: "Inscriptions" }
+    admin.inscrSession:
+        class: AppBundle\Admin\InscrSessAdmin
+        arguments: [~, AppBundle\Entity\Inscription_sess, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: Inscription session, group: "Inscriptions" }
     admin.roles:
         class: AppBundle\Admin\RoleAdmin
         arguments: [~, AppBundle\Entity\Role, ~]

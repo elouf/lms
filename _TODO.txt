@@ -1,0 +1,66 @@
+upload images dans sonata
+
+**rechargement de la page quand on créé une ressource (à vérifier, je crois que c’est fait)
+
+upload d’un fichier quand on créé un nouveau lien dans un groupe
+
+Sessions : envoi d’un mail à ceux qui ont souscrit
+
+mon compte
+
+Chat :
+    
+- couleurs users
+    
+- users dispos
+
+éditeurs wysiwyg : gestion des images
+
+
+module de nettoyage du serveur
+OKOK : bouton vers le backOffice pour l'admin
+OKOK : colonne institut dans le tableau des users
+OKOK : inscription session dans le backoffice
+OKOK : !!!BackOffice : champ mot de passe à la création
+!!!emailing : envoi à un cours
+emailing : après envoi, notifier que c'est envoyé
+!!!adresse d'envoi des mails : noreply_afadec@gmail.com
+!!! emailing : générer la liste des mails lors de l'application des filtres 
+mesCours : messageAlerte : afficher le html raw
+ressources, suppression : échanger les boutons, onglet "gestion des ressources" de même couleur que le btn suppr + appeler ça "stock de ressources"
+Message alert : attention vous allez supprimer une ressource qui est utilisée dans une SECTION (et pas zone)
+section invisible : le montrer dans la partie gauche (opacité) et dans l'onglet de gestion des sections
+forcer le rechargement à l'enregistrement des ressources
+flèches premier et dernier plan...
+Types de liens : BUG lors de l'ajout
+BUG : vérifier zip, et/ou gros fichiers
+sons et vidéos : afficher un player et proposer le téléchargement
+!!!! upload !!!!!! mettre au moins 512MO
+upload de zip : vérifier où est l'index.html
+Page mescours : trier les disciplines par ordre alphabétique
+éditeur wysiwyg : BUG quand on déplace la zone
+zone libre : éditeur wysiwyg complet
+Zone invisible : border-bottom toujours là
+Ajout de ressource : prepend et non append
+!!!! lp_item qui sont des documents
+!!!Forum et Chat ne s'ajoutent pas dans les section
+Forum : fil d'ariane nom du cours erroné
+Forum : au lieu de MESSAGES dans un sujet : mettre le nom du sujet, et idem dans la liste des sujets : mettre le nom du forum
+Forum : permettre d'épingler lors de la création
+Disciplines et sections : ajouter un attribut "picto" avec un code fontawesome
+Cours : revoir le scroll en admin...
+Mode admin (groupes de liens) : au lieu du texte du lien inclut, mettre la totale (picto, couleur et lien cliquable)
+
+calendrier : ajouter les dates de fins d'inscriptions aux sessions 
+
+----- pour l'automne...
+Devoir : tant que le temps n'est pas écoulé, permettre de supprimer la copie
+Devoir : upload de fichiers de type : pdf, word, jpeg et png
+Devoir : ajouter notes et commentaires
+Devoir : envoi automatique de mails lors de la réception d'un corrigé
+Devoir admin : rendre éditable le nom des sujets/corrigés types
+Devoir backOffice : Ajouter liste d'étudiants qui ont participé (copie rendue) avec instituts et notes
+------
+
+skin opale
+groupes de liens : mode liseuse

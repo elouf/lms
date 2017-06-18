@@ -13,6 +13,13 @@ class UserAdmin extends AbstractAdmin
     {
         $formMapper
             ->add('email', 'text')
+            ->add('plainPassword', 'repeated', array(
+                'type' => 'password',
+                'options' => array('translation_domain' => 'FOSUserBundle'),
+                'first_options' => array('label' => 'form.password'),
+                'second_options' => array('label' => 'form.password_confirmation'),
+                'invalid_message' => 'fos_user.password.mismatch',
+            ))
             ->add('enabled')
             ->add('firstname')
             ->add('lastname')
@@ -47,6 +54,7 @@ class UserAdmin extends AbstractAdmin
             ->add('firstname')
             ->add('lastname')
             ->add('phone')
+            ->add('institut')
         ;
     }
 }
