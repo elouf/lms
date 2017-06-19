@@ -20,8 +20,13 @@ class EmailingController extends Controller
         $users = $this->getDoctrine()->getRepository('AppBundle:User')->findBy(array(), array('lastname' => 'ASC'));
         $sessions = $this->getDoctrine()->getRepository('AppBundle:Session')->findBy(array(), array('nom' => 'ASC'));
         $cohortes = $this->getDoctrine()->getRepository('AppBundle:Cohorte')->findBy(array(), array('nom' => 'ASC'));
+        $courses = $this->getDoctrine()->getRepository('AppBundle:Cours')->findBy(array(), array('nom' => 'ASC'));
 
-        return $this->render('emailing.html.twig', ['users' => $users, 'sessions' => $sessions, 'cohortes' => $cohortes]);
+        $coursesArray = array();
+        for($i=0; $i<count($courses); $i++){
+            array_push($coursesArray, [$courses[$i], $courses[$i]->getDiscipline()]);
+        }
+        return $this->render('emailing.html.twig', ['users' => $users, 'sessions' => $sessions, 'cohortes' => $cohortes, 'courses' => $coursesArray]);
     }
 
     /**
@@ -30,7 +35,8 @@ class EmailingController extends Controller
     public function applyFiltersEmailingAjaxAction (Request $request)
     {
         if ($request->isXMLHttpRequest()) {
-            $em = $this->getDoctrine()->getEntityManager();
+            $em = $this->getDoctrine();
+            $coursSubscribed = $request->request->get('coursSubscribed');
             $sessionsSubscribed = $request->request->get('sessionsSubscribed');
             $sessionsUnSubscribed = $request->request->get('sessionsUnSubscribed');
             $cohSubscribed = $request->request->get('cohSubscribed');
@@ -38,6 +44,15 @@ class EmailingController extends Controller
 
             $users = array();
             $notUsers = array();
+
+            for($i=0; $i<count($coursSubscribed); $i++){
+                $inscritIds = $em->getRepository('AppBundle:Cours')->findInscrits($coursSubscribed[$i]);
+                if($inscritIds){
+                    foreach($inscritIds as $inscr){
+                        array_push($users, $inscr->getId());
+                    }
+                }
+            }
 
             for($i=0; $i<count($sessionsSubscribed); $i++){
                 $session = $this->getDoctrine()->getRepository('AppBundle:Session')->findOneBy(array('id' => $sessionsSubscribed[$i]));
@@ -69,6 +84,18 @@ class EmailingController extends Controller
                     if($inscrs){
                         foreach($inscrs as $inscr){
                             array_push($users, $inscr->getUser()->getId());
+                        }
+                    }
+                }
+            }
+
+            for($i=0; $i<count($cohUnSubscribed); $i++){
+                $cohorte = $this->getDoctrine()->getRepository('AppBundle:Cohorte')->findOneBy(array('id' => $cohUnSubscribed[$i]));
+                if($cohorte){
+                    $inscrs = $this->getDoctrine()->getRepository('AppBundle:Inscription_coh')->findBy(array('cohorte' => $cohorte));
+                    if($inscrs){
+                        foreach($inscrs as $inscr){
+                            array_push($notUsers, $inscr->getUser()->getId());
                         }
                     }
                 }

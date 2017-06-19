@@ -24,12 +24,17 @@
 
             $('.btnApplyFiltersEmailing').click(function(){
                 $('.checkUserEmailing').prop('checked', false);
+                var coursSubscribed = [];
                 var sessionsSubscribed = [];
                 var sessionsUnSubscribed = [];
                 var cohSubscribed = [];
                 var cohUnSubscribed = [];
                 $('.checkFiltreEmailing:checked').each(function(){
-                    if($(this).closest('.usersSubscribedSession').length){
+                    if($(this).closest('.usersSubscribedCourse').length){
+                        $(this).closest('.usersSubscribedCourse').find('.addFiltredCours[aria-selected="true"]').each(function(){
+                            coursSubscribed.push($(this).find('[data-idCours]').attr('data-idCours'));
+                        });
+                    }else if($(this).closest('.usersSubscribedSession').length){
                         $(this).closest('.usersSubscribedSession').find('.addFiltredSession[aria-selected="true"]').each(function(){
                             sessionsSubscribed.push($(this).find('[data-idSess]').attr('data-idSess'));
                         });
@@ -53,6 +58,7 @@
                     async: false,
                     dataType: "json",
                     data: {
+                        coursSubscribed: coursSubscribed,
                         sessionsSubscribed: sessionsSubscribed,
                         sessionsUnSubscribed:sessionsUnSubscribed,
                         cohSubscribed: cohSubscribed,
@@ -104,6 +110,32 @@
     <div class="container mt-100 mb-40">
         <div class="row emailingIHM">
             <div class="col-xs-8 colReglages">
+                <div class="filtreEmailingRow row usersSubscribedCourse">
+                    <div class="col-sm-6">
+                        <input class="checkFiltreEmailing" type="checkbox" />
+                        <div class="filtreEmailing">Tous les utilisateurs inscrits à un cours</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <select class="selectpicker col-xs-6" data-window-padding="[500, 0, 50, 0]" data-live-search="true" data-style="MyBtnSelectPickeer" title="Choisir un cours" multiple>
+                            {% for key,val in courses %}
+                                <option class="addNewItem addFiltredCours" data-content="<span data-idCours='{{ val[0].id }}'>{{ val[0].nom }} ({{ val[1].nom }})</span>"></option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="filtreEmailingRow row usersSubscribedSession">
+                    <div class="col-sm-6">
+                        <input class="checkFiltreEmailing" type="checkbox" />
+                        <div class="filtreEmailing">Tous les utilisateurs inscrits à une session</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <select class="selectpicker col-xs-6" data-style="MyBtnSelectPickeer" title="Choisir une session" multiple>
+                            {% for key,val in sessions %}
+                                <option class="addNewItem addFiltredSession" data-content="<span data-idSess='{{ val.id }}'>{{ val.nom }}</span>"></option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
                 <div class="filtreEmailingRow row usersSubscribedSession">
                     <div class="col-sm-6">
                         <input class="checkFiltreEmailing" type="checkbox" />

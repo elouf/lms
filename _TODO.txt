@@ -22,8 +22,8 @@ OKOK : bouton vers le backOffice pour l'admin
 OKOK : colonne institut dans le tableau des users
 OKOK : inscription session dans le backoffice
 OKOK : !!!BackOffice : champ mot de passe à la création
-!!!emailing : envoi à un cours
-emailing : après envoi, notifier que c'est envoyé
+OKOK : !!!emailing : envoi à un cours
+OKOK : emailing : après envoi, notifier que c'est envoyé
 !!!adresse d'envoi des mails : noreply_afadec@gmail.com
 !!! emailing : générer la liste des mails lors de l'application des filtres 
 mesCours : messageAlerte : afficher le html raw
