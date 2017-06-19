@@ -45,7 +45,8 @@ class Section extends OrderedItem
     /**
      * @var Cours
      *
-     * @ORM\ManyToOne(targetEntity="Cours", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @ORM\ManyToOne(targetEntity="Cours", cascade={"persist"})
      */
     private $cours;
 
