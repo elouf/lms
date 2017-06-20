@@ -69,6 +69,33 @@ class SectionController extends Controller
     }
 
     /**
+     * @Route("/changefaIconSection_ajax", name="changefaIconSection_ajax")
+     * @Method({"GET", "POST"})
+     */
+    public function changeFaIconSectionAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+
+            $id = $request->request->get('id');
+            $faIcon = $request->request->get('faIcon');
+
+            $section = $em->getRepository('AppBundle:Section')->findOneBy(array('id' => $id));
+            $section->setFaIcon($faIcon);
+
+            $em->persist($section);
+            $em->flush();
+
+            return new JsonResponse(array(
+                    'action' =>'change Section faIcon',
+                    'section' => $section)
+            );
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
+    /**
      * @Route("/addSection_ajax", name="addSection_ajax")
      * @Method({"GET", "POST"})
      */

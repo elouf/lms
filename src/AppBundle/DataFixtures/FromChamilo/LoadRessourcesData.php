@@ -106,7 +106,7 @@ class LoadRessourcesData extends LoadChamiloConnect implements OrderedFixtureInt
                                                     }
 
                                                 } elseif ($elem->type == 'parcours') {
-                                                    $queryParc = "SELECT * FROM c_lp WHERE c_id='" . $course->id . "' AND id='" . $elem->id . "'";
+                                                    $queryParc = "SELECT * FROM c_lp WHERE c_id='" . $course->id . "' AND id='" . $elem->id . "' AND item_type='link'";
                                                     if ($resultParc = $this->getMysqli()->query($queryParc)) {
                                                         $parc = $resultParc->fetch_object();
 

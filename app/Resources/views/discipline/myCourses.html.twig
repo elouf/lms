@@ -61,7 +61,7 @@
                 <ul class="nav nav-pills nav-stacked pull-left" role="tablist" style="padding-bottom: 5px;padding-top: 5px">
                     {% for key,val in courses %}
                         <li role="presentation" {% if loop.index == 1 %} class="active" {% endif %}>
-                            <a href="#p1body{{ val.discipline.id }}" aria-controls="p1body{{ val.discipline.id }}" role="tab" data-toggle="tab"><i class="fa fa-university fa-fw"></i> {{ val.discipline }}</a>
+                            <a href="#p1body{{ val.discipline.id }}" aria-controls="p1body{{ val.discipline.id }}" role="tab" data-toggle="tab"><i class="fa {{ val.discipline.faIcon }} fa-fw"></i> {{ val.discipline }}</a>
                         </li>
                     {% endfor %}
                 </ul>

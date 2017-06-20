@@ -151,13 +151,13 @@ a { font-family: inherit; color: inherit; }
     background: #0ca200 !important;
 }
 .btnDelete:not(.btnSupprElem){
-    background: #c64d34 !important;
+    background: #7907c6 !important;
 }
 .btnEdit{
     background: #006ca2 !important;
 }
 .btnSupprElem{
-    background: #7907c6 !important;
+    background: #c64d34 !important;
 }
 .btnRight{
     border-bottom-left-radius: 0px;
@@ -349,7 +349,22 @@ label.alertMustBeSet{
 .ongletAdmin.active > a::after{
     border-color: transparent transparent transparent #f89406 !important;
 }
-.adminSectionRow input[data-champName="nom"]{
+
+.stockRessource:not(.active) > a{
+    color: #7907c6 !important;
+}
+.stockRessource.active > a{
+    background-color: #7907c6 !important;
+}
+.stockRessource.active > a::after{
+    border-color: transparent transparent transparent #7907c6 !important;
+}
+
+.visibility_{
+    opacity: .3;
+}
+
+.adminSectionRow input[data-champName="nom"], .adminSectionRow input[data-champName="faIcon"]{
     height: 32px;
 }
 .btnAdmin.btnSaveInputChange{

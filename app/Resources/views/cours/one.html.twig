@@ -272,7 +272,7 @@
                 <ul class="nav nav-pills nav-stacked pull-left" role="tablist" style="padding-bottom: 5px;padding-top: 5px">
                     {% for key,val in zonesSections if val.section.isVisible == 1 %}
                         <li role="presentation"  class="ongletSection{% if loop.index == 1 %} active{% endif %}"   data-idsection="{{ val.section.id }}">
-                            <a href="#t1body{{ val.section.id }}" aria-controls="t1body{{ val.section.id }}" role="tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-pencil fa-fw" aria-hidden="true"> </i>{{ val.section.nom }}</a>
+                            <a href="#t1body{{ val.section.id }}" aria-controls="t1body{{ val.section.id }}" role="tab" data-toggle="tab" aria-expanded="true"><i class="fa {{ val.section.faIcon }} fa-fw" aria-hidden="true"> </i>{{ val.section.nom }}</a>
                         </li>
                     {% endfor %}
                     {% if cours.docsActivated==1 %}

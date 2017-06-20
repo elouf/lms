@@ -23,8 +23,7 @@ class DisciplineController extends Controller
 
         $repositoryCoh = $this->getDoctrine()->getRepository('AppBundle:Cohorte');
 
-        $repositoryDisc = $this->getDoctrine()->getRepository('AppBundle:Discipline');
-        $disciplines = $repositoryDisc->findAll();
+        $disciplines = $this->getDoctrine()->getRepository('AppBundle:Discipline')->findBy(array(), array('nom' => 'ASC'));
 
         // Par défaut, admin : toutes les disciplines
         $disciplinesArray2Consider = $disciplines;

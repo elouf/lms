@@ -29,13 +29,6 @@ class Section extends OrderedItem
     private $nom;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="pictoFilePath", type="text")
-     */
-    private $pictoFilePath;
-
-    /**
      * @var bool
      *
      * @ORM\Column(name="isVisible", type="boolean", nullable=true)
@@ -49,6 +42,13 @@ class Section extends OrderedItem
      * @ORM\ManyToOne(targetEntity="Cours", cascade={"persist"})
      */
     private $cours;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="faicon", type="string", length=255, unique=false)
+     */
+    private $faIcon="fa-pencil";
 
     /**
      * Get id
@@ -82,30 +82,6 @@ class Section extends OrderedItem
     public function getNom()
     {
         return $this->nom;
-    }
-
-    /**
-     * Set pictoFilePath
-     *
-     * @param string $pictoFilePath
-     *
-     * @return Section
-     */
-    public function setPictoFilePath($pictoFilePath)
-    {
-        $this->pictoFilePath = $pictoFilePath;
-
-        return $this;
-    }
-
-    /**
-     * Get pictoFilePath
-     *
-     * @return string
-     */
-    public function getPictoFilePath()
-    {
-        return $this->pictoFilePath;
     }
 
     /**
@@ -154,5 +130,29 @@ class Section extends OrderedItem
     public function getCours()
     {
         return $this->cours;
+    }
+
+    /**
+     * Set faIcon
+     *
+     * @param string $faIcon
+     *
+     * @return Section
+     */
+    public function setFaIcon($faIcon)
+    {
+        $this->faIcon = $faIcon;
+
+        return $this;
+    }
+
+    /**
+     * Get faIcon
+     *
+     * @return string
+     */
+    public function getFaIcon()
+    {
+        return $this->faIcon;
     }
 }

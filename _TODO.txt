@@ -19,25 +19,16 @@ Chat :
 module de nettoyage du serveur
 
 
-!!! emailing : générer la liste des mails lors de l'application des filtres 
-ressources, suppression : échanger les boutons, onglet "gestion des ressources" de même couleur que le btn suppr + appeler ça "stock de ressources"
-section invisible : le montrer dans la partie gauche (opacité) et dans l'onglet de gestion des sections
-forcer le rechargement à l'enregistrement des ressources
+!!! emailing : générer la liste des mails lors de l'application des filtres
 BUG : vérifier zip, et/ou gros fichiers
 sons et vidéos : afficher un player et proposer le téléchargement
 !!!! upload !!!!!! mettre au moins 512MO
 upload de zip : vérifier où est l'index.html
-Page mescours : trier les disciplines par ordre alphabétique
 éditeur wysiwyg : BUG quand on déplace la zone
-Ajout de ressource : prepend et non append
-!!!! lp_item qui sont des documents
 Forum : fil d'ariane nom du cours erroné
 Forum : au lieu de MESSAGES dans un sujet : mettre le nom du sujet, et idem dans la liste des sujets : mettre le nom du forum
 Forum : permettre d'épingler lors de la création
-Disciplines et sections : ajouter un attribut "picto" avec un code fontawesome
 Cours : revoir le scroll en admin...
-Mode admin (groupes de liens) : au lieu du texte du lien inclu, mettre tout (picto, couleur et lien cliquable)
-
 calendrier : ajouter les dates de fins d'inscriptions aux sessions 
 
 ----- pour l'automne...
@@ -49,12 +40,12 @@ Devoir admin : rendre éditable le nom des sujets/corrigés types
 Devoir backOffice : Ajouter liste d'étudiants qui ont participé (copie rendue) avec instituts et notes
 ------
 
-skin opale
 groupes de liens : mode liseuse
 
 
 FAIT
 --------
+19/06/2017
 bouton vers le backOffice pour l'admin
 colonne institut dans le tableau des users
 inscription session dans le backoffice
@@ -69,3 +60,14 @@ Types de liens : BUG lors de l'ajout
 zone libre : éditeur wysiwyg complet
 Zone invisible : border-bottom toujours là
 !!!Forum et Chat ne s'ajoutent pas dans les section
+
+20/06/2017
+Correction du bug qui emmpêchait d'uploader sur la plateforme de production
+Mode admin (groupes de liens) : au lieu du texte du lien inclu, mettre tout (picto, couleur et lien cliquable)
+Disciplines et sections : ajouter un attribut "picto" avec un code fontawesome
+Page mescours : trier les disciplines par ordre alphabétique
+Gestion des items de groupes qui étaient des documents dans chamilo : vu avec Julie
+forcer le rechargement à l'enregistrement des ressources
+ressources, suppression : échanger les boutons, onglet "gestion des ressources" de même couleur que le btn suppr + appeler ça "stock de ressources"
+Ajout de ressource : En première position et non en dernière position
+section invisible : le montrer dans la partie gauche (opacité) et dans l'onglet de gestion des sections

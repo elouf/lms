@@ -137,11 +137,9 @@ class ZoneRessourceController extends Controller
                 $sectionZones = $em->getRepository('AppBundle:ZoneRessource')->findBy(array('section' => $section));
                 $posMax = 0;
                 for($i=0; $i<count($sectionZones); $i++){
-                    if($sectionZones[$i]->getPosition() > $posMax){
-                        $posMax = $sectionZones[$i]->getPosition();
-                    }
+                    $sectionZones[$i]->setPosition($sectionZones[$i]->getPosition() + 1);
                 }
-                $zone->setPosition($posMax+1);
+                $zone->setPosition(0);
 
                 $em->persist($zone);
                 $em->flush();

@@ -30,7 +30,7 @@
         <div class="row mb-10">
             <div class="LabelAdmin col-sm-3">Description</div>
             <div class="noPadding col-sm-9  col-xs-12">
-                <textarea data-champName="description" id="zone_{{ zoneId }}_groupeLien_{{ itemId }}_descr" class="simpleEditor editor champAdmin" readonly>{{ description }}</textarea>
+                <textarea data-champName="description" id="zone_{{ zoneId }}_groupeLien_{{ itemId }}_descr" class="simpleEditor editor champAdmin" readonly>{{ description | raw }}</textarea>
             </div>
 
         </div>
@@ -43,7 +43,11 @@
                     <div class="row" data-idLien="{{ valR.id }}">
                         <div class="col-xs-10">
                             <div class="myBtn btnMove inlineBtn"><i class="fa fa-arrows-alt "></i></div>
-                            <div class="nomAssoc inlineBtn">{{ valR.nom }}</div>
+                            <div class="nomAssoc inlineBtn">
+                                <a class="btnLienGroupeRessource btn btn-xs"
+                                   style="background-color: {{ valR.categorieLien.couleur }};" target="_blank"
+                                   href="{{ valR.lien.url }}">{{ valR.nom }}</a>
+                            </div>
                         </div>
                         <div class="col-xs-2 text-right noPadding">
                             <div class="myBtn btnEdit inlineBtn btnEditLienInGroup">

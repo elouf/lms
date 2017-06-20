@@ -51,6 +51,13 @@ class Discipline extends DocContainer
     private $cohortes;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="faicon", type="string", length=255, unique=false)
+     */
+    private $faIcon="fa-university";
+
+    /**
      * Constructor
      */
     public function __construct() {
@@ -179,4 +186,27 @@ class Discipline extends DocContainer
         return $this->cohortes;
     }
 
+    /**
+     * Set faIcon
+     *
+     * @param string $faIcon
+     *
+     * @return Discipline
+     */
+    public function setFaIcon($faIcon)
+    {
+        $this->faIcon = $faIcon;
+
+        return $this;
+    }
+
+    /**
+     * Get faIcon
+     *
+     * @return string
+     */
+    public function getFaIcon()
+    {
+        return $this->faIcon;
+    }
 }

@@ -253,6 +253,12 @@
                     dataType: "json",
                     success: function (response) {
                         updateCheckedState(myBtn, response["isVisible"]);
+                        myBtn.closest('.adminSectionRow').removeClass('visibility_');
+                        $('.ongletSection[data-idsection='+id+']').removeClass('visibility_');
+                        if(!response["isVisible"]){
+                            myBtn.closest('.adminSectionRow').addClass('visibility_');
+                            $('.ongletSection[data-idsection='+id+']').addClass('visibility_');
+                        }
                     }
                 });
             });
@@ -279,6 +285,30 @@
                                 sectionInput.removeClass('inEdition');
                                 sectionInput.next('.btnSaveInputChange').remove();
                                 $('.ongletSection[data-idsection='+id+'] .nomSection').text(nom);
+                            }
+                        });
+                    });
+                }
+            });
+            $('.faIconSectionInput').on('input', function(){
+                if(!$(this).hasClass('inEdition')){
+                    var sectionInput = $(this);
+                    sectionInput.addClass('inEdition');
+                    sectionInput.after('<div class="myBtn btnSaveInputChange btnAdmin btnMiddle col-sm-1 col-xs-1"><i class="fa fa-floppy-o"></i></div>')
+                    sectionInput.next('.btnSaveInputChange').click(function(){
+                        var id = sectionInput.closest('.adminSectionRow').attr('data-idsection');
+                        var faIcon = sectionInput.val();
+                        $.ajax({
+                            type: 'POST',
+                            url: "{{path('changefaIconSection_ajax')}}",
+                            async: false,
+                            dataType: "json",
+                            data: {
+                                id: id,
+                                faIcon: faIcon
+                            },
+                            success: function (data) {
+                                window.location.href = window.location.href.replace( /[\?#].*|$/, "?sectionAdmin" );
                             }
                         });
                     });
@@ -372,6 +402,10 @@
                 }
             });
 
+            function refreshInSection(idSection){
+                window.location.href = window.location.href.replace( /[\?#].*|$/, "?idSection="+idSection );
+            }
+
             // ajout d'un item du cours dans une section (via la modale)
             $('.btnAddItem').click(function(){
                 var idItem = $(this).closest('.item').attr('data-idItem');
@@ -388,7 +422,7 @@
                     dataType: "json",
                     success: function (response) {
                         if(!response["error"]){
-                            window.location.href = window.location.href.replace( /[\?#].*|$/, "?idSection="+idSection );
+                            refreshInSection(idSection);
                         }else{
                             console.log("Erreur d'ajout de l'item "+idItem+" à la section");
                         }
@@ -398,7 +432,7 @@
 
             // GESTION DES RESSOURCES
             // suppression d'un item
-            $('.btnSupprElem').click(function(){
+            $('.btnSupprElem:not(.btnDeleteSection)').click(function(){
                 var idItem = $(this).closest('.courseElemAdmin').attr('data-idItem');
                 var typeItem = $(this).closest('.courseElemAdmin').attr('data-typeItem');
                 var idSection = null;
@@ -436,7 +470,7 @@
                                         if(idSection == null){
                                             window.location.href = window.location.href.replace( /[\?#].*|$/, "?ressourcesAdmin" );
                                         }else{
-                                            window.location.href = window.location.href.replace( /[\?#].*|$/, "?idSection="+idSection );
+                                            refreshInSection(idSection);
                                         }
                                     }else{
                                         console.log("Erreur de suppression de l'item "+idItem);
@@ -493,8 +527,8 @@
                 }
             }
             function changeLien(lien){
-                console.log('changeGroupe : '+lien.hasClass('inEdition'))
                 lien.find('.btnSaveInputChange').click(function(){
+                    var idSection = $(this).closest('[data-idSection]').attr('data-idSection');
                     var id = lien.attr('data-idItem');
                     var nom = lien.find('[data-champName=nom]').val();
                     var url = lien.find('[data-champName=url]').val();
@@ -517,15 +551,14 @@
                             typeLien: typeLien
                         },
                         success: function (data) {
-                            lien.removeClass('inEdition');
-                            lien.find('.btnSaveInputChange').remove();
+                            refreshInSection(idSection);
                         }
                     });
                 });
             }
             function changeChat(chat){
-                console.log('changeChat : '+chat.hasClass('inEdition'))
                 chat.find('.btnSaveInputChange').click(function(){
+                    var idSection = $(this).closest('[data-idSection]').attr('data-idSection');
                     var id = chat.attr('data-idItem');
                     var nom = chat.find('[data-champName=nom]').val();
                     var description = chat.find('textarea[data-champName=description]').val();
@@ -544,15 +577,14 @@
                             description: description
                         },
                         success: function (data) {
-                            chat.removeClass('inEdition');
-                            chat.find('.btnSaveInputChange').remove();
+                            refreshInSection(idSection);
                         }
                     });
                 });
             }
             function changeLibre(lien){
-                console.log('changeGroupe : '+lien.hasClass('inEdition'))
                 lien.find('.btnSaveInputChange').click(function(){
+                    var idSection = $(this).closest('[data-idSection]').attr('data-idSection');
                     var id = lien.attr('data-idItem');
                     var description = lien.find('textarea[data-champName=description]').val();
                     if(CKEDITOR.instances[lien.find('[data-champName=description]').attr('id')]){
@@ -569,15 +601,14 @@
                             description: description
                         },
                         success: function (data) {
-                            lien.removeClass('inEdition');
-                            lien.find('.btnSaveInputChange').remove();
+                            refreshInSection(idSection);
                         }
                     });
                 });
             }
             function changeGroupe(groupe){
-                console.log('changeGroupe : '+groupe.hasClass('inEdition'))
                 groupe.find('.btnSaveInputChange').click(function(){
+                    var idSection = $(this).closest('[data-idSection]').attr('data-idSection');
                     var id = groupe.attr('data-idItem');
                     var nom = groupe.find('[data-champName=nom]').val();
 
@@ -597,14 +628,12 @@
                             description: description
                         },
                         success: function (data) {
-                            groupe.removeClass('inEdition');
-                            groupe.find('.btnSaveInputChange').remove();
+                            refreshInSection(idSection);
                         }
                     });
                 });
             }
             function changeDevoir(devoir){
-                console.log('changeDevoir : '+devoir.hasClass('inEdition'))
                 devoir.find('.btnSaveInputChange').click(function(){
                     var id = devoir.attr('data-idItem');
                     var nom = devoir.find('[data-champName=nom]').val();
@@ -635,7 +664,7 @@
                         },
                         success: function (data) {
                             if(mustReload){
-                                window.location.href = window.location.href.replace( /[\?#].*|$/, "?idSection="+idSection );
+                                refreshInSection(idSection);
                             }else{
                                 devoir.removeClass('inEdition');
                                 devoir.find('.btnSaveInputChange').remove();
@@ -740,7 +769,7 @@
                                         categorieId: categorieLienInGroupe
                                     },
                                     success: function (data) {
-                                        window.location.href = window.location.href.replace( /[\?#].*|$/, "?idSection="+idSection );
+                                        refreshInSection(idSection);
                                     }
                                 });
                             }
@@ -773,7 +802,7 @@
                                 categorieId: categorieLienInGroupe
                             },
                             success: function (data) {
-                                window.location.href = window.location.href.replace( /[\?#].*|$/, "?idSection="+idSection );
+                                refreshInSection(idSection);
                             }
                         });
                     }
@@ -1064,19 +1093,15 @@
                                     nom: $('.modal .modal-body[data-contentModal=uploadFile] [data-champName=uploadedFileName]').val()
                                 },
                                 success: function (data) {
-                                    console.log("success");
-                                    console.log(data);
                                     $('.modal').modal('toggle');
                                     if(devoir.find('.btnSaveInputChange').length){
                                         devoir.find('.btnSaveInputChange').addClass('mustReload');
                                         devoir.find('.btnSaveInputChange').click();
                                     }else{
-                                        window.location.href = window.location.href.replace( /[\?#].*|$/, "?idSection="+idSection );
+                                        refreshInSection(idSection);
                                     }
                                 },
                                 error: function(xhr, status, error) {
-                                    console.log("error");
-                                    console.log(data);
                                     $('.modal').modal('toggle');
                                 }
                             });
@@ -1236,19 +1261,19 @@
                             Gestion des sections
                         </a>
                     </li>
-                    <li role="presentation" class="ongletAdmin" id="ressourcesAdmin">
+                    <li role="presentation" class="ongletAdmin stockRessource" id="ressourcesAdmin">
                         <a href="#t1body_1" aria-controls="t1body_1" role="tab"
                            data-toggle="tab" aria-expanded="true"><i class="fa fa-cogs fa-fw" aria-hidden="true"> </i>
-                            Gestion des ressources
+                            Stock de ressources
                         </a>
                     </li>
 
                     <!--- sections -->
                     {% for key,val in zonesSections %}
-                        <li role="presentation" class="ongletSection" data-idsection="{{ val.section.id }}">
+                        <li role="presentation" class="ongletSection visibility_{{ val.section.isVisible }}" data-idsection="{{ val.section.id }}">
                             <a href="#t1body{{ val.section.id }}" aria-controls="t1body{{ val.section.id }}" role="tab"
                                data-toggle="tab" aria-expanded="true" >
-                                <i class="fa {{ val.section.pictoFilePath }} fa-fw" aria-hidden="true"> </i><span class="nomSection">{{ val.section.nom }}</span>
+                                <i class="fa {{ val.section.faIcon }} fa-fw" aria-hidden="true"> </i><span class="nomSection">{{ val.section.nom }}</span>
                             </a>
                         </li>
                     {% endfor %}
@@ -1266,7 +1291,7 @@
                     <div role="tabpanel" class="tab-pane fade in active sortable" id="t1body_0">
                         <div class="sortableSections">
                             {% for key,val in zonesSections %}
-                                <div class="row mb-10 adminSectionRow" data-idSection="{{ val.section.id }}">
+                                <div class="row mb-10 adminSectionRow visibility_{{ val.section.isVisible }}" data-idSection="{{ val.section.id }}">
                                     <div class="myBtn btnAdmin btnLeft col-sm-1  col-xs-1">
                                         {% if val.section.isVisible %}
                                             <i class="activationSectionBtn fa fa-check-square-o"></i>
@@ -1275,8 +1300,9 @@
                                         {% endif %}
                                     </div>
                                     <div class="myBtn btnAdmin btnMove btnMoveSection col-sm-1  col-xs-1"><i class="fa fa-arrows-alt "></i></div>
-                                    <input data-champName="nom" class="nomSectionInput col-sm-8  col-xs-8" value="{{ val.section.nom }}"/>
-                                    <div class="myBtn btnRight btnAdmin btnDelete btnDeleteSection col-sm-1 col-xs-1"><i class="fa fa-trash"></i></div>
+                                    <input data-champName="nom" class="nomSectionInput col-sm-6  col-xs-6" value="{{ val.section.nom }}"/>
+                                    <input data-champName="faIcon" class="faIconSectionInput col-sm-2 col-xs-2" value="{{ val.section.faIcon }}"/>
+                                    <div class="myBtn btnRight btnAdmin btnSupprElem btnDeleteSection col-sm-1 col-xs-1"><i class="fa fa-trash"></i></div>
                                 </div>
                             {% endfor %}
                         </div>

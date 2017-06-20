@@ -18,6 +18,7 @@ class DisciplineAdmin extends AbstractAdmin
                 'config_name' => 'my_simple_config'
             ))
             ->add('imgFilePath', 'text')
+            ->add('faIcon', 'text')
         ;
 
     }
@@ -27,6 +28,7 @@ class DisciplineAdmin extends AbstractAdmin
     {
         $datagridMapper
             ->add('nom')
+            ->add('faIcon')
         ;
     }
 
@@ -37,6 +39,7 @@ class DisciplineAdmin extends AbstractAdmin
             ->addIdentifier('nom')
             ->add('description')
             ->add('imgFilePath')
+            ->add('faIcon')
         ;
     }
 }
