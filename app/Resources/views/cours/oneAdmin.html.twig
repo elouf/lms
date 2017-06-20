@@ -156,6 +156,16 @@
                 elem.insertBefore(prev);
                 reorderZone($(this).closest('.courseElems'))
             });
+            $('.btnMoveTotalDown').click(function(){
+                var elem = $(this).closest('.courseElemAdmin');
+                elem.appendTo(elem.closest('.courseElems'));
+                reorderZone($(this).closest('.courseElems'))
+            });
+            $('.btnMoveTotalUp').click(function(){
+                var elem = $(this).closest('.courseElemAdmin');
+                elem.prependTo(elem.parent());
+                reorderZone($(this).closest('.courseElems'))
+            });
             function reorderZone(zoneList){
                 var arrayZones = [];
                 zoneList.find('[data-idzone]').each(function(){
@@ -207,7 +217,7 @@
                 }else if($(this).hasClass('addNewTypeChat')){
                     typeItem = "chat";
                 }
-                console.log(typeItem)
+
                 $.ajax({
                     type: "POST",
                     url: "{{path('addZone_ajax')}}",
@@ -1249,7 +1259,7 @@
                     </li>
                 </ul>
             </div>
-            <div class="col-md-9 col-sm-9 col-xs-12">
+            <div class="col-md-9 col-sm-9 col-xs-12 sectionAdminContent">
                 <div class="tab-content">
 
                     <!--- administration des sections (activation, modif nom et suppression) -->
@@ -1411,6 +1421,14 @@
                                             with {description: valR.description, visible: val.zones.containers[keyR].isVisible,
                                             zoneId: val.zones.containers[keyR].id, itemId: valR.id, inSection: 'true'}
                                             %}
+                                        {% elseif val.zones.type[keyR] == "forum" %}
+                                            <!--
+                                                                FORUM
+                                            -->
+                                            {% include "cours/adminForum.html.twig"
+                                            with {forum:valR, description: valR.description, visible: val.zones.containers[keyR].isVisible,
+                                            zoneId: val.zones.containers[keyR].id, itemId: valR.id, inSection: 'true'}
+                                            %}
                                         {% elseif val.zones.type[keyR] == "chat" %}
                                             <!--
                                                                 CHAT
@@ -1444,7 +1462,7 @@
                         <div class="bginverse">
                             <div class="">
                                 <div class="alert alert-danger mb-10">
-                                    <strong>Attention!</strong> Vous allez supprimer une ressource qui est utilisée dans <span class="nbZoneUseOfRess"></span> zones!</p>
+                                    <strong>Attention!</strong> Vous allez supprimer une ressource qui est utilisée dans <span class="nbZoneUseOfRess"></span> sections !</p>
                                 </div>
                                 <div class="row mb-10" style="text-align: center">
                                     <div class="btn btn-sm btn-info mb-3 validateRessDeletion">Valider</div>

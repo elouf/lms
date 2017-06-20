@@ -94,10 +94,15 @@ a { font-family: inherit; color: inherit; }
 .noMargin{
     margin: 0;
 }
+
+.sectionAdminContent{
+
+}
+
 .courseElemAdmin{
-    margin-bottom: 20px;
+    margin-bottom: 5px;
     border-bottom: dashed 3px #456d94;
-    padding-bottom: 20px !important;
+    padding-bottom: 10px !important;
 }
 .courseElemAdmin::before, .courseElem::before{
     content: none !important;
@@ -105,9 +110,8 @@ a { font-family: inherit; color: inherit; }
 .titleBar{
     text-align: center;
     color: #fff;
-    padding: 5px;
+    padding: 2px;
     font-family: "Montserrat",sans-serif;
-    margin-bottom: 5px;
     border-radius: 2px;
 }
 .lienAdmin .titleBar{
@@ -139,7 +143,7 @@ a { font-family: inherit; color: inherit; }
     text-transform: uppercase;
 }
 .btnActionCol li, .btnAdmin{
-    margin-bottom: 5px;
+    margin-bottom: 3px;
     background: #ff9c00;
     padding: 0;
 }
@@ -167,12 +171,16 @@ a { font-family: inherit; color: inherit; }
     border-top-right-radius: 0px;
     border-bottom-right-radius: 0px;
 }
+.btnCoteCote{
+    width: 45%;
+    display: inline-block;
+}
 .btnAlone{
     border-radius: 3px;
 }
 .btnActionCol i, .btnAdmin i{
-    line-height: 26px;
-    font-size: 20px;
+    line-height: 20px;
+    font-size: 18px;
 }
 .adminSectionRow .btnActionCol i, .adminSectionRow .btnAdmin i{
     line-height: 32px;
@@ -185,7 +193,7 @@ a { font-family: inherit; color: inherit; }
 .formCol{
     border: 2px solid #d1d1d1;
     background: #e9e9e9;
-    min-height: 150px !important;
+    min-height: 115px !important;
     padding: 3px 6px !important;
     display: flex;
     display: -webkit-flex;
@@ -198,10 +206,6 @@ a { font-family: inherit; color: inherit; }
     margin-left: 0;
     margin-right: 0;
     margin-bottom: 2px;
-    flex: 1;
-    -webkit-box-flex: 1;
-    -webkit-flex: 1;
-    -ms-flex: 1;
 }
 .LabelAdmin{
     font-weight: bold;
@@ -234,8 +238,15 @@ textarea[readonly]{
     background: #E8E8E8;
 }
 
-.courseElems .courseElemAdmin:first-child .btnMoveUp, .courseElems .courseElemAdmin:last-child .btnMoveDown{
+.courseElems .courseElemAdmin:first-child .btnMoveUp,
+.courseElems .courseElemAdmin:last-child .btnMoveDown,
+.courseElems .courseElemAdmin:first-child .btnMoveTotalUp,
+.courseElems .courseElemAdmin:last-child .btnMoveTotalDown{
     display: none;
+}
+.courseElems .courseElemAdmin:first-child .btnCoteCote,
+.courseElems .courseElemAdmin:last-child .btnCoteCote{
+    width: 100%;
 }
 
 .hrCourseElem{
@@ -243,6 +254,8 @@ textarea[readonly]{
     border-style: none none dashed;
     border-width: 0 0 2px;
     width: 100%;
+    margin-bottom: 7px;
+    margin-top: 7px;
 }
 
 .dureeSelect .form-control{
@@ -582,6 +595,10 @@ label.alertMustBeSet{
 /* Messages */
 .btnSendMsg, .btnPostMsg, .btnUpdatePost{
     font-size: 20px;
+}
+.btnDownloadFilters{
+    padding: 4px 24px;
+    font-size: 18px;
 }
 .newMsgsPuce {
     position: absolute;

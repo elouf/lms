@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Chat;
 use AppBundle\Entity\Devoir;
 use AppBundle\Entity\Forum;
 use AppBundle\Entity\GroupeLiens;
@@ -87,6 +88,8 @@ class ZoneRessourceController extends Controller
                 $entityRessourceName = "RessourceLibre";
             }elseif($typeItem == "forum"){
                 $entityRessourceName = "Forum";
+            }elseif($typeItem == "chat"){
+                $entityRessourceName = "Chat";
             }
 
             if($entityRessourceName == ""){
@@ -117,6 +120,8 @@ class ZoneRessourceController extends Controller
                         $ressource = new RessourceLibre();
                     }elseif($typeItem == "forum"){
                         $ressource = new Forum();
+                    }elseif($typeItem == "chat"){
+                        $ressource = new Chat();
                     }
                     $ressource->setDescription("");
                     $ressource->setNom("");

@@ -36,6 +36,14 @@ class TypeLien
     private $faIcon;
 
     /**
+     * __toString method
+     */
+    public function __toString()
+    {
+        return (string) $this->getNom();
+    }
+
+    /**
      * Get id
      *
      * @return int
@@ -91,10 +99,5 @@ class TypeLien
     public function getFaIcon()
     {
         return $this->faIcon;
-    }
-
-    public function __toString()
-    {
-        return $this->nom;
     }
 }

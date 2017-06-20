@@ -83,6 +83,7 @@
             });
 
             $('.btnSendMsg').click(function(){
+                $(this).animate('opacity', 1000);
                 var objet = $('#emailingSujet').val();
                 var message = CKEDITOR.instances['emailingTexte'].getData();
                 var users = [];
@@ -103,6 +104,9 @@
                         window.location.href = window.location.href;
                     }
                 });
+            });
+            $('.btnDownloadFilters').click(function(){
+
             });
         });
     </script>
@@ -189,9 +193,16 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-12">
+                    <div class="col-sm-10">
                         <div class="form-group text-center">
                             <a class="btn btn-primary btn-sm btnApplyFiltersEmailing">Appliquer les filtres</a>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="form-group text-center">
+                            <a class="btn btn-success btn-sm btnDownloadFilters">
+                                <i class="fa fa-file-excel-o" aria-hidden="true"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -218,7 +229,7 @@
             </div>
             <div class="col-sm-12">
                 <div class="form-group text-center">
-                    <a class="btn btn-primary btn-sm btnSendPost"><i class="btnSendMsg fa fa-paper-plane-o" aria-hidden="true"></i></a>
+                    <a class="btn btn-primary btn-sm btnSendMsg"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></a>
                 </div>
             </div>
         </div>

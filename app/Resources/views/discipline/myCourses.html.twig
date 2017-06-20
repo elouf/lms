@@ -145,7 +145,7 @@
                                                             <br/>
                                                             <li><i class="fa fa-hourglass-start"></i> {{ valC.session.dateDebut|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}</li>
                                                         </ul>
-                                                        <p class="brief">{{ valC.session.messageAlerte }}</p>
+                                                        <p class="brief">{{ valC.session.messageAlerte|raw }}</p>
                                                         <p class="brief fdbackInscUserSess{% if not val.sessionsAlerteIsInscrit[keyC] %} hidden{% endif %}">Vous êtes inscrit à cette future session.</p>
                                                         {% if not val.sessionsAlerteIsInscrit[keyC] %}
                                                             <a class="btn btn-warning btn-sm btnInscrSess">S'inscrire</a>
