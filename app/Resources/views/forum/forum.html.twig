@@ -47,7 +47,7 @@
     </script>
     <div class="container pt-40 pb-40">
         <a href="{{ path('newForumSujet', {id: forum.id}) }}" class="btn btn-primary btn-sm"><i class="btnSendMsg fa fa-paper-plane-o" aria-hidden="true"></i></a>
-        <h3 class="heading text-center">Sujets de discussion</h3>
+        <h3 class="heading text-center">{{ forum.nom }}</h3>
 
         {% if sujetsEpingles %}
             <h6 class="heading text-center">Sujets épinglés</h6>

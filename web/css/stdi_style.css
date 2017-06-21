@@ -160,7 +160,7 @@ a { font-family: inherit; color: inherit; }
     background: #006ca2 !important;
 }
 .btnSupprElem{
-    background: #c64d34 !important;
+    background: #c61400 !important;
 }
 .btnRight{
     border-bottom-left-radius: 0px;
@@ -213,6 +213,10 @@ a { font-family: inherit; color: inherit; }
 .LabelAdmin{
     font-weight: bold;
     line-height: 26px;
+}
+.infoLabel{
+    font-size: 12px;
+    font-style: italic;
 }
 .champAdmin{
     padding: 1px 5px !important;
@@ -298,6 +302,10 @@ textarea[readonly]{
 }
 
 /* popup ajout lien dans groupe */
+.longLinkList{
+    overflow: auto;
+    max-height: 750px;
+}
 #btnNewLienInGroupeModal{
     text-align: center;
 }
@@ -922,24 +930,39 @@ ul.list-default>li.studitWhiteFC:before{
     .chatIHM .contentRow, .emailingIHM {
         height: 490px;
     }
+    .longLinkList{
+        max-height: 600px;
+    }
 }
 @media screen and (max-height: 900px){
     .chatIHM .contentRow, .emailingIHM {
         height: 450px;
+    }
+    .longLinkList{
+        max-height: 500px;
     }
 }
 @media screen and (max-height: 800px){
     .chatIHM .contentRow, .emailingIHM {
         height: 380px;
     }
+    .longLinkList{
+        max-height: 400px;
+    }
 }
 @media screen and (max-height: 700px){
     .chatIHM .contentRow, .emailingIHM {
         height: 350px;
     }
+    .longLinkList{
+        max-height: 300px;
+    }
 }
 @media screen and (max-height: 600px){
     .chatIHM .contentRow, .emailingIHM {
         height: 300px;
+    }
+    .longLinkList{
+        max-height: 250px;
     }
 }

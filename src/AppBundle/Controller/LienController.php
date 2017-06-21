@@ -150,7 +150,7 @@ class LienController extends Controller
             }
 
             $em->flush();
-            return new JsonResponse(array('action' =>'upload File', 'id' => $itemId, 'type' => $type, 'ext' => $ext, 'newLien' => $lien->getUrl(), 'dir' => $dir, 'indexfounded' => $indexfounded, '$urlDest' => $urlDest));
+            return new JsonResponse(array('action' =>'upload File', 'id' => $itemId, 'type' => $type, 'ext' => $ext, 'newLien' => $lien->getUrl(), 'dir' => $dir, '$urlDest' => $urlDest));
         }
 
         return new JsonResponse('This is not ajax!', 400);

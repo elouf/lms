@@ -108,6 +108,7 @@ class ForumController extends Controller
             $id = $request->request->get('id');
             $titre = $request->request->get('titre');
             $texte = $request->request->get('texte');
+            $epingle = $request->request->get('epingle') == "true";
 
             $forum = $em->getRepository('AppBundle:Forum')->findOneBy(array('id' => $id));
 
@@ -115,6 +116,7 @@ class ForumController extends Controller
             $sujet->setCreateur($this->getUser());
             $sujet->setTitre($titre);
             $sujet->setForum($forum);
+            $sujet->setEpingle($epingle);
 
             $em->persist($sujet);
 

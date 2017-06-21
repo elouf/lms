@@ -36,6 +36,8 @@
             $('.btnSendSujet').click(function(){
                 $('.alertMustBeSet').removeClass('alertMustBeSet');
                 var titre =$('#sujetTitre').val();
+                var epingle = $('#sujetEpingle').is(":checked");
+                console.log(epingle)
                 var texte = description = CKEDITOR.instances['sujetTexte'].getData();
                 if(titre == ""){
                     $('[for=sujetTitre]').addClass('alertMustBeSet');
@@ -50,7 +52,8 @@
                         data: {
                             id: forumId,
                             titre: titre,
-                            texte: texte
+                            texte: texte,
+                            epingle: epingle
                         },
                         dataType: "json",
                         success: function (response) {
@@ -71,6 +74,14 @@
                 <div class="write-comment bockNewSujet">
                     <form>
                         <div class="row">
+                            {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <input id="sujetEpingle" class="" type="checkbox" />
+                                        <label for="sujetEpingle">Sujet épinglé</label>
+                                    </div>
+                                </div>
+                            {% endif %}
                             <div class="col-sm-12">
                                 <div class="form-group">
                                     <input class="form-control" id="sujetTitre" type="text">

@@ -763,8 +763,6 @@
                         $('[data-contentModal=ajoutLienToGroupe] [data-champName=nomLienInGroupe]').addClass('alertMustBeSet');
                     }else if(selectedIdCat.length == 0){
                         $('[data-contentModal=ajoutLienToGroupe] [data-id=categorieLienInGroupeSelectPicker]').addClass('alertMustBeSet');
-                    }else if(urlLien == ""){
-                        $('[data-contentModal=ajoutLienToGroupe] [data-champName=groupeNewLien_url]').addClass('alertMustBeSet');
                     }else if(selectedIdType.length == 0){
                         $('[data-contentModal=ajoutLienToGroupe] [data-id=typeLienInGroupeSelectPicker]').addClass('alertMustBeSet');
                     }else{
@@ -795,7 +793,11 @@
                                         categorieId: categorieLienInGroupe
                                     },
                                     success: function (data) {
-                                        refreshInSection(idSection);
+                                        if(urlLien == ""){
+                                            uploadLinkFile(lienId, true, idSection);
+                                        }else{
+                                            refreshInSection(idSection);
+                                        }
                                     }
                                 });
                             }
@@ -953,8 +955,7 @@
             }
 
             // upload d'un fichier pour un lien
-            $('.lienAdmin .fileUploader').click(function(){
-                var lienId = $(this).attr('data-idItem');
+            function uploadLinkFile(lienId, refresh, idSection){
                 var coursId = $('[data-coursId]').attr('data-coursId');
                 var lienUrlInput = $('[data-typeItem=lien][data-idItem='+lienId+'] .champAdmin[data-champName=url]');
 
@@ -981,20 +982,20 @@
 
                 $('.modal .modal-body[data-contentModal=uploadFile] .bginverse').empty().append(
                         '<div>' +
-                            '<div class="mb-10" style="text-align: center">'+
-                                '<div class="LabelAdmin col-xs-8">Dézipper le fichier (le fichier index.html sera pointé par le lien)</div>'+
-                                '<input data-champName="unzipUploaded" class="col-xs-2" value="" type="checkbox" />'+
-                            '</div>'+
+                        '<div class="mb-10" style="text-align: center">'+
+                        '<div class="LabelAdmin col-xs-8">Dézipper le fichier (le fichier index.html sera pointé par le lien)</div>'+
+                        '<input data-champName="unzipUploaded" class="col-xs-2" value="" type="checkbox" />'+
+                        '</div>'+
                         '</div>'+
                         '<div class="fileUploader btn">' +
-                            '<span class="btn btn-success fileinput-button"> '+
-                                '<i class="glyphicon glyphicon-plus"></i> '+
-                                '<span>Ajouter un fichier</span> '+
-                                '<input id="itemUpload" type="file" name="files[]" multiple> '+
-                            '</span> '+
-                            '<div id="itemProgress" class="progress col-xs-12"> '+
-                            '   <div class="progress-bar progress-bar-success"></div> '+
-                            '</div> '+
+                        '<span class="btn btn-success fileinput-button"> '+
+                        '<i class="glyphicon glyphicon-plus"></i> '+
+                        '<span>Ajouter un fichier</span> '+
+                        '<input id="itemUpload" type="file" name="files[]" multiple> '+
+                        '</span> '+
+                        '<div id="itemProgress" class="progress col-xs-12"> '+
+                        '   <div class="progress-bar progress-bar-success"></div> '+
+                        '</div> '+
                         '</div>'
                 );
 
@@ -1034,6 +1035,9 @@
                                 success: function (data) {
                                     $('.modal').modal('toggle');
                                     lienUrlInput.val(data.newLien);
+                                    if(refresh){
+                                        refreshInSection(idSection);
+                                    }
                                 },
                                 error: function(xhr, status, error) {
                                     $('.modal').modal('toggle');
@@ -1051,6 +1055,10 @@
                     }
                 }).prop('disabled', !$.support.fileInput)
                         .parent().addClass($.support.fileInput ? undefined : 'disabled');
+            }
+
+            $('.lienAdmin .fileUploader').click(function(){
+                uploadLinkFile($(this).attr('data-idItem'), false, null);
             });
 
 
@@ -1584,7 +1592,9 @@
                                 </tr>
                                 <tr>
                                     <td class="LabelAdmin">Url du lien</td>
-                                    <td><input data-champName="groupeNewLien_url" class="col-xs-8" value=""/></td>
+                                    <td>
+                                        <input data-champName="groupeNewLien_url" class="col-xs-8" value=""/>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td class="LabelAdmin">Type du lien</td>
@@ -1632,7 +1642,7 @@
                                 <li role="presentation" class="active"><a href="#btnNewLienInGroupeModal" aria-controls="btnNewLienInGroupeModal" role="tab" data-toggle="tab"><i class="fa fa-external-link  fa-fw"></i> Nouveau Lien</a></li>
                                 <li role="presentation"><a href="#btnOldLienInGroupeModal" aria-controls="btnOldLienInGroupeModal" role="tab" data-toggle="tab"><i class="fa fa-university fa-fw"></i> Lien existant</a></li>
                             </ul>
-                            <div class="tab-content">
+                            <div class="tab-content longLinkList">
                                 <div role="tabpanel" class="tab-pane fade in active" id="btnNewLienInGroupeModal">
                                     <table class="tableAddNewLienInGroup">
                                         <tr>
@@ -1641,7 +1651,9 @@
                                         </tr>
                                         <tr>
                                             <td class="LabelAdmin">Url du lien</td>
-                                            <td><input data-champName="groupeNewLien_url" class="col-xs-8" value=""/></td>
+                                            <td>
+                                                <input data-champName="groupeNewLien_url" class="col-xs-8" value=""/><div class="col-xs-8 infoLabel">Laissez vide pour uploader ensuite un fichier</div>
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td class="LabelAdmin">Type du lien</td>
