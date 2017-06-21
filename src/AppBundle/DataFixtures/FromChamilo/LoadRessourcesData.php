@@ -196,7 +196,7 @@ class LoadRessourcesData extends LoadChamiloConnect implements OrderedFixtureInt
         $item->setNom($nom);
         $item->setCours($cours);
         $item->setIsVisible(true);
-        $item->setPictoFilePath('fa-pencil');
+        $item->setFaIcon('fa-pencil');
         $item->setPosition($position);
         $manager->persist($item);
         return $item;

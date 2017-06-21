@@ -112,7 +112,7 @@ class SectionController extends Controller
             $section->setIsVisible(false);
             $section->setNom($nom);
             $section->setCours($cours);
-            $section->setPictoFilePath('fa-pencil');
+            $section->setFaIcon('fa-pencil');
 
             //on cherche la position
             $courseSections = $em->getRepository('AppBundle:Section')->findBy(array('cours' => $cours));
