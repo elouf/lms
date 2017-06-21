@@ -978,21 +978,17 @@
                     url: steps + upload_srcSteps  + upload_course + folderLocation,
                     dropZone:null,
                     dataType: 'json',
-                    /*add: function(e, data) {
+                    add: function(e, data) {
                         var uploadErrors = [];
-                        var acceptFileTypes = /^image\/(gif|jpe?g|png)$/i;
-                        if(data.files[0]['type'].length && !acceptFileTypes.test(data.files[0]['type'])) {
-                            uploadErrors.push('Not an accepted file type');
-                        }
-                        if(data.files[0]['size'].length && data.files[0]['size'] > 10000000) {
-                            uploadErrors.push('Filesize is too big');
+                        if(data.files[0]['size'] > 256000000) {
+                            uploadErrors.push('Fichier trop volumineux : ne pas dépasser 256MO');
                         }
                         if(uploadErrors.length > 0) {
                             alert(uploadErrors.join("\n"));
                         } else {
                             data.submit();
                         }
-                    },*/
+                    },
                     done: function (e, data) {
                         $.each(data.result.files, function (index, file) {
                             var myUrlTab = file.url.split(folderLocation);
@@ -1091,6 +1087,17 @@
                     url: steps + upload_srcSteps  + upload_course + folderLocation,
                     dropZone:null,
                     dataType: 'json',
+                    add: function(e, data) {
+                        var uploadErrors = [];
+                        if(data.files[0]['size'] > 256000000) {
+                            uploadErrors.push('Fichier trop volumineux : ne pas dépasser 256MO');
+                        }
+                        if(uploadErrors.length > 0) {
+                            alert(uploadErrors.join("\n"));
+                        } else {
+                            data.submit();
+                        }
+                    },
                     done: function (e, data) {
                         $.each(data.result.files, function (index, file) {
                             var myUrlTab = file.url.split(folderLocation);

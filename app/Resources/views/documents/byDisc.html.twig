@@ -55,6 +55,17 @@
                     url: steps + upload_srcSteps + folderLocation,
                     dropZone:null,
                     dataType: 'json',
+                    add: function(e, data) {
+                        var uploadErrors = [];
+                        if(data.files[0]['size'] > 32000000) {
+                            uploadErrors.push('Fichier trop volumineux : ne pas dépasser 32MO');
+                        }
+                        if(uploadErrors.length > 0) {
+                            alert(uploadErrors.join("\n"));
+                        } else {
+                            data.submit();
+                        }
+                    },
                     done: function (e, data) {
                         $.each(data.result.files, function (index, file) {
 

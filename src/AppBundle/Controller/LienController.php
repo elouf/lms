@@ -103,20 +103,42 @@ class LienController extends Controller
 
             $urlTab = explode('/web', $currentUrl);
             $urlDestTab = explode('/var', $urlDest);
+            $dir = $urlTab[0].'/var'.$urlDestTab[1];
 
             $lien = $em->getRepository('AppBundle:Lien')->findOneBy(array('id' => $itemId));
 
             $ext = pathinfo($url, PATHINFO_EXTENSION);
             rename($url, $urlDest.'file.'.$ext);
 
-            if($unzipIfZip && $type == 'application/zip'){
+            if($unzipIfZip && ($type == 'application/zip' || $type == 'application/octet-stream' || $type == 'application/x-zip-compressed' || $type == 'application/zip-compressed' || $type == 'application/x-zip') ){
                 $zip = new ZipArchive;
                 $res = $zip->open($urlDest.'file.'.$ext);
                 if ($res === TRUE) {
                     $zip->extractTo($urlDest);
                     $zip->close();
-                    $lien->setUrl($urlTab[0].'/var'.$urlDestTab[1].'index.html');
-                    unlink($urlDest.'file.'.$ext);
+
+                    $indexfounded = false;
+                    if(file_exists($urlDest.'index.html')){
+                        $indexfounded = true;
+                        $lien->setUrl($dir.'index.html');
+                    }else{
+                        $filesInZip = scandir($urlDest);
+                        foreach ($filesInZip as $key => $value) {
+                            if (is_dir($urlDest . $value)) {
+                                if(file_exists($urlDest. $value.'/index.html')){
+                                    $indexfounded = true;
+                                    $lien->setUrl($dir. $value.'/index.html');
+                                    break;
+                                }
+                            }
+                        }
+                        if(!$indexfounded){
+                            $lien->setUrl($dir.'file.'.$ext);
+                        }
+                    }
+                    if($indexfounded) {
+                        unlink($urlDest . 'file.' . $ext);
+                    }
                 } else {
                     return new JsonResponse(array(
                             'error' => true,
@@ -128,7 +150,7 @@ class LienController extends Controller
             }
 
             $em->flush();
-            return new JsonResponse(array('action' =>'upload File', 'id' => $itemId, 'ext' => $ext, 'newLien' => $lien->getUrl()));
+            return new JsonResponse(array('action' =>'upload File', 'id' => $itemId, 'type' => $type, 'ext' => $ext, 'newLien' => $lien->getUrl(), 'dir' => $dir, 'indexfounded' => $indexfounded, '$urlDest' => $urlDest));
         }
 
         return new JsonResponse('This is not ajax!', 400);
