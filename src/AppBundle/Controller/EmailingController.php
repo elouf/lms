@@ -6,6 +6,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class EmailingController extends Controller
 {
@@ -166,6 +167,29 @@ class EmailingController extends Controller
             $em->flush();
 
             return new JsonResponse(array('action' =>'Send mail'));
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
+    /**
+     * @Route("/emailingGenerateCsv_ajax", name="emailingGenerateCsv_ajax")
+     */
+    public function emailingGenerateCsvAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+            $users = $request->request->get('users');
+
+            $data = array(['id','email','firstname','lastname']);
+            for($i=0; $i<count($users); $i++){
+                $user = $this->getDoctrine()->getRepository('AppBundle:User')->findOneBy(array('id' => $users[$i]));
+                array_push($data, [$user->getId(), $user->getEmail(), $user->getFirstname(), $user->getLastname()]);
+            }
+
+            $em->flush();
+
+            return new JsonResponse(array('action' =>'get csv users', 'data' => $data));
         }
 
         return new JsonResponse('This is not ajax!', 400);

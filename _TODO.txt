@@ -18,8 +18,6 @@ Chat :
 
 module de nettoyage du serveur
 
-
-!!! emailing : générer la liste des mails lors de l'application des filtres
 BUG : vérifier zip, et/ou gros fichiers
 sons et vidéos : afficher un player et proposer le téléchargement
 !!!! upload !!!!!! mettre au moins 512MO
@@ -71,3 +69,4 @@ forcer le rechargement à l'enregistrement des ressources
 ressources, suppression : échanger les boutons, onglet "gestion des ressources" de même couleur que le btn suppr + appeler ça "stock de ressources"
 Ajout de ressource : En première position et non en dernière position
 section invisible : le montrer dans la partie gauche (opacité) et dans l'onglet de gestion des sections
+emailing : générer la liste des mails lors de l'application des filtres (bouton vert à droite du bouton "appliquer les filtres")
