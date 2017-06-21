@@ -11,6 +11,9 @@ body{
 }
 
 /* footer */
+.affiliations > li{
+    display: inline-block;
+}
 .quick-links > li > a{
     color: #d3d3d3
 }
