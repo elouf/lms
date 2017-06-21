@@ -582,6 +582,32 @@
                     });
                 });
             }
+            function changeForum(forum){
+                forum.find('.btnSaveInputChange').click(function(){
+                    var idSection = $(this).closest('[data-idSection]').attr('data-idSection');
+                    var id = forum.attr('data-idItem');
+                    var nom = forum.find('[data-champName=nom]').val();
+                    var description = forum.find('textarea[data-champName=description]').val();
+                    if(CKEDITOR.instances[forum.find('[data-champName=description]').attr('id')]){
+                        description = CKEDITOR.instances[forum.find('[data-champName=description]').attr('id')].getData();
+                    }
+
+                    $.ajax({
+                        type: 'POST',
+                        url: "{{path('changeContentForum_ajax')}}",
+                        async: false,
+                        dataType: "json",
+                        data: {
+                            id: id,
+                            nom: nom,
+                            description: description
+                        },
+                        success: function (data) {
+                            refreshInSection(idSection);
+                        }
+                    });
+                });
+            }
             function changeLibre(lien){
                 lien.find('.btnSaveInputChange').click(function(){
                     var idSection = $(this).closest('[data-idSection]').attr('data-idSection');

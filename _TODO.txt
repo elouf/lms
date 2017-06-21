@@ -73,4 +73,4 @@ Ajout de liens vers les partenaires
 sons et vidéos : afficher un player et proposer le téléchargement -> formats impératifs : mp4 pour les vidéos, mp3 pour les sons
 Modification de logos (enseignement-catholique)
 limitation des tailles de fichiers uploadés : les liens à 256MO, les copies/corrigés à 5MO, les documents à 32MO, les sujets/corrigés types à 256MO
-upload de zip : vérifier où est l'index.html
+upload de zip : vérifier où est l'index.html => je le tolère au niveau 0 et au niveau 1 du zip. Si je ne le trouve pas, je fais un lien vers le fichier zip
