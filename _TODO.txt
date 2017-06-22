@@ -1,7 +1,5 @@
 upload images dans sonata
 
-Sessions : envoi d’un mail à ceux qui ont souscrit
-
 Chat :
     
 - couleurs users
@@ -69,3 +67,7 @@ Forum : au lieu de MESSAGES dans un sujet : mettre le nom du sujet, et idem dans
 Forum : permettre d'épingler lors de la création
 upload d’un fichier quand on créé un nouveau lien dans un groupe : il faut laisser l'url vide et valider. Ensuite la popup d'upload apparaît.
 Liste des liens dans la popup d'ajout dans un groupe : revoir le scroll en admin...
+
+22/06/2017
+Correction bug d'affichage des liens
+Correction bug qui empêchait la création d'un cours dans le backOffice
