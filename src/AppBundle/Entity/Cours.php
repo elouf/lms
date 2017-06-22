@@ -96,7 +96,12 @@ class Cours extends DocContainer
      */
     public function __toString()
     {
-        return (string) $this->getNom().' ('.$this->getDiscipline()->getNom().')';
+
+        if(is_null($this->getNom())){
+            return "";
+        }else{
+            return $this->getNom().' ('.$this->getDiscipline()->getNom().')';
+        }
     }
 
     /**
