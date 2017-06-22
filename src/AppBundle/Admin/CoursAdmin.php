@@ -31,6 +31,7 @@ class CoursAdmin extends AbstractAdmin
                 ->add('cohortes')
                 ->add('session', 'sonata_type_model', array(
                     'required' => false))
+                ->add('position', 'text')
             ->end();
     }
 
@@ -62,6 +63,7 @@ class CoursAdmin extends AbstractAdmin
             ->add('description')
             ->addIdentifier('discipline')
             ->add('session')
+            ->add('position')
         ;
 
     }

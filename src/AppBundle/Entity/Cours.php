@@ -85,6 +85,13 @@ class Cours extends DocContainer
     private $session;
 
     /**
+     * @var int
+     *
+     * @ORM\Column(name="position", type="integer")
+     */
+    private $position=0;
+
+    /**
      * Constructor
      */
     public function __construct() {
@@ -312,5 +319,29 @@ class Cours extends DocContainer
     public function getSession()
     {
         return $this->session;
+    }
+
+    /**
+     * Set position
+     *
+     * @param integer $position
+     *
+     * @return Cours
+     */
+    public function setPosition($position)
+    {
+        $this->position = $position;
+
+        return $this;
+    }
+
+    /**
+     * Get position
+     *
+     * @return int
+     */
+    public function getPosition()
+    {
+        return $this->position;
     }
 }

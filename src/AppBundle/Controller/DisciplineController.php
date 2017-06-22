@@ -74,7 +74,7 @@ class DisciplineController extends Controller
             $courses[$i]["sessionsAlerte"] = array();
             $courses[$i]["sessionsAlerteIsInscrit"] = array();
             $courses[$i]["discipline"] = $disciplinesArray2Consider[$i];
-            $coursesT = $repositoryCours->findBy(array('discipline' =>$disciplinesArray2Consider[$i]));
+            $coursesT = $repositoryCours->findBy(array('discipline' =>$disciplinesArray2Consider[$i]), array('position' => 'ASC'));
             for($j=0; $j<count($coursesT); $j++){
                 if(!$coursesT[$j]->getSession()) {
                     array_push($courses[$i]["courses"], $coursesT[$j]);
