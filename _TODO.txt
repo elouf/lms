@@ -71,4 +71,5 @@ Liste des liens dans la popup d'ajout dans un groupe : revoir le scroll en admin
 22/06/2017
 Correction bug d'affichage des liens
 Correction bug qui empêchait la création d'un cours dans le backOffice
+Ajout de 3 images de cours
 Ajout des position des cours dans une disciplines (à gérer dans le backOffice)
