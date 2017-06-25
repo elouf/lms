@@ -1,11 +1,5 @@
 upload images dans sonata
 
-Chat :
-    
-- couleurs users
-    
-- users dispos
-
 éditeurs wysiwyg : gestion des images
 
 module de nettoyage du serveur
@@ -73,3 +67,8 @@ Correction bug d'affichage des liens
 Correction bug qui empêchait la création d'un cours dans le backOffice
 Ajout de 3 images de cours
 Ajout des position des cours dans une disciplines (à gérer dans le backOffice)
+
+23/06/2017
+Chat :
+- couleurs users (vert pour moi, orange pour l'admin, gris pour les autres)
+- colonne des utilisateurs connectés doit se mettre à jour

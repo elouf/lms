@@ -46,7 +46,8 @@ class ChatTopic implements TopicInterface
     public function onUnSubscribe(ConnectionInterface $connection, Topic $topic, WampRequest $request)
     {
         //this will broadcast the message to ALL subscribers of this topic.
-        $topic->broadcast(['msg' => $connection->resourceId . " has left " . $topic->getId()]);
+        $user = $this->clientManipulator->getClient($connection);
+        $topic->broadcast(['type' => "unsubscribe", 'user' => $user, 'msg' => $connection->resourceId . " has totally left " . $topic->getId()]);
     }
 
 

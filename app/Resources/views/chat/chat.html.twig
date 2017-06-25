@@ -37,7 +37,13 @@
                     <table>
                         {% for key,val in posts %}
                             <tr class="msgChatRow">
-                                <td class="userTDchat"><div class="usrChat">{{ val.auteur.firstname }} {{ val.auteur.lastname }}</div></td>
+                                <td class="userTDchat"><div class="usrChat
+                                {% if app.user.id == val.auteur.id %}
+                                    meUsrChat
+                                {% elseif val.auteur.hasRole('ROLE_SUPER_ADMIN') %}
+                                   adminUsrChat
+                                {% endif %}
+                                ">{{ val.auteur.firstname }} {{ val.auteur.lastname }}</div></td>
                                 <td class="msgChat">{{ val.texte }}</td>
                             </tr>
                         {% endfor %}
@@ -46,7 +52,13 @@
                 <div class="col-xs-3 colUsers">
                     {% for key,val in assocs %}
                         <div class="usrChatRow">
-                            <div class="usrChat" data-userId="{{ val.user.id }}">{{ val.user.firstname }} {{ val.user.lastname }}</div>
+                            <div class="usrChat
+                            {% if app.user.id == val.user.id %}
+                                meUsrChat
+                            {% elseif val.user.hasRole('ROLE_SUPER_ADMIN') %}
+                               adminUsrChat
+                            {% endif %}
+                            " data-userId="{{ val.user.id }}">{{ val.user.firstname }} {{ val.user.lastname }}</div>
                         </div>
                     {% endfor %}
                 </div>
@@ -84,7 +96,7 @@
                         // user is connected to websocket
 
                         session.subscribe("app/chat/"+chatId, function(uri, payload){
-                            console.log(payload.user)
+                            console.log(payload);
                             if(payload.type == "subscribe"){
                                 var sessionDB = payload.user;
 
@@ -154,6 +166,21 @@
                                         $('.colMsgs').animate({ scrollTop: n }, 200);
                                     }
                                 });
+                            }else if(payload.type == "unsubscribe"){
+                                var sessionDB = payload.user;
+                                // c'est quelqu'un d'autre qui s'est unsubscribé
+                                $.ajax({
+                                    type: "POST",
+                                    url: "{{path('getChatUserBySessionession_ajax')}}",
+                                    data: {
+                                        session: sessionDB,
+                                        chatId: chatId
+                                    },
+                                    dataType: "json",
+                                    success: function (response) {
+                                        $('.colUsers [data-userid='+response['userId']+']').closest('.usrChatRow').remove();
+                                    }
+                                });
                             }
 
                             $('.colBtn .btn').unbind('click').click(function(){
@@ -170,7 +197,8 @@
                     });
 
                     webSocket.on("socket/disconnect", function(error){
-                        console.log("Disconnected for " + error.reason + " with code " + error.code);
+                        //console.log("Disconnected for " + error.reason + " with code " + error.code);
+                        console.log("Disconnected of socket ");
                     });
 
                 }

@@ -752,13 +752,19 @@ label.alertMustBeSet{
 }
 .chatIHM .usrChat{
     border-radius: 5px;
-    background: #ff9c00;
+    background: #666;
     color: #fff;
     margin: 3px;
     display: inline-block;
     padding: 3px 10px;
     text-align: center;
     font-size: 10px;
+}
+.chatIHM .meUsrChat{
+    background: #0ba204;
+}
+.chatIHM .adminUsrChat{
+    background: #ff9c00;
 }
 .chatIHM .colMsgs table{
     width: 100%;
