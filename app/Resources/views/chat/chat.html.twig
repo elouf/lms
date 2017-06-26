@@ -115,7 +115,7 @@
                                         if(response['user'] != 'otherOne'){
                                             if(!$('.colUsers [data-userId='+response['userId']+']').length){
                                                 $('.colUsers').append('<div class="usrChatRow">' +
-                                                        '<div class="usrChat" data-userId="'+response['userId']+'">'+response['user']+'</div>' +
+                                                        '<div class="usrChat meUsrChat" data-userId="'+response['userId']+'">'+response['user']+'</div>' +
                                                         '</div>');
                                             }
                                         }else{
@@ -131,9 +131,13 @@
                                                     },
                                                     dataType: "json",
                                                     success: function (response) {
+                                                        var isAdmin = "";
+                                                        if(response['isAdmin'] == "true"){
+                                                            isAdmin = " adminUsrChat";
+                                                        }
                                                         if(!$('.colUsers [data-userId='+response['userId']+']').length) {
                                                             var chaine = '<div class="usrChatRow">' +
-                                                                    '<div class="usrChat" data-userId="'+response["userId"]+'">' + response["user"] + '</div>' +
+                                                                    '<div class="usrChat'+isAdmin+'" data-userId="'+response["userId"]+'">' + response["user"] + '</div>' +
                                                                     '</div>';
                                                             $('.colUsers').append(chaine);
                                                         }

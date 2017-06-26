@@ -123,12 +123,18 @@ class ChatController extends Controller
             $assoc = $em->getRepository('AppBundle:AssocUserChatSession')->findOneBy(array('session' => $session, 'chat' => $chat));
             $user = $assoc->getUser();
 
+            $isAdmin = "false";
+            if($user->hasRole('ROLE_SUPER_ADMIN')){
+                $isAdmin = "true";
+            }
+
             $em->flush();
 
             return new JsonResponse(array(
                     'action' =>'get Chat User by session',
                     'user' => $user->getFirstname().' '.$user->getLastname(),
-                    'userId' =>$user->getId())
+                    'userId' =>$user->getId(),
+                    'isAdmin' => $isAdmin)
             );
         }
 
