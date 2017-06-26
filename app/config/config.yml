@@ -131,7 +131,7 @@ gos_web_socket:
         - "@chat.topic_sample_service"
     server:
         port: 1338        #The port the socket server will listen on
-        host: 127.0.0.1   #The host ip to bind to
+        host: 80.247.226.149   #The host ip to bind to
         router:
             resources:
                 - "@AppBundle/Resources/config/pubsub/routing.yml"
