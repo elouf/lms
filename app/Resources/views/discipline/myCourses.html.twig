@@ -109,7 +109,7 @@
                                             {% for keyC,valC in val.sessions %}
                                                 <div class="course-list course-session" style="margin-top: 0;">
                                                     <div class="course-media">
-                                                        <img src="{{ asset('images/') }}{{ valC.imgFilePath }}" class="img-responsive course-img" alt="">
+                                                        <img src="{{ asset('images/cours/') }}{{ valC.imageFilename }}" class="img-responsive course-img" alt="">
                                                     </div>
                                                     <div class="course-detail">
                                                         <h4 class="heading">{{ valC.nom }}</h4>
@@ -136,7 +136,7 @@
                                             {% for keyC,valC in val.sessionsAlerte %}
                                                 <div class="course-list course-sessionAlerte" data-idSession="{{ valC.session.id }}" style="margin-top: 0;">
                                                     <div class="course-media">
-                                                        <img src="{{ asset('images/') }}{{ valC.imgFilePath }}" class="img-responsive course-img" alt="">
+                                                        <img src="{{ asset('images/cours/') }}{{ valC.imageFilename }}" class="img-responsive course-img" alt="">
                                                     </div>
                                                     <div class="course-detail">
                                                         <h4 class="heading">{{ valC.nom }}</h4>
@@ -157,7 +157,7 @@
                                         {% for keyC,valC in val.courses %}
                                             <div class="course-list" style="margin-top: 0;">
                                                 <div class="course-media">
-                                                    <img src="{{ asset('images/') }}{{ valC.imgFilePath }}" class="img-responsive course-img" alt="">
+                                                    <img src="{{ asset('images/cours/') }}{{ valC.imageFilename }}" class="img-responsive course-img" alt="">
                                                 </div>
                                                 <div class="course-detail">
                                                     <h4 class="heading">{{ valC.nom }}</h4>

@@ -2,8 +2,10 @@
 
 namespace AppBundle\Entity;
 
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Cours
@@ -17,6 +19,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Cours extends DocContainer
 {
+
+    const SERVER_PATH_TO_IMAGE_FOLDER = '../web/images/cours';
 
     /**
      * @var int
@@ -63,6 +67,19 @@ class Cours extends DocContainer
     private $imgFilePath;
 
     /**
+     * @var UploadedFile
+     *
+     */
+    private $imageFile;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="imageFilename", type="string", length=255, unique=false)
+     */
+    private $imageFilename;
+
+    /**
      * @var Discipline
      *
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -90,6 +107,13 @@ class Cours extends DocContainer
      * @ORM\Column(name="position", type="integer")
      */
     private $position=0;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="updated", type="datetime", nullable=true)
+     */
+    private $updated;
 
     /**
      * Constructor
@@ -218,30 +242,6 @@ class Cours extends DocContainer
     }
 
     /**
-     * Set imgFilePath
-     *
-     * @param string $imgFilePath
-     *
-     * @return Cours
-     */
-    public function setImgFilePath($imgFilePath)
-    {
-        $this->imgFilePath = $imgFilePath;
-
-        return $this;
-    }
-
-    /**
-     * Get imgFilePath
-     *
-     * @return string
-     */
-    public function getImgFilePath()
-    {
-        return $this->imgFilePath;
-    }
-
-    /**
      * Set discipline
      *
      * @param Discipline $discipline
@@ -343,5 +343,143 @@ class Cours extends DocContainer
     public function getPosition()
     {
         return $this->position;
+    }
+
+    /**
+     * Sets imageFile.
+     *
+     * @param UploadedFile $imageFile
+     */
+    public function setImageFile(UploadedFile $imageFile = null)
+    {
+        $this->imageFile = $imageFile;
+    }
+
+    /**
+     * Get imageFile
+     *
+     * @return UploadedFile
+     */
+    public function getImageFile()
+    {
+        return $this->imageFile;
+    }
+
+    /**
+     * Set imageFilename
+     *
+     * @param string $imageFilename
+     *
+     * @return Cours
+     */
+    public function setImageFilename($imageFilename)
+    {
+        $this->imageFilename = $imageFilename;
+
+        return $this;
+    }
+
+    /**
+     * Get imageFilename
+     *
+     * @return string
+     */
+    public function getImageFilename()
+    {
+        return $this->imageFilename;
+    }
+
+    /**
+     * Manages the copying of the imageFile to the relevant place on the server
+     */
+    public function upload()
+    {
+        // the imageFile property can be empty if the field is not required
+        if (null === $this->getImageFile()) {
+            return;
+        }
+
+        // we use the original imagefile name here but you should
+        // sanitize it at least to avoid any security issues
+
+        // move takes the target directory and target filename as params
+        $this->getImageFile()->move(
+            self::SERVER_PATH_TO_IMAGE_FOLDER,
+            $this->getImageFile()->getClientOriginalName()
+        );
+
+        // set the path property to the filename where you've saved the imageFile
+        $this->setImageFilename($this->getImageFile()->getClientOriginalName());
+
+        // clean up the file property as you won't need it anymore
+        $this->setImageFile(null);
+    }
+
+    public function getWebPath()
+    {
+        return self::SERVER_PATH_TO_IMAGE_FOLDER.'/'.$this->getImageFilename();
+    }
+
+    /**
+     * Lifecycle callback to upload the file to the server
+     */
+    public function lifecycleImageFileUpload()
+    {
+        $this->upload();
+    }
+
+    /**
+     * Updates the hash value to force the preUpdate and postUpdate events to fire
+     */
+    public function refreshUpdated()
+    {
+        $this->setUpdated(new \DateTime());
+    }
+
+    /**
+     * Get updated
+     *
+     * @return DateTime
+     */
+    public function getUpdated()
+    {
+        return $this->updated;
+    }
+
+    /**
+     * Set updated
+     *
+     * @param DateTime $updated
+     * @return Cours
+     */
+    public function setUpdated($updated)
+    {
+        $this->updated = $updated;
+
+        return $this;
+    }
+
+    /**
+     * Set imgFilePath
+     *
+     * @param string $imgFilePath
+     *
+     * @return Cours
+     */
+    public function setImgFilePath($imgFilePath)
+    {
+        $this->imgFilePath = $imgFilePath;
+
+        return $this;
+    }
+
+    /**
+     * Get imgFilePath
+     *
+     * @return string
+     */
+    public function getImgFilePath()
+    {
+        return $this->imgFilePath;
     }
 }

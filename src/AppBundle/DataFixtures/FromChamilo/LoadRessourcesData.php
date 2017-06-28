@@ -68,7 +68,7 @@ class LoadRessourcesData extends LoadChamiloConnect implements OrderedFixtureInt
                             plus difficiles, vous disposez aussi d\'indices aidant à la résolution, si besoin. Attention: Les formats
                             des sujets ont changé, les annales permettent de s\'entraîner surtout à l\'épreuve 1 "Résolution de
                             problème". Tenez en compte dans vos révisions. Bonne découverte !</p>',
-                                'cours/' . $course->imgFilePath,
+                                'cours/' . $course->imageFilename,
                                 $oneDisc,
                                 0);
                             if(strpos($cours->getNom(), "session estivale")){
@@ -178,13 +178,13 @@ class LoadRessourcesData extends LoadChamiloConnect implements OrderedFixtureInt
         return $item;
     }
 
-    public function createCours(ObjectManager $manager, $nom, $descr, $accueil, $imgFilePath, Discipline $disc, $cout)
+    public function createCours(ObjectManager $manager, $nom, $descr, $accueil, $imageFilename, Discipline $disc, $cout)
     {
         $item = new Cours();
         $item->setNom($nom);
         $item->setDescription($descr);
         $item->setAccueil($accueil);
-        $item->setImgFilePath($imgFilePath);
+        $item->setImageFilename($imageFilename);
         $item->setCout($cout);
         $item->setDiscipline($disc);
         $manager->persist($item);

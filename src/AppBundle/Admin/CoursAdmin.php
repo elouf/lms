@@ -1,6 +1,8 @@
 <?php
 namespace AppBundle\Admin;
 
+use AppBundle\Entity\Cours;
+use AppBundle\Entity\Image;
 use AppBundle\Entity\Session;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
@@ -14,11 +16,25 @@ class CoursAdmin extends AbstractAdmin
     // EDIT and CREATE
     protected function configureFormFields(FormMapper $formMapper)
     {
+
+        // get the current Image instance
+        $image = $this->getSubject();
+
+        // use $fileFieldOptions so we can add other options to the field
+        $fileFieldOptions = array('required' => false);
+        if ($image && ($webPath = $image->getWebPath())) {
+            // get the container so the full path to the image can be set
+            $container = $this->getConfigurationPool()->getContainer();
+            $fullPath = $container->get('request_stack')->getCurrentRequest()->getBasePath().'/'.$webPath;
+
+            // add a 'help' option containing the preview's img tag
+            $fileFieldOptions['help'] = '<img src="'.$fullPath.'" class="admin-preview" />';
+        }
+
         $formMapper
             ->with('Informations', array('class' => 'col-md-6'))
                 ->add('nom', 'text')
                 ->add('cout', 'text')
-                ->add('imgFilePath', 'text')
                 ->add('description', CKEditorType::class, array(
                     'config_name' => 'my_simple_config'
                 ))
@@ -32,6 +48,7 @@ class CoursAdmin extends AbstractAdmin
                 ->add('session', 'sonata_type_model', array(
                     'required' => false))
                 ->add('position', 'text')
+                ->add('imageFile', 'file', $fileFieldOptions)
             ->end();
     }
 
@@ -66,5 +83,23 @@ class CoursAdmin extends AbstractAdmin
             ->add('position')
         ;
 
+    }
+
+    public function prePersist($cours)
+    {
+        $this->manageFileUpload($cours);
+    }
+
+    public function preUpdate($cours)
+    {
+        $this->manageFileUpload($cours);
+    }
+
+    private function manageFileUpload(Cours $cours)
+    {
+        if ($cours->getImageFile()) {
+            $cours->upload();
+            $cours->refreshUpdated();
+        }
     }
 }

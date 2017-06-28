@@ -217,12 +217,12 @@ class LoadCoursData extends AbstractFixture implements OrderedFixtureInterface
         $manager->flush();
     }
 
-    public function createItem(ObjectManager $manager, $nom, $descr, $accueil, $imgFilePath, $disc, $cout){
+    public function createItem(ObjectManager $manager, $nom, $descr, $accueil, $imageFilename, $disc, $cout){
         $item = new Cours();
         $item->setNom($nom);
         $item->setDescription($descr);
         $item->setAccueil($accueil);
-        $item->setImgFilePath($imgFilePath);
+        $item->setImageFilename($imageFilename);
         $item->setCout($cout);
         $item->setDiscipline($disc);
         $manager->persist($item);
