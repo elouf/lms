@@ -60,13 +60,6 @@ class Cours extends DocContainer
     private $cout;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="imgFilePath", type="text", nullable=true)
-     */
-    private $imgFilePath;
-
-    /**
      * @var UploadedFile
      *
      */
@@ -457,29 +450,5 @@ class Cours extends DocContainer
         $this->updated = $updated;
 
         return $this;
-    }
-
-    /**
-     * Set imgFilePath
-     *
-     * @param string $imgFilePath
-     *
-     * @return Cours
-     */
-    public function setImgFilePath($imgFilePath)
-    {
-        $this->imgFilePath = $imgFilePath;
-
-        return $this;
-    }
-
-    /**
-     * Get imgFilePath
-     *
-     * @return string
-     */
-    public function getImgFilePath()
-    {
-        return $this->imgFilePath;
     }
 }

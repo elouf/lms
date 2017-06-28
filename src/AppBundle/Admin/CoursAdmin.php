@@ -28,7 +28,7 @@ class CoursAdmin extends AbstractAdmin
             $fullPath = $container->get('request_stack')->getCurrentRequest()->getBasePath().'/'.$webPath;
 
             // add a 'help' option containing the preview's img tag
-            $fileFieldOptions['help'] = '<img src="'.$fullPath.'" class="admin-preview" />';
+            $fileFieldOptions['help'] = '<img style="max-width:300px;" src="'.$fullPath.'" class="admin-preview" />';
         }
 
         $formMapper
