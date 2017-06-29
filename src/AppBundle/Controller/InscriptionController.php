@@ -131,7 +131,7 @@ class InscriptionController extends Controller
                     'Documentation' => 'Documentation',
                     'Economie et gestion' => 'EcoGest',
                     'Education musicale et chant choral' => 'EducMusChantChoral',
-                    'Espagnol' => 'Espagnol',
+                    'Espagnol' => 'EspagnolM2',
                     'Philosophie' => 'Philosophie',
                     'Sciences économiques et sociales' => 'SES',
                     'Sciences industrielles - Génie' => 'SIgenie',

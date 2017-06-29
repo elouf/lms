@@ -49,7 +49,8 @@ class CoursRepository extends \Doctrine\ORM\EntityRepository
         if($inscrCohs){
             foreach($inscrCohs as $inscrCoh){
                 $coh = $inscrCoh->getCohorte();
-                if($coh->getDisciplines()->contains($discipline) || $coh->getCours()->contains($cours)){
+
+                if($coh->getDisciplines()->contains($discipline) || $coh->getCours()->contains($cours)){dump($coh->getDisciplines());
                     if(!in_array($inscrCoh->getUser(), $users)){
                         array_push($users, $inscrCoh->getUser());
                     }

@@ -96,7 +96,6 @@
                 editor.attr("readonly", false);
                 editor.ckeditor(config);
                 for (var i in CKEDITOR.instances) {
-                    //CKEDITOR.instances[i].unbind('change');
                     CKEDITOR.instances[i].on('change', function() {
                         var idItem = $(this).attr('name');
                         var elem = $('#'+idItem).closest('.courseElemAdmin');
