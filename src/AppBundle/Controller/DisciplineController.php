@@ -84,12 +84,19 @@ class DisciplineController extends Controller
                     $inscrSess = $this->getDoctrine()
                         ->getRepository('AppBundle:Inscription_sess')
                         ->findOneBy(array('user' => $this->getUser(), 'session' => $session));
-                    // on est inscrit et les dates sont bonnes (ou on est admin)
+                    // on est inscrit et les dates sont bonnes (ou on est admin ou enseignant)
+                    $isEns = false;
+                    if($inscrSess){
+                        if($inscrSess->getRole() == "Enseignant"){
+                            $isEns = true;
+                        }
+                    }
+
                     if(($currentDate >= $session->getDateDebut() &&
                         $currentDate <= $session->getDateFin() &&
                         $inscrSess) ||
                         $this->getUser()->hasRole('ROLE_SUPER_ADMIN') ||
-                        $inscrSess->getRole() == "Enseignant"
+                        $isEns
                     ){
                         array_push($courses[$i]["sessions"], $coursesT[$j]);
                     }elseif($currentDate < $session->getDateDebut() && $currentDate >= $session->getDateDebutAlerte() && $currentDate < $session->getDateFinAlerte()){

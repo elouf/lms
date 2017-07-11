@@ -19,6 +19,13 @@ class CoursRepository extends \Doctrine\ORM\EntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    public function findRole($userId, $coursId){
+        /*$em = $this->getEntityManager();
+        $cours = $this->findOneBy(array('id'=> $id));
+        $user =
+        $discipline = $cours->getDiscipline();*/
+    }
+
     public function findInscrits($id)
     {
         $em = $this->getEntityManager();
