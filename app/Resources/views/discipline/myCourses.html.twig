@@ -40,11 +40,13 @@
                 var btn = $(this);
                 var block = btn.closest('[data-idSession]');
                 var id = block.attr('data-idSession');
+                var idCours = block.attr('data-idCours');
                 $.ajax({
                     type: "POST",
                     url: "{{path('inscrSess_ajax')}}",
                     data: {
-                        id: id
+                        id: id,
+                        idCours: idCours
                     },
                     dataType: "json",
                     success: function (response) {
@@ -107,7 +109,7 @@
                                         {% endif %}
                                         {% if val.sessions is defined %}
                                             {% for keyC,valC in val.sessions %}
-                                                <div class="course-list course-session" style="margin-top: 0;">
+                                                <div class="course-list course-session" data-idCours="{{ valC.id }}" style="margin-top: 0;">
                                                     <div class="course-media">
                                                         <img src="{{ asset('images/cours/') }}{{ valC.imageFilename }}" class="img-responsive course-img" alt="">
                                                     </div>
@@ -134,7 +136,7 @@
                                         {% endif %}
                                         {% if val.sessionsAlerte is defined %}
                                             {% for keyC,valC in val.sessionsAlerte %}
-                                                <div class="course-list course-sessionAlerte" data-idSession="{{ valC.session.id }}" style="margin-top: 0;">
+                                                <div class="course-list course-sessionAlerte"  data-idCours="{{ valC.id }}" data-idSession="{{ valC.session.id }}" style="margin-top: 0;">
                                                     <div class="course-media">
                                                         <img src="{{ asset('images/cours/') }}{{ valC.imageFilename }}" class="img-responsive course-img" alt="">
                                                     </div>
@@ -155,7 +157,7 @@
                                             {% endfor %}
                                         {% endif %}
                                         {% for keyC,valC in val.courses %}
-                                            <div class="course-list" style="margin-top: 0;">
+                                            <div class="course-list" data-idCours="{{ valC.id }}" style="margin-top: 0;">
                                                 <div class="course-media">
                                                     <img src="{{ asset('images/cours/') }}{{ valC.imageFilename }}" class="img-responsive course-img" alt="">
                                                 </div>

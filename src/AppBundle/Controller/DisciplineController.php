@@ -198,10 +198,13 @@ class DisciplineController extends Controller
             $em = $this->getDoctrine()->getEntityManager();
 
             $id = $request->request->get('id');
+            $idCours = $request->request->get('idCours');
 
             $session = $em->getRepository('AppBundle:Session')->findOneBy(array('id' => $id));
 
-            $role = $em->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Etudiant'));
+            $roleInCours = $em->getRepository('AppBundle:Cours')->findRole($this->getUser()->getId(), $idCours);
+
+            $role = $em->getRepository('AppBundle:Role')->findOneBy(array('nom' => $roleInCours));
 
             $inscr = new Inscription_sess();
             $inscr->setSession($session);
@@ -214,7 +217,7 @@ class DisciplineController extends Controller
             $em->persist($inscr);
             $em->flush();
 
-            return new JsonResponse(array('action' =>'Inscription user session'));
+            return new JsonResponse(array('action' =>'Inscription user session', 'role' => $role));
         }
 
         return new JsonResponse('This is not ajax!', 400);

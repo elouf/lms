@@ -19,11 +19,40 @@ class CoursRepository extends \Doctrine\ORM\EntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function findRole($userId, $coursId){
-        /*$em = $this->getEntityManager();
-        $cours = $this->findOneBy(array('id'=> $id));
-        $user =
-        $discipline = $cours->getDiscipline();*/
+    public function findRole($userId, $coursId)
+    {
+        $em = $this->getEntityManager();
+        $cours = $this->findOneBy(array('id' => $coursId));
+        $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
+        $discipline = $cours->getDiscipline();
+
+        $inscrCs = $em->getRepository('AppBundle:Inscription_c')->findBy(array('cours' => $cours, 'user' => $user));
+        $inscrDs = $em->getRepository('AppBundle:Inscription_d')->findBy(array('discipline' => $discipline, 'user' => $user));
+        $inscrCohs = $em->getRepository('AppBundle:Inscription_coh')->findBy(array('user' => $user));
+
+        $role = "Etudiant";
+
+        if($inscrCohs){
+            foreach($inscrCohs as $inscrCoh){
+                $coh = $inscrCoh->getCohorte();
+
+                if($coh->getDisciplines()->contains($discipline) || $coh->getCours()->contains($cours)){
+                    $role = $inscrCoh->getRole()->getNom();
+                }
+
+            }
+        }
+        if($role == "Etudiant"){
+            if($inscrDs){
+                $role = $inscrDs->getRole()->getNom();
+            }
+        }
+        if($role == "Etudiant"){
+            if($inscrCs){
+                $role = $inscrCs->getRole()->getNom();
+            }
+        }
+        return $role;
     }
 
     public function findInscrits($id)
@@ -58,7 +87,7 @@ class CoursRepository extends \Doctrine\ORM\EntityRepository
             foreach($inscrCohs as $inscrCoh){
                 $coh = $inscrCoh->getCohorte();
 
-                if($coh->getDisciplines()->contains($discipline) || $coh->getCours()->contains($cours)){dump($coh->getDisciplines());
+                if($coh->getDisciplines()->contains($discipline) || $coh->getCours()->contains($cours)){
                     if(!in_array($inscrCoh->getUser(), $users)){
                         array_push($users, $inscrCoh->getUser());
                     }
