@@ -23,6 +23,7 @@ class CoursRepository extends \Doctrine\ORM\EntityRepository
     {
         $em = $this->getEntityManager();
         $cours = $this->findOneBy(array('id'=> $id));
+        $session = $cours->getSession();
         $discipline = $cours->getDiscipline();
 
         $users = array();
@@ -58,6 +59,19 @@ class CoursRepository extends \Doctrine\ORM\EntityRepository
 
             }
         }
-        return $users;
+
+        $userToSend = array();
+        if($session){
+            foreach($users as $user){
+                $inscSess = $em->getRepository('AppBundle:Inscription_sess')->findBy(array('session' => $session, 'user' => $user));
+                if($inscSess){
+                    array_push($userToSend, $user);
+                }
+            }
+        }else{
+            $userToSend = $users;
+        }
+
+        return $userToSend;
     }
 }
