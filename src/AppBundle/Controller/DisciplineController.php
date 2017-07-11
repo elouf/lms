@@ -88,7 +88,8 @@ class DisciplineController extends Controller
                     if(($currentDate >= $session->getDateDebut() &&
                         $currentDate <= $session->getDateFin() &&
                         $inscrSess) ||
-                        $this->getUser()->hasRole('ROLE_SUPER_ADMIN')
+                        $this->getUser()->hasRole('ROLE_SUPER_ADMIN') ||
+                        $inscrSess->getRole() == "Enseignant"
                     ){
                         array_push($courses[$i]["sessions"], $coursesT[$j]);
                     }elseif($currentDate < $session->getDateDebut() && $currentDate >= $session->getDateDebutAlerte() && $currentDate < $session->getDateFinAlerte()){
