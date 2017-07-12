@@ -110,6 +110,7 @@ class InscriptionController extends Controller
                     'Education musicale et chant choral' => 'EducMusChantChoral',
                     'EMCC' => 'EMCC',
                     'Espagnol' => 'Espagnol',
+                    'Espagnol M2' => 'EspagnolM2',
                     'Histoire-Géographie' => 'HG',
                     'Lettres modernes' => 'Lettres',
                     'Mathématiques' => 'Maths',
