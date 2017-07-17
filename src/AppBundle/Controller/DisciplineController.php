@@ -103,6 +103,12 @@ class DisciplineController extends Controller
                         // la date de début n'est pas encore commencée, mais la date d'alerte oui : on doit permettre de s'inscrire si ce n'est pas fait
                         array_push($courses[$i]["sessionsAlerte"], $coursesT[$j]);
                         array_push($courses[$i]["sessionsAlerteIsInscrit"], $inscrSess != null);
+                    }elseif($currentDate >= $session->getDateDebut() &&
+                        $currentDate <= $session->getDateFin() &&
+                        !$inscrSess){
+                        // la session est commencée, pas finie mais le user n'est pas inscrit, il doit pouvoir continuer à s'inscrire
+                        array_push($courses[$i]["sessionsAlerte"], $coursesT[$j]);
+                        array_push($courses[$i]["sessionsAlerteIsInscrit"], $inscrSess != null);
                     }
                 }
             }
