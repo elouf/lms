@@ -820,6 +820,21 @@ label.alertMustBeSet{
 .emailingIHM .bootstrap-select{
     width: 100%;
 }
+.filtreEmailingRow, .filtreEmailingRow *{
+    font-size: 12px !important;
+}
+.filtreEmailingRow .btn{
+    padding: 8px 30px !important;
+}
+.filtreEmailingRow .dropdown-menu>li>a{
+    padding: 5px 20px !important;
+}
+.filtreEmailingRow [data-idcours]{
+    max-width: 250px;
+    display: inline-block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
 
 /* Pages fixes */
 /*.icon-box-5{
