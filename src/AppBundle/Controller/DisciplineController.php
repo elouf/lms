@@ -73,7 +73,7 @@ class DisciplineController extends Controller
             $courses[$i]["sessions"] = array();
             $courses[$i]["sessionsAlerte"] = array();
             $courses[$i]["sessionsAlerteIsInscrit"] = array();
-            $courses[$i]["sessionsAlertePermetInscr"] = array();
+            $courses[$i]["sessionsFinSession"] = array();
             $courses[$i]["discipline"] = $disciplinesArray2Consider[$i];
             $coursesT = $repositoryCours->findBy(array('discipline' =>$disciplinesArray2Consider[$i]), array('position' => 'ASC'));
             for($j=0; $j<count($coursesT); $j++){
@@ -102,10 +102,12 @@ class DisciplineController extends Controller
                         // on peut rentrer dans la session
                         array_push($courses[$i]["sessions"], $coursesT[$j]);
                     }elseif($currentDate >= $session->getDateDebutAlerte() && $currentDate < $session->getDateFinAlerte()){
-                        // on affiche l'alerte
-                        array_push($courses[$i]["sessionsAlertePermetInscr"], $currentDate < $session->getDateFin());
+                        // on affiche l'alerte et on permet de s'inscrire
                         array_push($courses[$i]["sessionsAlerte"], $coursesT[$j]);
                         array_push($courses[$i]["sessionsAlerteIsInscrit"], $inscrSess != null);
+                    }elseif($currentDate >= $session->getDateFinAlerte() && $currentDate < $session->getDateFin()){
+                        // on affiche le message de fin de session
+                        array_push($courses[$i]["sessionsFinSession"], $coursesT[$j]);
                     }
                 }
             }

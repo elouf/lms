@@ -21,6 +21,13 @@ class Session extends Evenement
     protected $messageAlerte;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="messageFinSession", type="text", nullable=true)
+     */
+    protected $messageFinSession;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="dateDebutAlerte", type="datetime", nullable=true)
@@ -56,6 +63,30 @@ class Session extends Evenement
     public function getMessageAlerte()
     {
         return $this->messageAlerte;
+    }
+
+    /**
+     * Set messageFinSession
+     *
+     * @param string $messageFinSession
+     *
+     * @return Session
+     */
+    public function setMessageFinSession($messageFinSession)
+    {
+        $this->messageFinSession = $messageFinSession;
+
+        return $this;
+    }
+
+    /**
+     * Get messageFinSession
+     *
+     * @return string
+     */
+    public function getMessageFinSession()
+    {
+        return $this->messageFinSession;
     }
 
     /**

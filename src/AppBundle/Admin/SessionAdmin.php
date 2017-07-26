@@ -21,6 +21,9 @@ class SessionAdmin extends AbstractAdmin
                 ->add('messageAlerte', CKEditorType::class, array(
                     'config_name' => 'my_simple_config'
                 ))
+                ->add('messageFinSession', CKEditorType::class, array(
+                    'config_name' => 'my_simple_config'
+                ))
             ->end()
             ->with('Timing', array('class' => 'col-md-6'))
                 ->add('dateDebut', 'sonata_type_datetime_picker', array(
@@ -70,6 +73,7 @@ class SessionAdmin extends AbstractAdmin
         $listMapper
             ->addIdentifier('nom')
             ->add('messageAlerte')
+            ->add('messageFinSession')
         ;
     }
 }
