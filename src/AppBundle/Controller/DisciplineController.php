@@ -73,6 +73,7 @@ class DisciplineController extends Controller
             $courses[$i]["sessions"] = array();
             $courses[$i]["sessionsAlerte"] = array();
             $courses[$i]["sessionsAlerteIsInscrit"] = array();
+            $courses[$i]["sessionsAlertePermetInscr"] = array();
             $courses[$i]["discipline"] = $disciplinesArray2Consider[$i];
             $coursesT = $repositoryCours->findBy(array('discipline' =>$disciplinesArray2Consider[$i]), array('position' => 'ASC'));
             for($j=0; $j<count($coursesT); $j++){
@@ -98,15 +99,11 @@ class DisciplineController extends Controller
                         $this->getUser()->hasRole('ROLE_SUPER_ADMIN') ||
                         $isEns
                     ){
+                        // on peut rentrer dans la session
                         array_push($courses[$i]["sessions"], $coursesT[$j]);
-                    }elseif($currentDate < $session->getDateDebut() && $currentDate >= $session->getDateDebutAlerte() && $currentDate < $session->getDateFinAlerte()){
-                        // la date de début n'est pas encore commencée, mais la date d'alerte oui : on doit permettre de s'inscrire si ce n'est pas fait
-                        array_push($courses[$i]["sessionsAlerte"], $coursesT[$j]);
-                        array_push($courses[$i]["sessionsAlerteIsInscrit"], $inscrSess != null);
-                    }elseif($currentDate >= $session->getDateDebut() &&
-                        $currentDate <= $session->getDateFin() &&
-                        !$inscrSess){
-                        // la session est commencée, pas finie mais le user n'est pas inscrit, il doit pouvoir continuer à s'inscrire
+                    }elseif($currentDate >= $session->getDateDebutAlerte() && $currentDate < $session->getDateFinAlerte()){
+                        // on affiche l'alerte
+                        array_push($courses[$i]["sessionsAlertePermetInscr"], $currentDate < $session->getDateFin());
                         array_push($courses[$i]["sessionsAlerte"], $coursesT[$j]);
                         array_push($courses[$i]["sessionsAlerteIsInscrit"], $inscrSess != null);
                     }
@@ -204,13 +201,12 @@ class DisciplineController extends Controller
             $em = $this->getDoctrine()->getEntityManager();
 
             $id = $request->request->get('id');
-            $idCours = $request->request->get('idCours');
 
             $session = $em->getRepository('AppBundle:Session')->findOneBy(array('id' => $id));
 
-            $roleInCours = $em->getRepository('AppBundle:Cours')->findRole($this->getUser()->getId(), $idCours);
+            $roleInCours = $em->getRepository('AppBundle:Cours')->findOneBy(array('id' => $id));
 
-            $role = $em->getRepository('AppBundle:Role')->findOneBy(array('nom' => $roleInCours));
+            $role = $em->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Etudiant'));
 
             $inscr = new Inscription_sess();
             $inscr->setSession($session);
@@ -223,7 +219,7 @@ class DisciplineController extends Controller
             $em->persist($inscr);
             $em->flush();
 
-            return new JsonResponse(array('action' =>'Inscription user session', 'role' => $role));
+            return new JsonResponse(array('action' =>'Inscription user session'));
         }
 
         return new JsonResponse('This is not ajax!', 400);

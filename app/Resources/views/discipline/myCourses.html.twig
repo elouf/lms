@@ -150,8 +150,11 @@
                                                         </ul>
                                                         <p class="brief">{{ valC.session.messageAlerte|raw }}</p>
                                                         <p class="brief fdbackInscUserSess{% if not val.sessionsAlerteIsInscrit[keyC] %} hidden{% endif %}">Vous êtes inscrit à cette future session.</p>
+
                                                         {% if not val.sessionsAlerteIsInscrit[keyC] %}
-                                                            <a class="btn btn-warning btn-sm btnInscrSess">S'inscrire</a>
+                                                            {% if val.sessionsAlertePermetInscr[keyC] %}
+                                                                <a class="btn btn-warning btn-sm btnInscrSess">S'inscrire</a>
+                                                            {% endif %}
                                                         {% endif %}
                                                     </div>
                                                 </div>
