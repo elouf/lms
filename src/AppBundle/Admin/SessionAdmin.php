@@ -19,10 +19,12 @@ class SessionAdmin extends AbstractAdmin
                     'config_name' => 'my_simple_config'
                 ))*/
                 ->add('messageAlerte', CKEditorType::class, array(
-                    'config_name' => 'my_simple_config'
+                    'config_name' => 'my_simple_config',
+                    'help' => "Message visible avant la date de début, et tant que l'utilisateur ne s'est pas insrit"
                 ))
                 ->add('messageFinSession', CKEditorType::class, array(
-                    'config_name' => 'my_simple_config'
+                    'config_name' => 'my_simple_config',
+                    'help' => "Message visible seulement par ceux qui ne se sont pas inscrits après le date de fin d'alerte"
                 ))
             ->end()
             ->with('Timing', array('class' => 'col-md-6'))

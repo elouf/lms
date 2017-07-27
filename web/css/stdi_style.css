@@ -408,6 +408,18 @@ label.alertMustBeSet{
     display: inline-block;
     vertical-align: top;
 }
+.courseElem video, .courseElem audio, .blocMedia{
+    max-width: 100%;
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+.blocMedia video, .blocMedia audio{
+    max-width: 80%;
+    margin-top: 30px;
+}
+.blocMedia{
+    text-align: left;
+}
 .itemHeader{
     font-family: "Oswald",sans-serif;
     font-size: 15px;
