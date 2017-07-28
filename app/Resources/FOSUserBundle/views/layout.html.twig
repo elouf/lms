@@ -3,16 +3,22 @@
 {% block pageHeader %}
     <div class="page-header">
         <div class="container">
-            <h2 class="color3">Bienvenue sur la plateforme de l'AFADEC</h2>
-            <ul class="breadcrumb">
-                <li class="color3">Association pour la Formation A Distance de l'Enseignement Catholique</li>
-            </ul>
+            {% if template == 'studit'  %}
+                <h2 class="color3">Bienvenue sur la plateforme de STUDIT</h2>
+                <ul class="breadcrumb">
+                    <li class="color3">Bibliothèque de ressources pédagogiques</li>
+                </ul>
+            {% elseif template == 'afadec' %}
+                <h2 class="color3">Bienvenue sur la plateforme de l'AFADEC</h2>
+                <ul class="breadcrumb">
+                    <li class="color3">Association pour la Formation A Distance de l'Enseignement Catholique</li>
+                </ul>
+            {% endif %}
         </div>
     </div>
 {% endblock %}
 
 {% block main %}
-
     <div class="container mb-60 mt-20">
         <div class="row">
 
@@ -22,73 +28,78 @@
             {% endif %}
 
             <div class="col-sm-8
-                {% if app.user %}
-                    col-sm-push-2
-                {% else %}
-                    col-sm-pull-4
+                    {% if app.user %}
+                        col-sm-push-2
+                    {% else %}
+                        col-sm-pull-4
+                    {% endif %}
+                mt-40">
+                {% if template == 'studit'  %}
+                    <img src="{{ asset('educomp/images/logoSTUDIT.png') }}" alt="">
+                {% elseif template == 'afadec' %}
+                    <h4 class="heading pt-20 text-center">DÉCOUVREZ L’AFADEC <span class="color2">EN 2 MINUTES</span></h4>
+                    <iframe class="mt-20" width="100%" height="430" frameborder="0" allowfullscreen="" mozallowfullscreen="" webkitallowfullscreen="" src="https://player.vimeo.com/video/123835230"></iframe>
                 {% endif %}
-            mt-40">
-                <h4 class="heading pt-20 text-center">DÉCOUVREZ L’AFADEC <span class="color2">EN 2 MINUTES</span></h4>
-                <iframe class="mt-20" width="100%" height="430" frameborder="0" allowfullscreen="" mozallowfullscreen="" webkitallowfullscreen="" src="https://player.vimeo.com/video/123835230"></iframe>
             </div>
         </div>
-
-        <div class="row mt-40">
-            <div class="col-sm-12">
+        {% if template == "afadec" %}
+            <div class="row mt-40">
                 <div class="col-sm-12">
-                    <div class="row bgcolor3 pt-20">
-                        <div class="col-sm-12">
-                            <figcaption>
-                                <h4 class="img-title">Testez <span class="color2">nos modules</span></h4>
-                            </figcaption>
-                        </div>
+                    <div class="col-sm-12">
+                        <div class="row bgcolor3 pt-20">
+                            <div class="col-sm-12">
+                                <figcaption>
+                                    <h4 class="img-title">Testez <span class="color2">nos modules</span></h4>
+                                </figcaption>
+                            </div>
 
 
-                        <div class="col-sm-3">
-                            <figure class="effect-sadie">
-                                <a target="_blank" href="http://www.e-educmaster.com/data_AFADEC/1er_degre/maths_remediation3_NDiaye_2013_capt/afadec_puissance.htm">
-                                    <img src="{{ asset('images/accueil/maths_lesPuissances.png') }}" class="img-responsive" alt="Mathématiques CRPE Remédiation">
-                                    <figcaption>
-                                        <h6 class="img-title">Mathématiques CRPE Remédiation - <span class="color2">Les puissances</span></h6>
-                                    </figcaption>
-                                </a>
-                            </figure>
-                        </div>
-                        <div class="col-sm-3">
-                            <figure class="effect-sadie">
-                                <a target="_blank" href="http://www.e-educmaster.com/data_AFADEC/1er_degre/Francais_Fiche_AccordParticipe_LeBellego_2013_op/co/Fiche1D_LeBellegoSansProdEleve_web.html">
-                                    <img src="{{ asset('images/accueil/fra_accord_partPass.png') }}" class="img-responsive" alt="Français CRPE Remédiation">
-                                    <figcaption>
-                                        <h6 class="img-title">Français CRPE Remédiation - <span class="color2">L’accord du participe passé</span></h6>
-                                    </figcaption>
-                                </a>
-                            </figure>
-                        </div>
-                        <div class="col-sm-3">
-                            <figure class="effect-sadie">
-                                <a target="_blank" href="http://www.e-educmaster.com/data_AFADEC/2d_degre/SVT_cor_biol_ESTIENNE_2013_wbm/index.html">
-                                    <img src="{{ asset('images/accueil/svt_corrBio.png') }}" class="img-responsive wp-post-image" alt="SVT CAFEP Corrigé">
-                                    <figcaption>
-                                        <h6 class="img-title">SVT CAFEP Corrigé de sujet format concours en <span class="color2">biologie</span></h6>
-                                    </figcaption>
-                                </a>
-                            </figure>
-                        </div>
-                        <div class="col-sm-3">
-                            <figure class="effect-sadie">
-                                <a target="_blank" href="http://www.e-educmaster.com/data_AFADEC/2d_degre/anglais_fiche_VoixPassive_Webster_2013_op/co/Voix_Passive_web.html">
-                                    <img src="{{ asset('images/accueil/anglaisGrammVoixPassive.png') }}" class="img-responsive wp-post-image" alt="Anglais CAFEP Grammaire">
-                                    <figcaption>
-                                        <h6 class="img-title">Anglais CAFEP Grammaire de traduction - <span class="color2">Voix passive</span></h6>
-                                    </figcaption>
-                                </a>
-                            </figure>
-                        </div>
+                            <div class="col-sm-3">
+                                <figure class="effect-sadie">
+                                    <a target="_blank" href="http://www.e-educmaster.com/data_AFADEC/1er_degre/maths_remediation3_NDiaye_2013_capt/afadec_puissance.htm">
+                                        <img src="{{ asset('images/accueil/maths_lesPuissances.png') }}" class="img-responsive" alt="Mathématiques CRPE Remédiation">
+                                        <figcaption>
+                                            <h6 class="img-title">Mathématiques CRPE Remédiation - <span class="color2">Les puissances</span></h6>
+                                        </figcaption>
+                                    </a>
+                                </figure>
+                            </div>
+                            <div class="col-sm-3">
+                                <figure class="effect-sadie">
+                                    <a target="_blank" href="http://www.e-educmaster.com/data_AFADEC/1er_degre/Francais_Fiche_AccordParticipe_LeBellego_2013_op/co/Fiche1D_LeBellegoSansProdEleve_web.html">
+                                        <img src="{{ asset('images/accueil/fra_accord_partPass.png') }}" class="img-responsive" alt="Français CRPE Remédiation">
+                                        <figcaption>
+                                            <h6 class="img-title">Français CRPE Remédiation - <span class="color2">L’accord du participe passé</span></h6>
+                                        </figcaption>
+                                    </a>
+                                </figure>
+                            </div>
+                            <div class="col-sm-3">
+                                <figure class="effect-sadie">
+                                    <a target="_blank" href="http://www.e-educmaster.com/data_AFADEC/2d_degre/SVT_cor_biol_ESTIENNE_2013_wbm/index.html">
+                                        <img src="{{ asset('images/accueil/svt_corrBio.png') }}" class="img-responsive wp-post-image" alt="SVT CAFEP Corrigé">
+                                        <figcaption>
+                                            <h6 class="img-title">SVT CAFEP Corrigé de sujet format concours en <span class="color2">biologie</span></h6>
+                                        </figcaption>
+                                    </a>
+                                </figure>
+                            </div>
+                            <div class="col-sm-3">
+                                <figure class="effect-sadie">
+                                    <a target="_blank" href="http://www.e-educmaster.com/data_AFADEC/2d_degre/anglais_fiche_VoixPassive_Webster_2013_op/co/Voix_Passive_web.html">
+                                        <img src="{{ asset('images/accueil/anglaisGrammVoixPassive.png') }}" class="img-responsive wp-post-image" alt="Anglais CAFEP Grammaire">
+                                        <figcaption>
+                                            <h6 class="img-title">Anglais CAFEP Grammaire de traduction - <span class="color2">Voix passive</span></h6>
+                                        </figcaption>
+                                    </a>
+                                </figure>
+                            </div>
 
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+            {% include 'pagesFixes/afadecContent.html.twig' %}
+        {% endif %}
     </div>
-    {% include 'pagesFixes/afadecContent.html.twig' %}
 {% endblock %}

@@ -125,6 +125,8 @@ class CalendarController extends Controller
             }
         }
 
-        return $this->render('calendrier.html.twig', ['events' => $myEvents]);
+        return $this->render('calendrier.html.twig', [
+            'events' => $myEvents
+        ]);
     }
 }

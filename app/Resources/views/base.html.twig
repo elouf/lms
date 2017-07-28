@@ -20,6 +20,9 @@
         <link rel="stylesheet" href="{{ asset('css/style.css') }}" />
         <link rel="stylesheet" href="{{ asset('css/components.css') }}" />
         <link rel="stylesheet" href="{{ asset('css/stdi_style.css') }}">
+        {% if template == "studit" %}
+            <link rel="stylesheet" href="{{ asset('css/studit.css') }}">
+        {% endif %}
 
         <!--Google Fonts-->
         <link href='https://fonts.googleapis.com/css?family=Oswald:300,700,400' rel='stylesheet' type='text/css'>
@@ -29,7 +32,11 @@
         <!-- Fullcalendar Stylesheet-->
         <link rel='stylesheet' href='{{ asset("vendors/fullcalendar/dist/fullcalendar.css") }}' />
     {% endblock %}
-    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico?v=4') }}" />
+    {% if template == "studit" %}
+        <link rel="icon" type="image/x-icon" href="{{ asset('faviconSTUDIT.ico?v=4') }}" />
+    {% elseif template == "afadec" %}
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico?v=4') }}" />
+    {% endif %}
 
     {% block javascripts %}
         <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}" type="text/javascript"></script>
@@ -95,10 +102,17 @@
                     <span>Menu</span>
                 </button>
                 <a class="navbar-brand logoPtf" href=".">
-                    <img src="{{ asset('educomp/images/logo_empty.png') }}" alt="">
-                    <img class="logoAbsolute logoGrand" src="{{ asset('educomp/images/logo.png') }}" alt="">
-                    <img class="logoAbsolute logoPetit" src="{{ asset('educomp/images/logo_petit.png') }}" alt="">
-                    <img class="logoAbsolute logoToutPetit" src="{{ asset('educomp/images/logo_1.png') }}" alt="">
+                    {% if template == 'studit'  %}
+                        <img src="{{ asset('educomp/images/logo_empty.png') }}" alt="">
+                        <img class="logoAbsolute logoGrand" src="{{ asset('educomp/images/logoSTUDIT.png') }}" alt="">
+                        <img class="logoAbsolute logoPetit" src="{{ asset('educomp/images/logo_petitSTUDIT.png') }}" alt="">
+                        <img class="logoAbsolute logoToutPetit" src="{{ asset('educomp/images/logo_1STUDIT.png') }}" alt="">
+                    {% elseif template == "afadec" %}
+                        <img src="{{ asset('educomp/images/logo_empty.png') }}" alt="">
+                        <img class="logoAbsolute logoGrand" src="{{ asset('educomp/images/logo.png') }}" alt="">
+                        <img class="logoAbsolute logoPetit" src="{{ asset('educomp/images/logo_petit.png') }}" alt="">
+                        <img class="logoAbsolute logoToutPetit" src="{{ asset('educomp/images/logo_1.png') }}" alt="">
+                    {% endif %}
                 </a> <!-- Replace with your Logo -->
 
             </div>
@@ -106,17 +120,22 @@
             <div class="collapse navbar-collapse" id="main-navigation">         <!-- Main Menu -->
                 <ul class="nav navbar-nav navbar-right">
                     <li><a href="{{ path('homepage') }}">Accueil</a></li>
-                    <li><a href="{{ path('afadec') }}">L’AFADEC</a></li>
-                    <li><a href="#">Informations pratiques</a>
-                        <ul class="sub-menu">									<!-- Sub Menu -->
-                            <li><a href="{{ path('concours') }}">Concours</a></li>
-                            <li><a href="{{ path('faq') }}">FAQ</a></li>
-                            <li><a href="{{ path('metierEnseignant') }}">Le métier d'enseignant</a></li>
-                            <li><a href="{{ path('inscription') }}">Comment s'inscrire ?</a></li>
-                            <li><a href="{{ path('cookies') }}">Cookies</a></li>
-                        </ul>
-                    </li>
-                    <li><a href="{{ path('myCourses') }}">Les cours</a></li>
+                    {% if template == 'studit'  %}
+                        <li><a href="{{ path('myCourses') }}">Collections</a></li>
+                    {% elseif template == 'afadec' %}
+                        <li><a href="{{ path('afadec') }}">L’AFADEC</a></li>
+                        <li><a href="#">Informations pratiques</a>
+                            <ul class="sub-menu">									<!-- Sub Menu -->
+                                <li><a href="{{ path('concours') }}">Concours</a></li>
+                                <li><a href="{{ path('faq') }}">FAQ</a></li>
+                                <li><a href="{{ path('metierEnseignant') }}">Le métier d'enseignant</a></li>
+                                <li><a href="{{ path('inscription') }}">Comment s'inscrire ?</a></li>
+                                <li><a href="{{ path('cookies') }}">Cookies</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="{{ path('myCourses') }}">Les cours</a></li>
+                    {% endif %}
+
                     {% if app.user %}
                         <li>
                             <a href="#" data-userId="{{ app.user.id }}">{{ app.user.firstname }} {{ app.user.lastname }}</a>
@@ -151,29 +170,48 @@
     <div class="footer-pri">            <!-- Primary Footer -->
         <div class="container-fluid">
             <div class="row">
-                <div class="col-sm-4 footer-widget">
-                    <h5 class="heading inverse">Informations <span class="color2">pratiques</span></h5>
-                    <ul class="quick-links">
-                        <li><a href="{{ path('concours') }}">Concours</a></li>
-                        <li><a href="{{ path('faq') }}">FAQ</a></li>
-                        <li><a href="{{ path('metierEnseignant') }}">Le métier d'enseignant</a></li>
-                        <li><a href="{{ path('inscription') }}">Comment s'inscrire ?</a></li>
-                        <li><a href="{{ path('afadec') }}">L’AFADEC</a></li>
-                    </ul>
-                </div>
-                <div class="col-sm-4 footer-widget">
-                    <h5 class="heading inverse">Nos <span class="color2">partenaires</span></h5>
-                    <ul class="affiliations">
-                        <li><a target="_blank" href="http://enseignement-catholique.fr/"><img src="{{ asset('educomp/images/logo_1.png') }}" class="img-responsive" alt=""></a></li>
-                        <li><a target="_blank" href="http://www.udesca.fr/"><img src="{{ asset('educomp/images/logo_2.png') }}" class="img-responsive" alt=""></a></li>
-                        <li><a target="_blank" href="http://www.unisfec.fr/"><img src="{{ asset('educomp/images/logo_3.png') }}" class="img-responsive" alt=""></a></li>
-                    </ul>
-                </div>
-                <div class="col-sm-4 footer-widget">            <!-- Footer Widget - Contact Info -->
-                    <h5 class="heading inverse">Nous <span class="color2">contacter</span></h5>
-                    <!--<a href="" class="email"><i class="fa fa-facebook fa-fw"></i> notre Facebook</a>-->
-                    <a href="mailto:contact.afadec@gmail.com" class="email"><i class="fa fa-envelope fa-fw"></i> contact.afadec@gmail.com</a>
-                </div>
+                {% if template == 'studit'  %}
+                    <div class="col-sm-4 footer-widget">
+                        <h5 class="heading inverse">Informations <span class="color2">pratiques</span></h5>
+                        <ul class="quick-links">
+                            <li><a target="_blank" href="http://studit.fr/">Studit en ligne</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-sm-4 footer-widget">
+                        <h5 class="heading inverse">Nos <span class="color2">partenaires</span></h5>
+                        <ul class="affiliations">
+                            </ul>
+                    </div>
+                    <div class="col-sm-4 footer-widget">            <!-- Footer Widget - Contact Info -->
+                        <h5 class="heading inverse">Nous <span class="color2">contacter</span></h5>
+                        <!--<a href="" class="email"><i class="fa fa-facebook fa-fw"></i> notre Facebook</a>-->
+                        <a href="mailto:contact.contact@studit.fr" class="email"><i class="fa fa-envelope fa-fw"></i> contact@studit.fr</a>
+                    </div>
+                {% elseif template == 'afadec' %}
+                    <div class="col-sm-4 footer-widget">
+                        <h5 class="heading inverse">Informations <span class="color2">pratiques</span></h5>
+                        <ul class="quick-links">
+                            <li><a href="{{ path('concours') }}">Concours</a></li>
+                            <li><a href="{{ path('faq') }}">FAQ</a></li>
+                            <li><a href="{{ path('metierEnseignant') }}">Le métier d'enseignant</a></li>
+                            <li><a href="{{ path('inscription') }}">Comment s'inscrire ?</a></li>
+                            <li><a href="{{ path('afadec') }}">L’AFADEC</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-sm-4 footer-widget">
+                        <h5 class="heading inverse">Nos <span class="color2">partenaires</span></h5>
+                        <ul class="affiliations">
+                            <li><a target="_blank" href="http://enseignement-catholique.fr/"><img src="{{ asset('educomp/images/logo_1.png') }}" class="img-responsive" alt=""></a></li>
+                            <li><a target="_blank" href="http://www.udesca.fr/"><img src="{{ asset('educomp/images/logo_2.png') }}" class="img-responsive" alt=""></a></li>
+                            <li><a target="_blank" href="http://www.unisfec.fr/"><img src="{{ asset('educomp/images/logo_3.png') }}" class="img-responsive" alt=""></a></li>
+                        </ul>
+                    </div>
+                    <div class="col-sm-4 footer-widget">            <!-- Footer Widget - Contact Info -->
+                        <h5 class="heading inverse">Nous <span class="color2">contacter</span></h5>
+                        <!--<a href="" class="email"><i class="fa fa-facebook fa-fw"></i> notre Facebook</a>-->
+                        <a href="mailto:contact.afadec@gmail.com" class="email"><i class="fa fa-envelope fa-fw"></i> contact.afadec@gmail.com</a>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -181,7 +219,11 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-6 text-center">
-                    <span class="copyright">&copy; AFADEC 2017</span>           <!-- Copyright Text -->
+                    {% if template == 'studit'  %}
+                        <span class="copyright">&copy; STUDIT 2017</span>
+                    {% elseif template == 'afadec' %}
+                        <span class="copyright">&copy; AFADEC 2017</span>
+                    {% endif %}
                 </div>
                 <div class="col-sm-6 text-center">
                     <ul class="social">          <!-- Social Media Links -->
