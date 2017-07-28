@@ -27,8 +27,8 @@ class LoadUserData extends AbstractFixture implements FixtureInterface, Containe
         $this->createItem($manager,
             $this->container->getParameter('admin_password_init'),
             'Admin',
-            'AFADEC',
-            'contact.afadec@gmail.com',
+            'STUDIT',
+            'contact@studit.fr',
             null,
             true);
 
