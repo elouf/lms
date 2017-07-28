@@ -317,11 +317,6 @@
                                                                     <source src="{{ valR.url }}" type="video/mp4">
                                                                     Votre navigateur ne supporte pas la balise "video".
                                                                 </video>
-                                                            {% elseif '.mp3' in valR.url %}
-                                                                <audio controls>
-                                                                    <source src="{{ valR.url }}" type="audio/mpeg">
-                                                                    Votre navigateur ne supporte pas la balise "audio".
-                                                                </audio>
                                                             {% endif %}
                                                         </div>
                                                         <div class="col-xs-2 text-right">
@@ -478,13 +473,6 @@
                                                                         <source src="{{ valG.lien.url }}" type="video/mp4">
                                                                         Votre navigateur ne supporte pas la balise "video".
                                                                     </video>
-                                                                </div>
-                                                            {% elseif '.mp3' in valG.lien.url %}
-                                                                <div class="blocMedia">
-                                                                    <audio controls>
-                                                                        <source src="{{ valG.lien.url }}" type="audio/mpeg">
-                                                                        Votre navigateur ne supporte pas la balise "audio".
-                                                                    </audio>
                                                                 </div>
                                                             {% else %}
                                                                 <a class="btnLienGroupeRessource btn btn-xs"
