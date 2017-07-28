@@ -7,7 +7,14 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>{% block title %}AFADEC{% endblock %}</title>
+    <title>{% block title %}
+        {% if template == "studit" %}
+            STUDIT
+        {% elseif template == "afadec" %}
+            AFADEC
+        {% endif %}
+
+        {% endblock %}</title>
     {% block mystylesheets %}
         <link rel="stylesheet" href="{{ asset('vendors/bootstrap/dist/css/bootstrap.min.css') }}" />
         <link rel="stylesheet" href="{{ asset('vendors/bootstrap-select/dist/css/bootstrap-select.min.css') }}" />
