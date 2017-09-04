@@ -69,7 +69,7 @@
                     done: function (e, data) {
                         $.each(data.result.files, function (index, file) {
 
-                            var myUrlTab = file.url.split('upload/');
+                            var myUrlTab = file.url.split(folderLocation);
 
                             var usersSelected = $('.selectpicker').val();
                             usersSelected.push($('[data-userId]').attr('data-userId'));
