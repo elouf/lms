@@ -191,7 +191,7 @@ class InscriptionController extends Controller
                     }
                 }elseif($data['typeUser'] == 1){
                     // Formateur
-                    $role = $em->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Stagiaire'));
+                    $role = $em->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Enseignant'));
                     if($data['sectionEns'] == 0){
                         // CRPE formateur
                         $nomCoh = 'crpe';
@@ -201,7 +201,7 @@ class InscriptionController extends Controller
                     }
                 }elseif($data['typeUser'] == 2){
                     // Prof stagiaire
-                    $role = $em->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Enseignant'));
+                    $role = $em->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Stagiaire'));
                     $nomCoh = $data['matiereProfStag'];
                 }
                 $coh = $em->getRepository('AppBundle:Cohorte')->findOneBy(array('nom' => $nomCoh));
