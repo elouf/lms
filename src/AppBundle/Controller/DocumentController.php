@@ -181,7 +181,7 @@ class DocumentController extends Controller
 
 
             $urlTab = explode('/web', $currentUrl);
-            $urlDestTab = explode('/var', $urlDest);
+            $urlDestTab = explode('var', $urlDest);
 
             $discipline = $em->getRepository('AppBundle:Discipline')->findOneBy(array('id' => $discId));
             $proprietaire = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
@@ -266,9 +266,8 @@ class DocumentController extends Controller
             $description = $request->request->get('description');
             $users = $request->request->get('users');
 
-
             $urlTab = explode('/web', $currentUrl);
-            $urlDestTab = explode('/var', $urlDest);
+            $urlDestTab = explode('var', $urlDest);
 
             $cours = $em->getRepository('AppBundle:Cours')->findOneBy(array('id' => $coursId));
             $proprietaire = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));

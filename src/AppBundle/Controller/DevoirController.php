@@ -215,7 +215,7 @@ class DevoirController extends Controller
             $nom = $request->request->get('nom');
 
             $urlTab = explode('/web', $currentUrl);
-            $urlDestTab = explode('/var', $urlDest);
+            $urlDestTab = explode('var', $urlDest);
 
             $devoir = $em->getRepository('AppBundle:Devoir')->findOneBy(array('id' => $itemId));
 
@@ -267,7 +267,7 @@ class DevoirController extends Controller
             $copie = $em->getRepository('AppBundle:Copie')->findOneBy(array('auteur' => $user, 'devoir' => $devoir));
 
             $urlTab = explode('/web', $currentUrl);
-            $urlDestTab = explode('/var', $urlDest);
+            $urlDestTab = explode('var', $urlDest);
 
             $copieFichier = new CopieFichier();
             $copieFichier->setCopie($copie);
@@ -325,7 +325,7 @@ class DevoirController extends Controller
             }
 
             $urlTab = explode('/web', $currentUrl);
-            $urlDestTab = explode('/var', $urlDest);
+            $urlDestTab = explode('var', $urlDest);
 
             $corrige = new Corrige();
             $corrige->setDateRendu(new DateTime());

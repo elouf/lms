@@ -102,7 +102,7 @@ class LienController extends Controller
             $unzipIfZip = $request->request->get('unzipIfZip') == 'true';
 
             $urlTab = explode('/web', $currentUrl);
-            $urlDestTab = explode('/var', $urlDest);
+            $urlDestTab = explode('var', $urlDest);
             $dir = $urlTab[0].'/var'.$urlDestTab[1];
 
             $lien = $em->getRepository('AppBundle:Lien')->findOneBy(array('id' => $itemId));
