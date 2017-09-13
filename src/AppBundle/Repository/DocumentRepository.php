@@ -159,7 +159,7 @@ class DocumentRepository extends \Doctrine\ORM\EntityRepository
                         $inscrCohs = $this->getEntityManager()->getRepository('AppBundle:Inscription_coh')->findBy(array('cohorte' => $cohorte));
                         if ($inscrCohs) {
                             foreach($inscrCohs as $inscrCoh) {
-                                $assocsInscr = $this->getEntityManager()->getRepository('AppBundle:AssocDocInscr')->findBy(array('inscription' => $inscrCoh));
+                                $assocsInscr = $this->getEntityManager()->getRepository('AppBundle:AssocDocInscr')->findBy(array('inscription' => $inscrCoh, 'cours' => $cours));
                                 for ($i = 0; $i < count($assocsInscr); $i++) {
                                     if($assocsInscr[$i]->getIsImportant()){
                                         if (!in_array($assocsInscr[$i]->getDocument(), $documentsImportants) && $assocsInscr[$i]->getCours() != null) {
@@ -179,7 +179,7 @@ class DocumentRepository extends \Doctrine\ORM\EntityRepository
                             if($role == 'etu' && $inscrCoh->getRole()->getNom() == "Enseignant"){
                                 $role = 'ens';
                             }
-                            $assocsInscr = $this->getEntityManager()->getRepository('AppBundle:AssocDocInscr')->findBy(array('inscription' => $inscrCoh));
+                            $assocsInscr = $this->getEntityManager()->getRepository('AppBundle:AssocDocInscr')->findBy(array('inscription' => $inscrCoh, 'cours' => $cours));
                             for($i=0; $i<count($assocsInscr); $i++) {
                                 if($assocsInscr[$i]->getIsImportant()){
                                     if (!in_array($assocsInscr[$i]->getDocument(), $documentsImportants) && $assocsInscr[$i]->getCours() != null) {
@@ -203,7 +203,7 @@ class DocumentRepository extends \Doctrine\ORM\EntityRepository
             $inscrDiss = $this->getEntityManager()->getRepository('AppBundle:Inscription_d')->findOneBy(array('discipline' => $discipline));
             if($inscrDiss) {
                 foreach ($inscrDiss as $inscrDis) {
-                    $assocsInscr = $this->getEntityManager()->getRepository('AppBundle:AssocDocInscr')->findBy(array('inscription' => $inscrDis));
+                    $assocsInscr = $this->getEntityManager()->getRepository('AppBundle:AssocDocInscr')->findBy(array('inscription' => $inscrDis, 'cours' => $cours));
                     for ($i = 0; $i < count($assocsInscr); $i++) {
                         if($assocsInscr[$i]->getIsImportant()){
                             if (!in_array($assocsInscr[$i]->getDocument(), $documentsImportants) && $assocsInscr[$i]->getCours() != null) {
@@ -223,7 +223,7 @@ class DocumentRepository extends \Doctrine\ORM\EntityRepository
                 if($role == 'etu' && $inscrDis->getRole()->getNom() == "Enseignant"){
                     $role = 'ens';
                 }
-                $assocsInscr = $this->getEntityManager()->getRepository('AppBundle:AssocDocInscr')->findBy(array('inscription' => $inscrDis));
+                $assocsInscr = $this->getEntityManager()->getRepository('AppBundle:AssocDocInscr')->findBy(array('inscription' => $inscrDis, 'cours' => $cours));
                 for($i=0; $i<count($assocsInscr); $i++) {
                     if($assocsInscr[$i]->getIsImportant()){
                         if (!in_array($assocsInscr[$i]->getDocument(), $documentsImportants) && $assocsInscr[$i]->getCours() != null) {
