@@ -30,7 +30,8 @@
                 $('[data-champname="nom"]').removeClass('champError').val('');
                 $('.contentDocInfos').show();
                 $('.contentDocRess').hide();
-                $('.selectpicker').selectpicker('val', 'tous');
+                $('.selectpicker').selectpicker('selectAll');
+
 
                 var idCours = $(this).closest('[data-coursId]').attr('data-coursId');
 

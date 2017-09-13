@@ -10,4 +10,38 @@ namespace AppBundle\Repository;
  */
 class DisciplineRepository extends \Doctrine\ORM\EntityRepository
 {
+
+    public function findInscrits($id)
+    {
+        $em = $this->getEntityManager();
+        $discipline = $this->findOneBy(array('id'=> $id));
+
+        $users = array();
+
+        $inscrDs = $em->getRepository('AppBundle:Inscription_d')->findBy(array('discipline' => $discipline));
+        if($inscrDs){
+            foreach($inscrDs as $inscrD){
+                if(!in_array($inscrD->getUser(), $users)){
+                    array_push($users, $inscrD->getUser());
+                }
+            }
+        }
+
+        $inscrCohs = $em->getRepository('AppBundle:Inscription_coh')->findAll();
+        if($inscrCohs){
+            foreach($inscrCohs as $inscrCoh){
+                $coh = $inscrCoh->getCohorte();
+
+                if($coh->getDisciplines()->contains($discipline)){
+                    if(!in_array($inscrCoh->getUser(), $users)){
+                        array_push($users, $inscrCoh->getUser());
+                    }
+                }
+
+            }
+        }
+
+        return $users;
+    }
+
 }

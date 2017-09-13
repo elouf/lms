@@ -8,6 +8,7 @@ use AppBundle\Entity\AssocDocInscr;
 use AppBundle\Entity\Discipline;
 use AppBundle\Entity\Document;
 use AppBundle\Entity\StatsUsersDocs;
+use AppBundle\Entity\User;
 use DateTime;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -207,6 +208,13 @@ class DocumentController extends Controller
                 $assocDisc->setDocument($doc);
                 $assocDisc->setIsImportant($isImportant);
                 $em->persist($assocDisc);
+
+                $inscrits = $em->getRepository('AppBundle:Discipline')->findInscrits($discipline->getId());
+                if($inscrits){
+                    foreach($inscrits as $inscrit){
+                        $this->sendMailDoc($inscrit, $proprietaire, 'la discipline '.$discipline->getNom());
+                    }
+                }
             }else{
                 for($i=0; $i<count($users); $i++){
                     $assocInscr = new AssocDocInscr();
@@ -238,6 +246,7 @@ class DocumentController extends Controller
                         }
                     }
                     if($estAssocie){
+                        $this->sendMailDoc($user, $proprietaire, 'la discipline '.$discipline->getNom());
                         $em->persist($assocInscr);
                     }
                 }
@@ -247,6 +256,29 @@ class DocumentController extends Controller
             return new JsonResponse(array('action' =>'upload Document for Discipline', 'id' => $discId, 'ext' => $ext));
         }
         return new JsonResponse('This is not ajax!', 400);
+    }
+
+    public function sendMailDoc(User $user, User $sender, $conteneurName){
+        $message = \Swift_Message::newInstance()
+            ->setSubject('[AFADEC] Document déposé')
+            ->setFrom('contact.afadec@gmail.com')
+            ->setTo($user->getEmail())
+            ->setBody(
+                $this->renderView(
+                    'documents/depotMail.html.twig',
+                    array(
+                        'prenom' => $user->getFirstname(),
+                        'nom' => $user->getLastname(),
+                        'id' => $user->getId(),
+                        'senderPrenom' => $sender->getFirstname(),
+                        'senderNom' => $sender->getLastname(),
+                        'conteneurName' => $conteneurName
+                    )
+                ),
+                'text/html'
+            )
+        ;
+        $this->get('mailer')->send($message);
     }
 
     /**
@@ -294,6 +326,15 @@ class DocumentController extends Controller
                 $assocCours->setIsImportant($isImportant);
                 $em->persist($assocCours);
                 $em->flush();
+
+
+                $inscrits = $em->getRepository('AppBundle:Cours')->findInscrits($cours->getId());
+                if($inscrits){
+                    foreach($inscrits as $inscrit){
+                        $this->sendMailDoc($inscrit, $proprietaire, 'le cours '.$cours->getNom());
+                    }
+                }
+
                 return new JsonResponse(array('action' =>'upload Document for Cours : All', 'id' => $coursId, 'ext' => $ext));
             }else{
                 for($i=0; $i<count($users); $i++){
@@ -334,6 +375,7 @@ class DocumentController extends Controller
                         }
                     }
                     if($estAssocie){
+                        $this->sendMailDoc($user, $proprietaire, 'le cours '.$cours->getNom());
                         $em->persist($assocInscr);
                     }
                 }
