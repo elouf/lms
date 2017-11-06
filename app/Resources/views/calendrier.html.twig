@@ -20,11 +20,12 @@
                 var dateD = $(this).find('.dateD');
                 var dateDarray = {
                     year: dateD.find('.year').text(),
-                    month: dateD.find('.month').text(),
+                    month: parseInt(dateD.find('.month').text()) - 1,
                     day: dateD.find('.day').text(),
                     hour: parseInt(dateD.find('.hour').text()),
                     minute: parseInt(dateD.find('.minute').text())
                 };
+                console.log(dateDarray)
                 var dateF = $(this).find('.dateF');
                 var type = $(this).find('.typeEvt').text();
 
@@ -38,7 +39,7 @@
                 if(dateF.length){
                     var dateFarray = {
                         year: dateF.find('.year').text(),
-                        month: dateF.find('.month').text(),
+                        month: parseInt(dateF.find('.month').text())-1,
                         day: dateF.find('.day').text(),
                         hour: parseInt(dateF.find('.hour').text()),
                         minute: parseInt(dateF.find('.minute').text())
