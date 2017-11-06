@@ -38,23 +38,26 @@
 
             $('.btnInscrSess').click(function(){
                 var btn = $(this);
-                var block = btn.closest('[data-idSession]');
-                var id = block.attr('data-idSession');
-                var idCours = block.attr('data-idCours');
-                $.ajax({
-                    type: "POST",
-                    url: "{{path('inscrSess_ajax')}}",
-                    data: {
-                        id: id,
-                        idCours: idCours
-                    },
-                    dataType: "json",
-                    success: function (response) {
-                        btn.remove();
-                        block.find('.fdbackInscUserSess').removeClass('hidden');
-                        window.location.href = window.location.href;
-                    }
-                });
+                if(!btn.hasClass('inactivate')){
+                    btn.addClass('inactivate');
+                    var block = btn.closest('[data-idSession]');
+                    var id = block.attr('data-idSession');
+                    var idCours = block.attr('data-idCours');
+                    $.ajax({
+                        type: "POST",
+                        url: "{{path('inscrSess_ajax')}}",
+                        data: {
+                            id: id,
+                            idCours: idCours
+                        },
+                        dataType: "json",
+                        success: function (response) {
+                            btn.remove();
+                            block.find('.fdbackInscUserSess').removeClass('hidden');
+                            window.location.href = window.location.href;
+                        }
+                    });
+                }
             });
         });
     </script>

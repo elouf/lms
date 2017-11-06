@@ -47,7 +47,12 @@ class ForumSujetAdmin extends AbstractAdmin
             ->addIdentifier('titre')
             ->add('ouvert')
             ->add('epingle')
-            ->add('forum')
+            ->add('forum', null, array(
+                'label' => 'Forum'
+            ))
+            ->add('forum.cours', null, array(
+                'label' => 'Cours'
+            ))
         ;
     }
 }

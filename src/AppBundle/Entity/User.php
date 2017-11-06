@@ -37,6 +37,7 @@ class User extends BaseUser
      * @var Institut
      *
      * @ORM\ManyToOne(targetEntity="Institut")
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      */
     protected $institut;
 

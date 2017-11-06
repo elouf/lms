@@ -17,6 +17,7 @@ class RoleAdmin extends AbstractAdmin
                     'label' => 'Some post',
                     'disabled'  => true
                 ))
+            ->add('description')
         ;
 
     }
@@ -34,6 +35,7 @@ class RoleAdmin extends AbstractAdmin
     {
         $listMapper
             ->addIdentifier('nom')
+            ->add('description')
         ;
     }
 }

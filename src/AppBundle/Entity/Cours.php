@@ -91,6 +91,8 @@ class Cours extends DocContainer
      * @var Session
      *
      * @ORM\ManyToOne(targetEntity="Session")
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
+     *
      */
     private $session;
 
