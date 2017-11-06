@@ -17,7 +17,7 @@ class DisciplineAdmin extends AbstractAdmin
             ->add('description', CKEditorType::class, array(
                 'config_name' => 'my_simple_config'
             ))
-            ->add('imgFilePath', 'text')
+            /*->add('imgFilePath', 'text')*/
             ->add('faIcon', 'text')
         ;
 
