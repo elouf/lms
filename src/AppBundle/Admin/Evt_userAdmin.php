@@ -64,7 +64,15 @@ class Evt_userAdmin extends AbstractAdmin
         $listMapper
             ->addIdentifier('nom')
             ->add('description')
-            ->addIdentifier('user')
+            ->add('user.firstname', null, array(
+                'label' => 'Prénom'
+            ))
+            ->add('user.lastname', null, array(
+                'label' => 'Nom'
+            ))
+            ->add('user', null, array(
+                'label' => 'Utilisateur'
+            ))
         ;
     }
 }

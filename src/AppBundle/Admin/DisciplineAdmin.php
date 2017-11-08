@@ -38,7 +38,7 @@ class DisciplineAdmin extends AbstractAdmin
         $listMapper
             ->addIdentifier('nom')
             ->add('description')
-            ->add('imgFilePath')
+            /*->add('imgFilePath')*/
             ->add('faIcon')
         ;
     }

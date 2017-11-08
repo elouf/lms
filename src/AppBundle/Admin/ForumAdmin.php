@@ -67,7 +67,9 @@ class ForumAdmin extends AbstractAdmin
         $listMapper
             ->addIdentifier('nom')
             ->add('description')
-            ->addIdentifier('cours')
+            ->add('cours', null, array(
+                'label' => 'Cours'
+            ))
         ;
     }
 }

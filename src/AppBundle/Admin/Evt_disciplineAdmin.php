@@ -64,7 +64,9 @@ class Evt_disciplineAdmin extends AbstractAdmin
         $listMapper
             ->addIdentifier('nom')
             ->add('description')
-            ->addIdentifier('discipline')
+            ->add('discipline', null, array(
+                'label' => 'Discipline'
+            ))
         ;
     }
 }

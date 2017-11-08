@@ -102,6 +102,53 @@ a { font-family: inherit; color: inherit; }
 
 }
 
+.menuDiscCourses{
+    position: fixed;
+    left: 20px;
+    top: 110px;
+    z-index: 10;
+}
+.btnMenuDiscCourses{
+    height: 45px;
+    width: 45px;
+    background-color: #456d94;
+    color: #fff;
+    line-height: 50px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 50%;
+    box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.3);
+    z-index: 99;
+}
+.btnMenuDiscCourses .fa{
+    font-size: 22px;
+}
+
+.filArianeCourses{
+    opacity: 0;
+    position: absolute;
+    left:80px;
+    top:10px;
+    border: #456d94 2px solid;
+    text-align: center;
+    box-shadow: 5px 5px 5px #fff;
+}
+.filArianeCourses a{
+    display: block;
+    color: #fff;
+    padding: 5px 10px;
+    white-space: nowrap;
+}
+.filArianeCourses a:hover{
+    color: #F99F1F;
+}
+.filArianeCourses .disciLink{
+    background: #456d94;
+}
+.filArianeCourses .coursLink{
+    background: #4f81b1;
+}
+
 .courseElemAdmin{
     margin-bottom: 5px;
     border-bottom: dashed 3px #456d94;

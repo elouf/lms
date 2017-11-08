@@ -53,9 +53,21 @@ class InscrCoursAdmin extends AbstractAdmin
     {
         $listMapper
             ->addIdentifier('id')
-            ->add('user')
-            ->add('cours')
-            ->add('role')
+            ->add('user.firstname', null, array(
+                'label' => 'Prénom'
+            ))
+            ->add('user.lastname', null, array(
+                'label' => 'Nom'
+            ))
+            ->add('user', null, array(
+                'label' => 'Email'
+            ))
+            ->add('cours', null, array(
+                'label' => 'Cours'
+            ))
+            ->add('role', null, array(
+                'label' => 'Role'
+            ))
         ;
 
     }

@@ -1,0 +1,52 @@
+<div class="menuDiscCourses" style="display: block;">
+    <div class="btnMenuDiscCourses">
+        <i class="fa fa-bars"></i>
+    </div>
+
+    <div class="filArianeCourses mt-10">
+        <a class="disciLink" href="{{ path('myCourses', {id:cours.discipline.id }) }}">{{ cours.discipline.nom }}</a>
+        {% for key,val in courses %}
+            <a class="coursLink" href="{{ path('oneCours', {id: val.id, mode: 'etu'}) }}">{{ val.nom }}</a>
+        {% endfor %}
+    </div>
+</div>
+<script language="JavaScript">
+    jQuery(document).ready(function () {
+        var decrease;
+        var timeout;
+        $('.btnMenuDiscCourses').click(function(){
+            clearInterval(decrease);
+            showFileAriane();
+            launchDecrease();
+            $('.filArianeCourses').unbind('mouseover mouseout');
+            $('.filArianeCourses').mouseover(function(){
+                clearInterval(decrease);
+            }).mouseout(function(){
+                launchDecrease();
+            });
+        });
+
+        function launchDecrease(){
+            timeout = 2000;
+            decrease = setInterval(function(){
+                timeout -= 100;
+                if(timeout < 100){
+                    clearInterval(decrease);
+                    hideFileAriane();
+                }
+            }, 100);
+        }
+
+        function showFileAriane(){
+            $('.filArianeCourses').animate({
+                opacity: 1
+            }, 300);
+        }
+
+        function hideFileAriane(){
+            /*$('.filArianeCourses').animate({
+                opacity: 0
+            }, 300);*/
+        }
+    });
+</script>

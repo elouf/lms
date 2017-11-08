@@ -144,7 +144,7 @@ class DisciplineController extends Controller
             $courses[$j]["nbNewDocs"] = $nbNewDocs;
         }
 
-        return $this->render('discipline/myCourses.html.twig', ['courses' => $courses, 'default' => $id]);
+        return $this->render('discipline/myCourses.html.twig', ['courses' => $courses, 'active' => $id]);
     }
 
     /**

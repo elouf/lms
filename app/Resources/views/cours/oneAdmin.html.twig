@@ -1,5 +1,11 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}
+    <title>
+        {{ cours.discipline.nom }}
+    </title>
+{% endblock %}
+
 {% block titrePage %}Bienvenue sur la plateforme de l'AFADEC{% endblock %}
 {% block sousTitrePage %}Association pour la Formation A Distance de l'Enseignement Catholique{% endblock %}
 
@@ -11,15 +17,7 @@
 {% endblock %}
 
 {% block pageHeader %}
-    <!--<div class="page-header">
-        <div class="container">
-            <h1>Détail des cours</h1>
-            <ul class="breadcrumb">
-                <li><a href="{{ path('homepage') }}">Accueil</a></li>
-                <li class="active">Détail des cours</li>
-            </ul>
-        </div>
-    </div>-->
+    {% include "cours/filAriane.html.twig"  %}
 {% endblock %}
 
 {% block main %}

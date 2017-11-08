@@ -53,19 +53,19 @@ class InscrSessAdmin extends AbstractAdmin
     {
         $listMapper
             ->addIdentifier('id')
-            ->add('user.email', null, array(
-                'label' => 'Email'
-            ))
             ->add('user.firstname', null, array(
                 'label' => 'Prénom'
             ))
             ->add('user.lastname', null, array(
                 'label' => 'Nom'
             ))
-            ->add('session.nom', null, array(
+            ->add('user', null, array(
+                'label' => 'Email'
+            ))
+            ->add('session', null, array(
                 'label' => 'Session'
             ))
-            ->add('role.nom', null, array(
+            ->add('role', null, array(
                 'label' => 'Role'
             ))
         ;

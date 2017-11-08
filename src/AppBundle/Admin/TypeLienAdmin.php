@@ -32,7 +32,9 @@ class TypeLienAdmin extends AbstractAdmin
     {
         $listMapper
             ->addIdentifier('nom')
-            ->add('faIcon')
+            ->add('faIcon', null, array(
+                'label' => 'Icone fontawesome'
+            ))
         ;
     }
 }

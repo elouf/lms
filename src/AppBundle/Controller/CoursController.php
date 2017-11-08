@@ -45,6 +45,8 @@ class CoursController extends Controller
     {
         $cours = $this->getDoctrine()->getRepository('AppBundle:Cours')->find($id);
         $discipline = $cours->getDiscipline();
+        $repositoryC = $this->getDoctrine()->getRepository('AppBundle:Cours');
+        $courses = $repositoryC->findBy(array('discipline' => $discipline));
 
         // on corrige le statut du user. Si c'est un enseignant, il ne doit pas être en etu. Si ce n'est pas un admin, il ne doit pas être admin
         if(!$this->getUser()->hasRole('ROLE_SUPER_ADMIN')){
@@ -255,7 +257,8 @@ class CoursController extends Controller
                     'uploadSteps' => $this->getParameter('upload_steps'),
                     'uploadSrcSteps' => $this->getParameter('upload_srcSteps'),
                     'uploadCourse' => $this->getParameter('upload_course'),
-                    'nbNewDocs' => $nbNewDocs
+                    'nbNewDocs' => $nbNewDocs,
+                    'courses' => $courses
                 ]);
         }elseif($mode == "ens") {
             return $this->render('cours/one.html.twig', [
@@ -266,7 +269,8 @@ class CoursController extends Controller
                 'uploadSteps' => $this->getParameter('upload_steps'),
                 'uploadSrcSteps' => $this->getParameter('upload_srcSteps'),
                 'uploadCourse' => $this->getParameter('upload_course'),
-                'nbNewDocs' => $nbNewDocs
+                'nbNewDocs' => $nbNewDocs,
+                'courses' => $courses
             ]);
         }else{
             return $this->render('cours/one.html.twig', [
@@ -277,7 +281,8 @@ class CoursController extends Controller
                 'uploadSteps' => $this->getParameter('upload_steps'),
                 'uploadSrcSteps' => $this->getParameter('upload_srcSteps'),
                 'uploadCourse' => $this->getParameter('upload_course'),
-                'nbNewDocs' => $nbNewDocs
+                'nbNewDocs' => $nbNewDocs,
+                'courses' => $courses
             ]);
         }
     }

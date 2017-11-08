@@ -35,8 +35,12 @@ class CohorteAdmin extends AbstractAdmin
     {
         $listMapper
             ->addIdentifier('nom')
-            ->addIdentifier('disciplines')
-            ->addIdentifier('cours')
+            ->add('disciplines', null, array(
+                'label' => 'Disciplines'
+            ))
+            ->add('cours', null, array(
+                'label' => 'Cours'
+            ))
         ;
     }
 }

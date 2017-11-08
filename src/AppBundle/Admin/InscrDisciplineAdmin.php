@@ -53,9 +53,21 @@ class InscrDisciplineAdmin extends AbstractAdmin
     {
         $listMapper
             ->addIdentifier('id')
-            ->add('user')
-            ->add('discipline')
-            ->add('role')
+            ->add('user.firstname', null, array(
+                'label' => 'Prénom'
+            ))
+            ->add('user.lastname', null, array(
+                'label' => 'Nom'
+            ))
+            ->add('user', null, array(
+                'label' => 'Email'
+            ))
+            ->add('discipline', null, array(
+                'label' => 'Discipline'
+            ))
+            ->add('role', null, array(
+                'label' => 'Role'
+            ))
         ;
 
     }

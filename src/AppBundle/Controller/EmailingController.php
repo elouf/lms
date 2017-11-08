@@ -121,16 +121,23 @@ class EmailingController extends Controller
 
             for($i=0; $i<count($users); $i++){
                 $user = $this->getDoctrine()->getRepository('AppBundle:User')->findOneBy(array('id' => $users[$i]));
-                $message = \Swift_Message::newInstance()
+                $emailContent = \Swift_Message::newInstance()
                     ->setSubject($objet)
                     ->setFrom('contact.afadec@gmail.com')
                     ->setCC($user->getEmail())
                     ->setBody(
-                        $message,
+                        $this->renderView(
+                            'user/email.html.twig',
+                            array(
+                                'prenom' => $this->getUser()->getFirstname(),
+                                'nom' => $this->getUser()->getLastname(),
+                                'message' => $message
+                            )
+                        ),
                         'text/html'
                     )
                 ;
-                $this->get('mailer')->send($message);
+                $this->get('mailer')->send($emailContent);
             }
             $em->flush();
 
@@ -152,7 +159,7 @@ class EmailingController extends Controller
             $email = $request->request->get('email');
             $nom = $request->request->get('nom');
 
-            $message = \Swift_Message::newInstance()
+            $emailContent = \Swift_Message::newInstance()
                 ->setSubject("Message Plateforme : ".$objet)
                 ->setFrom($email)
                 ->setCC('contact.afadec@gmail.com')
@@ -162,7 +169,7 @@ class EmailingController extends Controller
                     'text/html'
                 )
             ;
-            $this->get('mailer')->send($message);
+            $this->get('mailer')->send($emailContent);
 
             $em->flush();
 

@@ -53,9 +53,21 @@ class InscrCohAdmin extends AbstractAdmin
     {
         $listMapper
             ->addIdentifier('id')
-            ->add('user')
-            ->add('cohorte')
-            ->add('role')
+            ->add('user.firstname', null, array(
+                'label' => 'Prénom'
+            ))
+            ->add('user.lastname', null, array(
+                'label' => 'Nom'
+            ))
+            ->add('user', null, array(
+                'label' => 'Email'
+            ))
+            ->add('cohorte', null, array(
+                'label' => 'Cohorte'
+            ))
+            ->add('role', null, array(
+                'label' => 'Role'
+            ))
         ;
 
     }

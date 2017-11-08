@@ -64,9 +64,16 @@
     <div class="container mt-140">
         <div class="row mt-20 mb-100">
             <div class="col-sm-12">
+                {% set idActive = 0 %}
+                {% if active > 0 %}
+                    {% set idActive = active %}
+                {% endif %}
                 <ul class="nav nav-pills nav-stacked pull-left" role="tablist" style="padding-bottom: 5px;padding-top: 5px">
                     {% for key,val in courses %}
-                        <li role="presentation" {% if loop.index == 1 %} class="active" {% endif %}>
+                        <li role="presentation"
+                                {% if idActive != 0 and val.discipline.id == active or idActive == 0 and loop.index == 1 %}
+                            class="active"
+                                {% endif %}>
                             <a href="#p1body{{ val.discipline.id }}" aria-controls="p1body{{ val.discipline.id }}" role="tab" data-toggle="tab"><i class="fa {{ val.discipline.faIcon }} fa-fw"></i> {{ val.discipline }}</a>
                         </li>
                     {% endfor %}
@@ -74,7 +81,7 @@
 
                 <div class="tab-content">
                     {% for key,val in courses %}
-                        <div data-discId="{{ val.discipline.id }}" role="tabpanel" class="tab-pane fade{% if loop.index == 1 %} in active{% endif %}" id="p1body{{ val.discipline.id }}" {% if loop.index == 1 %} style="padding-top: 0;" {% endif %}>
+                        <div data-discId="{{ val.discipline.id }}" role="tabpanel" class="tab-pane fade{% if idActive != 0 and val.discipline.id == active or idActive == 0 and loop.index == 1 %} in active{% endif %}" id="p1body{{ val.discipline.id }}" {% if loop.index == 1 %} style="padding-top: 0;" {% endif %}>
                             <div class="container mt-0 mb-60">
                                 <div class="row">
                                     <div class="col-sm-8">

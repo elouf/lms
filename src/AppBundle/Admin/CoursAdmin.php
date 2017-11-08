@@ -78,8 +78,12 @@ class CoursAdmin extends AbstractAdmin
         $listMapper
             ->addIdentifier('nom')
             ->add('description')
-            ->addIdentifier('discipline')
-            ->add('session')
+            ->add('discipline', null, array(
+                'label' => 'Discipline'
+            ))
+            ->add('session', null, array(
+                'label' => 'Session'
+            ))
             ->add('position')
         ;
 

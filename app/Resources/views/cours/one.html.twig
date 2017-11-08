@@ -1,5 +1,11 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}
+    <title>
+        {{ cours.discipline.nom }}
+    </title>
+{% endblock %}
+
 {% block vueAdmin %}
     {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
         <li><a href="{{ path('oneCours', {id: cours.id, mode: 'admin'}) }}">Vue admin</a></li>
@@ -9,6 +15,7 @@
 {% endblock %}
 
 {% block pageHeader %}
+    {% include "cours/filAriane.html.twig" %}
 {% endblock %}
 
 {% block main %}
