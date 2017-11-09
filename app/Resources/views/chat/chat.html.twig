@@ -80,6 +80,21 @@
             var userId = $('[data-userId]').attr('data-userId');
             var chatId = $('[data-chatId]').attr('data-chatId');
 
+            // ajoute dans les stats que le user a accédé au chat
+            $.ajax({
+                type: 'POST',
+                url: "{{path('addUserStatRessource_ajax')}}",
+                async: false,
+                dataType: "json",
+                data: {
+                    ressId: chatId
+                },
+                success: function (data) {
+                },
+                error: function(xhr, status, error) {
+                }
+            });
+
             // on commence par nettoyer la table des associations entre le user et le chat
             $.ajax({
                 type: "POST",

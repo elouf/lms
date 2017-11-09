@@ -255,6 +255,40 @@
             if(getUrlParameter("idSection")){
                 $('.ongletSection[data-idsection='+getUrlParameter("idSection")+'] a').click();
             }
+
+            $('.btnUserStatRessource').click(function(e){
+                var ressId = $(this).attr('data-statRessId');
+                $.ajax({
+                    type: 'POST',
+                    url: "{{path('addUserStatRessource_ajax')}}",
+                    async: false,
+                    dataType: "json",
+                    data: {
+                        ressId: ressId
+                    },
+                    success: function (data) {
+                    },
+                    error: function(xhr, status, error) {
+                    }
+                });
+            });
+
+            var ressId = $('[data-coursId]').attr('data-coursId');
+
+            // ajoute dans les stats que le user a accédé au chat
+            $.ajax({
+                type: 'POST',
+                url: "{{path('addUserStatCours_ajax')}}",
+                async: false,
+                dataType: "json",
+                data: {
+                    ressId: ressId
+                },
+                success: function (data) {
+                },
+                error: function(xhr, status, error) {
+                }
+            });
         });
     </script>
 
@@ -327,7 +361,11 @@
                                                             {% endif %}
                                                         </div>
                                                         <div class="col-xs-2 text-right">
-                                                            <a class="btn btnLien btn-sm btn-warning" target="_blank" href="{{ valR.url }}">
+                                                            <a class="btn btnLien btn-sm btn-warning btnUserStatRessource"
+                                                               target="_blank"
+                                                               href="{{ valR.url }}"
+                                                               data-statRessId="{{ valR.id }}"
+                                                            >
                                                                 {% if valR.typeLien.faIcon is defined %}
                                                                     <i class="fa {{ valR.typeLien.faIcon }}"></i>
                                                                 {% else %}
@@ -396,7 +434,11 @@
                                                                         <td>Sujet du devoir</td>
                                                                         <td>
                                                                             {% for keyS,valS in val.zones.sujet[keyR] %}
-                                                                                <a class="btn btn-sm btn-info mb-3" target="_blank" href="{{ valS.url }}">{{ valS.nom }}</a>
+                                                                                <a class="btn btn-sm btn-info mb-3 btnUserStatRessource"
+                                                                                   target="_blank"
+                                                                                   href="{{ valS.url }}"
+                                                                                   data-statRessId="{{ valR.id }}"
+                                                                                >{{ valS.nom }}</a>
                                                                             {% endfor %}
                                                                         </td>
                                                                     </tr>
@@ -482,9 +524,11 @@
                                                                     </video>
                                                                 </div>
                                                             {% else %}
-                                                                <a class="btnLienGroupeRessource btn btn-xs"
+                                                                <a class="btnLienGroupeRessource btn btn-xs btnUserStatRessource"
                                                                    style="background-color: {{ valG.categorieLien.couleur }};" target="_blank"
-                                                                   href="{{ valG.lien.url }}">
+                                                                   href="{{ valG.lien.url }}"
+                                                                   data-statRessId="{{ val.zones.groupe[keyR].id }}"
+                                                                >
                                                                     {% if valG.lien.typeLien.faIcon is defined %}
                                                                         <i class="fa {{ valG.lien.typeLien.faIcon }}"></i>
                                                                     {% else %}
@@ -512,7 +556,9 @@
                                                         </div>
 
                                                         <div class="col-xs-2 text-right">
-                                                            <a class="btn btnLien btn-sm btn-warning" href="{{ path('forum', {id: valR.id}) }}">
+                                                            <a class="btn btnLien btn-sm btn-warning"
+                                                               href="{{ path('forum', {id: valR.id}) }}"
+                                                            >
                                                                 <i class="fa fa-users" aria-hidden="true"></i>
                                                             </a>
                                                         </div>
@@ -534,7 +580,8 @@
                                                         </div>
 
                                                         <div class="col-xs-2 text-right">
-                                                            <a class="btn btnLien btn-sm btn-warning" href="{{ path('chat', {id: valR.id}) }}">
+                                                            <a class="btn btnLien btn-sm btn-warning"
+                                                               href="{{ path('chat', {id: valR.id}) }}">
                                                                 <i class="fa fa-comments-o" aria-hidden="true"></i>
                                                             </a>
                                                         </div>

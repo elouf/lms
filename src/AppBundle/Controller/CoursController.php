@@ -3,12 +3,15 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Cours;
+use AppBundle\Entity\UserStatCours;
+use AppBundle\Entity\UserStatRessource;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use DateTime;
 
 class CoursController extends Controller
 {
@@ -390,6 +393,62 @@ class CoursController extends Controller
             $em->flush();
 
             return new JsonResponse(array('action' =>'change Visibility of documents', 'id' => $cours->getId(), 'isVisible' => $cours->getDocsActivated()));
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
+    /**
+     * @Route("/addUserStatRessource_ajax", name="addUserStatRessource_ajax")
+     */
+    public function addUserStatRessourceAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+
+            $ressId = $request->request->get('ressId');
+            $ressource = $em->getRepository('AppBundle:Ressource')->findOneBy(array('id' => $ressId));
+            $user = $this->getUser();
+
+            $stat = new UserStatRessource();
+
+            $stat->setDateAcces(new DateTime());
+            $stat->setRessource($ressource);
+            $stat->setUser($user);
+
+            $em->persist($stat);
+
+            $em->flush();
+
+            return new JsonResponse(array('action' =>'add a user Stat for a ressource', '$ressId' => $ressource->getId(), 'user' => $user->getId()));
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
+    /**
+     * @Route("/addUserStatCours_ajax", name="addUserStatCours_ajax")
+     */
+    public function addUserStatCoursAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+
+            $coursId = $request->request->get('ressId');
+            $cours = $em->getRepository('AppBundle:Cours')->findOneBy(array('id' => $coursId));
+            $user = $this->getUser();
+
+            $stat = new UserStatCours();
+
+            $stat->setDateAcces(new DateTime());
+            $stat->setCours($cours);
+            $stat->setUser($user);
+
+            $em->persist($stat);
+
+            $em->flush();
+
+            return new JsonResponse(array('action' =>'add a user Stat for a ressource', '$coursId' => $cours->getId(), 'user' => $user->getId()));
         }
 
         return new JsonResponse('This is not ajax!', 400);

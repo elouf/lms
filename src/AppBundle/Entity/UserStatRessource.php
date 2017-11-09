@@ -5,12 +5,12 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * StatsUsersDocs
+ * UserStatRessource
  *
- * @ORM\Table(name="statsUsersDocs")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\StatsUsersDocsRepository")
+ * @ORM\Table(name="UserStatRessource")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\UserStatRessourceRepository")
  */
-class StatsUsersDocs
+class UserStatRessource
 {
     /**
      * @var int
@@ -29,19 +29,18 @@ class StatsUsersDocs
     protected $user;
 
     /**
+     * @var Ressource
+     *
+     * @ORM\ManyToOne(targetEntity="Ressource")
+     */
+    protected $ressource;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="dateAcces", type="datetime")
      */
     protected $dateAcces;
-
-    /**
-     * @var Document
-     *
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     * @ORM\ManyToOne(targetEntity="Document", cascade={"persist"})
-     */
-    protected $document;
 
     /**
      * Get id
@@ -58,7 +57,7 @@ class StatsUsersDocs
      *
      * @param User $user
      *
-     * @return StatsUsersDocs
+     * @return UserStatRessource
      */
     public function setUser($user)
     {
@@ -78,11 +77,35 @@ class StatsUsersDocs
     }
 
     /**
+     * Set ressource
+     *
+     * @param Ressource $ressource
+     *
+     * @return UserStatRessource
+     */
+    public function setRessource($ressource)
+    {
+        $this->ressource = $ressource;
+
+        return $this;
+    }
+
+    /**
+     * Get ressource
+     *
+     * @return Ressource
+     */
+    public function getRessource()
+    {
+        return $this->ressource;
+    }
+
+    /**
      * Set dateAcces
      *
      * @param \DateTime $dateAcces
      *
-     * @return StatsUsersDocs
+     * @return UserStatRessource
      */
     public function setDateAcces($dateAcces)
     {
@@ -101,27 +124,4 @@ class StatsUsersDocs
         return $this->dateAcces;
     }
 
-    /**
-     * Set document
-     *
-     * @param Document $document
-     *
-     * @return StatsUsersDocs
-     */
-    public function setDocument($document)
-    {
-        $this->document = $document;
-
-        return $this;
-    }
-
-    /**
-     * Get document
-     *
-     * @return Document
-     */
-    public function getDocument()
-    {
-        return $this->document;
-    }
 }

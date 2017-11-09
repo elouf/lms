@@ -38,7 +38,7 @@
         }
 
         function showFileAriane(){
-            $('.filArianeCourses').animate({
+            $('.filArianeCourses').show().animate({
                 opacity: 1
             }, 300);
         }
@@ -46,7 +46,9 @@
         function hideFileAriane(){
             $('.filArianeCourses').animate({
                 opacity: 0
-            }, 300);
+            }, 300, function(){
+                $('.filArianeCourses').hide();
+            });
         }
     });
 </script>

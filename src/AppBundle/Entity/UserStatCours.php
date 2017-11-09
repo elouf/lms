@@ -5,12 +5,12 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * StatsUsersDocs
+ * UserStatCours
  *
- * @ORM\Table(name="statsUsersDocs")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\StatsUsersDocsRepository")
+ * @ORM\Table(name="UserStatCours")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\UserStatCoursRepository")
  */
-class StatsUsersDocs
+class UserStatCours
 {
     /**
      * @var int
@@ -29,19 +29,18 @@ class StatsUsersDocs
     protected $user;
 
     /**
+     * @var Cours
+     *
+     * @ORM\ManyToOne(targetEntity="Cours")
+     */
+    protected $cours;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="dateAcces", type="datetime")
      */
     protected $dateAcces;
-
-    /**
-     * @var Document
-     *
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     * @ORM\ManyToOne(targetEntity="Document", cascade={"persist"})
-     */
-    protected $document;
 
     /**
      * Get id
@@ -58,7 +57,7 @@ class StatsUsersDocs
      *
      * @param User $user
      *
-     * @return StatsUsersDocs
+     * @return UserStatCours
      */
     public function setUser($user)
     {
@@ -78,11 +77,35 @@ class StatsUsersDocs
     }
 
     /**
+     * Set cours
+     *
+     * @param Cours $cours
+     *
+     * @return UserStatCours
+     */
+    public function setCours($cours)
+    {
+        $this->cours = $cours;
+
+        return $this;
+    }
+
+    /**
+     * Get cours
+     *
+     * @return Cours
+     */
+    public function getCours()
+    {
+        return $this->cours;
+    }
+
+    /**
      * Set dateAcces
      *
      * @param \DateTime $dateAcces
      *
-     * @return StatsUsersDocs
+     * @return UserStatCours
      */
     public function setDateAcces($dateAcces)
     {
@@ -101,27 +124,4 @@ class StatsUsersDocs
         return $this->dateAcces;
     }
 
-    /**
-     * Set document
-     *
-     * @param Document $document
-     *
-     * @return StatsUsersDocs
-     */
-    public function setDocument($document)
-    {
-        $this->document = $document;
-
-        return $this;
-    }
-
-    /**
-     * Get document
-     *
-     * @return Document
-     */
-    public function getDocument()
-    {
-        return $this->document;
-    }
 }

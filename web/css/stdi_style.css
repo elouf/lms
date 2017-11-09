@@ -126,6 +126,7 @@ a { font-family: inherit; color: inherit; }
 
 .filArianeCourses{
     opacity: 0;
+    display: none;
     position: absolute;
     left:80px;
     top:10px;

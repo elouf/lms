@@ -21,6 +21,25 @@
     <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/jquery.tablesorter.min.js') }}"></script>
     <script>
         jQuery(document).ready(function () {
+
+            // ajoute dans les stats que le user a accédé au forum
+            var ressId = $('[data-ressId]').attr("data-ressId");
+            $.ajax({
+                type: 'POST',
+                url: "{{path('addUserStatRessource_ajax')}}",
+                async: false,
+                dataType: "json",
+                data: {
+                    ressId: ressId
+                },
+                success: function (data) {
+                },
+                error: function(xhr, status, error) {
+                }
+            });
+
+
+
             $(".sujetsTable").tablesorter({
                 sortList: [[4,1]]
             });
@@ -45,7 +64,7 @@
             });
         });
     </script>
-    <div class="container pt-40 pb-40">
+    <div class="container pt-40 pb-40" data-ressId="{{ forum.id }}">
         <a href="{{ path('newForumSujet', {id: forum.id}) }}" class="btn btn-primary btn-sm"><i class="btnSendMsg fa fa-paper-plane-o" aria-hidden="true"></i></a>
         <h3 class="heading text-center">{{ forum.nom }}</h3>
 
