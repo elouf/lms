@@ -106,3 +106,7 @@ services:
     chat.topic_sample_service:
         class: AppBundle\Service\Chat\ChatTopic
         arguments: ['@gos_web_socket.websocket.client_manipulator']
+
+    authentication.success.listener:
+        class: AppBundle\EventListener\AuthenticationEventListener
+        arguments: ['@router', '@service_container', '@doctrine.orm.entity_manager', "@security.token_storage"]
