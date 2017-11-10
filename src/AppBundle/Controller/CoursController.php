@@ -49,7 +49,22 @@ class CoursController extends Controller
         $cours = $this->getDoctrine()->getRepository('AppBundle:Cours')->find($id);
         $discipline = $cours->getDiscipline();
         $repositoryC = $this->getDoctrine()->getRepository('AppBundle:Cours');
-        $courses = $repositoryC->findBy(array('discipline' => $discipline));
+
+        $allcourses = $repositoryC->findBy(array('discipline' => $discipline));
+        $courses = array();
+        foreach($allcourses as $cours){
+            if($cours->getSession() == null || $this->getUser()->hasRole('ROLE_SUPER_ADMIN')){
+                array_push($courses, $cours);
+            }else{
+                $currentDate = new DateTime();
+                $sess = $cours->getSession();
+                if($this->getDoctrine()->getRepository('AppBundle:Session')->userIsInscrit($this->getUser()->getId(), $sess->getId()) &&
+                    $currentDate >= $sess->getDateDebut() &&
+                    $currentDate <= $sess->getDateFin()){
+                    array_push($courses, $cours);
+                }
+            }
+        }
 
         // on corrige le statut du user. Si c'est un enseignant, il ne doit pas être en etu. Si ce n'est pas un admin, il ne doit pas être admin
         if(!$this->getUser()->hasRole('ROLE_SUPER_ADMIN')){
