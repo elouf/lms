@@ -10,4 +10,21 @@ namespace AppBundle\Repository;
  */
 class CohorteRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function findInscrits($id)
+    {
+        $em = $this->getEntityManager();
+        $cohorte = $this->findOneBy(array('id'=> $id));
+
+        $users = array();
+
+        $inscrCohs = $em->getRepository('AppBundle:Inscription_coh')->findBy(array('cohorte' => $cohorte));
+        if($inscrCohs){
+            foreach($inscrCohs as $inscrCoh){
+                if(!in_array($inscrCoh->getUser(), $users)){
+                    array_push($users, $inscrCoh->getUser());
+                }
+            }
+        }
+        return $inscrCohs;
+    }
 }
