@@ -78,22 +78,25 @@
                             $('.chrono_s').text("00");
 
                             $('.beginDevoir').unbind('click').click(function(){
-
-                                // creation de l'objet Copie
-                                $.ajax({
-                                    type: 'POST',
-                                    url: "{{path('startDevoir_ajax')}}",
-                                    async: false,
-                                    dataType: "json",
-                                    data: {
-                                        id: idItem,
-                                        userId: $('[data-userId]').attr('data-userId')
-                                    },
-                                    success: function (data) {
-                                        $('.masqueDevoir').hide();
-                                        launchChrono();
-                                    }
-                                });
+                                var btn = $(this);
+                                if(!btn.hasClass('inactivate')) {
+                                    btn.addClass('inactivate');
+                                    // creation de l'objet Copie
+                                    $.ajax({
+                                        type: 'POST',
+                                        url: "{{path('startDevoir_ajax')}}",
+                                        async: false,
+                                        dataType: "json",
+                                        data: {
+                                            id: idItem,
+                                            userId: $('[data-userId]').attr('data-userId')
+                                        },
+                                        success: function (data) {
+                                            $('.masqueDevoir').hide();
+                                            launchChrono();
+                                        }
+                                    });
+                                }
                             });
                         }else{
                             // le devoir avait déjà été commencé

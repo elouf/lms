@@ -25,6 +25,8 @@
     "fullcalendar": "^3.2.0",
     "eonasdan-bootstrap-datetimepicker": "^4.17.47",
     "tablesorter": "jquery.tablesorter#^2.28.7",
-    "ckeditor": "^4.6.2"
+    "ckeditor": "^4.6.2",
+    "nvd3": "^1.8.6",
+    "d3": "^4.11.0"
   }
 }

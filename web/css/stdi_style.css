@@ -940,6 +940,11 @@ ul.list-default>li.studitWhiteFC:before{
     background: rgba(0, 0, 0, .4);
 }
 
+/* Statistiques */
+.datas{
+    display: none;
+}
+
 /* MEDIA QUERIES */
 .logoAbsolute{
     width: 316px;
