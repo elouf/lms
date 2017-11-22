@@ -21,7 +21,7 @@
 {% endblock %}
 
 {% block main %}
-
+    <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/jquery.tablesorter.min.js') }}"></script>
     <script>
         jQuery(document).ready(function () {
             var steps = $('[data-uploadSteps]').attr('data-uploadSteps');
@@ -81,7 +81,6 @@
                             data: {
                                 idDevoir: idDevoir,
                                 userId: userId,
-                                etuId: etuId,
                                 url: steps + folderLocation + myUrlTab[1],
                                 urlDest: destUrl,
                                 currentUrl: window.location.pathname,
@@ -106,7 +105,62 @@
             }).prop('disabled', !$.support.fileInput)
                     .parent().addClass($.support.fileInput ? undefined : 'disabled');
 
+            // l'admin peut uploader une copie pour l'étudiant
+            $('.copieUpload').fileupload({
+                url: steps + upload_srcSteps + folderLocation,
+                dropZone:null,
+                dataType: 'json',
+                add: function(e, data) {
+                    var uploadErrors = [];
+                    if(data.files[0]['size'] > 5000000) {
+                        uploadErrors.push('Fichier trop volumineux : ne pas dépasser 5MO');
+                    }
+                    if(uploadErrors.length > 0) {
+                        alert(uploadErrors.join("\n"));
+                    } else {
+                        data.submit();
+                    }
+                },
+                done: function (e, data) {
+                    var etuId = $(this).closest('[data-userId]').attr('data-userId');
+                    var destUrl = url+etuId+'/';
+                    $.each(data.result.files, function (index, file) {
+                        var myUrlTab = file.url.split(folderLocation);
+                        $.ajax({
+                            type: 'POST',
+                            url: "{{path('uploadCopieFile_ajax')}}",
+                            async: false,
+                            dataType: "json",
+                            data: {
+                                itemId: idDevoir,
+                                userId: etuId,
+                                url: steps + folderLocation + myUrlTab[1],
+                                urlDest: destUrl,
+                                currentUrl: window.location.pathname
+                            },
+                            success: function (data) {
+                                window.location.href = window.location.href;
+                            },
+                            error: function(xhr, status, error) {
+                            }
+                        });
+                    });
 
+                },
+                progressall: function (e, data) {
+                    var progress = parseInt(data.loaded / data.total * 100, 10);
+                    $('.progress-bar').css(
+                            'width',
+                            progress + '%'
+                    );
+                }
+            }).prop('disabled', !$.support.fileInput)
+                    .parent().addClass($.support.fileInput ? undefined : 'disabled');
+
+
+            $(".tableCopies").tablesorter({
+                sortList: [[1,0]]
+            });
         });
     </script>
 
@@ -145,7 +199,7 @@
         <div class="container mb-40">
             <div class="row">
                 <div class="col-sm-12">
-                    <table class="table table-striped">
+                    <table class="table table-striped tableCopies">
                         <thead>
                         <tr>
                             <th>#</th>
@@ -157,33 +211,55 @@
                         </thead>
                         <tbody>
                         {% for key,val in devoirsEns %}
-                            <tr data-userId="{{ val.copie.auteur.id }}">
-                                <th scope="row">{{ key+1 }}</th>
-                                <td>{{ val.copie.auteur.firstname }} {{ val.copie.auteur.lastname }}</td>
-                                <td>
-                                    {{ val.copie.dateCreation|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}
-                                    <a class="btn btn-warning btn-sm" target="_blank" href="{{ val.copieFichier.url }}"><i class="fa fa-external-link fa-2x"></i></a>
-                                </td>
-                                <td>
-                                    {% if val.corrige != "undefined" %}
-                                        {{ val.corrige.dateRendu|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}
-                                        <a class="btn btn-success btn-sm" target="_blank" href="{{ val.corrigeFichier.url }}"><i class="fa fa-external-link fa-2x"></i></a>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    <div class="fileUploader col-sm-6 col-xs-12">
-                                        <span class="btn btn-success fileinput-button">
-                                            <i class="glyphicon glyphicon-plus"></i>
-                                            <span>Déposer un corrigé</span>
-                                            <input class="corrigeUpload" id="corrigeUpload_{{ val.copie.id }}" type="file" name="files[]" multiple>
-                                        </span>
+                            {% if val.copieFichier is not null or app.user.hasRole('ROLE_SUPER_ADMIN') %}
 
-                                        <div id="itemProgress_{{ val.copie.id }}" class="progress col-xs-12">
-                                            <div class="progress-bar progress-bar-success"></div>
+                                <tr data-userId="{{ val.copie.auteur.id }}">
+                                    <th scope="row">{{ key+1 }}</th>
+                                    <td>{{ val.copie.auteur.lastname }} {{ val.copie.auteur.firstname }}</td>
+                                    <td>
+
+                                        {% if val.copieFichier is not null %}
+                                            {{ val.copie.dateCreation|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}
+                                            <a class="btn btn-warning btn-sm" target="_blank" href="{{ val.copieFichier.url }}"><i class="fa fa-external-link fa-2x"></i></a>
+                                        {% else %}
+                                            Pas de copie déposée
+                                        {% endif %}
+                                        {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                            <br />
+                                            <div class="fileUploader col-sm-6 col-xs-12">
+                                            <span class="btn btn-success fileinput-button">
+                                                <i class="glyphicon glyphicon-plus"></i>
+                                                <span>Déposer une copie</span>
+                                                <input class="copieUpload" id="copieUpload_{{ val.copie.id }}" type="file" name="files[]" multiple>
+                                            </span>
+
+                                                <div id="itemProgressCop_{{ val.copie.id }}" class="progress col-xs-12">
+                                                    <div class="progress-bar progress-bar-success"></div>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if val.corrige != "undefined" %}
+                                            {{ val.corrige.dateRendu|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}
+                                            <a class="btn btn-success btn-sm" target="_blank" href="{{ val.corrigeFichier.url }}"><i class="fa fa-external-link fa-2x"></i></a>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="fileUploader col-sm-6 col-xs-12">
+                                            <span class="btn btn-success fileinput-button">
+                                                <i class="glyphicon glyphicon-plus"></i>
+                                                <span>Déposer un corrigé</span>
+                                                <input class="corrigeUpload" id="corrigeUpload_{{ val.copie.id }}" type="file" name="files[]" multiple>
+                                            </span>
+
+                                            <div id="itemProgressCor_{{ val.copie.id }}" class="progress col-xs-12">
+                                                <div class="progress-bar progress-bar-success"></div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </td>
-                            </tr>
+                                    </td>
+                                </tr>
+                            {% endif %}
                         {% endfor %}
                         </tbody>
                     </table>

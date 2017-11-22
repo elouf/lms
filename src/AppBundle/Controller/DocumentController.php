@@ -170,6 +170,9 @@ class DocumentController extends Controller
     {
         if ($request->isXMLHttpRequest()) {
             $em = $this->getDoctrine()->getEntityManager();
+
+            date_default_timezone_set('Europe/Paris');
+
             $discId = $request->request->get('discId');
             $url = utf8_encode($request->request->get('url'));
             $urlDest = $request->request->get('urlDest');
@@ -288,6 +291,9 @@ class DocumentController extends Controller
     {
         if ($request->isXMLHttpRequest()) {
             $em = $this->getDoctrine()->getEntityManager();
+
+            date_default_timezone_set('Europe/Paris');
+
             $coursId = $request->request->get('coursId');
             $url = utf8_encode($request->request->get('url'));
             $urlDest = $request->request->get('urlDest');
@@ -440,6 +446,9 @@ class DocumentController extends Controller
     {
         if ($request->isXMLHttpRequest()) {
             $em = $this->getDoctrine()->getEntityManager();
+
+            date_default_timezone_set('Europe/Paris');
+
             $docId = $request->request->get('id');
 
             $document = $em->getRepository('AppBundle:Document')->findOneBy(array('id' => $docId));

@@ -138,6 +138,8 @@ class DevoirController extends Controller
         if ($request->isXMLHttpRequest()) {
             $em = $this->getDoctrine()->getEntityManager();
 
+            date_default_timezone_set('Europe/Paris');
+
             $id = $request->request->get('id');
             $userId = $request->request->get('userId');
             $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
@@ -256,6 +258,9 @@ class DevoirController extends Controller
     {
         if ($request->isXMLHttpRequest()) {
             $em = $this->getDoctrine()->getEntityManager();
+
+            date_default_timezone_set('Europe/Paris');
+
             $itemId = $request->request->get('itemId');
             $userId = $request->request->get('userId');
             $url = utf8_encode($request->request->get('url'));
@@ -297,6 +302,9 @@ class DevoirController extends Controller
     {
         if ($request->isXMLHttpRequest()) {
             $em = $this->getDoctrine()->getEntityManager();
+
+            date_default_timezone_set('Europe/Paris');
+
             $idDevoir = $request->request->get('idDevoir');
             $userId = $request->request->get('userId');
             $etuId = $request->request->get('etuId');

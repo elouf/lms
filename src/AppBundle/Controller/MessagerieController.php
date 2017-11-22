@@ -120,6 +120,9 @@ class MessagerieController extends Controller
     {
         if ($request->isXMLHttpRequest()) {
             $em = $this->getDoctrine()->getEntityManager();
+
+            date_default_timezone_set('Europe/Paris');
+
             $msgId = $request->request->get('id');
 
             $message = $em->getRepository('AppBundle:Message')->findOneBy(array('id' => $msgId));
@@ -299,6 +302,9 @@ class MessagerieController extends Controller
     {
         if ($request->isXMLHttpRequest()) {
             $em = $this->getDoctrine()->getEntityManager();
+
+            date_default_timezone_set('Europe/Paris');
+
             $objet = $request->request->get('objet');
             $contenu = $request->request->get('contenu');
             $users = $request->request->get('users');

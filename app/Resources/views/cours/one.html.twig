@@ -28,11 +28,12 @@
             var upload_srcSteps = $('[data-uploadSrcSteps]').attr('data-uploadSrcSteps');
             var folderLocation = $('[data-folderUpload]').attr('data-folderUpload');
             var upload_course = $('[data-courseUpload]').attr('data-courseUpload');
+            var idSection;
 
             $('.btnOpenDevoir').click(function(){
                 var idItem = $(this).closest('[data-iditem]').attr('data-iditem');
                 var myBtn = $(this);
-                var idSection = $(this).closest('.section').attr('data-idSection');
+                idSection = $(this).closest('.section').attr('data-idSection');
 
                 $.ajax({
                     type: 'POST',
@@ -195,16 +196,22 @@
             });
 
             function launchChrono(){
+                console.log("launchChrono");
                 clearInterval(chrono);
                 chrono = setInterval(function(){
                     var h = parseInt($('.chrono_h').text());
                     var m = parseInt($('.chrono_m').text());
                     var s = parseInt($('.chrono_s').text());
                     if(s == 0){
+                        console.log("s=0");
                         if(m == 0){
+                            console.log("m=0");
                             if(h == 0){
+                                console.log("h=0");
                                 clearInterval(chrono);
-                                window.location.href = window.location.href.replace( /[\?#].*|$/, "?idSection="+idSection );
+                                $('.contentDevoirRess .fileUploader, .alert_duringDevoir, .alert_beforeDownload, .beginDevoir').hide();
+                                $('.alert_afterTimeExpire').show();
+                                //window.location.href = window.location.href.replace( /[\?#].*|$/, "?idSection="+idSection );
                             }else{
                                 var newH = parseInt(h-1);
                                 $('.chrono_h').text(newH);
@@ -653,6 +660,10 @@
                                 <div class="alert alert-danger mb-10 alert_duringDevoir">
                                     <strong>Attention!</strong> Vous avez déjà commencé ce devoir.
                                     <p>Le temps restant s'affiche en bas de cette popup.</p>
+                                </div>
+
+                                <div class="alert alert-danger mb-10 alert_afterTimeExpire">
+                                    <strong>Attention!</strong> Vous avez atteint la limite fixée pour ce devoir, qui était fixée à <span class="popupDevoirDuree"></span>.
                                 </div>
 
                                 <div class="row mb-10" style="text-align: center">

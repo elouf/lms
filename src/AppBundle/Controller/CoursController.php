@@ -46,6 +46,8 @@ class CoursController extends Controller
      */
     public function oneCoursAction (Request $request, $id, $mode)
     {
+        date_default_timezone_set('Europe/Paris');
+
         $cours = $this->getDoctrine()->getRepository('AppBundle:Cours')->find($id);
         $discipline = $cours->getDiscipline();
         $repositoryC = $this->getDoctrine()->getRepository('AppBundle:Cours');
@@ -421,6 +423,8 @@ class CoursController extends Controller
         if ($request->isXMLHttpRequest()) {
             $em = $this->getDoctrine()->getEntityManager();
 
+            date_default_timezone_set('Europe/Paris');
+
             $ressId = $request->request->get('ressId');
             $ressource = $em->getRepository('AppBundle:Ressource')->findOneBy(array('id' => $ressId));
             $user = $this->getUser();
@@ -448,6 +452,8 @@ class CoursController extends Controller
     {
         if ($request->isXMLHttpRequest()) {
             $em = $this->getDoctrine()->getEntityManager();
+
+            date_default_timezone_set('Europe/Paris');
 
             $coursId = $request->request->get('ressId');
             $cours = $em->getRepository('AppBundle:Cours')->findOneBy(array('id' => $coursId));

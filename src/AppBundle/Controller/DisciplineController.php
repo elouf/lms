@@ -19,6 +19,8 @@ class DisciplineController extends Controller
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
+        date_default_timezone_set('Europe/Paris');
+
         $repositoryCours = $this->getDoctrine()->getRepository('AppBundle:Cours');
 
         $repositoryCoh = $this->getDoctrine()->getRepository('AppBundle:Cohorte');
@@ -201,6 +203,8 @@ class DisciplineController extends Controller
     {
         if ($request->isXMLHttpRequest()) {
             $em = $this->getDoctrine()->getEntityManager();
+
+            date_default_timezone_set('Europe/Paris');
 
             $id = $request->request->get('id');
 

@@ -1172,6 +1172,36 @@
                         .parent().addClass($.support.fileInput ? undefined : 'disabled');
             });
 
+            // tri de des liens
+            $('.sortableLiensInGroupe').sortable({
+                placeholder: "ui-state-highlight",
+                handle: ".btnMove",
+                cancel: ".notSortable",
+                stop: function (event, ui) {
+                    var arrayAssocs = [];
+                    var itemDropped = ui.item;
+                    var id = itemDropped.attr('data-idLien');
+                    $(this).find('[data-idLien]').each(function(){
+                        arrayAssocs.push($(this).attr('data-idLien'));
+                    });
+
+                    $.ajax({
+                        type: "POST",
+                        url: "{{path('sortGroupeLiensAssocs_ajax')}}",
+                        data: {
+                            arrayAssocs: arrayAssocs
+                        },
+                        dataType: "json",
+                        success: function (response) {
+                            if(!response["error"]){
+
+                            }else{
+                                console.log("Erreur de tri des sections");
+                            }
+                        }
+                    });
+                }
+            });
             $('.btnRemoveSujetFromDevoir, .btnRemoveCorrigeTypeFromDevoir').click(function(){
                 var devoir = $(this).closest('[data-typeitem=devoir]');
 

@@ -36,10 +36,11 @@
         <div class="row">
             <div class="LabelAdmin col-sm-2">Sujet</div>
             <div class="selectSujetAddToDevoir btn btnAdmin col-sm-1"><i class="fa fa-plus"> </i></div>
-            <div class=" col-sm-9  col-xs-12 listeItemContained">
+            <div class=" col-sm-9  col-xs-12 listeItemContained sortableSujetDevoir">
                 {% for keyR,valR in sujets %}
                     <div class="row" data-idFile="{{ valR.id }}">
                         <div class="col-xs-9">
+                            <div class="myBtn btnMove inlineBtn"><i class="fa fa-arrows-alt "></i></div>
                             <div class="nomAssoc inlineBtn">{{ valR.nom }}</div>
                         </div>
                         <div class="col-xs-3 text-right">
@@ -57,7 +58,7 @@
         <div class="row">
             <div class="LabelAdmin col-sm-2">Corrigé type</div>
             <div class="selectCorrigeTypeAddToDevoir btn btnAdmin col-sm-1"><i class="fa fa-plus"> </i></div>
-            <div class=" col-sm-9  col-xs-12 listeItemContained">
+            <div class=" col-sm-9  col-xs-12 listeItemContained sortableCorrigeDevoir">
                 {% for keyR,valR in corrigesType %}
                     <div class="row" data-idFile="{{ valR.id }}">
                         <div class="col-xs-9">

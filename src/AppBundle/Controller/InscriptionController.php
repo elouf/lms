@@ -27,6 +27,8 @@ class InscriptionController extends Controller
      */
     public function inscriptionAction (Request $request)
     {
+        date_default_timezone_set('Europe/Paris');
+
         $form = $this->createFormBuilder()
             ->add('nom', TextType::class, array(
                 'label_attr' => array('class' => 'col-sm-4'),
