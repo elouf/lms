@@ -215,9 +215,12 @@ class DevoirController extends Controller
             $urlDest = $request->request->get('urlDest');
             $currentUrl = $request->request->get('currentUrl');
             $nom = $request->request->get('nom');
+            $unzipIfZip = $request->request->get('unzipIfZip') == 'true';
+            $type = $request->request->get('type');
 
             $urlTab = explode('/web', $currentUrl);
             $urlDestTab = explode('var', $urlDest);
+            $dir = $urlTab[0].'/var'.$urlDestTab[1];
 
             $devoir = $em->getRepository('AppBundle:Devoir')->findOneBy(array('id' => $itemId));
 
@@ -239,7 +242,45 @@ class DevoirController extends Controller
             $rand = rand(1, 999999);
             rename($url, $urlDest.'file'.$rand.'.'.$ext);
 
-            $devoirF->setUrl($urlTab[0].'/var'.$urlDestTab[1].'file'.$rand.'.'.$ext);
+
+            if($unzipIfZip && ($type == 'application/zip' || $type == 'application/octet-stream' || $type == 'application/x-zip-compressed' || $type == 'application/zip-compressed' || $type == 'application/x-zip') ){
+                $zip = new ZipArchive;
+                $res = $zip->open($urlDest.'file'.$rand.'.'.$ext);
+                if ($res === TRUE) {
+                    $zip->extractTo($urlDest);
+                    $zip->close();
+
+                    $indexfounded = false;
+                    if(file_exists($urlDest.'index.html')){
+                        $indexfounded = true;
+                        $devoirF->setUrl($dir.'index.html');
+                    }else{
+                        $filesInZip = scandir($urlDest);
+                        foreach ($filesInZip as $key => $value) {
+                            if (is_dir($urlDest . $value)) {
+                                if(file_exists($urlDest. $value.'/index.html')){
+                                    $indexfounded = true;
+                                    $devoirF->setUrl($dir. $value.'/index.html');
+                                    break;
+                                }
+                            }
+                        }
+                        if(!$indexfounded){
+                            $devoirF->setUrl($dir.'file.'.$ext);
+                        }
+                    }
+                    if($indexfounded) {
+                        unlink($urlDest . 'file.' . $ext);
+                    }
+                } else {
+                    return new JsonResponse(array(
+                            'error' => true,
+                            'unzipping' => "absence du fichier zip")
+                    );
+                }
+            }else{
+                $devoirF->setUrl($urlTab[0].'/var'.$urlDestTab[1].'file'.$rand.'.'.$ext);
+            }
 
             $em->persist($devoirF);
             $em->flush();
@@ -248,7 +289,6 @@ class DevoirController extends Controller
 
         return new JsonResponse('This is not ajax!', 400);
     }
-
 
     /**
      * @Route("/uploadCopieFile_ajax", name="uploadCopieFile_ajax")
@@ -394,6 +434,33 @@ class DevoirController extends Controller
 
             unlink('../var'.$urlTab[1]);
             return new JsonResponse(array('action' =>'delete File', 'id' => $itemId, 'type' => $typeItem));
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
+
+    /**
+     * @Route("/sortDevoirFile_ajax", name="sortDevoirFile_ajax")
+     * @Method({"GET", "POST"})
+     */
+    public function sortDevoirFileAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+            $arrayFileId = $request->request->get('arrayFile');
+            $elementCible = $request->request->get('elementCible');
+
+            for($i=0; $i<count($arrayFileId); $i++){
+                $file = $em->getRepository('AppBundle:'.$elementCible)->findOneBy(array('id' => $arrayFileId[$i]));
+                $file->setPosition($i);
+                $em->persist($file);
+            }
+
+            $em->flush();
+            return new JsonResponse(array(
+                    'action' =>'sort File in Devoir')
+            );
         }
 
         return new JsonResponse('This is not ajax!', 400);

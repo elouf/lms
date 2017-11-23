@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="devoirSujet")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\DevoirSujetRepository")
  */
-class DevoirSujet extends Fichier
+class DevoirSujet extends OrderedFile
 {
 
     /**

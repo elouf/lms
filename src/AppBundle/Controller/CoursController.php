@@ -138,11 +138,11 @@ class CoursController extends Controller
 
                         $repositorySujet = $this->getDoctrine()
                             ->getRepository('AppBundle:DevoirSujet')
-                            ->findBy(array('devoir' => $ressource));
+                            ->findBy(array('devoir' => $ressource), array('position' => 'ASC'));
 
                         $repositoryCorrigeType = $this->getDoctrine()
                             ->getRepository('AppBundle:DevoirCorrigeType')
-                            ->findBy(array('devoir' => $ressource));
+                            ->findBy(array('devoir' => $ressource), array('position' => 'ASC'));
 
                         $datas[$i]["zones"]["content"][$j] = $ressource;
                         $datas[$i]["zones"]["sujet"][$j] = $repositorySujet;
