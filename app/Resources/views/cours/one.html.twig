@@ -103,17 +103,17 @@
                             // le devoir avait déjà été commencé
                             $('.beginDevoir, .masqueDevoir').hide();
                             $('.alert_duringDevoir').show();
-                            var dateCopie = toJSDate(data['copieStart']['date']);
-                            var timeLimit = dateCopie;
+                            var timeLimit = toJSDate(data['copieStart']['date']);
                             timeLimit.setHours(timeLimit.getHours() + parseInt(dureeH));
                             timeLimit.setMinutes(timeLimit.getMinutes() + parseInt(dureeM));
-                            var now = new Date();
-                            if(now > timeLimit){
+                            var now_ = new Date();
+                            var now = new Date(now_.getTime() - now_.getTimezoneOffset()*60000);
+                            if(now_ > timeLimit){
                                 window.location.href = window.location.href.replace( /[\?#].*|$/, "?idSection="+idSection );
                             }else{
-                                var diff = timeLimit - now;
+                                var diff = timeLimit.getTime() - now_.getTime();
                                 var diffSeconds = diff / 1000;
-                                var HH = parseInt(Math.floor(diffSeconds / 3600))+1;
+                                var HH = parseInt(Math.floor(diffSeconds / 3600));
                                 var MM = parseInt(Math.floor(diffSeconds % 3600) / 60);
                                 $('.chrono_h').text(HH);
                                 $('.chrono_m').text(MM);
@@ -423,7 +423,7 @@
                                                                     {% if val.zones.copie[keyR] == "undefined" or "now"|date('Ymd H:i:s') < val.zones.copie[keyR].dateCreation|date_modify(duree)|date('Ymd H:i:s') %}
                                                                         <div class="col-xs-3 text-right conteneurLiensSujets">
                                                                             <div class="btn btn-sm btn-info btnOpenDevoir">
-                                                                                Ouvrir
+                                                                                Entrer
                                                                             </div>
                                                                             <div class="listeSujets">
                                                                                 {% for keyS,valS in val.zones.sujet[keyR] %}
@@ -679,12 +679,15 @@
                                     <div class="fileUploader col-sm-6 col-xs-12">
                                         <span class="btn btn-success fileinput-button">
                                             <i class="glyphicon glyphicon-plus"></i>
-                                            <span>Déposer ma copie (PDF ou word, 5MO maximum)</span>
+                                            <span>Déposer ma copie</span>
                                             <input id="copieUpload" type="file" name="files[]" multiple>
                                         </span>
 
                                         <div id="itemProgress" class="progress col-xs-12">
                                             <div class="progress-bar progress-bar-success"></div>
+                                        </div>
+                                        <div class="">
+                                            Fichiers acceptés : PDF, WORD (5MO maximum)
                                         </div>
                                     </div>
 
