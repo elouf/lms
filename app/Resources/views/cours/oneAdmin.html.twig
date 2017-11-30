@@ -661,8 +661,12 @@
                     var id = devoir.attr('data-idItem');
                     var nom = devoir.find('[data-champName=nom]').val();
                     var description = devoir.find('textarea[data-champName=description]').val();
+                    var commentaireCopieRendue = devoir.find('textarea[data-champName=commentaireCopieRendue]').val();
                     if(CKEDITOR.instances[devoir.find('[data-champName=description]').attr('id')]){
                         description = CKEDITOR.instances[devoir.find('[data-champName=description]').attr('id')].getData();
+                    }
+                    if(CKEDITOR.instances[devoir.find('[data-champName=commentaireCopieRendue]').attr('id')]){
+                        commentaireCopieRendue = CKEDITOR.instances[devoir.find('[data-champName=commentaireCopieRendue]').attr('id')].getData();
                     }
                     var dureeH = devoir.find('[data-champName=dureeHeures] input').val();
                     var dureeM = devoir.find('[data-champName=dureeMinutes] input').val();
@@ -683,7 +687,8 @@
                             dureeH: dureeH,
                             dureeM: dureeM,
                             dateDebut : dateDebut,
-                            dateFin: dateFin
+                            dateFin: dateFin,
+                            commentaireCopieRendue: commentaireCopieRendue
                         },
                         success: function (data) {
                             if(mustReload){
@@ -1792,6 +1797,7 @@
                                                         <tr><td class="nomChamp">Description</td><td>{{ val.content.description | raw }}</td></tr>
                                                         <tr><td class="nomChamp">Dates</td><td>du {{ val.content.dateDebut|date('Y-m-d') }} au {{ val.content.dateFin|date('Y-m-d') }}</td></tr>
                                                         <tr><td class="nomChamp">Durée</td><td>{{ val.content.duree//3600 }}h</td></tr>
+                                                        <tr><td class="nomChamp">Commentaire Copie Rendue</td><td>{{ val.content.commentaireCopieRendue | raw }}</td></tr>
                                                     </table>
                                                 </td>
                                                 <td>

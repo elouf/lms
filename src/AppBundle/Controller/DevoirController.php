@@ -117,6 +117,7 @@ class DevoirController extends Controller
                     'dateFin' => $devoir->getDateFin(),
                     'nom' => $devoir->getNom(),
                     'description' => $devoir->getDescription(),
+                    'commentaireCopieRendue' => $devoir->getCommentaireCopieRendue(),
                     'sujet' => $repositorySujet->getUrl(),
                     'copieStart' => $copieStart,
                     'copieFichier' => $copieFichier,
@@ -176,6 +177,7 @@ class DevoirController extends Controller
             $id = $request->request->get('id');
             $nom = $request->request->get('nom');
             $description = $request->request->get('description');
+            $commentaireCopieRendue = $request->request->get('commentaireCopieRendue');
             $dureeH = $request->request->get('dureeH');
             $dureeM = $request->request->get('dureeM');
             $dateDebut = date_create_from_format('j/m/Y H:i', $request->request->get('dateDebut'));
@@ -184,6 +186,7 @@ class DevoirController extends Controller
             $devoir = $em->getRepository('AppBundle:Devoir')->findOneBy(array('id' => $id));
             $devoir->setNom($nom);
             $devoir->setDescription($description);
+            $devoir->setCommentaireCopieRendue($commentaireCopieRendue);
             $devoir->setDuree($dureeH * 3600 + $dureeM * 60);
             $devoir->setDateDebut($dateDebut);
             $devoir->setDateFin($dateFin);
@@ -310,6 +313,16 @@ class DevoirController extends Controller
             $devoir = $em->getRepository('AppBundle:Devoir')->findOneBy(array('id' => $itemId));
             $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
             $copie = $em->getRepository('AppBundle:Copie')->findOneBy(array('auteur' => $user, 'devoir' => $devoir));
+
+            // on vérifie s'il y a déjà un fichier et on le supprime
+            $copieF = $em->getRepository('AppBundle:CopieFichier')->findOneBy(array('copie' => $copie));
+            if($copieF){
+                $urlTabOld = explode('/var', $copieF->getUrl());
+
+                $em->remove($copieF);
+
+                unlink('../var'.$urlTabOld[1]);
+            }
 
             $urlTab = explode('/web', $currentUrl);
             $urlDestTab = explode('var', $urlDest);
@@ -439,6 +452,31 @@ class DevoirController extends Controller
         return new JsonResponse('This is not ajax!', 400);
     }
 
+    /**
+     * @Route("/deleteCopieEtu_ajax", name="deleteCopieEtu_ajax")
+     * @Method({"GET", "POST"})
+     */
+    public function deleteCopieEtuAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+            $idDevoir = $request->request->get('itemId');
+
+            $devoir = $em->getRepository('AppBundle:Devoir')->findOneBy(array('id' => $idDevoir));
+            $copie = $em->getRepository('AppBundle:Copie')->findOneBy(array('auteur' => $this->getUser(), 'devoir' => $devoir));
+            $copieF = $em->getRepository('AppBundle:CopieFichier')->findOneBy(array('copie' => $copie));
+
+            $urlTab = explode('/var', $copieF->getUrl());
+
+            $em->remove($copieF);
+            $em->flush();
+
+            unlink('../var'.$urlTab[1]);
+            return new JsonResponse(array('action' =>'delete Copie par étudiant', 'id' => $idDevoir));
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
 
     /**
      * @Route("/sortDevoirFile_ajax", name="sortDevoirFile_ajax")

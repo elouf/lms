@@ -22,6 +22,13 @@ class Devoir extends Ressource
     private $duree;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="commentaireCopieRendue", type="text", nullable=true)
+     */
+    private $commentaireCopieRendue;
+
+    /**
      * Set duree
      *
      * @param integer $duree
@@ -43,6 +50,30 @@ class Devoir extends Ressource
     public function getDuree()
     {
         return $this->duree;
+    }
+
+    /**
+     * Set commentaireCopieRendue
+     *
+     * @param string $commentaireCopieRendue
+     *
+     * @return Devoir
+     */
+    public function setCommentaireCopieRendue($commentaireCopieRendue)
+    {
+        $this->commentaireCopieRendue = $commentaireCopieRendue;
+
+        return $this;
+    }
+
+    /**
+     * Get commentaireCopieRendue
+     *
+     * @return string
+     */
+    public function getCommentaireCopieRendue()
+    {
+        return $this->commentaireCopieRendue;
     }
 
     public function getType()

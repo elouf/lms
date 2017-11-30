@@ -194,9 +194,26 @@
                     }
                 });
             });
+            $('.btnDeleteCopieEtu').click(function(){
+                var idItem = $(this).closest('[data-iditem]').attr('data-iditem');
+                $.ajax({
+                    type: 'POST',
+                    url: "{{path('deleteCopieEtu_ajax')}}",
+                    async: false,
+                    dataType: "json",
+                    data: {
+                        itemId: idItem,
+                        userId: $('[data-userId]').attr('data-userId')
+                    },
+                    success: function (data) {
+                        window.location.href = window.location.href.replace( /[\?#].*|$/, "?idSection="+idSection );
+                    },
+                    error: function(xhr, status, error) {
+                    }
+                });
+            });
 
             function launchChrono(){
-                console.log("launchChrono");
                 clearInterval(chrono);
                 chrono = setInterval(function(){
                     var h = parseInt($('.chrono_h').text());
@@ -468,9 +485,22 @@
                                                                         <td>
                                                                             {% if val.zones.copieFichier[keyR] != "undefined" %}
                                                                                 <a class="btn btn-sm btn-warning" target="_blank" href="{{ val.zones.copieFichier[keyR].url }}">Ma copie</a>
+                                                                                {% if "now"|date('Ymd H:i:s') < val.zones.copie[keyR].dateCreation|date_modify(duree)|date('Ymd H:i:s') %}
+                                                                                    <div class="btn btn-sm btn-danger btnDeleteCopieEtu">Effacer ma copie</div>
+                                                                                {% endif %}
                                                                             {% endif %}
                                                                         </td>
                                                                     </tr>
+                                                                        {% if val.zones.copieFichier[keyR] != "undefined" %}
+                                                                            <tr>
+                                                                                <td>
+
+                                                                                </td>
+                                                                                <td>
+                                                                                        {{ valR.commentaireCopieRendue | raw }}
+                                                                                </td>
+                                                                            </tr>
+                                                                        {% endif %}
                                                                     {% endif %}
                                                                     {% if val.zones.corrige[keyR] != "undefined" %}
                                                                         <tr>
