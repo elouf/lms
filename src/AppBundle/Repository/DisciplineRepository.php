@@ -44,4 +44,28 @@ class DisciplineRepository extends \Doctrine\ORM\EntityRepository
         return $users;
     }
 
+    public function userIsInscrit($userId, $disId)
+    {
+        $em = $this->getEntityManager();
+        $dis = $this->findOneBy(array('id'=> $disId));
+        $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
+
+        $insc = $em->getRepository('AppBundle:Inscription_d')->findBy(array('discipline' => $dis, 'user' => $user));
+
+        return $insc!=null;
+    }
+
+    public function userHasAccess($userId, $coursId)
+    {
+        $em = $this->getEntityManager();
+        $inscrits = $this->findInscrits($coursId);
+        $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
+
+        if(in_array($user, $inscrits)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
 }

@@ -10,17 +10,159 @@
             </ul>
         </div>
     </div>
+    <div class="menuActionInscrUser">
+        <div class="btnMenuActionInscrUser btnInscire">
+            <i class="fa fa-sign-in"></i>Inscrire
+        </div>
+        <div class="btnMenuActionInscrUser btnDesinscire">
+            <i class="fa fa-sign-out"></i>Désinscrire
+        </div>
+        <div class="btnMenuActionInscrUser btnAlert btnAnnuler">
+            <i class="fa fa-ban"></i>Annuler
+        </div>
+    </div>
 {% endblock %}
 
 {% block main %}
     <script>
         jQuery(document).ready(function () {
+            var filtr_coh = '.filtred_item[data-typeItem=cohorte]';
+            var filtr_dis = '.filtred_item[data-typeItem=discipline]';
+            var filtr_cou = '.filtred_item[data-typeItem=cours]';
 
+            $(filtr_coh).mouseover(function(){
+                if(!$('.verrouille_item').length){
+                    $('.surligne').removeClass('surligne');
+                    $(this).addClass('surligne');
+                    var idCoh = $(this).attr('data-idItem');
+                    $(filtr_dis+', '+filtr_cou).each(function(){
+                        var cohsList = $(this).attr('data-cohs').split(',');
+                        if(jQuery.inArray(idCoh, cohsList) != -1){
+                            $(this).addClass('surligne').prependTo($(this).parent());
+                        }
+                    });
+                    $(filtr_cou).each(function(){
+                        var discId = $(this).attr('data-discipline');
+                        if($('[data-idItem='+discId+']').hasClass('surligne')){
+                            $(this).addClass('surligne').prependTo($(this).parent());
+                        }
+                    });
+                }
+            });
+            $(filtr_dis).mouseover(function(){
+                if(!$('.verrouille_item').length){
+                    $('.surligne').removeClass('surligne');
+                    $(this).addClass('surligne');
+                    var idDis = $(this).attr('data-idItem');
+                    $(filtr_cou).each(function(){
+                        var discId = $(this).attr('data-discipline');
+                        if(discId == idDis){
+                            $(this).addClass('surligne').prependTo($(this).parent());
+                        }
+                    });
+                }
+            });
+            $('.filtred_item').click(function(){
+                $(this).addClass('verrouille_item');
+                $('.menuActionInscrUser').show();
+            });
+            $('.btnAnnuler').click(function(){
+                $('.verrouille_item').removeClass('verrouille_item');
+                $('.menuActionInscrUser').hide();
+            });
+
+            $('.btnInscrire').click(function(){
+                var typeItem = $('.verrouille_item').attr('data-typeItem');
+                var idUser = $('.verrouille_item').attr('data-idItem');
+                var idItem = $('[data-userId]').attr('data-userId');
+                $.ajax({
+                    type: "POST",
+                    url: "{{path('inscrireUser_ajax')}}",
+                    data: {
+                        idItem: idItem,
+                        idUser: idUser,
+                        typeItem: typeItem
+                    },
+                    dataType: "json",
+                    success: function (response) {
+                        console.log('ok')
+                    }
+                });
+            });
         });
     </script>
 
-    <div class="container mt-100 mb-40">
+    <div class="container mt-100 mb-40" data-userId="{{ user.id }}">
         <div class="row">
+            <div class="itemsTab">
+                <div class="cohsItems">
+                    <div class="titleItems">Cohortes</div>
+                    <div class="interact-items">
+                        {% for key,val in cohortesInsc %}
+                            <div
+                                    data-idItem="{{ val['cohorte'].id }}"
+                                    class="filtred_item"
+                                    data-filtreIsInscrit="{{ val['isInscrit'] }}"
+                                    data-typeItem="cohorte"
+                            >
+                                {{ val['cohorte'].nom }}
+                                <a class="menuOneItem" href="{{ path('cohorteUsers', {id: val['cohorte'].id}) }}">
+                                    <i class="fa fa-arrow-circle-right"></i>
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="othersItems">
+                    <table>
+                        <thead>
+                            <tr><th>disciplines</th><th>Cours</th></tr>
+                        </thead>
+                        <tbody>
+                            {% for key,val in disciplinesInsc %}
+                                <tr>
+                                    <td class="interact-items">
+                                        <div
+                                                data-idItem="{{ val['discipline'].id }}"
+                                                class="filtred_item"
+                                                data-filtreIsInscrit="{{ val['isInscrit'] }}"
+                                                data-filtreHasAccess="{{ val['hasAccess'] }}"
+                                                data-cohs="{% for keyCoh,coh in val['cohortes'] %}{{ coh.id }},{% endfor %}"
+                                                data-typeItem="discipline"
+                                        >
+                                            {{ val['discipline'].nom }}
+                                            <a class="menuOneItem" href="{{ path('disciplineUsers', {id: val['discipline'].id}) }}">
+                                                <i class="fa fa-arrow-circle-right"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                    <td class="interact-items">
+                                        {% for keyCours,valCours in coursInsc %}
+                                            {% if valCours['cours'].discipline.id == val['discipline'].id %}
+                                                <div
+                                                        data-idItem="{{ valCours['cours'].id }}"
+                                                        class="filtred_item"
+                                                        data-filtreIsInscrit="{{ valCours['isInscrit'] }}"
+                                                        data-filtreHasAccess="{{ valCours['hasAccess'] }}"
+                                                        data-discipline="{{ valCours['cours'].discipline.id }}"
+                                                        data-cohs="{% for keyCoh,coh in val['cohortes'] %}{{ coh.id }},{% endfor %}"
+                                                        data-typeItem="cours"
+                                                >
+                                                    {{ valCours['cours'].nom }}
+                                                    <a class="menuOneItem" href="{{ path('coursUsers', {id: valCours['cours'].id}) }}">
+                                                        <i class="fa fa-arrow-circle-right"></i>
+                                                    </a>
+                                                </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
 
         </div>
     </div>
