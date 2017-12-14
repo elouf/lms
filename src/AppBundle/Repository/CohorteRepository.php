@@ -39,5 +39,8 @@ class CohorteRepository extends \Doctrine\ORM\EntityRepository
         return $insc!=null;
     }
 
-
+    public function userHasAccessOrIsInscrit($userId, $coursId)
+    {
+        return $this->userIsInscrit($userId, $coursId);
+    }
 }

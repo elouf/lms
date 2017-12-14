@@ -1036,13 +1036,30 @@ ul.list-default>li.studitWhiteFC:before{
     font-size: 22px;
     margin-right: 10px;
 }
-
-.menuOneItem{
-    color: #000;
-    display: inline-block;
-    line-height: 14px;
-    font-size: 20px;
-    margin-left: 20px;
+.btnCellFilter{
+    font-size: 22px;
+    text-align: center;
+}
+.btnCellFilter i{
+    cursor: pointer;
+}
+.btndesinscr{
+    color: #bf0600;
+}
+.btninscr{
+    color: #55ba45;
+}
+.btnCellFilter i:hover{
+    color: #00a7d0;
+}
+.containerItemForm{
+    max-width: 600px;
+}
+.userLine td a{
+    color: #d58b00;
+}
+.userLine td a:hover{
+    color: #008cd5;
 }
 
 /* MEDIA QUERIES */

@@ -1,6 +1,7 @@
 <?php
 
 namespace AppBundle\Repository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 /**
  * UserRepository
@@ -19,5 +20,19 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
             ->setParameter('roles', '%"'.$role.'"%');
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function getUsers($first_result, $max_results = 10)
+    {
+        $qb = $this->createQueryBuilder('user');
+        $qb
+            ->select('user')
+            ->addSelect('institut')
+            ->leftJoin('user.institut', 'institut')
+            ->setFirstResult($first_result)
+            ->setMaxResults($max_results);
+
+        $pag = new Paginator($qb);
+        return $pag;
     }
 }

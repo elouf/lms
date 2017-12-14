@@ -1,0 +1,204 @@
+{% extends 'base.html.twig' %}
+
+{% block pageHeader %}
+    <div>{{ template }}</div>
+    <div class="page-header">
+        <div class="container">
+            <h2 class="color3">Fiche {{ entityName }}</h2>
+            <ul class="breadcrumb">
+                <li class="color3">
+                    {% if entityName == "Cohorte" %}
+
+                    {% elseif entityName == "Discipline" %}
+
+                    {% elseif entityName == "Cours" %}
+                        <a href="{{ path('itemUsers', {id: item.discipline.id, type: "discipline" }) }}" class="label label-info">{{ item.discipline.nom }}</a>
+                        >
+                    {% endif %}
+                    <a href="{{ path('itemUsers', {id: item.id, type: entityName|lower }) }}" class="label label-info">{{ item.nom }}</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+
+{% block main %}
+    <link rel="stylesheet" href="{{ asset('vendors/tablesorter/dist/css/theme.default.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendors/tablesorter/dist/css/jquery.tablesorter.pager.min.css') }}" />
+
+    <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/jquery.tablesorter.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/jquery.tablesorter.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/jquery.tablesorter.widgets.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/extras/jquery.tablesorter.pager.min.js') }}"></script>
+    <script>
+        jQuery(document).ready(function () {
+            $(".tablesorter.tableYes")
+                    .tablesorter({
+                        widthFixed: true,
+                        widgets: ['zebra', 'filter']
+                    })
+                    .tablesorterPager({
+                        container: $("#pagerYes"),
+                        size: 2
+                    });
+            $(".tablesorter.tableNo")
+                    .tablesorter({
+                        widthFixed: true,
+                        widgets: ['zebra', 'filter']
+                    })
+                    .tablesorterPager({
+                        container: $("#pagerNo"),
+                        size: 5
+                    });
+
+            $('.btndesinscr').click(function(){
+                var idUser = $(this).closest('.userLine').attr('data-userId');
+                $.ajax({
+                    type: "POST",
+                    url: "{{path('desInscrireUser_ajax')}}",
+                    data: {
+                        idItem: "{{ item.id }}",
+                        idUser: idUser,
+                        typeItem: "{{ entityName }}".toLowerCase()
+                    },
+                    dataType: "json",
+                    success: function (response) {
+                        window.location.href = window.location.href;
+                    }
+                });
+            });
+            $('.btninscr').click(function(){
+                var idUser = $(this).closest('.userLine').attr('data-userId');
+                $.ajax({
+                    type: "POST",
+                    url: "{{path('inscrireUser_ajax')}}",
+                    data: {
+                        idItem: "{{ item.id }}",
+                        idUser: idUser,
+                        typeItem: "{{ entityName }}".toLowerCase()
+                    },
+                    dataType: "json",
+                    success: function (response) {
+                        window.location.href = window.location.href;
+                    }
+                });
+            });
+        });
+    </script>
+
+    <div class="container mt-100 mb-40">
+        <div class="row">
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active"><a href="#InscrDesinscr" aria-controls="InscrDesinscr" role="tab" data-toggle="tab"><i class="fa fa-external-link  fa-fw"></i> Inscriptions</a></li>
+                <li role="presentation"><a href="#InfosGen" aria-controls="InfosGen" role="tab" data-toggle="tab"><i class="fa fa-university fa-fw"></i> Informations générales</a></li>
+            </ul>
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane fade" id="InfosGen">
+                    <div class="containerItemForm">
+                        {{ form_start(form) }}
+                        {{ form_widget(form) }}
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+                <div role="tabpanel" class="tab-pane fade in active" id="InscrDesinscr">
+                    <div class="col-md-6">
+                        <p>Utilisateurs qui sont :</p>
+                        <ul>
+                            <li>Inscrits</li>
+                            <li>ou inscrits à un niveau supérieur (cohorte ou discipline)</li>
+                        </ul>
+                        <table class="tablesorter tableYes">
+                            <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Email</th>
+                                <th>Prénom</th>
+                                <th>Nom</th>
+                                <th>Institut</th>
+                                <th>Désinscrire</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for user in usersHavingAccess %}
+                                <tr class="userLine" data-userId="{{ user.user.id }}">
+                                    <td><a href="{{ path('user', {id:user.user.id }) }}">{{ user.user.id }}</a></td>
+                                    <td><a href="{{ path('user', {id:user.user.id }) }}">{{ user.user.email }}</a></td>
+                                    <td>{{ user.user.firstname }}</td>
+                                    <td>{{ user.user.lastname }}</td>
+                                    <td>{{ user.user.institut }}</td>
+                                    <td class="btnCellFilter">
+                                        {% if user.isInscrit %}
+                                            <i class="btndesinscr fa fa-sign-out" aria-hidden="true"></i>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <div id="pagerYes" class="pager">
+                            <form>
+                                <img src="{{ asset('vendors/tablesorter/dist/css/images/first.png') }}" class="first"/>
+                                <img src="{{ asset('vendors/tablesorter/dist/css/images/prev.png') }}" class="prev"/>
+                                <input type="text" class="pagedisplay"/>
+                                <img src="{{ asset('vendors/tablesorter/dist/css/images/next.png') }}" class="next"/>
+                                <img src="{{ asset('vendors/tablesorter/dist/css/images/last.png') }}" class="last"/>
+                                <select class="pagesize">
+                                    <option value="10">10</option>
+                                    <option value="20">20</option>
+                                    <option value="30">30</option>
+                                    <option value="40">40</option>
+                                    <option value="all">All Rows</option>
+                                </select>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <p>Utilisateurs qui n'ont aucun accès</p>
+                        <table class="tablesorter tableNo">
+                            <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Email</th>
+                                <th>Prénom</th>
+                                <th>Nom</th>
+                                <th>Institut</th>
+                                <th>Inscrire</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for user in usersNoHavingAccess %}
+                                <tr class="userLine" data-userId="{{ user.id }}">
+                                    <td><a href="{{ path('user', {id:user.id }) }}">{{ user.id }}</a></td>
+                                    <td><a href="{{ path('user', {id:user.id }) }}">{{ user.email }}</a></td>
+                                    <td>{{ user.firstname }}</td>
+                                    <td>{{ user.lastname }}</td>
+                                    <td>{{ user.institut }}</td>
+                                    <td class="btnCellFilter"><i class="btninscr fa fa-sign-in" aria-hidden="true"></i></td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <div id="pagerNo" class="pager">
+                            <form>
+                                <img src="{{ asset('vendors/tablesorter/dist/css/images/first.png') }}" class="first"/>
+                                <img src="{{ asset('vendors/tablesorter/dist/css/images/prev.png') }}" class="prev"/>
+                                <input type="text" class="pagedisplay"/>
+                                <img src="{{ asset('vendors/tablesorter/dist/css/images/next.png') }}" class="next"/>
+                                <img src="{{ asset('vendors/tablesorter/dist/css/images/last.png') }}" class="last"/>
+                                <select class="pagesize">
+                                    <option value="10">10</option>
+                                    <option value="20">20</option>
+                                    <option value="30">30</option>
+                                    <option value="40">40</option>
+                                    <option value="all">All Rows</option>
+                                </select>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        </div>
+    </div>
+{% endblock %}
