@@ -85,6 +85,24 @@
                             <div class="container mt-0 mb-60">
                                 <div class="row">
                                     <div class="col-sm-8">
+                                        {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                            <div class="course-list" style="margin-top: 0;">
+                                                <div class="course-media text-center mt-10">
+                                                    <i class="fa fa-users fa-3" aria-hidden="true"></i>
+                                                </div>
+                                                <div class="course-detail">
+                                                    <h4 class="heading">Gestion des inscriptions</h4>
+                                                    {% for key2,val2 in val.cohortesLiees %}
+                                                        <div class="resumeDocs mt-20 col-xs-12">
+                                                            <a href="{{ path('itemUsers', {id: val2.id, type:"cohorte"}) }}" class="btn btn-warning btn-sm">Inscrits via la cohorte {{ val2.nom }}</a>
+                                                        </div>
+                                                    {% endfor %}
+                                                    <div class="resumeDocs mt-20 col-xs-12">
+                                                        <a href="{{ path('itemUsers', {id: val.discipline.id, type:"discipline"}) }}" class="btn btn-warning btn-sm">Inscrits à la discipline</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endif %}
                                         {% if app.user.hasRole('ROLE_SUPER_ADMIN') or val.discipline.docsActivated==1 %}
                                             <div class="course-list documentsDisc" data-activated="{{ val.discipline.docsActivated }}" style="margin-top: 0;">
                                                 <div class="course-media text-center mt-10">
@@ -199,6 +217,9 @@
                                                     </ul>
                                                     <p class="brief">{{ valC.description|raw }}</p>
                                                     <a href="{{ path('oneCours', {id: valC.id, mode: 'etu'}) }}" class="btn btn-primary btn-sm">Entrer</a>
+                                                    {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                                        <a href="{{ path('itemUsers', {id: valC.id, type:"cours"}) }}" class="btn btn-warning btn-sm">Inscrits</a>
+                                                    {% endif %}
                                                 </div>
                                             </div>
                                         {% endfor %}

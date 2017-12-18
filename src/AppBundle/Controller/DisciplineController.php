@@ -29,6 +29,7 @@ class DisciplineController extends Controller
 
         // Par défaut, admin : toutes les disciplines
         $disciplinesArray2Consider = $disciplines;
+        $cohLiees = array();
 
         $coursesIndiv = array();
 
@@ -66,6 +67,11 @@ class DisciplineController extends Controller
                     array_push($coursesIndiv, $inscrC->getCours());
                 }
             }
+        }else{
+            // on ajoute les cohortes liées pour l'admin pour qu'il puisse accéder aux pages d'inscriptions à ces cohortes
+            for($i=0; $i<count($disciplinesArray2Consider); $i++){
+                $cohLiees[$i] = $this->getDoctrine()->getRepository('AppBundle:Discipline')->getCohortes($disciplinesArray2Consider[$i]->getId());
+            }
         }
 
         $courses = array();
@@ -77,6 +83,11 @@ class DisciplineController extends Controller
             $courses[$i]["sessionsAlerteIsInscrit"] = array();
             $courses[$i]["sessionsFinSession"] = array();
             $courses[$i]["discipline"] = $disciplinesArray2Consider[$i];
+            $courses[$i]["cohortesLiees"] = array();
+            if ($this->getUser()->hasRole('ROLE_SUPER_ADMIN')){
+                $courses[$i]["cohortesLiees"] = $cohLiees[$i];
+            }
+            dump($courses[$i]["cohortesLiees"]);
             $coursesT = $repositoryCours->findBy(array('discipline' =>$disciplinesArray2Consider[$i]), array('position' => 'ASC'));
             for($j=0; $j<count($coursesT); $j++){
                 if(!$coursesT[$j]->getSession()) {

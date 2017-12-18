@@ -44,6 +44,28 @@ class DisciplineRepository extends \Doctrine\ORM\EntityRepository
         return $users;
     }
 
+    public function getCohortes($disId)
+    {
+        $em = $this->getEntityManager();
+        $dis = $this->findOneBy(array('id'=> $disId));
+        $cohortes = array();
+
+        $cohs = $em->getRepository('AppBundle:Cohorte')->findAll();
+        if($cohs){
+            foreach($cohs as $coh){
+
+                if($coh->getDisciplines()->contains($dis)){
+                    if(!in_array($coh, $cohortes)){
+                        array_push($cohortes, $coh);
+                    }
+                }
+
+            }
+        }
+
+        return $cohortes;
+    }
+
     public function userIsInscrit($userId, $disId)
     {
         $em = $this->getEntityManager();

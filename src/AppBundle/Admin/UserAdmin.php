@@ -11,15 +11,26 @@ class UserAdmin extends AbstractAdmin
     // EDIT and CREATE
     protected function configureFormFields(FormMapper $formMapper)
     {
+
+        $passwordoptions = array(
+            'type' => 'password',
+            'options' => array('translation_domain' => 'FOSUserBundle'),
+            'first_options' => array('label' => 'form.password'),
+            'second_options' => array('label' => 'form.password_confirmation'),
+            'translation_domain' => 'FOSUserBundle',
+            'invalid_message' => 'fos_user.password.mismatch',
+        );
+
+        $this->record_id = $this->request->get($this->getIdParameter());
+        if (!empty($this->record_id)) {
+            $passwordoptions['required'] = false;
+        } else {
+            $passwordoptions['required'] = true;
+        }
+
         $formMapper
             ->add('email', 'text')
-            ->add('plainPassword', 'repeated', array(
-                'type' => 'password',
-                'options' => array('translation_domain' => 'FOSUserBundle'),
-                'first_options' => array('label' => 'form.password'),
-                'second_options' => array('label' => 'form.password_confirmation'),
-                'invalid_message' => 'fos_user.password.mismatch',
-            ))
+            ->add('plainPassword', 'repeated', $passwordoptions)
             ->add('enabled')
             ->add('firstname')
             ->add('lastname')
@@ -56,5 +67,20 @@ class UserAdmin extends AbstractAdmin
             ->add('phone')
             ->add('institut')
         ;
+    }
+
+    public function prePersist($object) {
+        parent::prePersist($object);
+        $this->updateUser($object);
+    }
+
+    public function preUpdate($object) {
+        parent::preUpdate($object);
+        $this->updateUser($object);
+    }
+
+    public function updateUser(\AppBundle\Entity\User $u) {
+        $um = $this->getConfigurationPool()->getContainer()->get('fos_user.user_manager');
+        $um->updateUser($u, false);
     }
 }
