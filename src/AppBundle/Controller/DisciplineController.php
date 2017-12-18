@@ -87,7 +87,6 @@ class DisciplineController extends Controller
             if ($this->getUser()->hasRole('ROLE_SUPER_ADMIN')){
                 $courses[$i]["cohortesLiees"] = $cohLiees[$i];
             }
-            dump($courses[$i]["cohortesLiees"]);
             $coursesT = $repositoryCours->findBy(array('discipline' =>$disciplinesArray2Consider[$i]), array('position' => 'ASC'));
             for($j=0; $j<count($coursesT); $j++){
                 if(!$coursesT[$j]->getSession()) {
