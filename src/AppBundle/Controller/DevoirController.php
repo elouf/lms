@@ -212,13 +212,10 @@ class DevoirController extends Controller
     {
         if ($request->isXMLHttpRequest()) {
             $em = $this->getDoctrine()->getEntityManager();
-
-            $randInt = rand(1, 10000);
-
             $typeItem = $request->request->get('typeItem');
             $itemId = $request->request->get('itemId');
             $url = utf8_encode($request->request->get('url'));
-            $urlDest = $request->request->get('urlDest').$randInt.'/';
+            $urlDest = $request->request->get('urlDest');
             $currentUrl = $request->request->get('currentUrl');
             $nom = $request->request->get('nom');
             $unzipIfZip = $request->request->get('unzipIfZip') == 'true';

@@ -1082,7 +1082,8 @@
                     typeItem = "corrigeTypes";
                     titreDefaut = "Corrigé type du devoir";
                 }
-                var url = steps + folderLocation+coursId+'/devoir/'+devoirId+'/'+typeItem+'/';
+                var rand = Math.floor((Math.random() * 10000) + 1);
+                var url = steps + folderLocation+coursId+'/devoir/'+devoirId+'/'+typeItem+'/'+rand+'/';
 
                 $.ajax({
                     type: 'POST',
@@ -1097,25 +1098,6 @@
                     error: function(xhr, status, error) {
                     }
                 });
-
-                /*$('.modal .modal-body[data-contentModal=uploadFile] .bginverse').empty().append(
-                    '<div>' +
-                        '<div class="mb-10" style="text-align: left">'+
-                            '<div class="LabelAdmin col-xs-4">Nom du fichier</div>'+
-                            '<input data-champName="uploadedFileName" class="col-xs-8" value="" type="text" />'+
-                        '</div>'+
-                    '</div>'+
-                    '<div class="fileUploader btn mb-10">' +
-                        '<span class="btn btn-success fileinput-button"> '+
-                            '<i class="glyphicon glyphicon-plus"></i> '+
-                            '<span>Ajouter un fichier</span> '+
-                            '<input id="itemUpload" type="file" name="files[]" multiple> '+
-                        '</span> '+
-                        '<div id="itemProgress" class="progress col-xs-12"> '+
-                        '   <div class="progress-bar progress-bar-success"></div> '+
-                        '</div> '+
-                    '</div>'
-                );*/
 
                 $('.modal .modal-body[data-contentModal=uploadFile] .bginverse').empty().append(
                         '<div>' +
