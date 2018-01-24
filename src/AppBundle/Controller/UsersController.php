@@ -7,11 +7,13 @@ use AppBundle\Entity\Inscription_d;
 use AppBundle\Entity\Cohorte;
 use AppBundle\Entity\Cours;
 use AppBundle\Entity\Discipline;
+use AppBundle\Entity\Inscription_sess;
 use DateTime;
 use AppBundle\Entity\Inscription_coh;
 use Ivory\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -53,10 +55,40 @@ class UsersController extends Controller
         $coh_repo = $this->getDoctrine()->getRepository('AppBundle:Cohorte');
         $disc_repo = $this->getDoctrine()->getRepository('AppBundle:Discipline');
         $cours_repo = $this->getDoctrine()->getRepository('AppBundle:Cours');
+        $copie_repo = $this->getDoctrine()->getRepository('AppBundle:Copie');
 
         $cohortes = $coh_repo->findBy(array(), array('nom' => 'ASC'));
         $discs = $disc_repo->findBy(array(), array('nom' => 'ASC'));
         $cours = $cours_repo->findBy(array(), array('nom' => 'ASC'));
+        $copies = $copie_repo->findBy(array('auteur' => $user), array('id' => 'ASC'));
+
+        $allcourses = $cours_repo->findAll();
+        $sessions_tab = array();
+        $sessions_tabTest = array();
+        foreach($allcourses as $coursFiltre){
+            if($coursFiltre->getSession() != null && $cours_repo->userHasAccess($user->getId(), $coursFiltre->getId())){
+                $sess = $coursFiltre->getSession();
+                $cours_tabTest = array();
+                if(!in_array($sess, $sessions_tabTest)) {
+                    foreach($allcourses as $coursCheckDisc) {
+                        if($coursCheckDisc->getSession() == $sess && $cours_repo->userHasAccess($user->getId(), $coursCheckDisc->getId())){
+                            if (!in_array($coursCheckDisc, $cours_tabTest)) {
+                                array_push($cours_tabTest, $coursCheckDisc);
+                            }
+                        }
+
+                    }
+
+                    array_push($sessions_tabTest, $sess);
+                    $isInscrit = $this->getDoctrine()->getRepository('AppBundle:Session')->userIsInscrit($user->getId(), $sess->getId());
+                    array_push($sessions_tab, array(
+                        'session' => $sess,
+                        'isInscrit' => $isInscrit,
+                        'sessionsForUser' => $cours_tabTest
+                    ));
+                }
+            }
+        }
 
         $cohortes_inscr = array();
         if($cohortes){
@@ -114,6 +146,17 @@ class UsersController extends Controller
                 'label_attr' => array('class' => 'col-sm-4'),
                 'attr' => array('class' => 'col-sm-8')
             ))
+            ->add('created_at', 'date', array(
+                'widget' => 'single_text',
+                'input' => 'datetime',
+                'format' => 'dd/MM/y',
+                'label' => 'Date d\'inscription',
+                'label_attr' => array('class' => 'col-sm-4'),
+                'attr' => array(
+                    'class' => 'col-sm-8',
+                    'readonly' => true,
+                )
+            ))
             ->add('institut', EntityType::class, array(
                 'class' => 'AppBundle:Institut',
                 'choice_label' => 'nom',
@@ -143,7 +186,9 @@ class UsersController extends Controller
             'cohortesInsc' => $cohortes_inscr,
             'disciplinesInsc' => $discs_inscr,
             'coursInsc' => $cours_inscr,
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'sessions' => $sessions_tab,
+            'copies' => $copies
         ]);
     }
 
@@ -161,6 +206,8 @@ class UsersController extends Controller
             $entityName = "Discipline";
         }else if($type == "cours"){
             $entityName = "Cours";
+        }else if($type == "session"){
+            $entityName = "Session";
         }
 
         $itemRepo = $this->getDoctrine()->getRepository('AppBundle:'.$entityName);
@@ -227,6 +274,18 @@ class UsersController extends Controller
                     'label' => 'Accueil'
                 ))
 
+                ->add('save', SubmitType::class, array('label' => 'Enregistrer'))
+                ->getForm();
+        }else if($type == "session"){
+            $form = $this->createFormBuilder($item)
+                ->add('nom', TextType::class, array(
+                    'label' => 'Nom',
+                    'label_attr' => array('class' => 'col-sm-4'),
+                    'attr' => array('class' => 'col-sm-8')
+                ))
+                ->add('description', CKEditorType::class, array(
+                    'label' => 'Description'
+                ))
                 ->add('save', SubmitType::class, array('label' => 'Enregistrer'))
                 ->getForm();
         }
@@ -419,5 +478,69 @@ class UsersController extends Controller
         return new JsonResponse('This is not ajax!', 400);
     }
 
+    /**
+     * @Route("/inscrSessUser_ajax", name="inscrSessUser_ajax")
+     */
+    public function inscrSessUserAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+
+            date_default_timezone_set('Europe/Paris');
+
+            $id = $request->request->get('id');
+            $userId = $request->request->get('idUser');
+
+            $session = $em->getRepository('AppBundle:Session')->findOneBy(array('id' => $id));
+
+            $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
+
+            $role = $em->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Etudiant'));
+
+            $inscr = new Inscription_sess();
+            $inscr->setSession($session);
+            $inscr->setUser($user);
+            $inscr->setDateInscription(new DateTime());
+            if($role){
+                $inscr->setRole($role);
+            }
+
+            $em->persist($inscr);
+            $em->flush();
+
+            return new JsonResponse(array('action' =>'Inscription user session'));
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
+    /**
+     * @Route("/desinscrSessUser_ajax", name="desinscrSessUser_ajax")
+     */
+    public function desinscrSessUserAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+
+            date_default_timezone_set('Europe/Paris');
+
+            $id = $request->request->get('id');
+            $userId = $request->request->get('idUser');
+
+            $session = $em->getRepository('AppBundle:Session')->findOneBy(array('id' => $id));
+
+            $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
+
+            $inscr = $em->getRepository('AppBundle:Inscription_sess')->findOneBy(array('session' => $session, 'user' => $user));
+
+            $em->remove($inscr);
+
+            $em->flush();
+
+            return new JsonResponse(array('action' =>'Inscription user session'));
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
 
 }

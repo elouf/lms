@@ -31,8 +31,15 @@
 {% endblock %}
 
 {% block main %}
+    <link rel="stylesheet" href="{{ asset('vendors/tablesorter/dist/css/theme.default.min.css') }}" />
+
+    <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/jquery.tablesorter.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/jquery.tablesorter.widgets.min.js') }}"></script>
     <script>
         jQuery(document).ready(function () {
+            $('.modal').modal();
+            $('.modal').modal('toggle');
+
             var filtr_coh = '.filtred_item[data-typeItem=cohorte]';
             var filtr_dis = '.filtred_item[data-typeItem=discipline]';
             var filtr_cou = '.filtred_item[data-typeItem=cours]';
@@ -112,7 +119,7 @@
                     },
                     dataType: "json",
                     success: function (response) {
-                        window.location.href = window.location.href;
+                        window.location.href = window.location.href.replace( /[\?#].*|$/, "?cours" );
                     }
                 });
             });
@@ -120,21 +127,83 @@
                 var typeItem = $('.verrouille_item').attr('data-typeItem');
                 var idItem = $('.verrouille_item').attr('data-idItem');
                 var idUser = $('[data-userIdFiche]').attr('data-userIdFiche');
+                $('.modal').modal('toggle');
+                $('.valideDesinscr').unbind('click').click(function(){
+                    $.ajax({
+                        type: "POST",
+                        url: "{{path('desInscrireUser_ajax')}}",
+                        data: {
+                            idItem: idItem,
+                            idUser: idUser,
+                            typeItem: typeItem
+                        },
+                        dataType: "json",
+                        success: function (response) {
+                            window.location.href = window.location.href.replace( /[\?#].*|$/, "?cours" );
+                        }
+                    });
+                });
+                $('.cancelDesinscr').unbind('click').click(function(){
+                    $('.modal').modal('toggle');
+                });
+            });
 
+            $(".tablesorter").tablesorter({
+                widthFixed: true,
+                widgets: ['zebra', 'filter']
+            });
+
+            $('.btninscrSess').click(function(){
+                var idUser = $('[data-userIdFiche]').attr('data-userIdFiche');
+                var idSession = $(this).closest('.sessionLine').attr('data-sessionId');
                 $.ajax({
                     type: "POST",
-                    url: "{{path('desInscrireUser_ajax')}}",
+                    url: "{{path('inscrSessUser_ajax')}}",
                     data: {
-                        idItem: idItem,
-                        idUser: idUser,
-                        typeItem: typeItem
+                        id: idSession,
+                        idUser: idUser
                     },
                     dataType: "json",
                     success: function (response) {
-                        window.location.href = window.location.href;
+                        window.location.href = window.location.href.replace( /[\?#].*|$/, "?sessions" );
                     }
                 });
             });
+            $('.btndesinscrSess').click(function(){
+                var idUser = $('[data-userIdFiche]').attr('data-userIdFiche');
+                var idSession = $(this).closest('.sessionLine').attr('data-sessionId');
+                $.ajax({
+                    type: "POST",
+                    url: "{{path('desinscrSessUser_ajax')}}",
+                    data: {
+                        id: idSession,
+                        idUser: idUser
+                    },
+                    dataType: "json",
+                    success: function (response) {
+                        window.location.href = window.location.href.replace( /[\?#].*|$/, "?sessions" );
+                    }
+                });
+            });
+            var getUrlParameter = function getUrlParameter(sParam) {
+                var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+                        sURLVariables = sPageURL.split('&'),
+                        sParameterName,
+                        i;
+
+                for (i = 0; i < sURLVariables.length; i++) {
+                    sParameterName = sURLVariables[i].split('=');
+
+                    if (sParameterName[0] === sParam) {
+                        return sParameterName[1] === undefined ? true : sParameterName[1];
+                    }
+                }
+            };
+            if(getUrlParameter("sessions")){
+                $('a[aria-controls=InfosSess]').click();
+            }else if(getUrlParameter("cours")){
+                $('a[aria-controls=t1body2]').click();
+            }
         });
     </script>
 
@@ -142,7 +211,13 @@
         <div class="col-sm-3">
             <ul class="nav nav-pills nav-stacked pull-left" role="tablist" style="padding-bottom: 5px;padding-top: 5px">
                 <li role="presentation"  class="ongletSection active">
-                    <a href="#t1body2" aria-controls="t1body2" role="tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-sign-in fa-fw" aria-hidden="true"> </i>Inscriptions</a>
+                    <a href="#t1body2" aria-controls="t1body2" role="tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-sign-in fa-fw" aria-hidden="true"> </i>Cours</a>
+                </li>
+                <li role="presentation">
+                    <a href="#InfosSess" aria-controls="InfosSess" role="tab" data-toggle="tab"><i class="fa fa-graduation-cap fa-fw"></i> Sessions</a>
+                </li>
+                <li role="presentation">
+                    <a href="#InfosDev" aria-controls="InfosDev" role="tab" data-toggle="tab"><i class="fa fa-certificate fa-fw"></i> Devoirs</a>
                 </li>
                 <li role="presentation"  class="ongletSection">
                     <a href="#OngletEditionUser" aria-controls="OngletEditionUser" role="tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-user-circle fa-fw" aria-hidden="true"> </i>Profil</a>
@@ -156,7 +231,81 @@
                     {{ form_widget(form) }}
                     {{ form_end(form) }}
                 </div>
+                <div role="tabpanel" class="tab-pane fade" id="InfosSess">
+                    <div class="coloneTable col-md-12">
+                        <p>Sessions disponibles pour l'utilisateur</p>
+                        <table class="tablesorter">
+                            <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Nom</th>
+                                <th>Accès de l'utilisateur</th>
+                                <th>Inscrire</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for session in sessions %}
+                                <tr class="sessionLine" data-sessionId="{{ session.session.id }}">
+                                    <td>{{ session.session.id }}</td>
+                                    <td><a href="{{ path('itemUsers', {id:session.session.id, type:'session'}) }}">{{ session.session.nom }}</a></td>
+                                    <td>
+                                        {% for cours in session.sessionsForUser %}
+                                            <div>{{ cours.discipline.nom }} > {{ cours.nom }}</div>
+                                        {% endfor %}
+                                    </td>
+                                    <td class="btnCellFilter">
+                                        {% if session.isInscrit %}
+                                            <i class="btndesinscr btndesinscrSess fa fa-sign-out" aria-hidden="true"></i>
+                                        {% else %}
+                                            <i class="btninscr btninscrSess fa fa-sign-in" aria-hidden="true"></i>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div role="tabpanel" class="tab-pane fade" id="InfosDev">
+                    <div class="coloneTable col-md-12">
+                        <p>Copies rendues par l'utilisateur</p>
+                        <table class="tablesorter">
+                            <thead>
+                            <tr>
+                                <th>Devoir</th>
+                                <th>Date de rendu</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for copie in copies %}
+                                <tr class="copieLine" data-copieId="{{ copie.id }}">
+                                    <td><a href="{{ path('oneDevoirEns', {id:copie.devoir.id}) }}">{{ copie.devoir.cours.discipline.nom }} > {{ copie.devoir.cours.nom }} > {{ copie.devoir.nom }}</a></td>
+                                    <td>{{ copie.dateCreation|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
                 <div role="tabpanel" class="tab-pane fade in active" id="t1body2">
+                    <div class="descriptionInscriptions">
+                        L'utilisateur {{ user.firstname }} {{ user.lastname }} est inscrit aux cohortes suivantes :
+                        <ul>
+                            {% for key,val in cohortesInsc %}
+                                {% if val['isInscrit'] == 1 %}
+                                    <li><a href="{{ path('itemUsers', {id: val['cohorte'].id, type: "cohorte"}) }}">{{ val['cohorte'].nom }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                        Il a accès aux disciplines suivantes :
+                        <ul>
+                            {% for key,val in disciplinesInsc %}
+                                {% if val['hasAccess'] == 1 %}
+                                    <li><a href="{{ path('itemUsers', {id: val['discipline'].id, type: "discipline"}) }}">{{ val['discipline'].nom }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
                     <div class="itemsTab">
                         <div class="cohsItems">
                             <div class="titleItems">Cohortes</div>
@@ -217,6 +366,31 @@
                                 {% endfor %}
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+                <div class="modal-body" data-contentModal="devoirDisplay" data-idItem="" style="background:#aaa; background-size:cover">
+                    <div class="row">
+                        <div class="bginverse">
+                            <div class="">
+                                <div class="alert alert-danger mb-10">
+                                    <strong>Attention!</strong> Vous allez désinscrire l'utilisateur.
+                                </div>
+
+                                <div class="row mb-10" style="text-align: center">
+                                    <div class="btn btn-sm btn-info mb-3 valideDesinscr">Valider</div>
+                                    <div class="btn btn-sm btn-info mb-3 cancelDesinscr">Annuler</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

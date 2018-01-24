@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity(repositoryClass="AppBundle\Repository\UserRepository")
  * @ORM\Table(name="fos_user")
+ * @ORM\HasLifecycleCallbacks
  */
 class User extends BaseUser
 {
@@ -47,6 +48,13 @@ class User extends BaseUser
      * @ORM\Column(name="phone", type="string", length=20, nullable = true)
      */
     protected $phone;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="createdAt", type="datetime")
+     */
+    private $createdAt;
 
     public function __construct()
     {
@@ -159,5 +167,39 @@ class User extends BaseUser
     {
         parent::setUsernameCanonical($emailCanonical);
         return parent::setEmailCanonical($emailCanonical);
+    }
+
+    /**
+     * Gets triggered only on insert
+
+     * @ORM\PrePersist
+     */
+    public function onPrePersist()
+    {
+        $this->createdAt = new \DateTime("now");
+    }
+
+    /**
+     * Set createdAt
+     *
+     * @param \DateTime $createdAt
+     *
+     * @return User
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * Get createdAt
+     *
+     * @return \DateTime
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
     }
 }

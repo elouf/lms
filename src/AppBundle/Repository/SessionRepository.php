@@ -20,4 +20,14 @@ class SessionRepository extends \Doctrine\ORM\EntityRepository
 
         return $inscSess;
     }
+
+    public function userHasAccess($userId, $sessId)
+    {
+        return $this->userIsInscrit($userId, $sessId);
+    }
+
+    public function userHasAccessOrIsInscrit($userId, $sessId)
+    {
+        return $this->userHasAccess($userId, $sessId) || $this->userIsInscrit($userId, $sessId);
+    }
 }

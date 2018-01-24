@@ -27,15 +27,25 @@
     <link rel="stylesheet" href="{{ asset('vendors/tablesorter/dist/css/jquery.tablesorter.pager.min.css') }}" />
 
     <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/jquery.tablesorter.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/jquery.tablesorter.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/jquery.tablesorter.widgets.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/extras/jquery.tablesorter.pager.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/widgets/widget-output.min.js') }}"></script>
     <script>
         jQuery(document).ready(function () {
+
+            $('.download').click(function(e){
+                e.preventDefault();
+                var table = $(this).closest('.coloneTable').find('.tablesorter')
+                table.trigger('outputTable');
+            });
             $(".tablesorter.tableYes")
                     .tablesorter({
                         widthFixed: true,
-                        widgets: ['zebra', 'filter']
+                        widgets: ['zebra', 'filter', 'output'],
+                        widgetOptions : {
+                              output_delivery      : 'd',
+                              output_saveFileName  : 'mytable.csv'
+                        }
                     })
                     .tablesorterPager({
                         container: $("#pagerYes"),
@@ -44,7 +54,11 @@
             $(".tablesorter.tableNo")
                     .tablesorter({
                         widthFixed: true,
-                        widgets: ['zebra', 'filter']
+                        widgets: ['zebra', 'filter', 'output'],
+                        widgetOptions : {
+                              output_delivery      : 'd',
+                              output_saveFileName  : 'mytable.csv'
+                        }
                     })
                     .tablesorterPager({
                         container: $("#pagerNo"),
@@ -83,6 +97,54 @@
                     }
                 });
             });
+            $('.selectAll').click(function(e){
+                e.preventDefault();
+                var col = $(this).closest('.coloneTable');
+                var select = col.find('.selectUser:checked').length == 0;
+                col.find('.selectUser').prop('checked', select);
+            });
+            $('.inscrSelected').click(function(){
+                e.preventDefault();
+                $('.tableNo .selectUser:checked').each(function(){
+                    var idUser = $(this).closest('.userLine').attr('data-userId');
+                    $.ajax({
+                        type: "POST",
+                        url: "{{path('inscrireUser_ajax')}}",
+                        data: {
+                            idItem: "{{ item.id }}",
+                            idUser: idUser,
+                            typeItem: "{{ entityName }}".toLowerCase()
+                        },
+                        dataType: "json",
+                        success: function (response) {
+                        }
+                    });
+                });
+                setTimeout(function(){
+                    window.location.href = window.location.href;
+                }, 300);
+            });
+            $('.desinscrSelected').click(function(){
+                e.preventDefault();
+                $('.tableYes .selectUser:checked').each(function(){
+                    var idUser = $(this).closest('.userLine').attr('data-userId');
+                    $.ajax({
+                        type: "POST",
+                        url: "{{path('desInscrireUser_ajax')}}",
+                        data: {
+                            idItem: "{{ item.id }}",
+                            idUser: idUser,
+                            typeItem: "{{ entityName }}".toLowerCase()
+                        },
+                        dataType: "json",
+                        success: function (response) {
+                        }
+                    });
+                });
+                setTimeout(function(){
+                    window.location.href = window.location.href;
+                }, 300);
+            });
         });
     </script>
 
@@ -101,7 +163,7 @@
                     </div>
                 </div>
                 <div role="tabpanel" class="tab-pane fade in active" id="InscrDesinscr">
-                    <div class="col-md-6">
+                    <div class="coloneTable col-md-6">
                         <p>Utilisateurs qui sont :</p>
                         <ul>
                             <li>Inscrits</li>
@@ -110,17 +172,19 @@
                         <table class="tablesorter tableYes">
                             <thead>
                             <tr>
+                                <th data-filter="false"></th>
                                 <th>Id</th>
                                 <th>Email</th>
                                 <th>Prénom</th>
                                 <th>Nom</th>
-                                <th>Institut</th>
+                                <th class="filter-select">Institut</th>
                                 <th>Désinscrire</th>
                             </tr>
                             </thead>
                             <tbody>
                             {% for user in usersHavingAccess %}
                                 <tr class="userLine" data-userId="{{ user.user.id }}">
+                                    <td><input class="selectUser" type="checkbox"></td>
                                     <td><a href="{{ path('user', {id:user.user.id }) }}">{{ user.user.id }}</a></td>
                                     <td><a href="{{ path('user', {id:user.user.id }) }}">{{ user.user.email }}</a></td>
                                     <td>{{ user.user.firstname }}</td>
@@ -149,25 +213,30 @@
                                     <option value="40">40</option>
                                     <option value="all">All Rows</option>
                                 </select>
+                                <button class="download">Télécharger le CSV</button>
+                                <button class="desinscrSelected">Désinscrire les sélectionnés</button>
+                                <button class="selectAll">Sélectionner tous</button>
                             </form>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="coloneTable col-md-6">
                         <p>Utilisateurs qui n'ont aucun accès</p>
                         <table class="tablesorter tableNo">
                             <thead>
                             <tr>
+                                <th data-filter="false"></th>
                                 <th>Id</th>
                                 <th>Email</th>
                                 <th>Prénom</th>
                                 <th>Nom</th>
-                                <th>Institut</th>
+                                <th class="filter-select">Institut</th>
                                 <th>Inscrire</th>
                             </tr>
                             </thead>
                             <tbody>
                             {% for user in usersNoHavingAccess %}
                                 <tr class="userLine" data-userId="{{ user.id }}">
+                                    <td><input class="selectUser" type="checkbox"></td>
                                     <td><a href="{{ path('user', {id:user.id }) }}">{{ user.id }}</a></td>
                                     <td><a href="{{ path('user', {id:user.id }) }}">{{ user.email }}</a></td>
                                     <td>{{ user.firstname }}</td>
@@ -192,6 +261,9 @@
                                     <option value="40">40</option>
                                     <option value="all">All Rows</option>
                                 </select>
+                                <button class="download">Télécharger le CSV</button>
+                                <button class="inscrSelected">Inscrire les sélectionnés</button>
+                                <button class="selectAll">Sélectionner tous</button>
                             </form>
                         </div>
                     </div>
