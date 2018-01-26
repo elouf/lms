@@ -43,4 +43,23 @@ class CohorteRepository extends \Doctrine\ORM\EntityRepository
     {
         return $this->userIsInscrit($userId, $coursId);
     }
+
+    public function allForUser($userId)
+    {
+        $em = $this->getEntityManager();
+        $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
+
+        $inscs = $em->getRepository('AppBundle:Inscription_coh')->findBy(array('user' => $user));
+
+        $cohs = array();
+        if($inscs){
+            foreach($inscs as $insc){
+                if(!in_array($insc->getCohorte(), $cohs)){
+                    array_push($cohs, $insc->getCohorte());
+                }
+            }
+        }
+
+        return $cohs;
+    }
 }

@@ -210,6 +210,8 @@ class UsersController extends Controller
             $entityName = "Session";
         }
 
+        $cohRepo = $this->getDoctrine()->getRepository('AppBundle:Cohorte');
+
         $itemRepo = $this->getDoctrine()->getRepository('AppBundle:'.$entityName);
         $item = $this->getDoctrine()->getRepository('AppBundle:'.$entityName)->findOneBy(array('id' => $id));
 
@@ -221,9 +223,16 @@ class UsersController extends Controller
 
         foreach($users as $user){
             if($itemRepo->userHasAccessOrIsInscrit($user->getId(), $id)){
-                array_push($usersAccessTab, ["user" => $user, "isInscrit" => $itemRepo->userIsInscrit($user->getId(), $id)]);
+                array_push($usersAccessTab, [
+                    "user" => $user,
+                    "isInscrit" => $itemRepo->userIsInscrit($user->getId(), $id),
+                    "myCohs" => $cohRepo->allForUser($user->getId())
+                ]);
             }else{
-                array_push($usersNoAccessTab, $user);
+                array_push($usersNoAccessTab, [
+                    'user' => $user,
+                    "myCohs" => $cohRepo->allForUser($user->getId())
+                ]);
             }
         }
 

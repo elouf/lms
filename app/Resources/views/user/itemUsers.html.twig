@@ -30,6 +30,11 @@
     <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/jquery.tablesorter.widgets.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/extras/jquery.tablesorter.pager.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/widgets/widget-output.min.js') }}"></script>
+    <style>
+    .container {
+        min-width: 1270px !important;
+    }
+</style>
     <script>
         jQuery(document).ready(function () {
 
@@ -178,6 +183,7 @@
                                 <th>Prénom</th>
                                 <th>Nom</th>
                                 <th class="filter-select">Institut</th>
+                                <th>Cohortes</th>
                                 <th>Désinscrire</th>
                             </tr>
                             </thead>
@@ -190,6 +196,11 @@
                                     <td>{{ user.user.firstname }}</td>
                                     <td>{{ user.user.lastname }}</td>
                                     <td>{{ user.user.institut }}</td>
+                                    <td>
+                                        {% for coh in user.myCohs %}
+                                            {{ coh.nom }}
+                                        {% endfor %}
+                                    </td>
                                     <td class="btnCellFilter">
                                         {% if user.isInscrit %}
                                             <i class="btndesinscr fa fa-sign-out" aria-hidden="true"></i>
@@ -230,18 +241,24 @@
                                 <th>Prénom</th>
                                 <th>Nom</th>
                                 <th class="filter-select">Institut</th>
+                                <th>Cohortes</th>
                                 <th>Inscrire</th>
                             </tr>
                             </thead>
                             <tbody>
                             {% for user in usersNoHavingAccess %}
-                                <tr class="userLine" data-userId="{{ user.id }}">
+                                <tr class="userLine" data-userId="{{ user.user.id }}">
                                     <td><input class="selectUser" type="checkbox"></td>
-                                    <td><a href="{{ path('user', {id:user.id }) }}">{{ user.id }}</a></td>
-                                    <td><a href="{{ path('user', {id:user.id }) }}">{{ user.email }}</a></td>
-                                    <td>{{ user.firstname }}</td>
-                                    <td>{{ user.lastname }}</td>
-                                    <td>{{ user.institut }}</td>
+                                    <td><a href="{{ path('user', {id:user.user.id }) }}">{{ user.user.id }}</a></td>
+                                    <td><a href="{{ path('user', {id:user.user.id }) }}">{{ user.user.email }}</a></td>
+                                    <td>{{ user.user.firstname }}</td>
+                                    <td>{{ user.user.lastname }}</td>
+                                    <td>{{ user.user.institut }}</td>
+                                    <td>
+                                    {% for coh in user.myCohs %}
+                                            {{ coh.nom }}
+                                        {% endfor %}
+                                    </td>
                                     <td class="btnCellFilter"><i class="btninscr fa fa-sign-in" aria-hidden="true"></i></td>
                                 </tr>
                             {% endfor %}
