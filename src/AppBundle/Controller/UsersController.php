@@ -149,7 +149,7 @@ class UsersController extends Controller
             ->add('created_at', 'date', array(
                 'widget' => 'single_text',
                 'input' => 'datetime',
-                'format' => 'dd/MM/y',
+                'format' => 'dd/MM/yyyy',
                 'label' => 'Date d\'inscription',
                 'label_attr' => array('class' => 'col-sm-4'),
                 'attr' => array(
