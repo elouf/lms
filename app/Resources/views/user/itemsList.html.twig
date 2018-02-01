@@ -1,0 +1,5 @@
+{% for item in items %}
+    <li>
+        <a href="{{ path('itemUsers', {id:item.id, type:type}) }}">{{ item.nom }}</a>
+    </li>
+{% endfor %}

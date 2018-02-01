@@ -552,4 +552,32 @@ class UsersController extends Controller
         return new JsonResponse('This is not ajax!', 400);
     }
 
+    public function allSessionsAction()
+    {
+        $em = $this->getDoctrine()->getEntityManager();
+        $item = $em->getRepository('AppBundle:Session')->findAll();
+
+        return $this->render(
+            'user/itemsList.html.twig',
+            array(
+                'items' => $item,
+                'type' => 'session',
+                )
+        );
+    }
+    public function allCohortesAction()
+    {
+        $em = $this->getDoctrine()->getEntityManager();
+        $item = $em->getRepository('AppBundle:Cohorte')->findAll();
+
+        return $this->render(
+            'user/itemsList.html.twig',
+            array(
+                'items' => $item,
+                'type' => 'cohorte',
+            )
+        );
+    }
+
+
 }
