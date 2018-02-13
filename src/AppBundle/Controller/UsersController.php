@@ -62,6 +62,16 @@ class UsersController extends Controller
         $cours = $cours_repo->findBy(array(), array('nom' => 'ASC'));
         $copies = $copie_repo->findBy(array('auteur' => $user), array('id' => 'ASC'));
 
+        $myCopies = array();
+        if($copies){
+            foreach($copies as $copie){
+                $fichier = $this->getDoctrine()->getRepository('AppBundle:CopieFichier')->findOneBy(array('copie' => $copie));
+                if($fichier){
+                    array_push($myCopies, ['copie' => $copie, 'fichier' => $fichier]);
+                }
+            }
+        }
+
         $allcourses = $cours_repo->findAll();
         $sessions_tab = array();
         $sessions_tabTest = array();
@@ -188,7 +198,7 @@ class UsersController extends Controller
             'coursInsc' => $cours_inscr,
             'form' => $form->createView(),
             'sessions' => $sessions_tab,
-            'copies' => $copies
+            'copies' => $myCopies
         ]);
     }
 

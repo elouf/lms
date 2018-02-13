@@ -4,9 +4,9 @@
     <div>{{ template }}</div>
     <div class="page-header">
         <div class="container">
-            <h2 class="color3">Utilisateurs</h2>
+            <h2 class="color3">Devoir</h2>
             <ul class="breadcrumb">
-                <li class="color3">Gestion des profils</li>
+                <li class="color3">Participants au devoir : {{ devoir.nom }}</li>
             </ul>
         </div>
     </div>
@@ -28,6 +28,7 @@
                 var table = $(this).closest('.container').find('.tablesorter');
                 table.trigger('outputTable');
             });
+
             $(".tablesorter")
                     .tablesorter({
                         widthFixed: true,
@@ -45,6 +46,7 @@
     </script>
 
     <div class="container mt-100 mb-40">
+        <a class="btn btn-sm btn-info mb-3" href="{{ path('oneDevoirEns', {id:devoir.id }) }}">Dépôt de copies et de corrigés pour ce devoir</a>
         <div class="row">
             <div class="col-md-12">
                 <table class="tablesorter ">
@@ -59,15 +61,15 @@
                     </tr>
                     </thead>
                     <tbody>
-                    {% for user in users %}
-                        <tr class="userLine" data-userId="{{ user.id }}">
-                            <td><a href="{{ path('user', {id:user.id }) }}">{{ user.id }}</a></td>
-                            <td><a href="{{ path('user', {id:user.id }) }}">{{ user.email }}</a></td>
-                            <td>{{ user.firstname }}</td>
-                            <td>{{ user.lastname }}</td>
-                            <td>{{ user.institut }}</td>
+                    {% for copie in copies %}
+                        <tr class="userLine" data-userId="{{ copie.user.id }}">
+                            <td><a href="{{ path('user', {id:copie.user.id }) }}">{{ copie.user.id }}</a></td>
+                            <td><a href="{{ path('user', {id:copie.user.id }) }}">{{ copie.user.email }}</a></td>
+                            <td>{{ copie.user.firstname }}</td>
+                            <td>{{ copie.user.lastname }}</td>
+                            <td>{{ copie.user.institut }}</td>
                             <td>
-                                {% if user.enabled == 1 %}
+                                {% if copie.user.enabled == 1 %}
                                     oui
                                 {% else %}
                                     non

@@ -22,6 +22,52 @@ class DevoirController extends Controller
 {
 
     /**
+     * @Route("/devoirsManag", name="devoirsManag")
+     */
+    public function devoirsManagAction (Request $request)
+    {
+        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
+
+        $devoirsRepo = $this->getDoctrine()->getRepository('AppBundle:Devoir');
+        $devoirs = $devoirsRepo->findAll();
+
+        return $this->render('ressources/allDevoirs.html.twig', [
+            'devoirs' => $devoirs
+        ]);
+    }
+
+    /**
+     * @Route("/devoir/{id}", name="devoir")
+     */
+    public function devoirManagAction (Request $request, $id)
+    {
+        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
+
+        $em = $this->getDoctrine();
+
+        $devoir = $em->getRepository('AppBundle:Devoir')->findOneBy(array('id' => $id));
+        $copies = $this->getDoctrine()->getRepository('AppBundle:Copie')->findBy(array('devoir' => $devoir));
+
+        $myCopies = array();
+        if($copies){
+            foreach($copies as $copie){
+                $fichier = $this->getDoctrine()->getRepository('AppBundle:CopieFichier')->findOneBy(array('copie' => $copie));
+                array_push($myCopies, [
+                    'copie' => $copie,
+                    'fichierCopie' => $fichier,
+                    'user' => $copie->getAuteur(),
+                    'fichierCorrige'
+                ]);
+            }
+        }
+
+        return $this->render('ressources/oneDevoir.html.twig', [
+            'copies' => $myCopies,
+            'devoir' => $devoir
+        ]);
+    }
+
+    /**
      *
      * @Route("/devoirens/{id}", name="oneDevoirEns")
      */

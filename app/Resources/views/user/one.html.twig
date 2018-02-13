@@ -185,6 +185,40 @@
                     }
                 });
             });
+            $('.btninscrCoh').click(function(){
+                var idUser = $('[data-userIdFiche]').attr('data-userIdFiche');
+                var idCoh = $(this).closest('.cohorteLine').attr('data-cohorteId');
+                $.ajax({
+                    type: "POST",
+                    url: "{{path('inscrireUser_ajax')}}",
+                    data: {
+                        idItem: idCoh,
+                        idUser: idUser,
+                        typeItem: 'cohorte'
+                    },
+                    dataType: "json",
+                    success: function (response) {
+                        window.location.href = window.location.href.replace( /[\?#].*|$/, "?cohortes" );
+                    }
+                });
+            });
+            $('.btndesinscrCoh').click(function(){
+                var idUser = $('[data-userIdFiche]').attr('data-userIdFiche');
+                var idCoh = $(this).closest('.cohorteLine').attr('data-cohorteId');
+                $.ajax({
+                    type: "POST",
+                    url: "{{path('desInscrireUser_ajax')}}",
+                    data: {
+                        idItem: idCoh,
+                        idUser: idUser,
+                        typeItem: 'cohorte'
+                    },
+                    dataType: "json",
+                    success: function (response) {
+                        window.location.href = window.location.href.replace( /[\?#].*|$/, "?cohortes" );
+                    }
+                });
+            });
             var getUrlParameter = function getUrlParameter(sParam) {
                 var sPageURL = decodeURIComponent(window.location.search.substring(1)),
                         sURLVariables = sPageURL.split('&'),
@@ -199,7 +233,9 @@
                     }
                 }
             };
-            if(getUrlParameter("sessions")){
+            if(getUrlParameter("cohortes")){
+                $('a[aria-controls=InfosCoh]').click();
+            }else if(getUrlParameter("sessions")){
                 $('a[aria-controls=InfosSess]').click();
             }else if(getUrlParameter("cours")){
                 $('a[aria-controls=t1body2]').click();
@@ -214,8 +250,11 @@
     <div class="container mt-100 mb-40" data-userIdFiche="{{ user.id }}">
         <div class="col-sm-3">
             <ul class="nav nav-pills nav-stacked pull-left" role="tablist" style="padding-bottom: 5px;padding-top: 5px">
-                <li role="presentation"  class="ongletSection active">
-                    <a href="#t1body2" aria-controls="t1body2" role="tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-sign-in fa-fw" aria-hidden="true"> </i>Cours</a>
+                <li role="presentation"  class="active">
+                    <a href="#InfosCoh" aria-controls="InfosCoh" role="tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-university fa-fw" aria-hidden="true"> </i>Cohortes</a>
+                </li>
+                <li role="presentation" >
+                    <a href="#t1body2" aria-controls="t1body2" role="tab" data-toggle="tab"><i class="fa fa-sign-in fa-fw" aria-hidden="true"> </i>Cours</a>
                 </li>
                 <li role="presentation">
                     <a href="#InfosSess" aria-controls="InfosSess" role="tab" data-toggle="tab"><i class="fa fa-graduation-cap fa-fw"></i> Sessions</a>
@@ -230,6 +269,62 @@
         </div>
         <div class="col-sm-9">
             <div class="tab-content">
+                <div role="tabpanel" class="tab-pane fade in active" id="InfosCoh">
+                    <div class="coloneTable col-md-12">
+                        <div class="col-md-6">
+                            <p>L'utilisateur est inscrit aux cohortes suivantes :</p>
+                            <table class="tablesorter">
+                                <thead>
+                                    <tr>
+                                        <th data-filter="false">Id</th>
+                                        <th>Nom</th>
+                                        <th data-filter="false">Désinscrire</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for key,val in cohortesInsc %}
+                                    {% if val['isInscrit'] == '1' %}
+                                        <tr class="cohorteLine" data-cohorteId="{{ val['cohorte'].id }}">
+                                            <td>{{ val['cohorte'].id }}</td>
+                                            <td>
+                                                <a href="{{ path('itemUsers', {id: val['cohorte'].id, type: "cohorte"}) }}">{{ val['cohorte'].nom }}</a>
+                                            </td>
+                                            <td class="btnCellFilter">
+                                                <i class="btndesinscr btndesinscrCoh fa fa-sign-out" aria-hidden="true"></i>
+                                            </td>
+                                    {% endif %}
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <p>L'utilisateur n'est pas inscrit aux cohortes suivantes :</p>
+                            <table class="tablesorter">
+                                <thead>
+                                <tr>
+                                    <th data-filter="false">Id</th>
+                                    <th>Nom</th>
+                                    <th data-filter="false">Inscrire</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for key,val in cohortesInsc %}
+                                {% if val['isInscrit'] != '1' %}
+                                <tr class="cohorteLine" data-cohorteId="{{ val['cohorte'].id }}">
+                                    <td>{{ val['cohorte'].id }}</td>
+                                    <td>
+                                        <a href="{{ path('itemUsers', {id: val['cohorte'].id, type: "cohorte"}) }}">{{ val['cohorte'].nom }}</a>
+                                    </td>
+                                    <td class="btnCellFilter">
+                                        <i class="btninscr btninscrCoh fa fa-sign-in" aria-hidden="true"></i>
+                                    </td>
+                                    {% endif %}
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
                 <div role="tabpanel" class="tab-pane fade" id="OngletEditionUser">
                     {{ form_start(form) }}
                     {{ form_widget(form) }}
@@ -237,37 +332,68 @@
                 </div>
                 <div role="tabpanel" class="tab-pane fade" id="InfosSess">
                     <div class="coloneTable col-md-12">
-                        <p>Sessions disponibles pour l'utilisateur</p>
-                        <table class="tablesorter">
-                            <thead>
-                            <tr>
-                                <th>Id</th>
-                                <th>Nom</th>
-                                <th>Accès de l'utilisateur</th>
-                                <th>Inscrire</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for session in sessions %}
-                                <tr class="sessionLine" data-sessionId="{{ session.session.id }}">
-                                    <td>{{ session.session.id }}</td>
-                                    <td><a href="{{ path('itemUsers', {id:session.session.id, type:'session'}) }}">{{ session.session.nom }}</a></td>
-                                    <td>
-                                        {% for cours in session.sessionsForUser %}
-                                            <div>{{ cours.discipline.nom }} > {{ cours.nom }}</div>
-                                        {% endfor %}
-                                    </td>
-                                    <td class="btnCellFilter">
-                                        {% if session.isInscrit %}
-                                            <i class="btndesinscr btndesinscrSess fa fa-sign-out" aria-hidden="true"></i>
-                                        {% else %}
-                                            <i class="btninscr btninscrSess fa fa-sign-in" aria-hidden="true"></i>
-                                        {% endif %}
-                                    </td>
+                        <div class="col-md-6">
+                            <p>L'utilisateur s'est inscrit à :</p>
+                            <table class="tablesorter">
+                                <thead>
+                                <tr>
+                                    <th data-filter="false">Id</th>
+                                    <th>Nom</th>
+                                    <th data-filter="false">Accès de l'utilisateur</th>
+                                    <th data-filter="false">Désinscrire</th>
                                 </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                {% for session in sessions %}
+                                    {% if session.isInscrit %}
+                                        <tr class="sessionLine" data-sessionId="{{ session.session.id }}">
+                                            <td>{{ session.session.id }}</td>
+                                            <td><a href="{{ path('itemUsers', {id:session.session.id, type:'session'}) }}">{{ session.session.nom }}</a></td>
+                                            <td>
+                                                {% for cours in session.sessionsForUser %}
+                                                    <div>{{ cours.discipline.nom }} > {{ cours.nom }}</div>
+                                                {% endfor %}
+                                            </td>
+                                            <td class="btnCellFilter">
+                                                <i class="btndesinscr btndesinscrSess fa fa-sign-out" aria-hidden="true"></i>
+                                            </td>
+                                        </tr>
+                                    {% endif %}
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <p>L'utilisateur ne s'est pas inscrit à :</p>
+                            <table class="tablesorter">
+                                <thead>
+                                <tr>
+                                    <th data-filter="false">Id</th>
+                                    <th>Nom</th>
+                                    <th data-filter="false">Accès de l'utilisateur</th>
+                                    <th data-filter="false">Inscrire</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for session in sessions %}
+                                    {% if not(session.isInscrit) %}
+                                        <tr class="sessionLine" data-sessionId="{{ session.session.id }}">
+                                            <td>{{ session.session.id }}</td>
+                                            <td><a href="{{ path('itemUsers', {id:session.session.id, type:'session'}) }}">{{ session.session.nom }}</a></td>
+                                            <td>
+                                                {% for cours in session.sessionsForUser %}
+                                                    <div>{{ cours.discipline.nom }} > {{ cours.nom }}</div>
+                                                {% endfor %}
+                                            </td>
+                                            <td class="btnCellFilter">
+                                                <i class="btninscr btninscrSess fa fa-sign-in" aria-hidden="true"></i>
+                                            </td>
+                                        </tr>
+                                    {% endif %}
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
                 <div role="tabpanel" class="tab-pane fade" id="InfosDev">
@@ -277,21 +403,23 @@
                             <thead>
                             <tr>
                                 <th>Devoir</th>
+                                <th>Copie</th>
                                 <th>Date de rendu</th>
                             </tr>
                             </thead>
                             <tbody>
                             {% for copie in copies %}
-                                <tr class="copieLine" data-copieId="{{ copie.id }}">
-                                    <td><a href="{{ path('oneDevoirEns', {id:copie.devoir.id}) }}">{{ copie.devoir.cours.discipline.nom }} > {{ copie.devoir.cours.nom }} > {{ copie.devoir.nom }}</a></td>
-                                    <td>{{ copie.dateCreation|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}</td>
+                                <tr class="copieLine" data-copieId="{{ copie.copie.id }}">
+                                    <td><a href="{{ path('oneDevoirEns', {id:copie.copie.devoir.id}) }}">{{ copie.copie.devoir.cours.discipline.nom }} > {{ copie.copie.devoir.cours.nom }} > {{ copie.copie.devoir.nom }}</a></td>
+                                    <td><a target="_blank" href="{{ copie.fichier.url }}">Copie</a></td>
+                                    <td>{{ copie.copie.dateCreation|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}</td>
                                 </tr>
                             {% endfor %}
                             </tbody>
                         </table>
                     </div>
                 </div>
-                <div role="tabpanel" class="tab-pane fade in active" id="t1body2">
+                <div role="tabpanel" class="tab-pane fade" id="t1body2">
                     <div class="descriptionInscriptions">
                         L'utilisateur {{ user.firstname }} {{ user.lastname }} est inscrit aux cohortes suivantes :
                         <ul>

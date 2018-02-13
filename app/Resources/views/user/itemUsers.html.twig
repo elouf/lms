@@ -31,12 +31,11 @@
     <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/extras/jquery.tablesorter.pager.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/widgets/widget-output.min.js') }}"></script>
     <style>
-    .container {
-        min-width: 1400px !important;
-    }
 </style>
     <script>
         jQuery(document).ready(function () {
+
+            var typeItem = "{{ entityName }}".toLowerCase();
 
             $('.download').click(function(e){
                 e.preventDefault();
@@ -72,35 +71,18 @@
 
             $('.btndesinscr').click(function(){
                 var idUser = $(this).closest('.userLine').attr('data-userId');
-                $.ajax({
-                    type: "POST",
-                    url: "{{path('desInscrireUser_ajax')}}",
-                    data: {
-                        idItem: "{{ item.id }}",
-                        idUser: idUser,
-                        typeItem: "{{ entityName }}".toLowerCase()
-                    },
-                    dataType: "json",
-                    success: function (response) {
-                        window.location.href = window.location.href;
-                    }
+
+                $('.modal').modal('toggle');
+                $('.valideDesinscr').unbind('click').click(function(){
+                    desinscrireUser(typeItem, idUser, "{{ item.id }}");
+                });
+                $('.cancelDesinscr').unbind('click').click(function(){
+                    $('.modal').modal('toggle');
                 });
             });
             $('.btninscr').click(function(){
                 var idUser = $(this).closest('.userLine').attr('data-userId');
-                $.ajax({
-                    type: "POST",
-                    url: "{{path('inscrireUser_ajax')}}",
-                    data: {
-                        idItem: "{{ item.id }}",
-                        idUser: idUser,
-                        typeItem: "{{ entityName }}".toLowerCase()
-                    },
-                    dataType: "json",
-                    success: function (response) {
-                        window.location.href = window.location.href;
-                    }
-                });
+                inscrireUser(typeItem, idUser, "{{ item.id }}");
             });
             $('.selectAll').click(function(e){
                 e.preventDefault();
@@ -108,48 +90,98 @@
                 var select = col.find('.selectUser:checked').length == 0;
                 col.find('.selectUser').prop('checked', select);
             });
-            $('.inscrSelected').click(function(){
+            $('.inscrSelected').click(function(e){
                 e.preventDefault();
+
                 $('.tableNo .selectUser:checked').each(function(){
                     var idUser = $(this).closest('.userLine').attr('data-userId');
+                    inscrireUser(typeItem, idUser, "{{ item.id }}");
+
+                });
+            });
+            $('.desinscrSelected').click(function(e){
+                e.preventDefault();
+                $('.tableYes .selectUser:checked').each(function(){
+                    var idUser = $(this).closest('.userLine').attr('data-userId');
+
+                    $('.modal').modal('toggle');
+                    $('.valideDesinscr').unbind('click').click(function(){
+                        desinscrireUser(typeItem, idUser, "{{ item.id }}");
+                    });
+                    $('.cancelDesinscr').unbind('click').click(function(){
+                        $('.modal').modal('toggle');
+                    });
+                });
+            });
+
+            function inscrireUser(typeItem, idUser, itemId){
+                if(typeItem == 'session'){
+                    $.ajax({
+                        type: "POST",
+                        url: "{{path('inscrSessUser_ajax')}}",
+                        data: {
+                            id: itemId,
+                            idUser: idUser
+                        },
+                        dataType: "json",
+                        success: function (response) {
+                            setTimeout(function(){
+                                window.location.href = window.location.href;
+                            }, 300);
+                        }
+                    });
+                }else{
                     $.ajax({
                         type: "POST",
                         url: "{{path('inscrireUser_ajax')}}",
                         data: {
-                            idItem: "{{ item.id }}",
+                            idItem: itemId,
                             idUser: idUser,
-                            typeItem: "{{ entityName }}".toLowerCase()
+                            typeItem: typeItem
                         },
                         dataType: "json",
                         success: function (response) {
+                            setTimeout(function(){
+                                window.location.href = window.location.href;
+                            }, 300);
                         }
                     });
-                });
-                setTimeout(function(){
-                    window.location.href = window.location.href;
-                }, 300);
-            });
-            $('.desinscrSelected').click(function(){
-                e.preventDefault();
-                $('.tableYes .selectUser:checked').each(function(){
-                    var idUser = $(this).closest('.userLine').attr('data-userId');
+                }
+            }
+            function desinscrireUser(typeItem, idUser, itemId){
+                if(typeItem == 'session'){
+                    $.ajax({
+                        type: "POST",
+                        url: "{{path('desinscrSessUser_ajax')}}",
+                        data: {
+                            id: itemId,
+                            idUser: idUser
+                        },
+                        dataType: "json",
+                        success: function (response) {
+                            setTimeout(function(){
+                                window.location.href = window.location.href;
+                            }, 300);
+                        }
+                    });
+                }else{
                     $.ajax({
                         type: "POST",
                         url: "{{path('desInscrireUser_ajax')}}",
                         data: {
-                            idItem: "{{ item.id }}",
+                            idItem: itemId,
                             idUser: idUser,
-                            typeItem: "{{ entityName }}".toLowerCase()
+                            typeItem: typeItem
                         },
                         dataType: "json",
                         success: function (response) {
+                            setTimeout(function(){
+                                window.location.href = window.location.href;
+                            }, 300);
                         }
                     });
-                });
-                setTimeout(function(){
-                    window.location.href = window.location.href;
-                }, 300);
-            });
+                }
+            }
         });
     </script>
 
@@ -168,7 +200,7 @@
                     </div>
                 </div>
                 <div role="tabpanel" class="tab-pane fade in active" id="InscrDesinscr">
-                    <div class="coloneTable col-md-6">
+                    <div class="coloneTable col-xl-6">
                         <p>Utilisateurs qui sont :</p>
                         <ul>
                             <li>Inscrits</li>
@@ -230,7 +262,7 @@
                             </form>
                         </div>
                     </div>
-                    <div class="coloneTable col-md-6">
+                    <div class="coloneTable col-xl-6">
                         <p>Utilisateurs qui n'ont aucun accès</p>
                         <table class="tablesorter tableNo">
                             <thead>
@@ -288,6 +320,31 @@
             </div>
         </div>
 
+        </div>
+    </div>
+
+    <div class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+                <div class="modal-body" data-contentModal="devoirDisplay" data-idItem="" style="background:#aaa; background-size:cover">
+                    <div class="row">
+                        <div class="bginverse">
+                            <div class="">
+                                <div class="alert alert-danger mb-10">
+                                    <strong>Attention!</strong> Voulez-vous vraiment procéder à cette désinscription ?
+                                </div>
+
+                                <div class="row mb-10" style="text-align: center">
+                                    <div class="btn btn-sm btn-info mb-3 valideDesinscr">Valider</div>
+                                    <div class="btn btn-sm btn-info mb-3 cancelDesinscr">Annuler</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

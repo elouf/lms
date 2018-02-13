@@ -4,9 +4,9 @@
     <div>{{ template }}</div>
     <div class="page-header">
         <div class="container">
-            <h2 class="color3">Utilisateurs</h2>
+            <h2 class="color3">Devoirs</h2>
             <ul class="breadcrumb">
-                <li class="color3">Gestion des profils</li>
+                <li class="color3">Gestion des devoirs</li>
             </ul>
         </div>
     </div>
@@ -19,23 +19,13 @@
     <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/jquery.tablesorter.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/jquery.tablesorter.widgets.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/extras/jquery.tablesorter.pager.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/widgets/widget-output.min.js') }}"></script>
 
     <script>
         jQuery(document).ready(function () {
-            $('.download').click(function(e){
-                e.preventDefault();
-                var table = $(this).closest('.container').find('.tablesorter');
-                table.trigger('outputTable');
-            });
             $(".tablesorter")
                     .tablesorter({
                         widthFixed: true,
-                        widgets: ['zebra', 'filter', 'output'],
-                        widgetOptions : {
-                            output_delivery      : 'd',
-                            output_saveFileName  : 'mytable.csv'
-                        }
+                        widgets: ['zebra', 'filter']
                     })
                     .tablesorterPager({
                         container: $("#pager"),
@@ -50,29 +40,25 @@
                 <table class="tablesorter ">
                     <thead>
                     <tr>
-                        <th>Id</th>
-                        <th>Email</th>
-                        <th>Prénom</th>
+                        <th data-filter="false">Id</th>
                         <th>Nom</th>
-                        <th class="filter-select">Institut</th>
-                        <th class="filter-select">Activé</th>
+                        <th>Description</th>
+                        <th>Durée</th>
+                        <th>Date de début</th>
+                        <th>Date de fin</th>
+                        <th data-filter="false">Détail</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {% for user in users %}
-                        <tr class="userLine" data-userId="{{ user.id }}">
-                            <td><a href="{{ path('user', {id:user.id }) }}">{{ user.id }}</a></td>
-                            <td><a href="{{ path('user', {id:user.id }) }}">{{ user.email }}</a></td>
-                            <td>{{ user.firstname }}</td>
-                            <td>{{ user.lastname }}</td>
-                            <td>{{ user.institut }}</td>
-                            <td>
-                                {% if user.enabled == 1 %}
-                                    oui
-                                {% else %}
-                                    non
-                                {% endif %}
-                            </td>
+                    {% for devoir in devoirs %}
+                        <tr class="devoirLine" data-devoirId="{{ devoir.id }}">
+                            <td><a href="{{ path('devoir', {id:devoir.id }) }}">{{ devoir.id }}</a></td>
+                            <td><a href="{{ path('devoir', {id:devoir.id }) }}">{{ devoir.nom }}</a></td>
+                            <td>{{ devoir.description|length > 80 ? devoir.description|slice(0, 80) ~ '...' : devoir.description }}</td>
+                            <td>{{ devoir.duree//3600  }}h{{ (devoir.duree - 3600*(devoir.duree//3600))//60 }}min</td>
+                            <td>{{ devoir.dateDebut|localizeddate('none', 'none', null, null, 'dd/MM/Y' ) }}</td>
+                            <td>{{ devoir.dateFin|localizeddate('none', 'none', null, null, 'dd/MM/Y' ) }}</td>
+                            <td><a class="btnCellFilter" href="{{ path('devoir', {id:devoir.id }) }}"><i class="fa fa-sign-in" aria-hidden="true"></i></a></td>
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -91,7 +77,6 @@
                             <option value="40">40</option>
                             <option value="all">All Rows</option>
                         </select>
-                        <button class="download">Télécharger le CSV</button>
                     </form>
                 </div>
             </div>
