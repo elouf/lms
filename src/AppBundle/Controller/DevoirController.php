@@ -251,6 +251,45 @@ class DevoirController extends Controller
     }
 
     /**
+     * @Route("/validURLress_ajax", name="validURLress_ajax")
+     * @Method({"GET", "POST"})
+     */
+    public function validURLressAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+            $typeItem = $request->request->get('typeItem');
+            $itemId = $request->request->get('itemId');
+            $urlDest = $request->request->get('urlDest');
+            $nom = $request->request->get('nom');
+
+            $devoir = $em->getRepository('AppBundle:Devoir')->findOneBy(array('id' => $itemId));
+
+            if($typeItem == "sujets"){
+                $devoirF = new DevoirSujet();
+            }elseif($typeItem == "corrigeTypes"){
+                $devoirF = new DevoirCorrigeType();
+            }else{
+                return new JsonResponse(array(
+                        'error' => true,
+                        'typeItem' => "non reconnu")
+                );
+            }
+
+            $devoirF->setDevoir($devoir);
+            $devoirF->setNom($nom);
+
+            $devoirF->setUrl($urlDest);
+
+            $em->persist($devoirF);
+            $em->flush();
+            return new JsonResponse(array('action' =>'set URL to ress', 'id' => $itemId, 'nouveau '.$typeItem => $devoirF->getUrl()));
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
+    /**
      * @Route("/uploadDevoirFile_ajax", name="uploadDevoirFile_ajax")
      * @Method({"GET", "POST"})
      */

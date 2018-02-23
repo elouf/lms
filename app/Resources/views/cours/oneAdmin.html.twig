@@ -1101,26 +1101,60 @@
 
                 $('.modal .modal-body[data-contentModal=uploadFile] .bginverse').empty().append(
                         '<div>' +
-                            '<div class="mb-10" style="text-align: center">'+
-                                '<div class="LabelAdmin col-xs-8">Dézipper le fichier (le fichier index.html sera pointé par le lien)</div>'+
-                                '<input data-champName="unzipUploaded" class="col-xs-2" value="" type="checkbox" />'+
-                                '<input data-champName="uploadedFileName" class="col-xs-8" value="" type="text" />'+
-                            '</div>'+
+                        '<div class="mb-10" style="text-align: left">'+
+                        '<div>Nom du document</div> '+
+                        '<input id="inputFileName" data-champName="uploadedFileName" class="col-xs-12" value="" type="text" />'+
+                        '<div class="alternative">' +
+                        '<div>Url</div> '+
+                        '<input id="inputFileURL" data-champName="inputFileURL" class="col-xs-12" value="" type="text" />'+
+                        '<div style="text-align: center"><a style="margin: 20px" class="btn btn-primary btn-sm btnValidURLress">Valider une URL</a>OU Déposez un ficher</div>' +
                         '</div>'+
+                        '<div class="LabelAdmin col-xs-8">Dézipper le fichier (le fichier index.html sera pointé par le lien)</div>'+
+                        '<input data-champName="unzipUploaded" class="col-xs-2" value="" type="checkbox" />'+
+                        '</div>'+
+                        '</div>'+
+
                         '<div class="fileUploader btn">' +
-                            '<span class="btn btn-success fileinput-button"> '+
-                                '<i class="glyphicon glyphicon-plus"></i> '+
-                                '<span>Ajouter un fichier</span> '+
-                                '<input id="itemUpload" type="file" name="files[]" multiple> '+
-                            '</span> '+
-                            '<div id="itemProgress" class="progress col-xs-12"> '+
-                                '<div class="progress-bar progress-bar-success"></div> '+
-                            '</div> '+
+                        '<span class="btn btn-success fileinput-button"> '+
+                        '<i class="glyphicon glyphicon-plus"></i> '+
+                        '<span>Ajouter un fichier</span> '+
+                        '<input id="itemUpload" type="file" name="files[]" multiple> '+
+                        '</span> '+
+                        '<div id="itemProgress" class="progress col-xs-12"> '+
+                        '<div class="progress-bar progress-bar-success"></div> '+
+                        '</div> '+
                         '</div>'
                 );
 
 
                 $('.modal .modal-body[data-contentModal=uploadFile] [data-champName=uploadedFileName]').val(titreDefaut);
+
+                $('.btnValidURLress').click(function(){
+                    $.ajax({
+                        type: 'POST',
+                        url: "{{path('validURLress_ajax')}}",
+                        async: false,
+                        dataType: "json",
+                        data: {
+                            typeItem: typeItem,
+                            itemId: devoirId,
+                            urlDest: $('.modal .modal-body[data-contentModal=uploadFile] [data-champName=inputFileURL]').val(),
+                            nom: $('.modal .modal-body[data-contentModal=uploadFile] [data-champName=uploadedFileName]').val()
+                        },
+                        success: function (data) {
+                            $('.modal').modal('toggle');
+                            if(devoir.find('.btnSaveInputChange').length){
+                                devoir.find('.btnSaveInputChange').addClass('mustReload');
+                                devoir.find('.btnSaveInputChange').click();
+                            }else{
+                                refreshInSection(idSection);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            $('.modal').modal('toggle');
+                        }
+                    });
+                });
 
                 $('#itemUpload').fileupload({
                     url: steps + upload_srcSteps  + upload_course + folderLocation,
