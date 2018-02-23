@@ -215,6 +215,7 @@
                                 <th>Prénom</th>
                                 <th>Nom</th>
                                 <th class="filter-select">Institut</th>
+                                <th>Role</th>
                                 <th>Cohortes</th>
                                 <th>Désinscrire</th>
                             </tr>
@@ -228,9 +229,10 @@
                                     <td>{{ user.user.firstname }}</td>
                                     <td>{{ user.user.lastname }}</td>
                                     <td>{{ user.user.institut }}</td>
+                                    <td>{{ user.role.nom }}</td>
                                     <td>
                                         {% for coh in user.myCohs %}
-                                            {{ coh.nom }}
+                                            <a href="{{ path('itemUsers', {id: coh.id, type: "cohorte"}) }}">{{ coh.nom }}</a>
                                         {% endfor %}
                                     </td>
                                     <td class="btnCellFilter">

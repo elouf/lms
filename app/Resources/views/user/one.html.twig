@@ -169,9 +169,7 @@
                     }
                 });
             });
-            $('.btndesinscrSess').click(function(){
-                var idUser = $('[data-userIdFiche]').attr('data-userIdFiche');
-                var idSession = $(this).closest('.sessionLine').attr('data-sessionId');
+            function desinscrireUserSession(idUser, idSession){
                 $.ajax({
                     type: "POST",
                     url: "{{path('desinscrSessUser_ajax')}}",
@@ -183,6 +181,18 @@
                     success: function (response) {
                         window.location.href = window.location.href.replace( /[\?#].*|$/, "?sessions" );
                     }
+                });
+            }
+            $('.btndesinscrSess').click(function(){
+                var idUser = $('[data-userIdFiche]').attr('data-userIdFiche');
+                var idSession = $(this).closest('.sessionLine').attr('data-sessionId');
+
+                $('.modal').modal('toggle');
+                $('.valideDesinscr').unbind('click').click(function(){
+                    desinscrireUserSession(idUser, idSession);
+                });
+                $('.cancelDesinscr').unbind('click').click(function(){
+                    $('.modal').modal('toggle');
                 });
             });
             $('.btninscrCoh').click(function(){
@@ -202,9 +212,7 @@
                     }
                 });
             });
-            $('.btndesinscrCoh').click(function(){
-                var idUser = $('[data-userIdFiche]').attr('data-userIdFiche');
-                var idCoh = $(this).closest('.cohorteLine').attr('data-cohorteId');
+            function desinscrireUserCohorte(idUser, idCoh){
                 $.ajax({
                     type: "POST",
                     url: "{{path('desInscrireUser_ajax')}}",
@@ -218,7 +226,21 @@
                         window.location.href = window.location.href.replace( /[\?#].*|$/, "?cohortes" );
                     }
                 });
+            }
+
+            $('.btndesinscrCoh').click(function(){
+                var idUser = $('[data-userIdFiche]').attr('data-userIdFiche');
+                var idCoh = $(this).closest('.cohorteLine').attr('data-cohorteId');
+
+                $('.modal').modal('toggle');
+                $('.valideDesinscr').unbind('click').click(function(){
+                    desinscrireUserCohorte(idUser, idCoh);
+                });
+                $('.cancelDesinscr').unbind('click').click(function(){
+                    $('.modal').modal('toggle');
+                });
             });
+
             var getUrlParameter = function getUrlParameter(sParam) {
                 var sPageURL = decodeURIComponent(window.location.search.substring(1)),
                         sURLVariables = sPageURL.split('&'),

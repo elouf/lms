@@ -105,4 +105,26 @@ class DisciplineRepository extends \Doctrine\ORM\EntityRepository
         return $this->userHasAccess($userId, $discId) || $this->userIsInscrit($userId, $discId);
     }
 
+    public function getRole($userId, $id)
+    {
+        $em = $this->getEntityManager();
+        $item = $this->findOneBy(array('id'=> $id));
+        $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
+
+        $inscr = $em->getRepository('AppBundle:Inscription_d')->findOneBy(array('discipline' => $item, 'user' => $user));
+        if($inscr){
+            return $inscr->getRole();
+        }else{
+            $inscrCohs = $em->getRepository('AppBundle:Inscription_coh')->findAll();
+            if($inscrCohs){
+                foreach($inscrCohs as $inscrCoh){
+                    $coh = $inscrCoh->getCohorte();
+                    if($coh->getDisciplines()->contains($item)){
+                        return $inscrCoh->getRole();
+                    }
+                }
+            }
+        }
+        return null;
+    }
 }

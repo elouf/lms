@@ -39,9 +39,9 @@ class CohorteRepository extends \Doctrine\ORM\EntityRepository
         return $insc!=null;
     }
 
-    public function userHasAccessOrIsInscrit($userId, $coursId)
+    public function userHasAccessOrIsInscrit($userId, $cohId)
     {
-        return $this->userIsInscrit($userId, $coursId);
+        return $this->userIsInscrit($userId, $cohId);
     }
 
     public function allForUser($userId)
@@ -61,5 +61,18 @@ class CohorteRepository extends \Doctrine\ORM\EntityRepository
         }
 
         return $cohs;
+    }
+
+    public function getRole($userId, $id)
+    {
+        $em = $this->getEntityManager();
+        $item = $this->findOneBy(array('id'=> $id));
+        $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
+
+        $inscr = $em->getRepository('AppBundle:Inscription_coh')->findOneBy(array('cohorte' => $item, 'user' => $user));
+        if($inscr){
+            return $inscr->getRole();
+        }
+        return null;
     }
 }

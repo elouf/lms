@@ -12,6 +12,39 @@ use DateTime;
 
 class DisciplineController extends Controller
 {
+
+    /**
+     * @Route("/discCoursManag", name="discCoursManag")
+     */
+    public function discCoursManagAction (Request $request)
+    {
+        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
+
+        $disRepo = $this->getDoctrine()->getRepository('AppBundle:Discipline');
+        $disciplines = $disRepo->findAll();
+
+        $myDisc = array();
+        $i = 0;
+        if($disciplines){
+            foreach($disciplines as $discipline){
+                $cours = $this->getDoctrine()->getRepository('AppBundle:Cours')->findBy(array('discipline' => $discipline));
+                $myDisc[$i]['discipline'] = $discipline;
+
+                $myDisc[$i]['cours'] = array();
+                if($cours) {
+                    foreach ($cours as $cour) {
+                        array_push($myDisc[$i]['cours'], $cour);
+                    }
+                }
+                $i++;
+            }
+        }
+        dump($myDisc);
+        return $this->render('ressources/allDiscCours.html.twig', [
+            'disciplines' => $myDisc
+        ]);
+    }
+
     /**
      * @Route("/myCourses/{id}", defaults={"id" = 0}, name="myCourses")
      */

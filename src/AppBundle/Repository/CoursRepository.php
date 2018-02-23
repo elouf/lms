@@ -141,4 +141,32 @@ class CoursRepository extends \Doctrine\ORM\EntityRepository
     {
         return $this->userHasAccess($userId, $coursId) || $this->userIsInscrit($userId, $coursId);
     }
+
+    public function getRole($userId, $id)
+    {
+        $em = $this->getEntityManager();
+        $item = $this->findOneBy(array('id'=> $id));
+        $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
+
+        $inscr = $em->getRepository('AppBundle:Inscription_c')->findOneBy(array('cours' => $item, 'user' => $user));
+        if($inscr){
+            return $inscr->getRole();
+        }else{
+            $inscrD = $em->getRepository('AppBundle:Inscription_d')->findOneBy(array('discipline' => $item->getDiscipline(), 'user' => $user));
+            if($inscrD){
+                return $inscrD->getRole();
+            }else{
+                $inscrCohs = $em->getRepository('AppBundle:Inscription_coh')->findAll();
+                if($inscrCohs){
+                    foreach($inscrCohs as $inscrCoh){
+                        $coh = $inscrCoh->getCohorte();
+                        if($coh->getDisciplines()->contains($item->getDiscipline()) || $coh->getCours()->contains($item)){
+                            return $inscrCoh->getRole();
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
 }

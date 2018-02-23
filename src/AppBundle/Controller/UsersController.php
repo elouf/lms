@@ -236,7 +236,8 @@ class UsersController extends Controller
                 array_push($usersAccessTab, [
                     "user" => $user,
                     "isInscrit" => $itemRepo->userIsInscrit($user->getId(), $id),
-                    "myCohs" => $cohRepo->allForUser($user->getId())
+                    "myCohs" => $cohRepo->allForUser($user->getId()),
+                    "role" => $itemRepo->getRole($user->getId(), $id)
                 ]);
             }else{
                 array_push($usersNoAccessTab, [

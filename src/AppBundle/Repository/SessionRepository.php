@@ -30,4 +30,16 @@ class SessionRepository extends \Doctrine\ORM\EntityRepository
     {
         return $this->userHasAccess($userId, $sessId) || $this->userIsInscrit($userId, $sessId);
     }
+    public function getRole($userId, $id)
+    {
+        $em = $this->getEntityManager();
+        $item = $this->findOneBy(array('id'=> $id));
+        $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
+
+        $inscr = $em->getRepository('AppBundle:Inscription_sess')->findOneBy(array('session' => $item, 'user' => $user));
+        if($inscr){
+            return $inscr->getRole();
+        }
+        return null;
+    }
 }

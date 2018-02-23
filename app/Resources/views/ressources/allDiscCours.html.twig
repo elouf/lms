@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+{% block pageHeader %}
+    <div>{{ template }}</div>
+    <div class="page-header littleScroll">
+        <div class="container">
+            <h2 class="color3">Disciplines / Cours</h2>
+        </div>
+    </div>
+{% endblock %}
+
+{% block main %}
+    <link rel="stylesheet" href="{{ asset('vendors/tablesorter/dist/css/theme.default.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendors/tablesorter/dist/css/jquery.tablesorter.pager.min.css') }}" />
+
+    <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/jquery.tablesorter.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/jquery.tablesorter.widgets.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/extras/jquery.tablesorter.pager.min.js') }}"></script>
+
+    <script>
+        jQuery(document).ready(function () {
+            $(".tablesorter")
+                    .tablesorter({
+                        widthFixed: true,
+                        widgets: ['zebra', 'filter']
+                    })
+                    .tablesorterPager({
+                        container: $("#pager"),
+                        size: 50
+                    });
+        });
+    </script>
+
+    <div class="container mt-220 mb-40">
+        <div class="row">
+            <div class="col-md-12">
+                <table class="tablesorter ">
+                    <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Disciplines</th>
+                        <th>Cours</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for discipline in disciplines %}
+                        <tr class="disciplineLine" data-devoirId="{{ discipline.discipline.id }}">
+                            <td><a href="{{ path('itemUsers', {id:discipline.discipline.id, type: "discipline" }) }}">{{ discipline.discipline.id }}</a></td>
+                            <td><a href="{{ path('itemUsers', {id:discipline.discipline.id, type: "discipline" }) }}">{{ discipline.discipline.nom }}</a></td>
+                            <td>
+                                {% for cour in discipline.cours %}
+                                    <a href="{{ path('itemUsers', {id:cour.id, type: "cours" }) }}">{{ cour.nom }}</a><br>
+                                {% endfor %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <div id="pager" class="pager">
+                    <form>
+                        <img src="{{ asset('vendors/tablesorter/dist/css/images/first.png') }}" class="first"/>
+                        <img src="{{ asset('vendors/tablesorter/dist/css/images/prev.png') }}" class="prev"/>
+                        <input type="text" class="pagedisplay"/>
+                        <img src="{{ asset('vendors/tablesorter/dist/css/images/next.png') }}" class="next"/>
+                        <img src="{{ asset('vendors/tablesorter/dist/css/images/last.png') }}" class="last"/>
+                        <select class="pagesize">
+                            <option value="10">10</option>
+                            <option value="20">20</option>
+                            <option value="30">30</option>
+                            <option value="40">40</option>
+                            <option value="all">All Rows</option>
+                        </select>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
