@@ -10,6 +10,22 @@ body{
     color: #c70700;
 }
 
+/* header */
+.littleScroll{
+    position: fixed;
+    width: 100%;
+    z-index: 999;
+    padding-bottom: 0;
+    padding-top: 60px;
+}
+.littleScroll h2{
+    margin-bottom: 5px;
+}
+.littleScroll .breadcrumb{
+    margin-bottom: 8px;
+}
+
+
 /* footer */
 .affiliations > li{
     display: inline-block;
@@ -61,6 +77,9 @@ body{
 
 .mt-140 {
     margin-top: 140px;
+}
+.mt-220 {
+    margin-top: 220px;
 }
 
 a { font-family: inherit; color: inherit; }

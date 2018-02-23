@@ -279,6 +279,13 @@ class DevoirController extends Controller
             $devoirF->setDevoir($devoir);
             $devoirF->setNom($nom);
 
+            $pos = strpos($urlDest, "http://");
+            if ($pos !== false) {
+
+            }else{
+                $urlDest = "http://".$urlDest;
+            }
+
             $devoirF->setUrl($urlDest);
 
             $em->persist($devoirF);
