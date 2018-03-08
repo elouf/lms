@@ -422,7 +422,7 @@ class DevoirController extends Controller
             $copieFichier = new CopieFichier();
             $copieFichier->setCopie($copie);
             $copieFichier->setDateRendu(new DateTime());
-            $copie->getDateCreation(new DateTime());
+            $copie->setDateCreation(new DateTime());
             $copieFichier->setNom("[Devoir ".$devoir->getNom()."] Copie de ".$user->getFirstName()." ".$user->getLastName());
 
             $ext = pathinfo($url, PATHINFO_EXTENSION);
