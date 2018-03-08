@@ -422,6 +422,7 @@ class DevoirController extends Controller
             $copieFichier = new CopieFichier();
             $copieFichier->setCopie($copie);
             $copieFichier->setDateRendu(new DateTime());
+            $copie->getDateCreation(new DateTime());
             $copieFichier->setNom("[Devoir ".$devoir->getNom()."] Copie de ".$user->getFirstName()." ".$user->getLastName());
 
             $ext = pathinfo($url, PATHINFO_EXTENSION);
@@ -431,6 +432,7 @@ class DevoirController extends Controller
             $copieFichier->setUrl($urlTab[0].'/var'.$urlDestTab[1].'file'.$rand.'.'.$ext);
 
             $em->persist($copieFichier);
+            $em->persist($copie);
             $em->flush();
 
             return new JsonResponse(array('action' =>'upload File', 'id' => $itemId, 'ext' => $ext, 'nouvelle copie ' => $copieFichier->getUrl()));
