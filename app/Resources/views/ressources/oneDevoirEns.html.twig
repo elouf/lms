@@ -35,7 +35,7 @@
 
             var url = steps + folderLocation+idCours+'/devoir/'+idDevoir+'/corriges/';
 
-            $('.corrigeUpload').each(function(){
+            /*$('.corrigeUpload').each(function(){
                 var etuId = $(this).closest('[data-userId]').attr('data-userId');
                 var destUrl = url+etuId+'/';
                 $.ajax({
@@ -51,7 +51,7 @@
                     error: function(xhr, status, error) {
                     }
                 });
-            });
+            });*/
 
             $('.corrigeUpload').fileupload({
                 url: steps + upload_srcSteps + folderLocation,
@@ -65,6 +65,22 @@
                     if(uploadErrors.length > 0) {
                         alert(uploadErrors.join("\n"));
                     } else {
+                        var etuId = $(this).closest('[data-userId]').attr('data-userId');
+                        var destUrl = url+etuId+'/';
+                        $.ajax({
+                            type: 'POST',
+                            url: "{{path('checkDirForUploadFile_ajax')}}",
+                            async: false,
+                            dataType: "json",
+                            data: {
+                                url: destUrl
+                            },
+                            success: function (data) {
+                            },
+                            error: function(xhr, status, error) {
+                            }
+                        });
+
                         data.submit();
                     }
                 },
@@ -202,7 +218,7 @@
                     <table class="table table-striped tableCopies">
                         <thead>
                         <tr>
-                            <th>#</th>
+                            <th>ID</th>
                             <th>Étudiant</th>
                             <th>Copie</th>
                             <th>Corrigé</th>
@@ -214,7 +230,7 @@
                             {% if val.copieFichier is not null or app.user.hasRole('ROLE_SUPER_ADMIN') %}
 
                                 <tr data-userId="{{ val.copie.auteur.id }}">
-                                    <th scope="row">{{ key+1 }}</th>
+                                    <th scope="row">{{ val.copie.auteur.id }}</th>
                                     <td>{{ val.copie.auteur.lastname }} {{ val.copie.auteur.firstname }}</td>
                                     <td>
 
