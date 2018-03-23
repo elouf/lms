@@ -56,6 +56,7 @@
                         <th>Email</th>
                         <th>Prénom</th>
                         <th>Nom</th>
+                        <th>Copie rendue</th>
                         <th class="filter-select">Institut</th>
                         <th class="filter-select">Activé</th>
                     </tr>
@@ -67,6 +68,7 @@
                             <td><a href="{{ path('user', {id:copie.user.id }) }}">{{ copie.user.email }}</a></td>
                             <td>{{ copie.user.firstname }}</td>
                             <td>{{ copie.user.lastname }}</td>
+                            <td>{{ copie.fichierCopie }}</td>
                             <td>{{ copie.user.institut }}</td>
                             <td>
                                 {% if copie.user.enabled == 1 %}

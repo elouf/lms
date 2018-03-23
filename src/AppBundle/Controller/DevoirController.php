@@ -54,7 +54,7 @@ class DevoirController extends Controller
                 $fichier = $this->getDoctrine()->getRepository('AppBundle:CopieFichier')->findOneBy(array('copie' => $copie));
                 array_push($myCopies, [
                     'copie' => $copie,
-                    'fichierCopie' => $fichier,
+                    'fichierCopie' => $fichier?"oui":"non",
                     'user' => $copie->getAuteur(),
                     'fichierCorrige'
                 ]);
