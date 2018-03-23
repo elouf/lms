@@ -24,7 +24,6 @@ class StatistiquesController extends Controller
         for($i=0; $i<count($cohortes); $i++) {
             $cohortesArr[$i]["cohorte"] = $cohortes[$i];
             $inscrits = $this->getDoctrine()->getRepository('AppBundle:Cohorte')->findInscrits($cohortes[$i]->getId());
-            dump($inscrits);
             $cohortesArr[$i]["inscrits"] = $inscrits;
         }
 

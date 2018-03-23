@@ -39,7 +39,6 @@ class DisciplineController extends Controller
                 $i++;
             }
         }
-        dump($myDisc);
         return $this->render('ressources/allDiscCours.html.twig', [
             'disciplines' => $myDisc
         ]);
