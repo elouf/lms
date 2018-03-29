@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Inscription_c;
 use AppBundle\Entity\Inscription_d;
+use AppBundle\Repository\InstitutRepository;
 use DateTime;
 use AppBundle\Entity\Inscription_coh;
 use AppBundle\Entity\User;
@@ -58,6 +59,11 @@ class InscriptionController extends Controller
                 ))
             ->add('institut', EntityType::class, array(
                 'class' => 'AppBundle:Institut',
+                'query_builder' => function (InstitutRepository $in) {
+                    return $in->createQueryBuilder('i')
+                        ->orderBy('i.nom', 'ASC')
+                        ->where('i.actif = true');
+                },
                 'choice_label' => 'nom',
                 'multiple' => false,
                 'label_attr' => array('class' => 'col-sm-4')

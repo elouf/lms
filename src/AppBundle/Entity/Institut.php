@@ -35,6 +35,12 @@ class Institut
      */
     private $ville;
 
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="actif", type="boolean")
+     */
+    private $actif;
 
     /**
      * Get id
@@ -100,5 +106,28 @@ class Institut
     public function getVille()
     {
         return $this->ville;
+    }
+
+    /**
+     * Set actif
+     *
+     * @param boolean $actif
+     *
+     * @return Institut
+     */
+    public function setActif($actif)
+    {
+        $this->actif = $actif;
+
+        return $this;
+    }
+    /**
+     * Get actif
+     *
+     * @return bool
+     */
+    public function getActif()
+    {
+        return $this->actif;
     }
 }

@@ -14,6 +14,7 @@ class InstitutAdmin extends AbstractAdmin
         $formMapper
             ->add('nom', 'text')
             ->add('ville', 'text')
+            ->add('actif')
         ;
 
     }
@@ -24,6 +25,7 @@ class InstitutAdmin extends AbstractAdmin
         $datagridMapper
             ->add('nom')
             ->add('ville')
+            ->add('actif')
         ;
     }
 
@@ -33,6 +35,7 @@ class InstitutAdmin extends AbstractAdmin
         $listMapper
             ->addIdentifier('nom')
             ->add('ville')
+            ->add('actif')
         ;
     }
 }
