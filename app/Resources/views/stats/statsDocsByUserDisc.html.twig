@@ -1,0 +1,106 @@
+{% extends 'base.html.twig' %}
+
+{% block pageHeader %}
+    <div>{{ template }}</div>
+    <div class="page-header">
+        <div class="container">
+            <h2 class="color3">Statistiques</h2>
+            <ul class="breadcrumb">
+                <li class="color3">Documents déposés par cours (discipline {{ discipline.nom }})</li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+
+{% block main %}
+    <link rel="stylesheet" href="{{ asset('vendors/tablesorter/dist/css/theme.default.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendors/tablesorter/dist/css/jquery.tablesorter.pager.min.css') }}" />
+
+    <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/jquery.tablesorter.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/jquery.tablesorter.widgets.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/extras/jquery.tablesorter.pager.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/widgets/widget-output.min.js') }}"></script>
+
+    <script>
+        jQuery(document).ready(function () {
+            $('.download').click(function(e){
+                e.preventDefault();
+                var table = $(this).closest('.container').find('.tablesorter');
+                table.trigger('outputTable');
+            });
+            $(".tablesorter")
+                    .tablesorter({
+                        widthFixed: true,
+                        widgets: ['zebra', 'filter', 'output'],
+                        widgetOptions : {
+                            output_delivery      : 'd',
+                            output_saveFileName  : 'mytable.csv'
+                        }
+                    })
+                    .tablesorterPager({
+                        container: $("#pager"),
+                        size: 50
+                    });
+        });
+    </script>
+
+    <div class="container mt-100 mb-40">
+        <div class="row">
+            <div class="col-md-12">
+                <table class="tablesorter ">
+                    <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Email</th>
+                        <th>Prénom</th>
+                        <th>Nom</th>
+                        <th class="filter-select">Institut</th>
+                        <th class="filter-select">Activé</th>
+                        <th>Cours</th>
+                        <th>Documents déposés</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for assoc in assocs %}
+                        {% for depot in assoc.depots %}
+                            <tr class="userLine" data-userId="{{ assoc.user.id }}">
+                                <td><a href="{{ path('user', {id:assoc.user.id }) }}">{{ assoc.user.id }}</a></td>
+                                <td><a href="{{ path('user', {id:assoc.user.id }) }}">{{ assoc.user.email }}</a></td>
+                                <td>{{ assoc.user.firstname }}</td>
+                                <td>{{ assoc.user.lastname }}</td>
+                                <td>{{ assoc.user.institut }}</td>
+                                <td>
+                                    {% if assoc.user.enabled == 1 %}
+                                        oui
+                                    {% else %}
+                                        non
+                                    {% endif %}
+                                </td>
+                                <td>{{ depot.cours }}</td>
+                                <td>{{ depot.nombre }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <div id="pager" class="pager">
+                    <form>
+                        <img src="{{ asset('vendors/tablesorter/dist/css/images/first.png') }}" class="first"/>
+                        <img src="{{ asset('vendors/tablesorter/dist/css/images/prev.png') }}" class="prev"/>
+                        <input type="text" class="pagedisplay"/>
+                        <img src="{{ asset('vendors/tablesorter/dist/css/images/next.png') }}" class="next"/>
+                        <img src="{{ asset('vendors/tablesorter/dist/css/images/last.png') }}" class="last"/>
+                        <select class="pagesize">
+                            <option value="10">10</option>
+                            <option value="20">20</option>
+                            <option value="30">30</option>
+                            <option value="40">40</option>
+                            <option value="all">All Rows</option>
+                        </select>
+                        <button class="download">Télécharger le CSV</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
