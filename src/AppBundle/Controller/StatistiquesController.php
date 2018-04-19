@@ -38,7 +38,7 @@ class StatistiquesController extends Controller
      */
     public function statsDocsByUsersDiscAction (Request $request, $discId)
     {
-        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
+        $this->denyAccessUnlessGranted('ROLE_USER');
 
         $disc = $this->getDoctrine()->getRepository('AppBundle:Discipline')->find($discId);
 
