@@ -146,6 +146,52 @@ class EmailingController extends Controller
 
         return new JsonResponse('This is not ajax!', 400);
     }
+    /*
+     *
+     * public function emailingSendMailAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+            $objet = $request->request->get('objet');
+            $message = $request->request->get('message');
+            $users = $request->request->get('users');
+
+            $mailSendLimit = $this->getParameter('grouped_mails_limit');
+            $nbArray = intval(ceil(count($users)/$mailSendLimit));
+
+            $users_chunk = array_chunk($users, $nbArray);
+
+            for($i=0; $i<count($users_chunk); $i++){
+                for($j=0; $j<count($users_chunk[$i]); $j++) {
+                }
+                $user = $this->getDoctrine()->getRepository('AppBundle:User')->findOneBy(array('id' => $users_chunk[$i][$j]));
+                $emailContent = \Swift_Message::newInstance()
+                    ->setSubject($objet.$i)
+                    ->setFrom('contact.afadec@gmail.com')
+                    ->setCC($user->getEmail())
+                    ->setBody(
+                        $this->renderView(
+                            'user/email.html.twig',
+                            array(
+                                'prenom' => $this->getUser()->getFirstname(),
+                                'nom' => $this->getUser()->getLastname(),
+                                'message' => $message
+                            )
+                        ),
+                        'text/html'
+                    )
+                ;
+                $this->get('mailer')->send($emailContent);
+
+            }
+            $em->flush();
+
+            return new JsonResponse(array('action' =>'Send mail'));
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+     */
 
     /**
      * @Route("/emailingSendAdminMail_ajax", name="emailingSendAdminMail_ajax")
