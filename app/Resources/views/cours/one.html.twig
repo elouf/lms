@@ -385,6 +385,11 @@
                                                                     <source src="{{ valR.url }}" type="video/mp4">
                                                                     Votre navigateur ne supporte pas la balise "video".
                                                                 </video>
+                                                            {% elseif '.mp3' in valR.url %}
+                                                                <audio controls>
+                                                                    <source src="{{ valR.url }}" type="audio/mpeg">
+                                                                    Votre navigateur ne supporte pas la balise "audio".
+                                                                </audio>
                                                             {% endif %}
                                                         </div>
                                                         <div class="col-xs-2 text-right">
