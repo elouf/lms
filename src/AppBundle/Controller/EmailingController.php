@@ -123,8 +123,8 @@ class EmailingController extends Controller
                 $user = $this->getDoctrine()->getRepository('AppBundle:User')->findOneBy(array('id' => $users[$i]));
                 $emailContent = \Swift_Message::newInstance()
                     ->setSubject($objet)
-                    ->setFrom('erwannig@studit.fr')
-                    ->setReplyTo('contact.afadec@gmail.com')
+                    ->setFrom('noreply@afadec.fr')
+                    ->setReplyTo('noreply@afadec.fr')
                     ->setCC($user->getEmail())
                     ->setBody(
                         $this->renderView(
@@ -136,6 +136,17 @@ class EmailingController extends Controller
                             )
                         ),
                         'text/html'
+                    )
+                    ->addPart(
+                        $this->renderView(
+                            'user/email.html.twig',
+                            array(
+                                'prenom' => $this->getUser()->getFirstname(),
+                                'nom' => $this->getUser()->getLastname(),
+                                'message' => $message
+                            )
+                        ),
+                        'text/plain'
                     )
                 ;
                 $headers = $emailContent->getHeaders();
