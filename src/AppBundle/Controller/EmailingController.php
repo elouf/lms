@@ -118,7 +118,7 @@ class EmailingController extends Controller
             $objet = $request->request->get('objet');
             $message = $request->request->get('message');
             $users = $request->request->get('users');
-
+            $headers = null;
             for($i=0; $i<count($users); $i++){
                 $user = $this->getDoctrine()->getRepository('AppBundle:User')->findOneBy(array('id' => $users[$i]));
                 $emailContent = \Swift_Message::newInstance()
