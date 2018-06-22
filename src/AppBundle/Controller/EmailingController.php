@@ -123,7 +123,8 @@ class EmailingController extends Controller
                 $user = $this->getDoctrine()->getRepository('AppBundle:User')->findOneBy(array('id' => $users[$i]));
                 $emailContent = \Swift_Message::newInstance()
                     ->setSubject($objet)
-                    ->setFrom('contact.afadec@gmail.com')
+                    ->setFrom('erwannig@studit.fr')
+                    ->setReplyTo('contact.afadec@gmail.com')
                     ->setCC($user->getEmail())
                     ->setBody(
                         $this->renderView(
@@ -137,11 +138,14 @@ class EmailingController extends Controller
                         'text/html'
                     )
                 ;
+                $headers = $emailContent->getHeaders();
                 $this->get('mailer')->send($emailContent);
             }
             $em->flush();
 
-            return new JsonResponse(array('action' =>'Send mail'));
+            return new JsonResponse(array(
+                'action' =>'Send mail',
+                'headers' => $headers));
         }
 
         return new JsonResponse('This is not ajax!', 400);
