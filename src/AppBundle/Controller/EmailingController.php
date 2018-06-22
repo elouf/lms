@@ -138,11 +138,14 @@ class EmailingController extends Controller
                         'text/html'
                     )
                 ;
+                $headers = $emailContent->getHeaders();
                 $this->get('mailer')->send($emailContent);
             }
             $em->flush();
 
-            return new JsonResponse(array('action' =>'Send mail'));
+            return new JsonResponse(array(
+                'action' =>'Send mail',
+                'headers' => $headers));
         }
 
         return new JsonResponse('This is not ajax!', 400);
