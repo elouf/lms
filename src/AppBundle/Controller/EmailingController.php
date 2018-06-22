@@ -123,7 +123,7 @@ class EmailingController extends Controller
                 $user = $this->getDoctrine()->getRepository('AppBundle:User')->findOneBy(array('id' => $users[$i]));
                 $emailContent = \Swift_Message::newInstance()
                     ->setSubject($objet)
-                    ->setFrom('afadec.prod@afadec.fr')
+                    ->setFrom('erwannig@studit.fr')
                     ->setReplyTo('contact.afadec@gmail.com')
                     ->setCC($user->getEmail())
                     ->setBody(
