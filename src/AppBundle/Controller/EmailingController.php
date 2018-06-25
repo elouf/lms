@@ -123,9 +123,9 @@ class EmailingController extends Controller
                 $user = $this->getDoctrine()->getRepository('AppBundle:User')->findOneBy(array('id' => $users[$i]));
                 $emailContent = \Swift_Message::newInstance()
                     ->setSubject($objet)
-                    ->setFrom('noreply.afadec@gmail.com')
-                    ->setReplyTo('noreply.afadec@gmail.com')
-                    ->setCC($user->getEmail())
+                    ->setFrom('noreply@afadec.fr')
+                    ->setReplyTo('noreply@afadec.fr')
+                    ->setTo($user->getEmail())
                     ->setBody(
                         $this->renderView(
                             'user/email.html.twig',
