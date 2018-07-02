@@ -349,6 +349,8 @@ textarea[readonly]{
 }
 .tableAddItem tr.item>td{
     padding: 10px;
+    max-width: 200px;
+    position: relative;
 }
 .tableAddItem tr.item>td:last-child{
     width: 70px;
