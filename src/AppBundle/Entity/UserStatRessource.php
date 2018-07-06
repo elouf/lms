@@ -32,6 +32,7 @@ class UserStatRessource
      * @var Ressource
      *
      * @ORM\ManyToOne(targetEntity="Ressource")
+     * @ORM\JoinColumn(name="ress_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $ressource;
 
