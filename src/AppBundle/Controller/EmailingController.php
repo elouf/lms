@@ -18,7 +18,7 @@ class EmailingController extends Controller
     {
         $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
 
-        $users = $this->getDoctrine()->getRepository('AppBundle:User')->findBy(array(), array('lastname' => 'ASC'));
+        $users = $this->getDoctrine()->getRepository('AppBundle:User')->findBy(array('enabled' => true), array('lastname' => 'ASC'));
         $sessions = $this->getDoctrine()->getRepository('AppBundle:Session')->findBy(array(), array('nom' => 'ASC'));
         $cohortes = $this->getDoctrine()->getRepository('AppBundle:Cohorte')->findBy(array(), array('nom' => 'ASC'));
         $courses = $this->getDoctrine()->getRepository('AppBundle:Cours')->findBy(array(), array('nom' => 'ASC'));
