@@ -36,7 +36,7 @@ class MessagerieController extends Controller
         $disciplines = array();
         $cours = array();
 
-        $users = $this->getDoctrine()->getRepository('AppBundle:User')->findAll();
+        $users = $this->getDoctrine()->getRepository('AppBundle:User')->findBy(array('enabled' => true));
 
         $inscrCohs = $this->getDoctrine()->getRepository('AppBundle:Inscription_coh')->findBy(array('user' => $this->getUser()));
         $inscrDiscs = $this->getDoctrine()->getRepository('AppBundle:Inscription_d')->findBy(array('user' => $this->getUser()));

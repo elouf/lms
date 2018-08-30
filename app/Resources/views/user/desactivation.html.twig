@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block pageHeader %}
+    <div class="page-header">
+        <div class="container">
+            <h2 class="color3">Activation du compte</h2>
+            <ul class="breadcrumb">
+                <li class="color3">Compte activé</li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+
+{% block main %}
+    <div class="container mt-10 mb-40">
+        <ul>
+            {% for user in users %}
+                <li>{{ user.email }}</li>
+            {% endfor %}
+        </ul>
+
+    </div>
+{% endblock %}

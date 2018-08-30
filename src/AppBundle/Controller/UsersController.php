@@ -2,12 +2,16 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Inscription;
 use AppBundle\Entity\Inscription_c;
 use AppBundle\Entity\Inscription_d;
 use AppBundle\Entity\Cohorte;
 use AppBundle\Entity\Cours;
 use AppBundle\Entity\Discipline;
 use AppBundle\Entity\Inscription_sess;
+use AppBundle\Entity\Role;
+use AppBundle\Entity\User;
+use AppBundle\Repository\CohorteRepository;
 use DateTime;
 use AppBundle\Entity\Inscription_coh;
 use Ivory\CKEditorBundle\Form\Type\CKEditorType;
@@ -40,6 +44,95 @@ class UsersController extends Controller
 
         return $this->render('user/userFrontEnd.html.twig', [
             'users' => $users
+        ]);
+    }
+
+    /**
+     * @Route("/reactiveAll", name="reactiveAll")
+     */
+    public function usersReactivationAction (Request $request)
+    {
+        $em = $this->getDoctrine()->getEntityManager();
+        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
+
+        $users = $em->getRepository('AppBundle:User')->findBy(array('enabled' => false));
+
+        $arrayUsers = [];
+
+        if($users) {
+            foreach ($users as $user) {
+                $user->setEnabled(true);
+                array_push($arrayUsers, $user);
+            }
+        }
+
+        $em->flush();
+
+        return $this->render('user/desactivation.html.twig', [
+            'users' => $arrayUsers
+        ]);
+    }
+
+    /**
+     * @Route("/usersDesactivation/{year}/{month}/{day}", name="usersDesactivation")
+     */
+    public function usersDesactivationAction (Request $request, $year, $month, $day)
+    {
+        $em = $this->getDoctrine()->getEntityManager();
+        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
+
+        $users = $em->getRepository('AppBundle:User')->findBy(array('enabled' => true));
+
+        $arrayUsers = [];
+
+        if($users) {
+            $d1 = new DateTime($year.'-'.$month.'-'.$day.' 00:00:00');
+            /* @var $user User */
+            foreach ($users as $user) {
+                $isEns = false;
+
+                $inscrs = $em->getRepository('AppBundle:Inscription_coh')->findBy(array('user' => $user));
+                if ($inscrs){
+                    /* @var $inscr Inscription_coh */
+                    foreach ($inscrs as $inscr) {
+                        if($inscr->getRole() == 'Enseignant'){
+                            $isEns = true;
+                            break;
+                        }
+                    }
+                }
+                $inscrs = $em->getRepository('AppBundle:Inscription_d')->findBy(array('user' => $user));
+                if ($inscrs){
+                    /* @var $inscr Inscription_d */
+                    foreach ($inscrs as $inscr) {
+                        if($inscr->getRole() == 'Enseignant'){
+                            $isEns = true;
+                            break;
+                        }
+                    }
+                }
+                $inscrs = $em->getRepository('AppBundle:Inscription_c')->findBy(array('user' => $user));
+                if ($inscrs){
+                    /* @var $inscr Inscription_c */
+                    foreach ($inscrs as $inscr) {
+                        if($inscr->getRole() == 'Enseignant'){
+                            $isEns = true;
+                            break;
+                        }
+                    }
+                }
+
+                if(!$isEns && $this->getUser()->getId() != $user->getId() && $user->getCreatedAt()<$d1){
+                    $user->setEnabled(false);
+                    array_push($arrayUsers, $user);
+                }
+            }
+        }
+
+        $em->flush();
+
+        return $this->render('user/desactivation.html.twig', [
+            'users' => $arrayUsers
         ]);
     }
 
@@ -226,7 +319,7 @@ class UsersController extends Controller
         $item = $this->getDoctrine()->getRepository('AppBundle:'.$entityName)->findOneBy(array('id' => $id));
 
         $userRepo = $this->getDoctrine()->getRepository('AppBundle:User');
-        $users = $userRepo->findAll();
+        $users = $userRepo->findBy(array('enabled' => true));
 
         $usersNoAccessTab = array();
         $usersAccessTab = array();
