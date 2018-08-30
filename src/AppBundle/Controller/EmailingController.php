@@ -61,7 +61,8 @@ class EmailingController extends Controller
                     $inscrs = $this->getDoctrine()->getRepository('AppBundle:Inscription_sess')->findBy(array('session' => $session));
                     if($inscrs){
                         foreach($inscrs as $inscr){
-                            array_push($users, $inscr->getUser()->getId());
+                            if($inscr->getUser()->isEnabled())
+                                array_push($users, $inscr->getUser()->getId());
                         }
                     }
                 }
@@ -72,7 +73,8 @@ class EmailingController extends Controller
                     $inscrs = $this->getDoctrine()->getRepository('AppBundle:Inscription_sess')->findBy(array('session' => $session));
                     if($inscrs){
                         foreach($inscrs as $inscr){
-                            array_push($notUsers, $inscr->getUser()->getId());
+                            if($inscr->getUser()->isEnabled())
+                                array_push($notUsers, $inscr->getUser()->getId());
                         }
                     }
                 }
@@ -84,7 +86,8 @@ class EmailingController extends Controller
                     $inscrs = $this->getDoctrine()->getRepository('AppBundle:Inscription_coh')->findBy(array('cohorte' => $cohorte));
                     if($inscrs){
                         foreach($inscrs as $inscr){
-                            array_push($users, $inscr->getUser()->getId());
+                            if($inscr->getUser()->isEnabled())
+                                array_push($users, $inscr->getUser()->getId());
                         }
                     }
                 }
@@ -96,7 +99,8 @@ class EmailingController extends Controller
                     $inscrs = $this->getDoctrine()->getRepository('AppBundle:Inscription_coh')->findBy(array('cohorte' => $cohorte));
                     if($inscrs){
                         foreach($inscrs as $inscr){
-                            array_push($notUsers, $inscr->getUser()->getId());
+                            if($inscr->getUser()->isEnabled())
+                                array_push($notUsers, $inscr->getUser()->getId());
                         }
                     }
                 }

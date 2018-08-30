@@ -67,7 +67,7 @@ class CoursRepository extends \Doctrine\ORM\EntityRepository
         $inscrCs = $em->getRepository('AppBundle:Inscription_c')->findBy(array('cours' => $cours));
         if($inscrCs){
             foreach($inscrCs as $inscrC){
-                if(!in_array($inscrC->getUser(), $users)){
+                if(!in_array($inscrC->getUser(), $users) && $inscrC->getUser()->isEnabled()){
                     array_push($users, $inscrC->getUser());
                 }
             }
@@ -76,7 +76,7 @@ class CoursRepository extends \Doctrine\ORM\EntityRepository
         $inscrDs = $em->getRepository('AppBundle:Inscription_d')->findBy(array('discipline' => $discipline));
         if($inscrDs){
             foreach($inscrDs as $inscrD){
-                if(!in_array($inscrD->getUser(), $users)){
+                if(!in_array($inscrD->getUser(), $users) && $inscrD->getUser()->isEnabled()){
                     array_push($users, $inscrD->getUser());
                 }
             }
@@ -88,7 +88,7 @@ class CoursRepository extends \Doctrine\ORM\EntityRepository
                 $coh = $inscrCoh->getCohorte();
 
                 if($coh->getDisciplines()->contains($discipline) || $coh->getCours()->contains($cours)){
-                    if(!in_array($inscrCoh->getUser(), $users)){
+                    if(!in_array($inscrCoh->getUser(), $users) && $inscrCoh->getUser()->isEnabled()){
                         array_push($users, $inscrCoh->getUser());
                     }
                 }

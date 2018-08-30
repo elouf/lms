@@ -20,7 +20,7 @@ class CohorteRepository extends \Doctrine\ORM\EntityRepository
         $inscrCohs = $em->getRepository('AppBundle:Inscription_coh')->findBy(array('cohorte' => $cohorte));
         if($inscrCohs){
             foreach($inscrCohs as $inscrCoh){
-                if(!in_array($inscrCoh->getUser(), $users)){
+                if(!in_array($inscrCoh->getUser(), $users) && $inscrCoh->getUser()->isEnabled()){
                     array_push($users, $inscrCoh->getUser());
                 }
             }

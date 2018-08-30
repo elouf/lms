@@ -1,6 +1,8 @@
 <?php
 
 namespace AppBundle\Repository;
+use AppBundle\Entity\Inscription_d;
+use AppBundle\Entity\User;
 
 /**
  * DisciplineRepository
@@ -20,8 +22,9 @@ class DisciplineRepository extends \Doctrine\ORM\EntityRepository
 
         $inscrDs = $em->getRepository('AppBundle:Inscription_d')->findBy(array('discipline' => $discipline));
         if($inscrDs){
+            /* @var $inscrD Inscription_d */
             foreach($inscrDs as $inscrD){
-                if(!in_array($inscrD->getUser(), $users)){
+                if(!in_array($inscrD->getUser(), $users) && $inscrD->getUser()->isEnabled()){
                     array_push($users, $inscrD->getUser());
                 }
             }
@@ -33,7 +36,7 @@ class DisciplineRepository extends \Doctrine\ORM\EntityRepository
                 $coh = $inscrCoh->getCohorte();
 
                 if($coh->getDisciplines()->contains($discipline)){
-                    if(!in_array($inscrCoh->getUser(), $users)){
+                    if(!in_array($inscrCoh->getUser(), $users) && $inscrCoh->getUser()->isEnabled()){
                         array_push($users, $inscrCoh->getUser());
                     }
                 }

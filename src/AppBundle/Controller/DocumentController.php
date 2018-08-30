@@ -61,7 +61,7 @@ class DocumentController extends Controller
                 if($cohorte->getDisciplines()->contains($discipline)){
                     $inscrCohs = $this->getDoctrine()->getRepository('AppBundle:Inscription_coh')->findBy(array('cohorte' => $cohorte));
                     foreach($inscrCohs as $inscrCoh){
-                        if(!in_array($inscrCoh->getUser(), $users)) {
+                        if(!in_array($inscrCoh->getUser(), $users)  && $inscrCoh->getUser()->isEnabled()) {
                             array_push($users, [$inscrCoh->getUser(), $inscrCoh->getRole()->getNom() ]);
                         }
                     }
@@ -72,7 +72,7 @@ class DocumentController extends Controller
         $inscrDs = $this->getDoctrine()->getRepository('AppBundle:Inscription_d')->findBy(array('discipline' => $discipline));
         if($inscrDs){
             foreach($inscrDs as $inscrD){
-                if(!in_array($inscrD->getUser(), $users)) {
+                if(!in_array($inscrD->getUser(), $users)  && $inscrD->getUser()->isEnabled()) {
                     array_push($users, [$inscrD->getUser(), $inscrD->getRole()->getNom()]);
                 }
             }
@@ -125,7 +125,7 @@ class DocumentController extends Controller
                 if($cohorte->getDisciplines()->contains($discipline) || $cohorte->getCours()->contains($cours)){
                     $inscrCohs = $this->getDoctrine()->getRepository('AppBundle:Inscription_coh')->findBy(array('cohorte' => $cohorte));
                     foreach($inscrCohs as $inscrCoh){
-                        if(!in_array($inscrCoh->getUser(), $users)) {
+                        if(!in_array($inscrCoh->getUser(), $users)  && $inscrCoh->getUser()->isEnabled()) {
                             array_push($users, [$inscrCoh->getUser(), $inscrCoh->getRole()->getNom() ]);
                         }
                     }
@@ -136,7 +136,7 @@ class DocumentController extends Controller
         $inscrDs = $this->getDoctrine()->getRepository('AppBundle:Inscription_d')->findBy(array('discipline' => $discipline));
         if($inscrDs){
             foreach($inscrDs as $inscrD){
-                if(!in_array($inscrD->getUser(), $users)) {
+                if(!in_array($inscrD->getUser(), $users)  && $inscrD->getUser()->isEnabled()) {
                     array_push($users, [$inscrD->getUser(), $inscrD->getRole()->getNom()]);
                 }
             }
@@ -145,7 +145,7 @@ class DocumentController extends Controller
         $inscrCs = $this->getDoctrine()->getRepository('AppBundle:Inscription_c')->findBy(array('cours' => $cours));
         if($inscrCs){
             foreach($inscrCs as $inscrC){
-                if(!in_array($inscrC->getUser(), $users)) {
+                if(!in_array($inscrC->getUser(), $users)  && $inscrC->getUser()->isEnabled()) {
                     array_push($users, [$inscrC->getUser(), $inscrC->getRole()->getNom()]);
                 }
             }
