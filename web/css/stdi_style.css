@@ -863,6 +863,15 @@ label.alertMustBeSet{
 }
 
 /* Emailing */
+.wellSendEmail{
+    display: none;
+    background: #abd088;
+    color: #509f17;
+    border: solid 1px #509f17;
+    border-radius: 5px;
+    padding: 10px;
+    text-align: center;
+}
 .emailingIHM, .emailingMSG{
     border: 3px #456d94 solid;
     background: #eee;
