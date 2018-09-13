@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -123,6 +124,9 @@ class EmailingController extends Controller
             $message = $request->request->get('message');
             $users = $request->request->get('users');
             $headers = null;
+            /* @var $admin User */
+            $admin = $this->getDoctrine()->getRepository('AppBundle:User')->findOneBy(array('email' => 'contact.afadec@gmail.com '));
+            array_push($users, $admin);
             for($i=0; $i<count($users); $i++){
                 $user = $this->getDoctrine()->getRepository('AppBundle:User')->findOneBy(array('id' => $users[$i]));
                 $emailContent = \Swift_Message::newInstance()
@@ -153,7 +157,6 @@ class EmailingController extends Controller
                         'text/plain'
                     )
                 ;
-                //$headers = $emailContent->getHeaders();
                 $this->get('mailer')->send($emailContent);
             }
             $em->flush();
