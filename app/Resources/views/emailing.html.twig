@@ -88,6 +88,7 @@
             });
 
             $('.btnSendMsg').click(function(){
+                $('.wellSendEmail').hide();
                 $(this).animate('opacity', 1000);
                 var objet = $('#emailingSujet').val();
                 var message = CKEDITOR.instances['emailingTexte'].getData();
@@ -106,7 +107,11 @@
                         users: users
                     },
                     success: function (data) {
-                        window.location.href = window.location.href;
+                        CKEDITOR.instances['emailingTexte'].setData(' ');
+                        $('#emailingSujet').val('');
+                        $('.wellSendEmail').show();
+                        $('.btnCancelFiltersEmailing').click();
+                        //window.location.href = window.location.href;
                     }
                 });
             });
@@ -235,6 +240,9 @@
         </div>
         <div class="row emailingMSG">
             <div class="col-sm-12">
+                <div class="form-group">
+                    <div class="wellSendEmail">Votre email a bien été envoyé !</div>
+                </div>
                 <div class="form-group">
                     <input type="text" id="emailingSujet" />
                     <label for="emailingSujet">Objet*</label>
