@@ -179,7 +179,7 @@
                                     success: function (response) {
                                         $('.colMsgs table').append('<tr class="msgChatRow">' +
                                                 '<td class="userTDchat"><div class="usrChat">'+response['user']+'</div></td>' +
-                                                '<td class="msgChat">'+message+'</td>' +
+                                                '<td class="msgChat"><pre>'+message+'</pre></td>' +
                                                 '</tr>');
                                         var n = $('.colMsgs').height();
                                         $('.colMsgs').animate({ scrollTop: n }, 200);
