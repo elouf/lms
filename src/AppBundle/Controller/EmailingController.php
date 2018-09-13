@@ -126,7 +126,7 @@ class EmailingController extends Controller
             $headers = null;
             /* @var $admin User */
             $admin = $this->getDoctrine()->getRepository('AppBundle:User')->findOneBy(array('email' => 'contact.afadec@gmail.com '));
-            array_push($users, $admin);
+            array_push($users, $admin->getId());
             for($i=0; $i<count($users); $i++){
                 $user = $this->getDoctrine()->getRepository('AppBundle:User')->findOneBy(array('id' => $users[$i]));
                 $emailContent = \Swift_Message::newInstance()
