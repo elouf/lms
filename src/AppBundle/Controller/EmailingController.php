@@ -125,8 +125,12 @@ class EmailingController extends Controller
             $users = $request->request->get('users');
             $headers = null;
             /* @var $admin User */
-            $admin = $this->getDoctrine()->getRepository('AppBundle:User')->findOneBy(array('email' => 'contact.afadec@gmail.com '));
-            array_push($users, $admin->getId());
+            $admin = $this->getDoctrine()->getRepository('AppBundle:User')->findOneBy(array('email' => 'erwannig.louf@gmail.com'));
+            if($admin){
+                array_push($users, $admin->getId());
+            }
+
+            $arraySended = [];
             for($i=0; $i<count($users); $i++){
                 $user = $this->getDoctrine()->getRepository('AppBundle:User')->findOneBy(array('id' => $users[$i]));
                 $emailContent = \Swift_Message::newInstance()
@@ -158,13 +162,15 @@ class EmailingController extends Controller
                     )
                 ;
                 //$headers = $emailContent->getHeaders();
-                $this->get('mailer')->send($emailContent);
+                if($this->get('mailer')->send($emailContent))
+                    array_push($arraySended, $user->getEmail());
             }
             $em->flush();
 
             return new JsonResponse(array(
                 'action' =>'Send mail',
-                'headers' => $headers));
+                'headers' => $headers,
+                'arraySended' => $arraySended));
         }
 
         return new JsonResponse('This is not ajax!', 400);

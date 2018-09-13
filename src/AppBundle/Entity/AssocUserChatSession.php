@@ -40,6 +40,7 @@ class AssocUserChatSession
     /**
      * @var Chat
      *
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @ORM\ManyToOne(targetEntity="Chat")
      */
     protected $chat;
