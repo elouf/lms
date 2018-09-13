@@ -31,7 +31,7 @@ class ChatController extends Controller
         $assocs = $this->getDoctrine()->getRepository('AppBundle:AssocUserChatSession')->findBy(array('chat' => $chat));
 
         $posts = $this->getDoctrine()->getRepository('AppBundle:ChatPost')->findBy(array('chat' => $chat), array('createdAt' => 'ASC'));
-
+        dump($posts);
         return $this->render('chat/chat.html.twig', [
             'chat' => $chat,
             'assocs' => $assocs,
