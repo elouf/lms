@@ -31,7 +31,6 @@ class ChatController extends Controller
         $assocs = $this->getDoctrine()->getRepository('AppBundle:AssocUserChatSession')->findBy(array('chat' => $chat));
 
         $posts = $this->getDoctrine()->getRepository('AppBundle:ChatPost')->findBy(array('chat' => $chat), array('createdAt' => 'ASC'));
-        dump($posts);
         return $this->render('chat/chat.html.twig', [
             'chat' => $chat,
             'assocs' => $assocs,
@@ -199,13 +198,13 @@ class ChatController extends Controller
             $assoc = $em->getRepository('AppBundle:AssocUserChatSession')->findOneBy(array('session' => $session, 'chat' => $chat));
             $user = $assoc->getUser();
 
-            if($user->getId() != $userConnected->getId()){
+            //if($user->getId() != $userConnected->getId()){
                 $newPost = new ChatPost();
                 $newPost->setAuteur($user);
                 $newPost->setChat($chat);
                 $newPost->setTexte($message);
                 $em->persist($newPost);
-            }
+            //}
 
             $em->flush();
 
