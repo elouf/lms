@@ -44,7 +44,7 @@
                                    adminUsrChat
                                 {% endif %}
                                 ">{{ val.auteur.firstname }} {{ val.auteur.lastname }}</div></td>
-                                <td class="msgChat">{{ val.texte }}</td>
+                                <td class="msgChat">{{ val.texte|raw }}</td>
                             </tr>
                         {% endfor %}
                     </table>
@@ -179,7 +179,7 @@
                                     success: function (response) {
                                         $('.colMsgs table').append('<tr class="msgChatRow">' +
                                                 '<td class="userTDchat"><div class="usrChat">'+response['user']+'</div></td>' +
-                                                '<td class="msgChat">'+message.html()+'</td>' +
+                                                '<td class="msgChat">'+message+'</td>' +
                                                 '</tr>');
                                         var n = $('.colMsgs').height();
                                         $('.colMsgs').animate({ scrollTop: n }, 200);
