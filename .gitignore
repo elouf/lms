@@ -16,4 +16,4 @@
 /web/bundles/
 /web/vendors/*
 /composer.lock
-/.idea/
+.idea/
