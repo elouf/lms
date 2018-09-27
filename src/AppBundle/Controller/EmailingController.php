@@ -125,18 +125,18 @@ class EmailingController extends Controller
             $users = $request->request->get('users');
             $headers = null;
             /* @var $admin User */
-            $admin = $this->getDoctrine()->getRepository('AppBundle:User')->findOneBy(array('email' => 'erwannig.louf@gmail.com'));
+            /*$admin = $this->getDoctrine()->getRepository('AppBundle:User')->findOneBy(array('email' => 'erwann_14@hotmail.com'));
             if($admin){
                 array_push($users, $admin->getId());
-            }
+            }*/
 
             $arraySended = [];
             for($i=0; $i<count($users); $i++){
                 $user = $this->getDoctrine()->getRepository('AppBundle:User')->findOneBy(array('id' => $users[$i]));
                 $emailContent = \Swift_Message::newInstance()
                     ->setSubject($objet)
-                    ->setFrom('noreply@afadec.fr')
-                    ->setReplyTo('noreply@afadec.fr')
+                    ->setFrom('erwannig@studit.fr')
+                    ->setReplyTo('erwannig@studit.fr')
                     ->setTo($user->getEmail())
                     ->setBody(
                         $this->renderView(

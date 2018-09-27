@@ -211,13 +211,6 @@
                                     CKEDITOR.instances['chatPostText'].setData('');
                                 }
                             });
-                            $('#cke_chatPostText').keypress(function(event){
-                                var keycode = (event.keyCode ? event.keyCode : event.which);
-                                if(keycode == '13'){
-                                    console.log('test');
-                                    $('.colBtn .btn').click();
-                                }
-                            });
                         });
 
                     });
