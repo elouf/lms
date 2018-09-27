@@ -225,9 +225,10 @@ class ChatController extends Controller
     {
         if ($request->isXMLHttpRequest()) {
 
-            //exec("php bin/console gos:websocket:server");
+            exec("php ../bin/console gos:websocket:server");
             return new JsonResponse(array(
-                    'action' =>'reload Chat WS')
+                    'action' =>'reload Chat WS'
+                )
             );
         }
 
