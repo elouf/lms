@@ -216,4 +216,21 @@ class ChatController extends Controller
 
         return new JsonResponse('This is not ajax!', 400);
     }
+
+    /**
+     * @Route("/reloadWS_ajax", name="reloadWS_ajax")
+     * @Method({"GET", "POST"})
+     */
+    public function reloadWSAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+
+            //exec("php bin/console gos:websocket:server");
+            return new JsonResponse(array(
+                    'action' =>'reload Chat WS')
+            );
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
 }

@@ -77,9 +77,22 @@
     {{ ws_client() }}
     <script>
         jQuery(document).ready(function () {
+
             var userId = $('[data-userId]').attr('data-userId');
             var chatId = $('[data-chatId]').attr('data-chatId');
 
+            // redémarre le chat au cas où le websocket soit fermé
+            $.ajax({
+                type: 'POST',
+                url: "{{path('reloadWS_ajax')}}",
+                async: false,
+                dataType: "json",
+                success: function (data) {
+                    window.location.href = window.location.href;
+                },
+                error: function(xhr, status, error) {
+                }
+            });
             // ajoute dans les stats que le user a accédé au chat
             $.ajax({
                 type: 'POST',
