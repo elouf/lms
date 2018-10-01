@@ -71,6 +71,11 @@ services:
         tags:
             - { name: sonata.admin, manager_type: orm, label: Roles, group: "Inscriptions" }
 
+    admin.chat:
+        class: AppBundle\Admin\ChatAdmin
+        arguments: [~, AppBundle\Entity\Chat, ~]
+        tags:
+            - { name: sonata.admin,manager_type: orm, label: Chats, group: "Ressources" }
     admin.forum:
         class: AppBundle\Admin\ForumAdmin
         arguments: [~, AppBundle\Entity\Forum, ~]

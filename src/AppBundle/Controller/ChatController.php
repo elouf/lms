@@ -3,11 +3,13 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\AssocUserChatSession;
+use AppBundle\Entity\Chat;
 use AppBundle\Entity\ChatPost;
 use AppBundle\Entity\Forum;
 use AppBundle\Entity\ForumPost;
 use AppBundle\Entity\ForumSujet;
 use AppBundle\Entity\Lien;
+use AppBundle\Entity\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -50,10 +52,22 @@ class ChatController extends Controller
             $id = $request->request->get('id');
             $nom = $request->request->get('nom');
             $description = $request->request->get('description');
+            $userResponsables = $request->request->get('userResponsables');
+            $enabled = $request->request->get('enabled');
 
+            /* @var $chat Chat */
             $chat = $em->getRepository('AppBundle:Chat')->findOneBy(array('id' => $id));
             $chat->setNom($nom);
             $chat->setDescription($description);
+            $chat->removeAllAdministrateur();
+            $chat->setEnabled($enabled == "true");
+            if($userResponsables){
+                foreach($userResponsables as $userId){
+                    /* @var $user User */
+                    $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
+                    $chat->addAdministrateur($user);
+                }
+            }
 
             $em->persist($chat);
             $em->flush();

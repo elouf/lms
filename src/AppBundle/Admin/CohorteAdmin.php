@@ -19,7 +19,6 @@ class CohorteAdmin extends AbstractAdmin
                 ->add('disciplines')
                 ->add('cours')
             ->end();
-
     }
 
     //FILTERS

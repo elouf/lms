@@ -31,6 +31,7 @@ class UserStatCours
     /**
      * @var Cours
      *
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @ORM\ManyToOne(targetEntity="Cours")
      */
     protected $cours;

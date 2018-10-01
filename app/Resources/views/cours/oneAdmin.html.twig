@@ -496,6 +496,14 @@
                 elem.find('.detailIconTypeLien i').remove();
                 elem.find('.detailIconTypeLien').append('<i class="fa '+$(this).find("option:selected").attr('data-icon')+'"></i>');
             });
+            $('.addNewResponsable').click(function(){
+                var elem = $(this).closest('.courseElemAdmin');
+                detectInput(elem);
+            });
+            $('[data-champName=enabled]').click(function(){
+                var elem = $(this).closest('.courseElemAdmin');
+                detectInput(elem);
+            });
             /*for (var i in CKEDITOR.instances) {
                 CKEDITOR.instances[i].on('change', function() {
 
@@ -562,6 +570,11 @@
                     if(CKEDITOR.instances[chat.find('[data-champName=description]').attr('id')]){
                         description = CKEDITOR.instances[chat.find('[data-champName=description]').attr('id')].getData();
                     }
+                    var userResponsables = [];
+                    var enabled = chat.find('[data-champName=enabled]').is(':checked');
+                    chat.find('.addNewResponsable[aria-selected="true"]').each(function(){
+                        userResponsables.push($(this).find('[data-idUser]').attr('data-idUser'));
+                    });
 
                     $.ajax({
                         type: 'POST',
@@ -571,7 +584,9 @@
                         data: {
                             id: id,
                             nom: nom,
-                            description: description
+                            description: description,
+                            userResponsables: userResponsables,
+                            enabled: enabled
                         },
                         success: function (data) {
                             refreshInSection(idSection);
@@ -916,6 +931,22 @@
                 });
             });
 
+            // met à jour les noms de responsables des chats
+            $('.chatAdminSelectPicker').each(function(){
+                var randomInt = Math.floor((Math.random() * 100000) + 1);
+                var idsAdmins = [];
+                var idItem = $(this).closest('[data-iditem]').attr('data-iditem');
+                var oldidSP = 'MyBtnSelectPicker'+idItem;
+                var idSP = oldidSP+'-'+randomInt;
+                $(this).find('.MyBtnSelectPicker [data-id='+oldidSP+']').attr('data-id', idSP);
+                $(this).find('.selectpicker').attr('id', idSP);
+                $(this).find('.responsablesIds span').each(function(){
+                    idsAdmins.push($(this).text());
+                });
+                if(idsAdmins.length){
+                    $('#'+idSP).selectpicker('val', idsAdmins);
+                }
+            });
 
             // reset les input text pour éviter le cache
             $('.inputReset').val('');
@@ -1593,7 +1624,7 @@
                                             -->
                                             {% include "cours/adminChat.html.twig"
                                             with {chat:valR, description: valR.description, visible: val.zones.containers[keyR].isVisible,
-                                            zoneId: val.zones.containers[keyR].id, itemId: valR.id, inSection: 'true'}
+                                            zoneId: val.zones.containers[keyR].id, itemId: valR.id, inSection: 'true', users: users}
                                             %}
                                         {% endif %}
                                     {% endfor %}

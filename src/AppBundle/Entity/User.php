@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -56,9 +57,17 @@ class User extends BaseUser
      */
     private $createdAt;
 
+    /**
+     *@var ArrayCollection
+     *
+     * @ORM\ManyToMany(targetEntity="Chat", mappedBy="administrateurs")
+     */
+    private $chats;
+
     public function __construct()
     {
         parent::__construct();
+        $this->chats = new ArrayCollection();
     }
 
     /**
@@ -201,5 +210,37 @@ class User extends BaseUser
     public function getCreatedAt()
     {
         return $this->createdAt;
+    }
+
+    /**
+     * Add a chat
+     *
+     * @param Chat $chat
+     * @return Discipline
+     */
+    public function addChat(Chat $chat)
+    {
+        if(!$this->chats->contains($chat)){
+            $this->chats[] = $chat;
+        }
+        return $this;
+    }
+    /**
+     * Remove a chat
+     *
+     * @param Chat $chat
+     */
+    public function removeChat(Chat $chat)
+    {
+        $this->chats->removeElement($chat);
+    }
+    /**
+     * Get chats
+     *
+     * @return ArrayCollection
+     */
+    public function getChats()
+    {
+        return $this->chats;
     }
 }

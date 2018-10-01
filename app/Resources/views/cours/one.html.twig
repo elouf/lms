@@ -623,13 +623,14 @@
                                                             <div class="itemTitle">{{ valR.nom }}</div>
                                                             <div class="itemDescription">{{ valR.description | raw }}</div>
                                                         </div>
-
-                                                        <div class="col-xs-2 text-right">
-                                                            <a class="btn btnLien btn-sm btn-warning"
-                                                               href="{{ path('chat', {id: valR.id}) }}">
-                                                                <i class="fa fa-comments-o" aria-hidden="true"></i>
-                                                            </a>
-                                                        </div>
+                                                        {% if valR.enabled or app.user in valR.administrateurs or app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                                            <div class="col-xs-2 text-right">
+                                                                <a class="btn btnLien btn-sm btn-warning"
+                                                                   href="{{ path('chat', {id: valR.id}) }}">
+                                                                    <i class="fa fa-comments-o" aria-hidden="true"></i>
+                                                                </a>
+                                                            </div>
+                                                        {% endif %}
                                                     </div>
 
 

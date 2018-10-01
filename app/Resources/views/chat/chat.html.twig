@@ -23,6 +23,20 @@
     <script src="{{ asset('vendors/ckeditor/adapters/jquery.js') }}"></script>
     {% include 'forum/commonJs.html.twig' %}
     <div class="container pt-40 pb-40" data-userId="{{ app.user.id }}" data-chatId="{{ chat.id }}">
+        {% if  app.user in chat.administrateurs or app.user.hasRole('ROLE_SUPER_ADMIN') %}
+            <div class="zoneBtnGestionChat">
+                {% if not chat.enabled %}
+                    <div class="btnDemarreChat btnToggleEnabledChat btn btnLien btn-sm btn-warning">
+                        Démarrer le chat
+                    </div>
+                {% else %}
+                    <div class="btnDemarreChat btnToggleEnabledChat btn btnLien btn-sm btn-warning">
+                        Interrompre le chat
+                    </div>
+                {% endif %}
+            </div>
+
+        {% endif %}
         <div class="chatIHM">
             <div class="row headerChat">
                 <div class="col-xs-9">

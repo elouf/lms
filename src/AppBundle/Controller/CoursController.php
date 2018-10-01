@@ -52,6 +52,8 @@ class CoursController extends Controller
         $discipline = $cours->getDiscipline();
         $repositoryC = $this->getDoctrine()->getRepository('AppBundle:Cours');
 
+        $users = $this->getDoctrine()->getRepository('AppBundle:User')->findBy(array('enabled' => true));
+
         $allcourses = $repositoryC->findBy(array('discipline' => $discipline));
         $courses = array();
         foreach($allcourses as $coursFiltre){
@@ -278,7 +280,8 @@ class CoursController extends Controller
                     'uploadSrcSteps' => $this->getParameter('upload_srcSteps'),
                     'uploadCourse' => $this->getParameter('upload_course'),
                     'nbNewDocs' => $nbNewDocs,
-                    'courses' => $courses
+                    'courses' => $courses,
+                    'users' => $users
                 ]);
         }elseif($mode == "ens") {
             return $this->render('cours/one.html.twig', [
