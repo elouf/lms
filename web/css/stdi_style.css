@@ -311,6 +311,15 @@ textarea[readonly]{
 .textarea{
     background: #E8E8E8;
 }
+.selectPickerContainer .bootstrap-select{
+    padding: 0;
+}
+.selectPickerContainer .dropdown-menu.open{
+    max-height: 300px !important;
+}
+.addNewResponsable{
+    padding: 6px 20px !important;
+}
 
 .courseElems .courseElemAdmin:first-child .btnMoveUp,
 .courseElems .courseElemAdmin:last-child .btnMoveDown,
@@ -500,7 +509,7 @@ label.alertMustBeSet{
 }
 .itemDescription{
     font-size: 15px;
-    color: #AAAAAA;
+    color: #666;
 }
 .alignR{
     margin-left: 50px;
@@ -860,6 +869,11 @@ label.alertMustBeSet{
     width: 140px;
     vertical-align: top;
     padding: 5px 0px;
+}
+
+.zoneBtnGestionChat{
+    text-align: center;
+    padding: 15px;
 }
 
 /* Emailing */
