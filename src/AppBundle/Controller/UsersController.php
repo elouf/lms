@@ -42,20 +42,26 @@ class UsersController extends Controller
         $userRepo = $this->getDoctrine()->getRepository('AppBundle:User');
         $users = $userRepo->findAll();
 
-        $usersAccessTab = array();
         $cohRepo = $this->getDoctrine()->getRepository('AppBundle:Cohorte');
         $cohortes = $cohRepo->findAll();
         $myUsers = [];
+        /* @var $user User */
         foreach($users as $user){
-            $myCohortes = [];
-            if($cohortes){
-                foreach ($cohortes as $cohorte) {
-                    if($cohRepo->userHasAccessOrIsInscrit($user->getId(), $cohorte->getId())){
-                        array_push($myCohortes, $cohorte);
+            if($user->isEnabled()){
+                $myCohortes = [];
+                if($cohortes){
+                    /* @var $cohorte Cohorte */
+                    foreach ($cohortes as $cohorte) {
+                        if($cohRepo->userHasAccessOrIsInscrit($user->getId(), $cohorte->getId())){
+                            array_push($myCohortes, $cohorte);
+                        }
                     }
                 }
+                array_push($myUsers, ['user' => $user, 'cohortes' => $myCohortes]);
+            }else{
+                array_push($myUsers, ['user' => $user, 'cohortes' => []]);
             }
-            array_push($myUsers, ['user' => $user, 'cohortes' => $myCohortes]);
+
         }
 
 
