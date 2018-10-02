@@ -54,20 +54,26 @@
                         <th>Email</th>
                         <th>Prénom</th>
                         <th>Nom</th>
+                        <th>Cohortes</th>
                         <th class="filter-select">Institut</th>
                         <th class="filter-select">Activé</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {% for user in users %}
-                        <tr class="userLine" data-userId="{{ user.id }}">
-                            <td><a href="{{ path('user', {id:user.id }) }}">{{ user.id }}</a></td>
-                            <td><a href="{{ path('user', {id:user.id }) }}">{{ user.email }}</a></td>
-                            <td>{{ user.firstname }}</td>
-                            <td>{{ user.lastname }}</td>
-                            <td>{{ user.institut }}</td>
+                    {% for myUser in myUsers %}
+                        <tr class="userLine" data-userId="{{ myUser.user.id }}">
+                            <td><a href="{{ path('user', {id:myUser.user.id }) }}">{{ myUser.user.id }}</a></td>
+                            <td><a href="{{ path('user', {id:myUser.user.id }) }}">{{ myUser.user.email }}</a></td>
+                            <td>{{ myUser.user.firstname }}</td>
+                            <td>{{ myUser.user.lastname }}</td>
                             <td>
-                                {% if user.enabled == 1 %}
+                                {% for coh in myUser.cohortes %}
+                                    <a href="{{ path('itemUsers', {id: coh.id, type: "cohorte"}) }}">{{ coh.nom }}</a>
+                                {% endfor %}
+                            </td>
+                            <td>{{ myUser.user.institut }}</td>
+                            <td>
+                                {% if myUser.user.enabled == 1 %}
                                     oui
                                 {% else %}
                                     non

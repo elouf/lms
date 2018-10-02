@@ -42,8 +42,25 @@ class UsersController extends Controller
         $userRepo = $this->getDoctrine()->getRepository('AppBundle:User');
         $users = $userRepo->findAll();
 
+        $usersAccessTab = array();
+        $cohRepo = $this->getDoctrine()->getRepository('AppBundle:Cohorte');
+        $cohortes = $cohRepo->findAll();
+        $myUsers = [];
+        foreach($users as $user){
+            $myCohortes = [];
+            if($cohortes){
+                foreach ($cohortes as $cohorte) {
+                    if($cohRepo->userHasAccessOrIsInscrit($user->getId(), $cohorte->getId())){
+                        array_push($myCohortes, $cohorte);
+                    }
+                }
+            }
+            array_push($myUsers, ['user' => $user, 'cohortes' => $myCohortes]);
+        }
+
+
         return $this->render('user/userFrontEnd.html.twig', [
-            'users' => $users
+            'myUsers' => $myUsers
         ]);
     }
 
