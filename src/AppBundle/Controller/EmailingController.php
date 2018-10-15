@@ -135,8 +135,8 @@ class EmailingController extends Controller
                 $user = $this->getDoctrine()->getRepository('AppBundle:User')->findOneBy(array('id' => $users[$i]));
                 $emailContent = \Swift_Message::newInstance()
                     ->setSubject($objet)
-                    ->setFrom('afadec.prod@afadec.fr')
-                    ->setReplyTo('afadec.prod@afadec.fr')
+                    ->setFrom('noreply@afadec.fr')
+                    ->setReplyTo('noreply@afadec.fr')
                     ->setTo($user->getEmail())
                     ->setBody(
                         $this->renderView(
