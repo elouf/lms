@@ -264,7 +264,7 @@ class DocumentController extends Controller
     public function sendMailDoc(User $user, User $sender, $conteneurName){
         $message = \Swift_Message::newInstance()
             ->setSubject('[AFADEC] Document déposé')
-            ->setFrom('noreply@afadec.fr')
+            ->setFrom('afadec.prod@afadec.fr')
             ->setTo($user->getEmail())
             ->setBody(
                 $this->renderView(
