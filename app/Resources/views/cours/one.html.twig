@@ -381,12 +381,12 @@
                                                             <div class="itemTitle">{{ valR.nom }}</div>
                                                             <div class="itemDescription">{{ valR.description | raw }}</div>
                                                             {% if '.mp4' in valR.url %}
-                                                                <video controls>
+                                                                <video style="max-width: 600px;" controls>
                                                                     <source src="{{ valR.url }}" type="video/mp4">
                                                                     Votre navigateur ne supporte pas la balise "video".
                                                                 </video>
                                                             {% elseif '.mp3' in valR.url %}
-                                                                <audio controls>
+                                                                <audio style="max-width: 600px;" controls>
                                                                     <source src="{{ valR.url }}" type="audio/mpeg">
                                                                     Votre navigateur ne supporte pas la balise "audio".
                                                                 </audio>
