@@ -594,7 +594,7 @@
                                                             <div class="itemTitle">{{ val.zones.groupe[keyR].nom }}</div>
                                                             <div class="itemDescription">{{ val.zones.groupe[keyR].description | raw }}</div>
                                                         </div>
-                                                        <div class="col-xs-12 text-right">
+                                                        <div class="col-xs-12 {% if not val.zones.groupe[keyR].isVertical %}text-right{% endif %}">
                                                             {% for keyG,valG in val.zones.content[keyR] %}
                                                                 {% if '.mp4' in valG.lien.url %}
                                                                     <div class="blocMedia">
