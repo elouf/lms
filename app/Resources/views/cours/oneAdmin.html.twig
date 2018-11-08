@@ -649,6 +649,7 @@
                     var idSection = $(this).closest('[data-idSection]').attr('data-idSection');
                     var id = groupe.attr('data-idItem');
                     var nom = groupe.find('[data-champName=nom]').val();
+                    var isVertical = groupe.find('.btnSetIsVertical i').hasClass(checkedClass);
 
                     var description = groupe.find('textarea[data-champName=description]').val();
                     if(CKEDITOR.instances[groupe.find('[data-champName=description]').attr('id')]){
@@ -663,7 +664,8 @@
                         data: {
                             id: id,
                             nom: nom,
-                            description: description
+                            description: description,
+                            isVertical: isVertical
                         },
                         success: function (data) {
                             refreshInSection(idSection);
@@ -747,6 +749,17 @@
                         }
                     });
                 }
+            });
+            // on passe les listes en vertical dans un groupe
+            $('.btnSetIsVertical').click(function(){
+                var groupe = $(this).closest('.courseElemAdmin');
+                var btn = $(this).find('i');
+                if (btn.hasClass(uncheckedClass)) {
+                    btn.removeClass(uncheckedClass).addClass(checkedClass);
+                } else {
+                    btn.removeClass(checkedClass).addClass(uncheckedClass);
+                }
+                detectInput(groupe);
             });
             // ajout d'un lien dans un groupe
             $('.selectLienToAddToGroupe').click(function(){
@@ -1507,7 +1520,7 @@
                                 <ul class="list-default courseElems">
                                     {% for key,val in groupes %}
                                         {% include "cours/adminGroupe.html.twig"
-                                        with {nom:val.groupe.nom, description: val.groupe.description,
+                                        with {isVertical: val.groupe.isVertical, nom:val.groupe.nom, description: val.groupe.description,
                                         zoneId: '0', itemId: val.groupe.id, inSection: 'false', liens: val.content}
                                         %}
                                     {% endfor %}
@@ -1589,7 +1602,7 @@
                                                             GROUPES DE LIENS
                                         -->
                                             {% include "cours/adminGroupe.html.twig"
-                                            with {nom:val.zones.groupe[keyR].nom, description: val.zones.groupe[keyR].description,
+                                            with {isVertical: val.zones.groupe[keyR].isVertical, nom:val.zones.groupe[keyR].nom, description: val.zones.groupe[keyR].description,
                                             zoneId: val.zones.containers[keyR].id, itemId: val.zones.groupe[keyR].id, inSection: 'true',
                                             liens: valR, visible: val.zones.containers[keyR].isVisible}
                                             %}

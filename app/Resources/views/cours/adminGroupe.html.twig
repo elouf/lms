@@ -2,18 +2,18 @@
     data-idItem="{{ itemId }}"
     class="courseElemAdmin groupeLiensAdmin col-md-12"
     data-typeItem="groupe"
-    {% if inSection == 'true' %}
-        {% set isVisible = "false" %}
-        {% if  visible == 1 %}
-            {% set isVisible = "true" %}
+        {% if inSection == 'true' %}
+            {% set isVisible = "false" %}
+            {% if  visible == 1 %}
+                {% set isVisible = "true" %}
+            {% endif %}
+            data-IsVisible="{{ isVisible }}"
         {% endif %}
-        data-IsVisible="{{ isVisible }}"
-    {% endif %}
 >
     <div class="titleBar">Groupe de Liens</div>
 
     {% if inSection == 'true' %}
-        {% include "cours/adminBtns.html.twig" with {visible: visible}  %}
+        {% include "cours/adminBtns.html.twig" with {visible: visible} %}
     {% else %}
         <div class="btnActionCol col-md-1">
             <ul>
@@ -30,11 +30,23 @@
         <div class="row mb-10">
             <div class="LabelAdmin col-sm-3">Description</div>
             <div class="noPadding col-sm-9  col-xs-12">
-                <textarea data-champName="description" id="zone_{{ zoneId }}_groupeLien_{{ itemId }}_descr" class="complexEditor editor champAdmin" readonly>{{ description | raw }}</textarea>
+                <textarea data-champName="description" id="zone_{{ zoneId }}_groupeLien_{{ itemId }}_descr"
+                          class="complexEditor editor champAdmin" readonly>{{ description | raw }}</textarea>
             </div>
 
         </div>
-        <hr class="hrCourseElem" />
+        <hr class="hrCourseElem"/>
+        <div class="row">
+            <div class="LabelAdmin col-sm-3">Liste verticale</div>
+            <div class="myBtn btnAdmin btnSetIsVertical inlineBtn">
+                {% if isVertical %}
+                    <i class="fa fa-check-square-o"></i>
+                {% else %}
+                    <i class="fa fa-square-o"></i>
+                {% endif %}
+            </div>
+        </div>
+        <hr class="hrCourseElem"/>
         <div class="row">
             <div class="LabelAdmin col-sm-2">Liens</div>
             <div class="selectLienToAddToGroupe btn btnAdmin col-sm-1"><i class="fa fa-plus"> </i></div>

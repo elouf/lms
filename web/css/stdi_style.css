@@ -259,6 +259,9 @@ a { font-family: inherit; color: inherit; }
     display: inline-block;
     padding: 5px 8px;
 }
+.btnSetIsVertical{
+    border-radius: 5px;
+}
 
 .formCol{
     border: 2px solid #d1d1d1;
@@ -540,6 +543,9 @@ label.alertMustBeSet{
     font-weight: bold;
     margin-top: 0 !important;
     color: #d64600 !important;
+}
+.verticalGrLienElem{
+    margin-bottom: 10px;
 }
 
 /* CRUD DES ITEMS */

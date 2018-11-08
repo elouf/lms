@@ -26,10 +26,13 @@ class GroupesLiensController extends Controller
             $id = $request->request->get('id');
             $nom = $request->request->get('nom');
             $description = $request->request->get('description');
+            $isVertical = $request->request->get('isVertical');
 
+            /* @var $groupe GroupeLiens */
             $groupe = $em->getRepository('AppBundle:GroupeLiens')->findOneBy(array('id' => $id));
             $groupe->setNom($nom);
             $groupe->setDescription($description);
+            $groupe->setIsVertical($isVertical == 'true');
 
             $em->persist($groupe);
             $em->flush();

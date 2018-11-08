@@ -19,6 +19,13 @@ class GroupeLiens extends Ressource
     protected $assocLiens;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="isVertical", type="boolean", nullable=true)
+     */
+    private $isVertical = false;
+
+    /**
      * Set assocLiens
      *
      * @param User $assocLiens
@@ -45,5 +52,29 @@ class GroupeLiens extends Ressource
     public function getType()
     {
         return $this::TYPE_GROUPE;
+    }
+
+    /**
+     * Set isVertical
+     *
+     * @param boolean $isVertical
+     *
+     * @return GroupeLiens
+     */
+    public function setIsVertical($isVertical)
+    {
+        $this->isVertical = $isVertical;
+
+        return $this;
+    }
+
+    /**
+     * Get isVertical
+     *
+     * @return bool
+     */
+    public function getIsVertical()
+    {
+        return $this->isVertical;
     }
 }

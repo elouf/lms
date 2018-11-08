@@ -30,14 +30,14 @@
             var upload_course = $('[data-courseUpload]').attr('data-courseUpload');
             var idSection;
 
-            $('.btnOpenDevoir').click(function(){
+            $('.btnOpenDevoir').click(function () {
                 var idItem = $(this).closest('[data-iditem]').attr('data-iditem');
                 var myBtn = $(this);
                 idSection = $(this).closest('.section').attr('data-idSection');
 
                 $.ajax({
                     type: 'POST',
-                    url: "{{path('getDevoir_ajax')}}",
+                    url: "{{ path('getDevoir_ajax') }}",
                     async: false,
                     dataType: "json",
                     data: {
@@ -52,11 +52,11 @@
 
                         var dureeH = parseInt(data['duree'] / 3600);
                         var dureeM = parseInt((data['duree'] % 3600) / 60);
-                        if(dureeM < 10){
-                            dureeM = "0"+dureeM;
+                        if (dureeM < 10) {
+                            dureeM = "0" + dureeM;
                         }
 
-                        popup.find('.popupDevoirDuree').text(dureeH+'h'+dureeM);
+                        popup.find('.popupDevoirDuree').text(dureeH + 'h' + dureeM);
                         popup.find('.popupDevoirNom').text(data['nom']);
                         popup.find('.popupDevoirDescription').html(data['description']);
 
@@ -71,21 +71,21 @@
                         $('.listeDevoirSujets .listeSujets *').removeClass('hidden')
 
                         popup.find('.alert').hide();
-                        if(data['copieStart'] == null) {
+                        if (data['copieStart'] == null) {
                             $('.beginDevoir, .masqueDevoir').show();
                             $('.alert_beforeDownload').show();
                             $('.chrono_h').text(dureeH);
                             $('.chrono_m').text(dureeM);
                             $('.chrono_s').text("00");
 
-                            $('.beginDevoir').unbind('click').click(function(){
+                            $('.beginDevoir').unbind('click').click(function () {
                                 var btn = $(this);
-                                if(!btn.hasClass('inactivate')) {
+                                if (!btn.hasClass('inactivate')) {
                                     btn.addClass('inactivate');
                                     // creation de l'objet Copie
                                     $.ajax({
                                         type: 'POST',
-                                        url: "{{path('startDevoir_ajax')}}",
+                                        url: "{{ path('startDevoir_ajax') }}",
                                         async: false,
                                         dataType: "json",
                                         data: {
@@ -99,7 +99,7 @@
                                     });
                                 }
                             });
-                        }else{
+                        } else {
                             // le devoir avait déjà été commencé
                             $('.beginDevoir, .masqueDevoir').hide();
                             $('.alert_duringDevoir').show();
@@ -107,10 +107,10 @@
                             timeLimit.setHours(timeLimit.getHours() + parseInt(dureeH));
                             timeLimit.setMinutes(timeLimit.getMinutes() + parseInt(dureeM));
                             var now_ = new Date();
-                            var now = new Date(now_.getTime() - now_.getTimezoneOffset()*60000);
-                            if(now_ > timeLimit){
-                                window.location.href = window.location.href.replace( /[\?#].*|$/, "?idSection="+idSection );
-                            }else{
+                            var now = new Date(now_.getTime() - now_.getTimezoneOffset() * 60000);
+                            if (now_ > timeLimit) {
+                                window.location.href = window.location.href.replace(/[\?#].*|$/, "?idSection=" + idSection);
+                            } else {
                                 var diff = timeLimit.getTime() - now_.getTime();
                                 var diffSeconds = diff / 1000;
                                 var HH = parseInt(Math.floor(diffSeconds / 3600));
@@ -122,11 +122,11 @@
                             }
                         }
 
-                        var url = steps + folderLocation+$('[data-coursId]').attr('data-coursId')+'/devoir/'+idItem+'/copies/'+$('[data-userId]').attr('data-userId')+'/';
+                        var url = steps + folderLocation + $('[data-coursId]').attr('data-coursId') + '/devoir/' + idItem + '/copies/' + $('[data-userId]').attr('data-userId') + '/';
 
                         $.ajax({
                             type: 'POST',
-                            url: "{{path('checkDirForUploadFile_ajax')}}",
+                            url: "{{ path('checkDirForUploadFile_ajax') }}",
                             async: false,
                             dataType: "json",
                             data: {
@@ -134,20 +134,20 @@
                             },
                             success: function (data) {
                             },
-                            error: function(xhr, status, error) {
+                            error: function (xhr, status, error) {
                             }
                         });
 
                         $('#copieUpload').fileupload({
                             url: steps + upload_srcSteps + upload_course + folderLocation,
-                            dropZone:null,
+                            dropZone: null,
                             dataType: 'json',
-                            add: function(e, data) {
+                            add: function (e, data) {
                                 var uploadErrors = [];
-                                if(data.files[0]['size'] > 5000000) {
+                                if (data.files[0]['size'] > 5000000) {
                                     uploadErrors.push('Fichier trop volumineux : ne pas dépasser 5MO');
                                 }
-                                if(uploadErrors.length > 0) {
+                                if (uploadErrors.length > 0) {
                                     alert(uploadErrors.join("\n"));
                                 } else {
                                     data.submit();
@@ -158,21 +158,21 @@
                                     var myUrlTab = file.url.split(folderLocation);
                                     $.ajax({
                                         type: 'POST',
-                                        url: "{{path('uploadCopieFile_ajax')}}",
+                                        url: "{{ path('uploadCopieFile_ajax') }}",
                                         async: false,
                                         dataType: "json",
                                         data: {
                                             itemId: idItem,
                                             userId: $('[data-userId]').attr('data-userId'),
-                                            url: steps + folderLocation+myUrlTab[1],
+                                            url: steps + folderLocation + myUrlTab[1],
                                             urlDest: url,
                                             currentUrl: window.location.pathname
                                         },
                                         success: function (data) {
                                             $('.modal').modal('toggle');
-                                            window.location.href = window.location.href.replace( /[\?#].*|$/, "?idSection="+idSection );
+                                            window.location.href = window.location.href.replace(/[\?#].*|$/, "?idSection=" + idSection);
                                         },
-                                        error: function(xhr, status, error) {
+                                        error: function (xhr, status, error) {
                                             $('.modal').modal('toggle');
                                         }
                                     });
@@ -182,23 +182,23 @@
                             progressall: function (e, data) {
                                 var progress = parseInt(data.loaded / data.total * 100, 10);
                                 $('#itemProgress').find('.progress-bar').css(
-                                        'width',
-                                        progress + '%'
+                                    'width',
+                                    progress + '%'
                                 );
                             }
                         }).prop('disabled', !$.support.fileInput)
-                                .parent().addClass($.support.fileInput ? undefined : 'disabled');
+                            .parent().addClass($.support.fileInput ? undefined : 'disabled');
                     },
-                    error: function(xhr, status, error) {
+                    error: function (xhr, status, error) {
                         console.log('error upload devoir copie')
                     }
                 });
             });
-            $('.btnDeleteCopieEtu').click(function(){
+            $('.btnDeleteCopieEtu').click(function () {
                 var idItem = $(this).closest('[data-iditem]').attr('data-iditem');
                 $.ajax({
                     type: 'POST',
-                    url: "{{path('deleteCopieEtu_ajax')}}",
+                    url: "{{ path('deleteCopieEtu_ajax') }}",
                     async: false,
                     dataType: "json",
                     data: {
@@ -206,69 +206,70 @@
                         userId: $('[data-userId]').attr('data-userId')
                     },
                     success: function (data) {
-                        window.location.href = window.location.href.replace( /[\?#].*|$/, "?idSection="+idSection );
+                        window.location.href = window.location.href.replace(/[\?#].*|$/, "?idSection=" + idSection);
                     },
-                    error: function(xhr, status, error) {
+                    error: function (xhr, status, error) {
                     }
                 });
             });
 
-            function launchChrono(){
+            function launchChrono() {
                 clearInterval(chrono);
-                chrono = setInterval(function(){
+                chrono = setInterval(function () {
                     var h = parseInt($('.chrono_h').text());
                     var m = parseInt($('.chrono_m').text());
                     var s = parseInt($('.chrono_s').text());
-                    if(s == 0){
+                    if (s == 0) {
                         console.log("s=0");
-                        if(m == 0){
+                        if (m == 0) {
                             console.log("m=0");
-                            if(h == 0){
+                            if (h == 0) {
                                 console.log("h=0");
                                 clearInterval(chrono);
                                 $('.contentDevoirRess .fileUploader, .alert_duringDevoir, .alert_beforeDownload, .beginDevoir').hide();
                                 $('.alert_afterTimeExpire').show();
                                 //window.location.href = window.location.href.replace( /[\?#].*|$/, "?idSection="+idSection );
-                            }else{
-                                var newH = parseInt(h-1);
+                            } else {
+                                var newH = parseInt(h - 1);
                                 $('.chrono_h').text(newH);
                                 $('.chrono_m').text('59');
                             }
-                        }else{
-                            var newM = parseInt(m-1);
-                            if(newM < 10){
-                                newM = "0"+newM;
+                        } else {
+                            var newM = parseInt(m - 1);
+                            if (newM < 10) {
+                                newM = "0" + newM;
                             }
                             $('.chrono_m').text(newM);
                             $('.chrono_s').text('59');
                         }
-                    }else{
-                        var newS = parseInt(s-1);
-                        if(newS < 10){
-                            newS = "0"+newS;
+                    } else {
+                        var newS = parseInt(s - 1);
+                        if (newS < 10) {
+                            newS = "0" + newS;
                         }
                         $('.chrono_s').text(newS);
                     }
                 }, 1000);
             }
 
-            function toJSDate(phpDateTime){
+            function toJSDate(phpDateTime) {
                 var dateTime = phpDateTime.split(" ");//dateTime[0] = date, dateTime[1] = time
 
                 var date = dateTime[0].split("-");
                 var time = dateTime[1].split(":");
 
-                return new Date(date[0], (date[1]-1), date[2], time[0], time[1], 0, 0);
+                return new Date(date[0], (date[1] - 1), date[2], time[0], time[1], 0, 0);
             }
+
             function formatNum(num) {
                 return num < 10 ? '0' + num : '' + num;
             }
 
             var getUrlParameter = function getUrlParameter(sParam) {
                 var sPageURL = decodeURIComponent(window.location.search.substring(1)),
-                        sURLVariables = sPageURL.split('&'),
-                        sParameterName,
-                        i;
+                    sURLVariables = sPageURL.split('&'),
+                    sParameterName,
+                    i;
 
                 for (i = 0; i < sURLVariables.length; i++) {
                     sParameterName = sURLVariables[i].split('=');
@@ -279,15 +280,15 @@
                 }
             };
             // on clique sur la section passée en paramètre (si reload de la page)
-            if(getUrlParameter("idSection")){
-                $('.ongletSection[data-idsection='+getUrlParameter("idSection")+'] a').click();
+            if (getUrlParameter("idSection")) {
+                $('.ongletSection[data-idsection=' + getUrlParameter("idSection") + '] a').click();
             }
 
-            $('.btnUserStatRessource').click(function(e){
+            $('.btnUserStatRessource').click(function (e) {
                 var ressId = $(this).attr('data-statRessId');
                 $.ajax({
                     type: 'POST',
-                    url: "{{path('addUserStatRessource_ajax')}}",
+                    url: "{{ path('addUserStatRessource_ajax') }}",
                     async: false,
                     dataType: "json",
                     data: {
@@ -295,7 +296,7 @@
                     },
                     success: function (data) {
                     },
-                    error: function(xhr, status, error) {
+                    error: function (xhr, status, error) {
                     }
                 });
             });
@@ -305,7 +306,7 @@
             // ajoute dans les stats que le user a accédé au chat
             $.ajax({
                 type: 'POST',
-                url: "{{path('addUserStatCours_ajax')}}",
+                url: "{{ path('addUserStatCours_ajax') }}",
                 async: false,
                 dataType: "json",
                 data: {
@@ -313,13 +314,15 @@
                 },
                 success: function (data) {
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                 }
             });
         });
     </script>
 
-    <div class="container mt-140" data-coursId="{{ cours.id }}" data-folderUpload="{{ folderUpload }}" data-uploadSteps="{{ uploadSteps }}" data-uploadSrcSteps="{{ uploadSrcSteps }}" data-courseUpload="{{ uploadCourse }}">
+    <div class="container mt-140" data-coursId="{{ cours.id }}" data-folderUpload="{{ folderUpload }}"
+         data-uploadSteps="{{ uploadSteps }}" data-uploadSrcSteps="{{ uploadSrcSteps }}"
+         data-courseUpload="{{ uploadCourse }}">
         <div class="row">
             <div class="col-sm-4">
                 <div class="course-intro">
@@ -348,15 +351,22 @@
 
         <div class="row mt-40 mb-100">
             <div class="col-sm-3">
-                <ul class="nav nav-pills nav-stacked pull-left" role="tablist" style="padding-bottom: 5px;padding-top: 5px">
+                <ul class="nav nav-pills nav-stacked pull-left" role="tablist"
+                    style="padding-bottom: 5px;padding-top: 5px">
                     {% for key,val in zonesSections if val.section.isVisible == 1 %}
-                        <li role="presentation"  class="ongletSection{% if loop.index == 1 %} active{% endif %}"   data-idsection="{{ val.section.id }}">
-                            <a href="#t1body{{ val.section.id }}" aria-controls="t1body{{ val.section.id }}" role="tab" data-toggle="tab" aria-expanded="true"><i class="fa {{ val.section.faIcon }} fa-fw" aria-hidden="true"> </i>{{ val.section.nom }}</a>
+                        <li role="presentation" class="ongletSection{% if loop.index == 1 %} active{% endif %}"
+                            data-idsection="{{ val.section.id }}">
+                            <a href="#t1body{{ val.section.id }}" aria-controls="t1body{{ val.section.id }}" role="tab"
+                               data-toggle="tab" aria-expanded="true"><i class="fa {{ val.section.faIcon }} fa-fw"
+                                                                         aria-hidden="true"> </i>{{ val.section.nom }}
+                            </a>
                         </li>
                     {% endfor %}
                     {% if cours.docsActivated==1 %}
-                        <li role="presentation"  class="ongletSection">
-                            <a href="#sectionDocs" aria-controls="sectionDocs" role="tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-pencil fa-fw" aria-hidden="true"> </i>Documents partagés</a>
+                        <li role="presentation" class="ongletSection">
+                            <a href="#sectionDocs" aria-controls="sectionDocs" role="tab" data-toggle="tab"
+                               aria-expanded="true"><i class="fa fa-pencil fa-fw" aria-hidden="true"> </i>Documents
+                                partagés</a>
                         </li>
                     {% endif %}
                 </ul>
@@ -364,7 +374,9 @@
             <div class="col-sm-9">
                 <div class="tab-content">
                     {% for key,val in zonesSections if val.section.isVisible %}
-                        <div role="tabpanel" data-idSection="{{ val.section.id }}" class="section tab-pane fade{% if loop.index == 1 %} in active {% endif %}" id="t1body{{ val.section.id }}">
+                        <div role="tabpanel" data-idSection="{{ val.section.id }}"
+                             class="section tab-pane fade{% if loop.index == 1 %} in active {% endif %}"
+                             id="t1body{{ val.section.id }}">
                             <div class="editor">
                                 <ul class="list-default">
                                     {% for keyR,valR in val.zones.content %}
@@ -423,10 +435,12 @@
                                                                     {{ valR.nom }}
                                                                 </div>
                                                                 <div class="ml-10">
-                                                                    Du {{ valR.dateDebut|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }} au {{ valR.dateFin|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}
+                                                                    Du {{ valR.dateDebut|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}
+                                                                    au {{ valR.dateFin|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}
                                                                 </div>
                                                                 <div class="ml-10">
-                                                                    Durée : {{ valR.duree//3600  }}h{{ (valR.duree - 3600*(valR.duree//3600))//60 }}min
+                                                                    Durée : {{ valR.duree//3600 }}
+                                                                    h{{ (valR.duree - 3600*(valR.duree//3600))//60 }}min
                                                                 </div>
                                                                 <div class="itemDescription ml-10">
                                                                     {{ valR.description | raw }}
@@ -440,8 +454,7 @@
                                                                 {% set duree = '+' ~ valR.duree ~ 'seconds' %}
                                                                 {% if val.zones.copieFichier[keyR] == "undefined"
                                                                     and  "now"|date('Ymd H:i:s') < valR.dateFin|date('Ymd H:i:s')
-                                                                    and  "now"|date('Ymd H:i:s') > valR.dateDebut|date('Ymd H:i:s')
-                                                                %}
+                                                                    and  "now"|date('Ymd H:i:s') > valR.dateDebut|date('Ymd H:i:s') %}
                                                                     {% if val.zones.copie[keyR] == "undefined" or "now"|date('Ymd H:i:s') < val.zones.copie[keyR].dateCreation|date_modify(duree)|date('Ymd H:i:s') %}
                                                                         <div class="col-xs-3 text-right conteneurLiensSujets">
                                                                             <div class="btn btn-sm btn-info btnOpenDevoir">
@@ -449,7 +462,9 @@
                                                                             </div>
                                                                             <div class="listeSujets">
                                                                                 {% for keyS,valS in val.zones.sujet[keyR] %}
-                                                                                    <a class="btn btn-sm btn-info mb-3 hidden" target="_blank" href="{{ valS.url }}">{{ valS.nom }}</a>
+                                                                                    <a class="btn btn-sm btn-info mb-3 hidden"
+                                                                                       target="_blank"
+                                                                                       href="{{ valS.url }}">{{ valS.nom }}</a>
                                                                                 {% endfor %}
                                                                             </div>
                                                                         </div>
@@ -479,40 +494,52 @@
                                                                             <td>Corrigé type du devoir</td>
                                                                             <td>
                                                                                 {% for keyC,valC in val.zones.corrigeType[keyR] %}
-                                                                                    <a class="btn btn-sm btn-success mb-3" target="_blank" href="{{ valC.url }}">{{ valC.nom }}</a>
+                                                                                    <a class="btn btn-sm btn-success mb-3"
+                                                                                       target="_blank"
+                                                                                       href="{{ valC.url }}">{{ valC.nom }}</a>
                                                                                 {% endfor %}
                                                                             </td>
                                                                         </tr>
                                                                     {% endif %}
                                                                     {% if val.zones.copie[keyR] != "undefined" %}
-                                                                    <tr>
-                                                                        <td>Devoir commencé le {{ val.zones.copie[keyR].dateCreation|localizeddate('none', 'none', 'fr', null, 'd LLLL Y à H:mm' ) }}</td>
-                                                                        <td>
-                                                                            {% if val.zones.copieFichier[keyR] != "undefined" %}
-                                                                                <a class="btn btn-sm btn-warning" target="_blank" href="{{ val.zones.copieFichier[keyR].url }}">Ma copie</a>
-                                                                                {% if "now"|date('Ymd H:i:s') < val.zones.copie[keyR].dateCreation|date_modify(duree)|date('Ymd H:i:s') %}
-                                                                                    <div class="btn btn-sm btn-danger btnDeleteCopieEtu">Effacer ma copie</div>
+                                                                        <tr>
+                                                                            <td>Devoir commencé
+                                                                                le {{ val.zones.copie[keyR].dateCreation|localizeddate('none', 'none', 'fr', null, 'd LLLL Y à H:mm' ) }}</td>
+                                                                            <td>
+                                                                                {% if val.zones.copieFichier[keyR] != "undefined" %}
+                                                                                    <a class="btn btn-sm btn-warning"
+                                                                                       target="_blank"
+                                                                                       href="{{ val.zones.copieFichier[keyR].url }}">Ma
+                                                                                        copie</a>
+                                                                                    {% if "now"|date('Ymd H:i:s') < val.zones.copie[keyR].dateCreation|date_modify(duree)|date('Ymd H:i:s') %}
+                                                                                        <div class="btn btn-sm btn-danger btnDeleteCopieEtu">
+                                                                                            Effacer ma copie
+                                                                                        </div>
+                                                                                    {% endif %}
                                                                                 {% endif %}
-                                                                            {% endif %}
-                                                                        </td>
-                                                                    </tr>
+                                                                            </td>
+                                                                        </tr>
                                                                         {% if val.zones.copieFichier[keyR] != "undefined" %}
                                                                             <tr>
                                                                                 <td>
 
                                                                                 </td>
                                                                                 <td>
-                                                                                        {{ valR.commentaireCopieRendue | raw }}
+                                                                                    {{ valR.commentaireCopieRendue | raw }}
                                                                                 </td>
                                                                             </tr>
                                                                         {% endif %}
                                                                     {% endif %}
                                                                     {% if val.zones.corrige[keyR] != "undefined" %}
                                                                         <tr>
-                                                                            <td>Corrigé déposé le {{ val.zones.corrige[keyR].dateRendu|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}</td>
+                                                                            <td>Corrigé déposé
+                                                                                le {{ val.zones.corrige[keyR].dateRendu|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}</td>
                                                                             <td>
                                                                                 {% if val.zones.corrigeFichier[keyR] != "undefined" %}
-                                                                                    <a class="btn btn-sm btn-success" target="_blank" href="{{ val.zones.corrigeFichier[keyR].url }}">Ma copie corrigée</a>
+                                                                                    <a class="btn btn-sm btn-success"
+                                                                                       target="_blank"
+                                                                                       href="{{ val.zones.corrigeFichier[keyR].url }}">Ma
+                                                                                        copie corrigée</a>
                                                                                 {% endif %}
                                                                             </td>
                                                                         </tr>
@@ -525,7 +552,9 @@
                                                                     <td>Sujet du devoir</td>
                                                                     <td>
                                                                         {% for keyS,valS in val.zones.sujet[keyR] %}
-                                                                            <a class="btn btn-sm btn-info mb-3" target="_blank" href="{{ valS.url }}">{{ valS.nom }}</a>
+                                                                            <a class="btn btn-sm btn-info mb-3"
+                                                                               target="_blank"
+                                                                               href="{{ valS.url }}">{{ valS.nom }}</a>
                                                                         {% endfor %}
                                                                     </td>
                                                                 </tr>
@@ -533,14 +562,20 @@
                                                                     <td>Corrigé type du devoir</td>
                                                                     <td>
                                                                         {% for keyC,valC in val.zones.corrigeType[keyR] %}
-                                                                            <a class="btn btn-sm btn-success mb-3" target="_blank" href="{{ valC.url }}">{{ valC.nom }}</a>
+                                                                            <a class="btn btn-sm btn-success mb-3"
+                                                                               target="_blank"
+                                                                               href="{{ valC.url }}">{{ valC.nom }}</a>
                                                                         {% endfor %}
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
-                                                                    <td>{{ val.zones.corrigesDeposes[keyR] }} copies corrigée{% if val.zones.corrigesDeposes[keyR]>1 %}s{% endif %} sur {{ val.zones.copiesDeposes[keyR] }} déposée{% if val.zones.copiesDeposes[keyR]>1 %}s{% endif %}</td>
+                                                                    <td>{{ val.zones.corrigesDeposes[keyR] }} copies
+                                                                        corrigée{% if val.zones.corrigesDeposes[keyR]>1 %}s{% endif %}
+                                                                        sur {{ val.zones.copiesDeposes[keyR] }}
+                                                                        déposée{% if val.zones.copiesDeposes[keyR]>1 %}s{% endif %}</td>
                                                                     <td>
-                                                                        <a class="btn btn-sm btn-danger mb-3 btnOpenDevoirEns" href="{{ path('oneDevoirEns', {id: valR.id}) }}">Afficher</a>
+                                                                        <a class="btn btn-sm btn-danger mb-3 btnOpenDevoirEns"
+                                                                           href="{{ path('oneDevoirEns', {id: valR.id}) }}">Afficher</a>
                                                                     </td>
                                                                 </tr>
                                                             </table>
@@ -560,30 +595,38 @@
                                                             <div class="itemDescription">{{ val.zones.groupe[keyR].description | raw }}</div>
                                                         </div>
                                                         <div class="col-xs-12 text-right">
-                                                        {% for keyG,valG in val.zones.content[keyR] %}
-                                                            {% if '.mp4' in valG.lien.url %}
-                                                                <div class="blocMedia">
-                                                                    <video controls>
-                                                                        <source src="{{ valG.lien.url }}" type="video/mp4">
-                                                                        Votre navigateur ne supporte pas la balise "video".
-                                                                    </video>
-                                                                </div>
-                                                            {% else %}
-                                                                <a class="btnLienGroupeRessource btn btn-xs btnUserStatRessource"
-                                                                   style="background-color: {{ valG.categorieLien.couleur }};" target="_blank"
-                                                                   href="{{ valG.lien.url }}"
-                                                                   data-statRessId="{{ val.zones.groupe[keyR].id }}"
-                                                                >
-                                                                    {% if valG.lien.typeLien.faIcon is defined %}
-                                                                        <i class="fa {{ valG.lien.typeLien.faIcon }}"></i>
-                                                                    {% else %}
-                                                                        <i class="fa fa-external-link"></i>
+                                                            {% for keyG,valG in val.zones.content[keyR] %}
+                                                                {% if '.mp4' in valG.lien.url %}
+                                                                    <div class="blocMedia">
+                                                                        <video controls>
+                                                                            <source src="{{ valG.lien.url }}" type="video/mp4">
+                                                                            Votre navigateur ne supporte pas la balise "video".
+                                                                        </video>
+                                                                    </div>
+                                                                {% else %}
+                                                                    {% if val.zones.groupe[keyR].isVertical %}
+                                                                        <div class="verticalGrLienElem">
                                                                     {% endif %}
-                                                                    {{ valG.nom }}
-                                                                </a>
-                                                            {% endif %}
+                                                                    <a class="btnLienGroupeRessource btn btn-xs btnUserStatRessource"
+                                                                       style="background-color: {{ valG.categorieLien.couleur }};"
+                                                                       target="_blank"
+                                                                       href="{{ valG.lien.url }}"
+                                                                       data-statRessId="{{ val.zones.groupe[keyR].id }}"
+                                                                    >
+                                                                        {% if valG.lien.typeLien.faIcon is defined %}
+                                                                            <i class="fa {{ valG.lien.typeLien.faIcon }}"></i>
+                                                                        {% else %}
+                                                                            <i class="fa fa-external-link"></i>
+                                                                        {% endif %}
+                                                                        {{ valG.nom }}
+                                                                    </a>
+                                                                    {% if val.zones.groupe[keyR].isVertical %}
+                                                                        </div>
+                                                                    {% endif %}
 
-                                                        {%  endfor %}
+                                                                {% endif %}
+
+                                                            {% endfor %}
                                                         </div>
                                                     </div>
                                                 </li>
@@ -644,7 +687,7 @@
                                                     <div class="">{{ val.zones.content[keyR].description | raw }}</div>
                                                 </li>
                                             {% endif %}
-                                            <hr class="mt-10 mb-10" />
+                                            <hr class="mt-10 mb-10"/>
                                         {% endif %}
                                     {% endfor %}
                                 </ul>
@@ -653,17 +696,20 @@
                     {% endfor %}
                     <div role="tabpanel" class="tab-pane fade" id="sectionDocs">
                         {% if cours.docsActivated==1 %}
-                            <div class="course-list documentsDisc" data-activated="{{ cours.docsActivated }}" style="margin-top: 0;">
+                            <div class="course-list documentsDisc" data-activated="{{ cours.docsActivated }}"
+                                 style="margin-top: 0;">
                                 <div class="course-media text-center mt-10">
                                     <i class="fa fa-file-o fa-3" aria-hidden="true"></i>
                                 </div>
                                 <div class="course-detail">
                                     <h4 class="heading">Mes documents partagés</h4>
                                     {% if nbNewDocs != 0 %}
-                                        <p class="newDocsP"><span class="newDocsPuce">{{ nbNewDocs }}</span> nouveaux documents</p>
+                                        <p class="newDocsP"><span class="newDocsPuce">{{ nbNewDocs }}</span> nouveaux
+                                            documents</p>
                                     {% endif %}
                                     <div class="resumeDocs mt-20 col-xs-12">
-                                        <a href="{{ path('courseDocs', {id: cours.id}) }}" class="btn btn-primary btn-sm">Accéder</a>
+                                        <a href="{{ path('courseDocs', {id: cours.id}) }}"
+                                           class="btn btn-primary btn-sm">Accéder</a>
                                     </div>
                                 </div>
                             </div>
@@ -677,11 +723,13 @@
     <div class="modal fade" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
 
                 <!--                  POPUP DEVOIR ELEVE                     -->
 
-                <div class="modal-body" data-contentModal="devoirDisplay" data-idItem="" style="background:#aaa; background-size:cover">
+                <div class="modal-body" data-contentModal="devoirDisplay" data-idItem=""
+                     style="background:#aaa; background-size:cover">
                     <div class="row">
                         <div class="bginverse">
                             <div class="">
@@ -689,8 +737,10 @@
                                 <div class="popupDevoirDescription mb-10"></div>
 
                                 <div class="alert alert-danger mb-10 alert_beforeDownload">
-                                    <strong>Attention!</strong> Lors du click sur "commencer", le chronomètre du devoir sera lancé.
-                                    <p>Vous disposerez alors de <span class="popupDevoirDuree"></span> pour rendre vos fichiers.</p>
+                                    <strong>Attention!</strong> Lors du click sur "commencer", le chronomètre du devoir
+                                    sera lancé.
+                                    <p>Vous disposerez alors de <span class="popupDevoirDuree"></span> pour rendre vos
+                                        fichiers.</p>
                                 </div>
 
                                 <div class="alert alert-danger mb-10 alert_duringDevoir">
@@ -699,7 +749,8 @@
                                 </div>
 
                                 <div class="alert alert-danger mb-10 alert_afterTimeExpire">
-                                    <strong>Attention!</strong> Vous avez atteint la limite fixée pour ce devoir, qui était fixée à <span class="popupDevoirDuree"></span>.
+                                    <strong>Attention!</strong> Vous avez atteint la limite fixée pour ce devoir, qui
+                                    était fixée à <span class="popupDevoirDuree"></span>.
                                 </div>
 
                                 <div class="row mb-10" style="text-align: center">
@@ -728,7 +779,8 @@
                                     </div>
 
                                     <div class="chronometre">
-                                        <span class="chrono_elem chrono_h"></span>:<span class="chrono_elem chrono_m"></span>:<span class="chrono_elem chrono_s">00</span>
+                                        <span class="chrono_elem chrono_h"></span>:<span
+                                                class="chrono_elem chrono_m"></span>:<span class="chrono_elem chrono_s">00</span>
                                     </div>
                                 </div>
 
