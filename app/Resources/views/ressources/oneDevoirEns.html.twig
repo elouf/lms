@@ -174,6 +174,45 @@
                     .parent().addClass($.support.fileInput ? undefined : 'disabled');
 
 
+            $('.btnEditNote').click(function(){
+                var tr = $(this).closest('tr');
+                var span = tr.find('.copieNote');
+                var input = tr.find('.copieNoteEdit');
+                var btnValidNote = tr.find('.btnValidNote');
+                span.addClass('hidden');
+                input.removeClass('hidden');
+                btnValidNote.removeClass('hidden');
+                $(this).addClass('hidden');
+            });
+            $('.btnValidNote').click(function(){
+                var tr = $(this).closest('tr');
+                var copieId = tr.attr('data-copieId');
+                var span = tr.find('.copieNote');
+                var input = tr.find('.copieNoteEdit');
+                var btnEditNote = tr.find('.btnEditNote');
+                span.removeClass('hidden');
+                input.addClass('hidden');
+                btnEditNote.removeClass('hidden');
+                $(this).addClass('hidden');
+
+                var note = input.val().replace(",", ".");
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ path('editNoteCopie_ajax') }}",
+                    async: false,
+                    dataType: "json",
+                    data: {
+                        copieId: copieId,
+                        note: note
+                    },
+                    success: function (data) {
+                        span.text(note);
+                        nput.val(note);
+                    },
+                    error: function (xhr, status, error) {
+                    }
+                });
+            });
             $(".tableCopies").tablesorter({
                 sortList: [[1,0]]
             });
@@ -221,6 +260,7 @@
                             <th>ID</th>
                             <th>Étudiant</th>
                             <th>Copie</th>
+                            <th>Note</th>
                             <th>Corrigé</th>
                             <th>Nouvel upload</th>
                         </tr>
@@ -229,11 +269,10 @@
                         {% for key,val in devoirsEns %}
                             {% if val.copieFichier is not null or app.user.hasRole('ROLE_SUPER_ADMIN') %}
 
-                                <tr data-userId="{{ val.copie.auteur.id }}">
+                                <tr data-userId="{{ val.copie.auteur.id }}" data-copieId="{{ val.copie.id }}">
                                     <th scope="row">{{ val.copie.auteur.id }}</th>
                                     <td>{{ val.copie.auteur.lastname }} {{ val.copie.auteur.firstname }}</td>
                                     <td>
-
                                         {% if val.copieFichier is not null %}
                                             {{ val.copie.dateCreation|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}
                                             <a class="btn btn-warning btn-sm" target="_blank" href="{{ val.copieFichier.url }}"><i class="fa fa-external-link fa-2x"></i></a>
@@ -253,6 +292,14 @@
                                                     <div class="progress-bar progress-bar-success"></div>
                                                 </div>
                                             </div>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if val.copie.note >= 0 %}
+                                            <span class="copieNote">{{ val.copie.note }}</span>
+                                            <input class="copieNoteEdit hidden" id="copieNoteEdit_{{ val.copie.id }}" type="text" value="{{ val.copie.note }}" />
+                                            <a class="btn btnEditNote inversedBtn btn-success btn-sm" ><i class="fa fa-pencil fa-2x"></i></a>
+                                            <a class="btn btnValidNote hidden inversedBtn btn-success btn-sm" ><i class="fa fa-check fa-2x"></i></a>
                                         {% endif %}
                                     </td>
                                     <td>

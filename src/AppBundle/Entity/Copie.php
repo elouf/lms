@@ -44,6 +44,13 @@ class Copie
     protected $devoir;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="note", type="string", options={"default" : -1})
+     */
+    protected $note;
+
+    /**
      * Get id
      *
      * @return int
@@ -123,5 +130,29 @@ class Copie
     public function getDevoir()
     {
         return $this->devoir;
+    }
+
+    /**
+     * Set note
+     *
+     * @param integer $note
+     *
+     * @return Copie
+     */
+    public function setNote($note)
+    {
+        $this->note = $note;
+
+        return $this;
+    }
+
+    /**
+     * Get note
+     *
+     * @return integer
+     */
+    public function getNote()
+    {
+        return $this->note;
     }
 }

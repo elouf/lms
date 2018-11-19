@@ -544,6 +544,17 @@
                                                                             </td>
                                                                         </tr>
                                                                     {% endif %}
+                                                                    {% if val.zones.copie[keyR] != "undefined" %}
+                                                                        {% if val.zones.copie[keyR].note >= 0 %}
+                                                                            <tr class="itemTitle">
+                                                                                <td>
+                                                                                    Note obtenue
+                                                                                <td>
+                                                                                    {{ val.zones.copie[keyR].note }} / 20
+                                                                                </td>
+                                                                            </tr>
+                                                                        {% endif %}
+                                                                    {% endif %}
                                                                 </table>
                                                             {% endif %}
                                                         {% elseif mode == 'ens' %}
@@ -599,8 +610,10 @@
                                                                 {% if '.mp4' in valG.lien.url %}
                                                                     <div class="blocMedia">
                                                                         <video controls>
-                                                                            <source src="{{ valG.lien.url }}" type="video/mp4">
-                                                                            Votre navigateur ne supporte pas la balise "video".
+                                                                            <source src="{{ valG.lien.url }}"
+                                                                                    type="video/mp4">
+                                                                            Votre navigateur ne supporte pas la balise
+                                                                            "video".
                                                                         </video>
                                                                     </div>
                                                                 {% else %}

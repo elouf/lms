@@ -598,4 +598,29 @@ class DevoirController extends Controller
         return new JsonResponse('This is not ajax!', 400);
     }
 
+    /**
+     * @Route("/editNoteCopie_ajax", name="editNoteCopie_ajax")
+     * @Method({"GET", "POST"})
+     */
+    public function editNoteCopieAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+            $copieId = $request->request->get('copieId');
+            $note = $request->request->get('note');
+
+            /* @var $copie Copie */
+            $copie = $em->getRepository('AppBundle:Copie')->findOneBy(array('id' => $copieId));
+            $copie->setNote($note);
+
+            $em->flush();
+
+            return new JsonResponse(array(
+                    'action' =>'change copie note')
+            );
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
 }
