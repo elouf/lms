@@ -46,7 +46,7 @@ class Copie
     /**
      * @var string
      *
-     * @ORM\Column(name="note", type="string", options={"default" : -1})
+     * @ORM\Column(name="note", type="string", nullable=true)
      */
     protected $note;
 
