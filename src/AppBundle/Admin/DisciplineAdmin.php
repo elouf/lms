@@ -19,6 +19,7 @@ class DisciplineAdmin extends AbstractAdmin
             ))
             /*->add('imgFilePath', 'text')*/
             ->add('faIcon', 'text')
+            ->add('accronyme', 'text')
         ;
 
     }
@@ -29,6 +30,7 @@ class DisciplineAdmin extends AbstractAdmin
         $datagridMapper
             ->add('nom')
             ->add('faIcon')
+            ->add('accronyme')
         ;
     }
 
@@ -40,6 +42,7 @@ class DisciplineAdmin extends AbstractAdmin
             ->add('description')
             /*->add('imgFilePath')*/
             ->add('faIcon')
+            ->add('accronyme')
         ;
     }
 }
