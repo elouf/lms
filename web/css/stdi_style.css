@@ -344,10 +344,10 @@ textarea[readonly]{
     margin-top: 7px;
 }
 
-.dureeSelect .form-control{
+.dureeSelect .form-control, .baremeSelect .form-control{
     height: 32px;
 }
-.dureeSelect .btn{
+.dureeSelect .btn, .baremeSelect .btn{
     padding: 6px 15px
 }
 

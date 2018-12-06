@@ -58,10 +58,18 @@ class Discipline extends DocContainer
     private $faIcon="fa-university";
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="accronyme", type="string", length=255, unique=false)
+     */
+    private $accronyme;
+
+    /**
      * Constructor
      */
     public function __construct() {
         $this->cohortes = new ArrayCollection();
+        $this->accronyme = $this->getId();
     }
 
     /**
@@ -208,5 +216,29 @@ class Discipline extends DocContainer
     public function getFaIcon()
     {
         return $this->faIcon;
+    }
+
+    /**
+     * Set accronyme
+     *
+     * @param string $accronyme
+     *
+     * @return Discipline
+     */
+    public function setAccronyme($accronyme)
+    {
+        $this->accronyme = $accronyme;
+
+        return $this;
+    }
+
+    /**
+     * Get accronyme
+     *
+     * @return string
+     */
+    public function getAccronyme()
+    {
+        return $this->accronyme;
     }
 }

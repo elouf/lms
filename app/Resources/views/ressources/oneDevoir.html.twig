@@ -13,40 +13,44 @@
 {% endblock %}
 
 {% block main %}
-    <link rel="stylesheet" href="{{ asset('vendors/tablesorter/dist/css/theme.default.min.css') }}" />
-    <link rel="stylesheet" href="{{ asset('vendors/tablesorter/dist/css/jquery.tablesorter.pager.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendors/tablesorter/dist/css/theme.default.min.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('vendors/tablesorter/dist/css/jquery.tablesorter.pager.min.css') }}"/>
 
     <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/jquery.tablesorter.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/jquery.tablesorter.widgets.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/extras/jquery.tablesorter.pager.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/widgets/widget-output.min.js') }}"></script>
+    <script type="text/javascript"
+            src="{{ asset('vendors/tablesorter/dist/js/jquery.tablesorter.widgets.min.js') }}"></script>
+    <script type="text/javascript"
+            src="{{ asset('vendors/tablesorter/dist/js/extras/jquery.tablesorter.pager.min.js') }}"></script>
+    <script type="text/javascript"
+            src="{{ asset('vendors/tablesorter/dist/js/widgets/widget-output.min.js') }}"></script>
 
     <script>
         jQuery(document).ready(function () {
-            $('.download').click(function(e){
+            $('.download').click(function (e) {
                 e.preventDefault();
                 var table = $(this).closest('.container').find('.tablesorter');
                 table.trigger('outputTable');
             });
 
             $(".tablesorter")
-                    .tablesorter({
-                        widthFixed: true,
-                        widgets: ['zebra', 'filter', 'output'],
-                        widgetOptions : {
-                            output_delivery      : 'd',
-                            output_saveFileName  : 'mytable.csv'
-                        }
-                    })
-                    .tablesorterPager({
-                        container: $("#pager"),
-                        size: 50
-                    });
+                .tablesorter({
+                    widthFixed: true,
+                    widgets: ['zebra', 'filter', 'output'],
+                    widgetOptions: {
+                        output_delivery: 'd',
+                        output_saveFileName: 'mytable.csv'
+                    }
+                })
+                .tablesorterPager({
+                    container: $("#pager"),
+                    size: 50
+                });
         });
     </script>
 
     <div class="container mt-100 mb-40">
-        <a class="btn btn-sm btn-info mb-3" href="{{ path('oneDevoirEns', {id:devoir.id }) }}">Dépôt de copies et de corrigés pour ce devoir</a>
+        <a class="btn btn-sm btn-info mb-3" href="{{ path('oneDevoirEns', {id:devoir.id }) }}">Dépôt de copies et de
+            corrigés pour ce devoir</a>
         <div class="row">
             <div class="col-md-12">
                 <table class="tablesorter ">
@@ -57,6 +61,7 @@
                         <th>Prénom</th>
                         <th>Nom</th>
                         <th>Copie rendue</th>
+                        <th>Note</th>
                         <th class="filter-select">Institut</th>
                         <th class="filter-select">Activé</th>
                     </tr>
@@ -69,6 +74,7 @@
                             <td>{{ copie.user.firstname }}</td>
                             <td>{{ copie.user.lastname }}</td>
                             <td>{{ copie.fichierCopie }}</td>
+                            <td>{{ copie.note }}</td>
                             <td>{{ copie.user.institut }}</td>
                             <td>
                                 {% if copie.user.enabled == 1 %}

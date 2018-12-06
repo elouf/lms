@@ -687,6 +687,7 @@
                     }
                     var dureeH = devoir.find('[data-champName=dureeHeures] input').val();
                     var dureeM = devoir.find('[data-champName=dureeMinutes] input').val();
+                    var bareme = devoir.find('[data-champName=bareme] input').val();
                     var dateDebut = devoir.find('[data-champName=dateDebut] input').val();
                     var dateFin = devoir.find('[data-champName=dateFin] input').val();
                     var mustReload = $(this).hasClass('mustReload');
@@ -703,6 +704,7 @@
                             description: description,
                             dureeH: dureeH,
                             dureeM: dureeM,
+                            bareme: bareme,
                             dateDebut : dateDebut,
                             dateFin: dateFin,
                             commentaireCopieRendue: commentaireCopieRendue
@@ -1857,6 +1859,7 @@
                                                         <tr><td class="nomChamp">Description</td><td>{{ val.content.description | raw }}</td></tr>
                                                         <tr><td class="nomChamp">Dates</td><td>du {{ val.content.dateDebut|date('Y-m-d') }} au {{ val.content.dateFin|date('Y-m-d') }}</td></tr>
                                                         <tr><td class="nomChamp">Durée</td><td>{{ val.content.duree//3600 }}h</td></tr>
+                                                        <tr><td class="nomChamp">Barême</td><td>{{ val.content.bareme }} points</td></tr>
                                                         <tr><td class="nomChamp">Commentaire Copie Rendue</td><td>{{ val.content.commentaireCopieRendue | raw }}</td></tr>
                                                     </table>
                                                 </td>

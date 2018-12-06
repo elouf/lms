@@ -44,9 +44,9 @@ class Copie
     protected $devoir;
 
     /**
-     * @var string
+     * @var int
      *
-     * @ORM\Column(name="note", type="string", nullable=true)
+     * @ORM\Column(name="note", type="integer", nullable=true)
      */
     protected $note;
 

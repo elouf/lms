@@ -9,6 +9,7 @@ use AppBundle\Entity\CorrigeFichier;
 use AppBundle\Entity\Devoir;
 use AppBundle\Entity\DevoirCorrigeType;
 use AppBundle\Entity\DevoirSujet;
+use AppBundle\Entity\User;
 use DateTime;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -50,12 +51,14 @@ class DevoirController extends Controller
 
         $myCopies = array();
         if($copies){
+            /* @var $copie Copie */
             foreach($copies as $copie){
                 $fichier = $this->getDoctrine()->getRepository('AppBundle:CopieFichier')->findOneBy(array('copie' => $copie));
                 array_push($myCopies, [
                     'copie' => $copie,
                     'fichierCopie' => $fichier?"oui":"non",
                     'user' => $copie->getAuteur(),
+                    'note' => $copie->getNote(),
                     'fichierCorrige'
                 ]);
             }
@@ -228,7 +231,9 @@ class DevoirController extends Controller
             $dureeM = $request->request->get('dureeM');
             $dateDebut = date_create_from_format('j/m/Y H:i', $request->request->get('dateDebut'));
             $dateFin = date_create_from_format('j/m/Y H:i', $request->request->get('dateFin'));
+            $bareme = $request->request->get('bareme');
 
+            /* @var $devoir Devoir */
             $devoir = $em->getRepository('AppBundle:Devoir')->findOneBy(array('id' => $id));
             $devoir->setNom($nom);
             $devoir->setDescription($description);
@@ -236,6 +241,7 @@ class DevoirController extends Controller
             $devoir->setDuree($dureeH * 3600 + $dureeM * 60);
             $devoir->setDateDebut($dateDebut);
             $devoir->setDateFin($dateFin);
+            $devoir->setBareme($bareme);
 
             $em->persist($devoir);
             $em->flush();
@@ -402,8 +408,11 @@ class DevoirController extends Controller
             $urlDest = $request->request->get('urlDest');
             $currentUrl = $request->request->get('currentUrl');
 
+            /* @var $devoir Devoir */
             $devoir = $em->getRepository('AppBundle:Devoir')->findOneBy(array('id' => $itemId));
+            /* @var $user User */
             $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
+            /* @var $copie Copie */
             $copie = $em->getRepository('AppBundle:Copie')->findOneBy(array('auteur' => $user, 'devoir' => $devoir));
 
             // on vérifie s'il y a déjà un fichier et on le supprime
@@ -427,9 +436,17 @@ class DevoirController extends Controller
 
             $ext = pathinfo($url, PATHINFO_EXTENSION);
             $rand = rand(1, 999999);
-            rename($url, $urlDest.'file'.$rand.'.'.$ext);
+            //rename($url, $urlDest.'file'.$rand.'.'.$ext);
+            $unwanted_array = array(    'Š'=>'S', 'š'=>'s', 'Ž'=>'Z', 'ž'=>'z', 'À'=>'A', 'Á'=>'A', 'Â'=>'A', 'Ã'=>'A', 'Ä'=>'A', 'Å'=>'A', 'Æ'=>'A', 'Ç'=>'C', 'È'=>'E', 'É'=>'E',
+                'Ê'=>'E', 'Ë'=>'E', 'Ì'=>'I', 'Í'=>'I', 'Î'=>'I', 'Ï'=>'I', 'Ñ'=>'N', 'Ò'=>'O', 'Ó'=>'O', 'Ô'=>'O', 'Õ'=>'O', 'Ö'=>'O', 'Ø'=>'O', 'Ù'=>'U',
+                'Ú'=>'U', 'Û'=>'U', 'Ü'=>'U', 'Ý'=>'Y', 'Þ'=>'B', 'ß'=>'Ss', 'à'=>'a', 'á'=>'a', 'â'=>'a', 'ã'=>'a', 'ä'=>'a', 'å'=>'a', 'æ'=>'a', 'ç'=>'c',
+                'è'=>'e', 'é'=>'e', 'ê'=>'e', 'ë'=>'e', 'ì'=>'i', 'í'=>'i', 'î'=>'i', 'ï'=>'i', 'ð'=>'o', 'ñ'=>'n', 'ò'=>'o', 'ó'=>'o', 'ô'=>'o', 'õ'=>'o',
+                'ö'=>'o', 'ø'=>'o', 'ù'=>'u', 'ú'=>'u', 'û'=>'u', 'ý'=>'y', 'þ'=>'b', 'ÿ'=>'y', ' '=>'_' );
+            $strUser = strtr($devoir->getCours()->getDiscipline()->getAccronyme().'_'.$user->getFirstname().'_'.$user->getLastname(), $unwanted_array );
+            $filename = 'Copie_'.$strUser.$copie->getId().'.'.$ext;
+            rename($url, $urlDest.$filename);
 
-            $copieFichier->setUrl($urlTab[0].'/var'.$urlDestTab[1].'file'.$rand.'.'.$ext);
+            $copieFichier->setUrl($urlTab[0].'/var'.$urlDestTab[1].$filename);
 
             $em->persist($copieFichier);
             $em->persist($copie);
@@ -459,7 +476,9 @@ class DevoirController extends Controller
             $urlDest = $request->request->get('urlDest');
             $currentUrl = $request->request->get('currentUrl');
 
+            /* @var $devoir Devoir */
             $devoir = $em->getRepository('AppBundle:Devoir')->findOneBy(array('id' => $idDevoir));
+            /* @var $user User */
             $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
             $etu = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $etuId));
 
@@ -472,7 +491,6 @@ class DevoirController extends Controller
                 $urlTab = explode('/var', $corrigeF->getUrl());
 
                 $em->remove($corrigeF);
-                $em->flush();
                 $em->remove($checkCorrige);
                 $em->flush();
 

@@ -40,7 +40,7 @@
                 var destUrl = url+etuId+'/';
                 $.ajax({
                     type: 'POST',
-                    url: "{{path('checkDirForUploadFile_ajax')}}",
+                    url: "",
                     async: false,
                     dataType: "json",
                     data: {
@@ -207,7 +207,7 @@
                     },
                     success: function (data) {
                         span.text(note);
-                        nput.val(note);
+                        input.val(note);
                     },
                     error: function (xhr, status, error) {
                     }

@@ -29,6 +29,13 @@ class Devoir extends Ressource
     private $commentaireCopieRendue;
 
     /**
+     * @var int
+     *
+     * @ORM\Column(name="bareme", type="integer", nullable=false)
+     */
+    protected $bareme = 0;
+
+    /**
      * Set duree
      *
      * @param integer $duree
@@ -79,5 +86,29 @@ class Devoir extends Ressource
     public function getType()
     {
         return $this::TYPE_DEVOIR;
+    }
+
+    /**
+     * Set bareme
+     *
+     * @param integer $bareme
+     *
+     * @return Devoir
+     */
+    public function setBareme($bareme)
+    {
+        $this->bareme = $bareme;
+
+        return $this;
+    }
+
+    /**
+     * Get bareme
+     *
+     * @return integer
+     */
+    public function getBareme()
+    {
+        return $this->bareme;
     }
 }

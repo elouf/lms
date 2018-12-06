@@ -442,6 +442,11 @@
                                                                     Durée : {{ valR.duree//3600 }}
                                                                     h{{ (valR.duree - 3600*(valR.duree//3600))//60 }}min
                                                                 </div>
+                                                                {% if valR.bareme > 0 %}
+                                                                    <div class="ml-10">
+                                                                        Barême : Notation sur {{ valR.bareme }} point{% if valR.bareme > 1 %}s{% endif %}
+                                                                    </div>
+                                                                {% endif %}
                                                                 <div class="itemDescription ml-10">
                                                                     {{ valR.description | raw }}
                                                                 </div>
@@ -544,13 +549,14 @@
                                                                             </td>
                                                                         </tr>
                                                                     {% endif %}
-                                                                    {% if val.zones.copie[keyR] != "undefined" %}
-                                                                        {% if val.zones.copie[keyR].note >= 0 %}
+                                                                    {% if val.zones.copie[keyR] %}
+
+                                                                        {% if val.zones.copie[keyR].note %}
                                                                             <tr class="itemTitle">
                                                                                 <td>
                                                                                     Note obtenue
                                                                                 <td>
-                                                                                    {{ val.zones.copie[keyR].note }} / 20
+                                                                                    {{ val.zones.copie[keyR].note }} / {{ valR.bareme }}
                                                                                 </td>
                                                                             </tr>
                                                                         {% endif %}
