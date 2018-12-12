@@ -23,7 +23,7 @@ class StatsUsersDocs
 
     /**
      * @var User
-     *
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @ORM\ManyToOne(targetEntity="User")
      */
     protected $user;
