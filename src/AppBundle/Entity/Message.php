@@ -38,7 +38,7 @@ class Message
 
     /**
      * @var User
-     *
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @ORM\ManyToOne(targetEntity="User", cascade={"persist"})
      */
     private $expediteur;
