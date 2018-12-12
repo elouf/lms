@@ -28,7 +28,11 @@
                         </a>
                     </td>
                     <td class="openMsgBtn">
-                        {{ val.sujet.createur.firstname }} {{ val.sujet.createur.lastname }}
+                        {% if val.sujet.createur %}
+                            {{ val.sujet.createur.firstname }} {{ val.sujet.createur.lastname }}
+                        {% else %}
+                            Utilisateur
+                        {% endif %}
                     </td>
                     <td data-text="{{ val.sujet.createdAt|localizeddate('none', 'none', null, null, 'YMMddhhmm' ) }}">
                         {{ val.sujet.createdAt|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}

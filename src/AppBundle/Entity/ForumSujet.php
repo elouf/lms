@@ -54,7 +54,7 @@ class ForumSujet
 
     /**
      * @var User
-     *
+     * @ORM\JoinColumn(onDelete="SET NULL")
      * @ORM\ManyToOne(targetEntity="User")
      */
     private $createur;

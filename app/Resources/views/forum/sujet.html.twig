@@ -105,7 +105,7 @@
                     <div class="blog-single">
                         <div class="headerPost">
                             <div class="auteurPostOptions">
-                                {% if val.auteur.id == app.user.id or app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                {% if val.auteur and val.auteur.id == app.user.id or app.user.hasRole('ROLE_SUPER_ADMIN') %}
                                     <a href="{{ path('editForumPost', {id: val.id}) }}" class="btnEditPost fctAdminPost">Éditer</a>
                                 {% endif %}
                                 {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
@@ -118,7 +118,13 @@
                         </div>
                         <div class="row">
                             <div class="authorPost col-sm-2">
-                                <h5 class="heading">{{ val.auteur.firstname }} {{ val.auteur.lastname }}</h5>
+                                <h5 class="heading">
+                                    {% if val.auteur %}
+                                        {{ val.auteur.firstname }} {{ val.auteur.lastname }}
+                                    {% else %}
+                                        Utilisateur
+                                    {% endif %}
+                                </h5>
                             </div>
                             <div class="contentPost col-sm-10">
                                 {{ val.texte|raw }}

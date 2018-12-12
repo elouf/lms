@@ -14,7 +14,7 @@ class Evt_user extends Evenement
 {
     /**
      * @var User
-     *
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @ORM\ManyToOne(targetEntity="User")
      */
     private $user;

@@ -23,11 +23,17 @@
                         <td>
                             <i class="fa fa-info-circle infoDocument" aria-hidden="true"></i>
                         </td>
-                        <td>{{ val[0].proprietaire.firstname }} {{ val[0].proprietaire.lastName }}</td>
+                        <td>
+                            {% if val[0].proprietaire %}
+                                {{ val[0].proprietaire.firstname }} {{ val[0].proprietaire.lastName }}
+                            {% else %}
+                                Utilisateur
+                            {% endif %}
+                        </td>
                         <td data-text="{{ val[0].dateCrea|localizeddate('none', 'none', null, null, 'YMMddhhmm' ) }}">{{ val[0].dateCrea|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}</td>
                         <td>
                             <a href="{{ val[0].url }}" class="btn btn-primary btn-xs btnDocOpen" download>Télécharger</a>
-                            {% if app.user.id == val[0].proprietaire.id
+                            {% if val[0].proprietaire and app.user.id == val[0].proprietaire.id
                             or app.user.hasRole('ROLE_SUPER_ADMIN')
                             or role == 'ens' %}
                                 <a class="btn btn-xs btn-danger deleteDoc">Supprimer</a>
