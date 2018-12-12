@@ -32,7 +32,7 @@ class AssocUserMsg
     /**
      * @var Message
      * @ORM\ManyToOne(targetEntity="Message")
-     * @ORM\JoinColumn(name="message_id", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="message_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $message;
 
