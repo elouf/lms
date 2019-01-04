@@ -34,6 +34,7 @@
             var userId = $('[data-userId]').attr('data-userId');
 
             var url = steps + folderLocation+idCours+'/devoir/'+idDevoir+'/corriges/';
+            var urlCopie = steps + folderLocation+idCours+'/devoir/'+idDevoir+'/copies/';
 
             /*$('.corrigeUpload').each(function(){
                 var etuId = $(this).closest('[data-userId]').attr('data-userId');
@@ -139,7 +140,7 @@
                 },
                 done: function (e, data) {
                     var etuId = $(this).closest('[data-userId]').attr('data-userId');
-                    var destUrl = url+etuId+'/';
+                    var destUrl = urlCopie+etuId+'/';
                     $.each(data.result.files, function (index, file) {
                         var myUrlTab = file.url.split(folderLocation);
                         $.ajax({
