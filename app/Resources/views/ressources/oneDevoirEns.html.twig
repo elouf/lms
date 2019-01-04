@@ -135,6 +135,21 @@
                     if(uploadErrors.length > 0) {
                         alert(uploadErrors.join("\n"));
                     } else {
+                        var etuId = $(this).closest('[data-userId]').attr('data-userId');
+                        var destUrl = urlCopie+etuId+'/';
+                        $.ajax({
+                            type: 'POST',
+                            url: "{{path('checkDirForUploadFile_ajax')}}",
+                            async: false,
+                            dataType: "json",
+                            data: {
+                                url: destUrl
+                            },
+                            success: function (data) {
+                            },
+                            error: function(xhr, status, error) {
+                            }
+                        });
                         data.submit();
                     }
                 },
