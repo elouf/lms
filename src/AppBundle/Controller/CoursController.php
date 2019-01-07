@@ -47,6 +47,7 @@ class CoursController extends Controller
     public function oneCoursAction (Request $request, $id, $mode)
     {
         date_default_timezone_set('Europe/Paris');
+        ini_set('session.gc_maxlifetime', 21600);
 
         $cours = $this->getDoctrine()->getRepository('AppBundle:Cours')->find($id);
         $discipline = $cours->getDiscipline();
