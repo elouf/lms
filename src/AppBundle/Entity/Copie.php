@@ -46,7 +46,7 @@ class Copie
     /**
      * @var int
      *
-     * @ORM\Column(name="note", type="integer", nullable=true)
+     * @ORM\Column(name="note", type="float", nullable=true)
      */
     protected $note;
 
