@@ -641,4 +641,35 @@ class DevoirController extends Controller
         return new JsonResponse('This is not ajax!', 400);
     }
 
+    /**
+     * @Route("/checkSessionTimeout_ajax", name="checkSessionTimeout_ajax")
+     * @Method({"GET", "POST"})
+     */
+    public function checkSessionTimeoutAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+            $id = $request->request->get('id');
+            $userId = $request->request->get('userId');
+
+            $this->get('session')->migrate();
+
+            /* @var $user User */
+            $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
+            /* @var $devoir Devoir */
+            $devoir = $em->getRepository('AppBundle:Devoir')->findOneBy(array('id' => $id));
+
+            $em->flush();
+
+            return new JsonResponse(array(
+                    'action' =>'checkSessionTimeout_ajax',
+                    'user' => $user->getFirstname().' '.$user->getLastname(),
+                    'devoir' => $devoir->getNom()
+                    )
+            );
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
 }

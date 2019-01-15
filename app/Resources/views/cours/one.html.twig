@@ -35,6 +35,27 @@
                 var myBtn = $(this);
                 idSection = $(this).closest('.section').attr('data-idSection');
 
+
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ path('checkSessionTimeout_ajax') }}",
+                    async: false,
+                    dataType: "json",
+                    data: {
+                        id: idItem,
+                        userId: $('[data-userId]').attr('data-userId')
+                    },
+                    success: function (data) {
+                        setTimeout(function () {
+                            window.location.href = window.location.href.replace(/[\?#].*|$/, "?idSection=" + idSection + "&idDevoirOpen=" + idItem);
+                        }, 600000)
+                    },
+                    error: function (xhr, status, error) {
+                        console.log('error checkSessionTimeout_ajax')
+                    }
+                });
+
+
                 $.ajax({
                     type: 'POST',
                     url: "{{ path('getDevoir_ajax') }}",
@@ -282,6 +303,9 @@
             // on clique sur la section passée en paramètre (si reload de la page)
             if (getUrlParameter("idSection")) {
                 $('.ongletSection[data-idsection=' + getUrlParameter("idSection") + '] a').click();
+                if (getUrlParameter("idDevoirOpen")) {
+                    $('.devoir[data-iditem=' + getUrlParameter("idDevoirOpen") + '] .btnOpenDevoir').click();
+                }
             }
 
             $('.btnUserStatRessource').click(function (e) {
@@ -444,7 +468,8 @@
                                                                 </div>
                                                                 {% if valR.bareme > 0 %}
                                                                     <div class="ml-10">
-                                                                        Barême : Notation sur {{ valR.bareme }} point{% if valR.bareme > 1 %}s{% endif %}
+                                                                        Barême : Notation sur {{ valR.bareme }}
+                                                                        point{% if valR.bareme > 1 %}s{% endif %}
                                                                     </div>
                                                                 {% endif %}
                                                                 <div class="itemDescription ml-10">
@@ -556,7 +581,8 @@
                                                                                 <td>
                                                                                     Note obtenue
                                                                                 <td>
-                                                                                    {{ val.zones.copie[keyR].note }} / {{ valR.bareme }}
+                                                                                    {{ val.zones.copie[keyR].note }}
+                                                                                    / {{ valR.bareme }}
                                                                                 </td>
                                                                             </tr>
                                                                         {% endif %}
