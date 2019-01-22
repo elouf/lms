@@ -675,6 +675,35 @@ class DevoirController extends Controller
     }
 
     /**
+     * @Route("/desassocCorrecteurCopie_ajax", name="desassocCorrecteurCopie_ajax")
+     * @Method({"GET", "POST"})
+     */
+    public function desassocCorrecteurCopieAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+            $copieId = $request->request->get('copieId');
+
+            /* @var $copie Copie */
+            $copie = $em->getRepository('AppBundle:Copie')->findOneBy(array('id' => $copieId));
+
+            /* @var $assoc AssocCopieCorrecteur */
+            $assoc = $em->getRepository('AppBundle:AssocCopieCorrecteur')->findOneBy(array('copie' => $copie));
+
+            $em->remove($assoc);
+
+            $em->flush();
+
+            return new JsonResponse(array(
+                    'action' =>'desassocie un correcteur à une copie'
+                    )
+            );
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
+    /**
      * @Route("/checkSessionTimeout_ajax", name="checkSessionTimeout_ajax")
      * @Method({"GET", "POST"})
      */
