@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\AssocCopieCorrecteur;
 use AppBundle\Entity\Copie;
 use AppBundle\Entity\CopieFichier;
 use AppBundle\Entity\Corrige;
@@ -635,6 +636,38 @@ class DevoirController extends Controller
 
             return new JsonResponse(array(
                     'action' =>'change copie note')
+            );
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
+    /**
+     * @Route("/assocCorrecteurCopie_ajax", name="assocCorrecteurCopie_ajax")
+     * @Method({"GET", "POST"})
+     */
+    public function assocCorrecteurCopieAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+            $copieId = $request->request->get('copieId');
+
+            /* @var $copie Copie */
+            $copie = $em->getRepository('AppBundle:Copie')->findOneBy(array('id' => $copieId));
+
+            $assocCorrecteurCopie = new AssocCopieCorrecteur();
+            $assocCorrecteurCopie->setCopie($copie);
+            $assocCorrecteurCopie->setCorrecteur($this->getUser());
+
+            $em->persist($assocCorrecteurCopie);
+
+            $em->flush();
+
+            return new JsonResponse(array(
+                    'action' =>'associe un correcteur à une copie',
+                    'correcteur' => $assocCorrecteurCopie->getCorrecteur()->getEmail(),
+                    'date' => date_format($assocCorrecteurCopie->getCreatedAt(),"d/m/Y à H:i")
+                    )
             );
         }
 

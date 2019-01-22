@@ -51,6 +51,13 @@ class Copie
     protected $note;
 
     /**
+     * @var AssocCopieCorrecteur
+     *
+     * @ORM\OneToOne(targetEntity="AssocCopieCorrecteur", mappedBy="copie")
+     */
+    private $assocCorrecteur;
+
+    /**
      * Get id
      *
      * @return int
@@ -154,5 +161,29 @@ class Copie
     public function getNote()
     {
         return $this->note;
+    }
+
+    /**
+     * Set assocCorrecteur
+     *
+     * @param AssocCopieCorrecteur $assocCorrecteur
+     *
+     * @return Copie
+     */
+    public function setAssocCorrecteur($assocCorrecteur)
+    {
+        $this->assocCorrecteur = $assocCorrecteur;
+
+        return $this;
+    }
+
+    /**
+     * Get assocCorrecteur
+     *
+     * @return AssocCopieCorrecteur
+     */
+    public function getAssocCorrecteur()
+    {
+        return $this->assocCorrecteur;
     }
 }

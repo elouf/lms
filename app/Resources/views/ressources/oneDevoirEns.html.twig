@@ -229,6 +229,30 @@
                     }
                 });
             });
+            $('.btnValidAssocCorrecteur').click(function(){
+                var tr = $(this).closest('tr');
+                var copieId = tr.attr('data-copieId');
+                var span = tr.find('.copieAssocCorrecteur');
+                span.removeClass('hidden');
+                var myBtn = $(this);
+
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ path('assocCorrecteurCopie_ajax') }}",
+                    async: false,
+                    dataType: "json",
+                    data: {
+                        copieId: copieId
+                    },
+                    success: function (data) {
+                        span.text('Le '+data['date']+' par '+ data['correcteur']);
+                        span.removeClass('hidden');
+                        myBtn.addClass('hidden');
+                    },
+                    error: function (xhr, status, error) {
+                    }
+                });
+            });
             $(".tableCopies").tablesorter({
                 sortList: [[1,0]]
             });
@@ -276,6 +300,7 @@
                             <th>ID</th>
                             <th>Étudiant</th>
                             <th>Copie</th>
+                            <th>Téléchargée par le correcteur</th>
                             <th>Note</th>
                             <th>Corrigé</th>
                             <th>Nouvel upload</th>
@@ -308,6 +333,14 @@
                                                     <div class="progress-bar progress-bar-success"></div>
                                                 </div>
                                             </div>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if not val.copie.assocCorrecteur %}
+                                            <a class="btn btnValidAssocCorrecteur inversedBtn btn-success btn-sm" ><i class="fa fa-check fa-2x"></i></a>
+                                            <span class="copieAssocCorrecteur hidden"></span>
+                                        {% else %}
+                                            <span class="copieAssocCorrecteur">Le {{ val.copie.assocCorrecteur.createdAt|localizeddate('none', 'none', 'fr', null, 'dd/MM/Y à H:mm' ) }} par {{ val.copie.assocCorrecteur.correcteur }}</span>
                                         {% endif %}
                                     </td>
                                     <td>

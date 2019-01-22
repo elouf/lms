@@ -61,6 +61,7 @@
                         <th>Prénom</th>
                         <th>Nom</th>
                         <th>Copie rendue</th>
+                        <th>Correcteur associé</th>
                         <th>Note</th>
                         <th class="filter-select">Institut</th>
                         <th class="filter-select">Activé</th>
@@ -74,6 +75,13 @@
                             <td>{{ copie.user.firstname }}</td>
                             <td>{{ copie.user.lastname }}</td>
                             <td>{{ copie.fichierCopie }}</td>
+                            <td>
+                                {% if copie.copie.assocCorrecteur %}
+                                    Le {{ copie.copie.assocCorrecteur.createdAt|localizeddate('none', 'none', 'fr', null, 'dd/MM/Y à H:mm' ) }} par {{ copie.copie.assocCorrecteur.correcteur }}
+                                {% else %}
+                                    non
+                                {% endif %}
+                            </td>
                             <td>{{ copie.note }}</td>
                             <td>{{ copie.user.institut }}</td>
                             <td>
