@@ -648,6 +648,7 @@ label.alertMustBeSet{
 td.celluleAssocCorCopie{
     position: relative;
     background: #eee;
+    text-align: center;
 }
 .btnCancelAssocCorrecteur{
     position: absolute;
@@ -668,6 +669,22 @@ td.celluleAssocCorCopie{
     color: #b80505;
     background-color: #fff;
     border-color: #b80505;
+}
+.btnValidAssocCorrecteur{
+    border: 4px #44B144 solid;
+    color: #44B144;
+    background-color: #f7f7f7;
+}
+.btnValidAssocCorrecteur:hover{
+    border-color:#44B144;
+    color: #44B144;
+    background-color: #f7f7f7;
+}
+.hiddenIcon{
+    opacity: 0;
+}
+.btnValidAssocCorrecteur:hover .hiddenIcon{
+    opacity: .7;
 }
 
 

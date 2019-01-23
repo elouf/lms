@@ -363,11 +363,11 @@
                                     </td>
                                     <td class="celluleAssocCorCopie">
                                         {% if not val.copie.assocCorrecteur %}
-                                            <a class="btn btnValidAssocCorrecteur inversedBtn btn-success btn-sm" ><i class="fa fa-check fa-2x"></i></a>
+                                            <a class="btn btnValidAssocCorrecteur inversedBtn btn-success btn-sm" ><i class="fa fa-check fa-2x hiddenIcon"></i></a>
                                             <span class="copieAssocCorrecteur hidden"></span>
                                             <div class="btnCancelAssocCorrecteur hidden">x</div>
                                         {% else %}
-                                            <a class="btn btnValidAssocCorrecteur inversedBtn btn-success btn-sm hidden" ><i class="fa fa-check fa-2x"></i></a>
+                                            <a class="btn btnValidAssocCorrecteur inversedBtn btn-success btn-sm hidden" ><i class="fa fa-check fa-2x hiddenIcon"></i></a>
                                             <span class="copieAssocCorrecteur">Le {{ val.copie.assocCorrecteur.createdAt|localizeddate('none', 'none', 'fr', null, 'dd/MM/Y à H:mm' ) }} par {{ val.copie.assocCorrecteur.correcteur }}</span>
                                             {% if app.user.hasRole('ROLE_SUPER_ADMIN') or val.copie.assocCorrecteur.correcteur.id == app.user.id %}
                                                 <div class="btnCancelAssocCorrecteur">x</div>
