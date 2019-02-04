@@ -64,6 +64,13 @@ class User extends BaseUser
      */
     private $chats;
 
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="receiveAutoNotifs", type="boolean", nullable=true)
+     */
+    private $receiveAutoNotifs = true;
+
     public function __construct()
     {
         parent::__construct();
@@ -216,7 +223,7 @@ class User extends BaseUser
      * Add a chat
      *
      * @param Chat $chat
-     * @return Discipline
+     * @return User
      */
     public function addChat(Chat $chat)
     {
@@ -242,5 +249,29 @@ class User extends BaseUser
     public function getChats()
     {
         return $this->chats;
+    }
+
+    /**
+     * Set receiveAutoNotifs
+     *
+     * @param boolean $receiveAutoNotifs
+     *
+     * @return User
+     */
+    public function setReceiveAutoNotifs($receiveAutoNotifs)
+    {
+        $this->receiveAutoNotifs = $receiveAutoNotifs;
+
+        return $this;
+    }
+
+    /**
+     * Get receiveAutoNotifs
+     *
+     * @return bool
+     */
+    public function getReceiveAutoNotifs()
+    {
+        return $this->receiveAutoNotifs;
     }
 }

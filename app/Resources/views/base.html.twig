@@ -149,6 +149,7 @@
                         <li>
                             <a href="#" data-userId="{{ app.user.id }}">{{ app.user.firstname }} {{ app.user.lastname }}</a>
                             <ul class="sub-menu" style="margin-left: -30px;">
+                                <li><a href="{{ path('myprofile') }}">Mon Profil</a></li>
                                 {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
                                     <li>
                                         <a href="#">Gestion</a>

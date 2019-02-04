@@ -14,7 +14,7 @@ class LoadCopieFichierData extends AbstractFixture implements OrderedFixtureInte
 
     public function load(ObjectManager $manager)
     {
-        for($i=1; $i<100; $i++){
+        for($i=1; $i<20; $i++){
             $cop = $this->getReference('copie_dev_cours_alg_2_etu'.$i);
 
             $dateR = $cop->getDateCreation();

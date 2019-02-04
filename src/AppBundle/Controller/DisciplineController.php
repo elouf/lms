@@ -111,6 +111,7 @@ class DisciplineController extends Controller
         for($i=0; $i<count($disciplinesArray2Consider); $i++){
             $courses[$i]["courses"] = array();
             $courses[$i]["sessions"] = array();
+            $courses[$i]["sessionsAdmin"] = array();
             $courses[$i]["sessionsAlerte"] = array();
             $courses[$i]["sessionsAlerteIsInscrit"] = array();
             $courses[$i]["sessionsFinSession"] = array();
@@ -137,13 +138,12 @@ class DisciplineController extends Controller
                         }
                     }
 
-                    if(($currentDate >= $session->getDateDebut() &&
+                    if($currentDate >= $session->getDateDebut() &&
                         $currentDate <= $session->getDateFin() &&
-                        $inscrSess) ||
-                        $this->getUser()->hasRole('ROLE_SUPER_ADMIN') ||
-                        $isEns
-                    ){
-                        // on peut rentrer dans la session
+                        ($inscrSess || $this->getUser()->hasRole('ROLE_SUPER_ADMIN') || $isEns)
+                        )
+                    {
+                        // on peut rentrer dans la session et on est dans les dates
                         array_push($courses[$i]["sessions"], $coursesT[$j]);
                     }elseif($currentDate >= $session->getDateDebutAlerte() && $currentDate < $session->getDateFinAlerte()){
                         // on affiche l'alerte et on permet de s'inscrire
@@ -152,6 +152,9 @@ class DisciplineController extends Controller
                     }elseif($currentDate >= $session->getDateFinAlerte() && $currentDate < $session->getDateFin()){
                         // on affiche le message de fin de session
                         array_push($courses[$i]["sessionsFinSession"], $coursesT[$j]);
+                    }elseif($this->getUser()->hasRole('ROLE_SUPER_ADMIN') || $isEns){
+                        // on peut rentrer dans la session hors des dates
+                        array_push($courses[$i]["sessionsAdmin"], $coursesT[$j]);
                     }
                 }
             }

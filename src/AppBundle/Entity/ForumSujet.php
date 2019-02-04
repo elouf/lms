@@ -55,7 +55,7 @@ class ForumSujet
     /**
      * @var User
      * @ORM\JoinColumn(onDelete="SET NULL")
-     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\ManyToOne(targetEntity="User", cascade={"persist"})
      */
     private $createur;
 

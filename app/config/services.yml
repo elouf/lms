@@ -8,6 +8,10 @@ services:
 #        class: AppBundle\Directory\ClassName
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
 
+    notifsSender:
+        class: AppBundle\Service\NotifsSender
+        arguments: ['@doctrine.orm.entity_manager']
+
     admin.cours:
         class: AppBundle\Admin\CoursAdmin
         arguments: [~, AppBundle\Entity\Cours, ~]

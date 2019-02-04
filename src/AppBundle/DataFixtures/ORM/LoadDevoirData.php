@@ -22,7 +22,8 @@ class LoadDevoirData extends AbstractFixture implements OrderedFixtureInterface
             $this->getReference('cours_alg'),
             $dateD,
             $dateF,
-            17200
+            17200,
+            20
             );
         $this->addReference('dev_cours_alg_1', $ress);
 
@@ -36,14 +37,15 @@ class LoadDevoirData extends AbstractFixture implements OrderedFixtureInterface
             $this->getReference('cours_alg'),
             $dateD,
             $dateF,
-            17200
+            17200,
+            20
         );
         $this->addReference('dev_cours_alg_2', $ress);
 
         $manager->flush();
     }
 
-    public function createItem(ObjectManager $manager, $nom, $description, $cours, $dateDebut, $dateFin, $duree){
+    public function createItem(ObjectManager $manager, $nom, $description, $cours, $dateDebut, $dateFin, $duree, $bareme){
         $item = new Devoir();
         $item->setNom($nom);
         $item->setCours($cours);
@@ -51,6 +53,7 @@ class LoadDevoirData extends AbstractFixture implements OrderedFixtureInterface
         $item->setDateDebut($dateDebut);
         $item->setDateFin($dateFin);
         $item->setDuree($duree);
+        $item->setBareme($bareme);
         $manager->persist($item);
         return $item;
     }

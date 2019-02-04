@@ -1,6 +1,8 @@
 <?php
 
 namespace AppBundle\Repository;
+use AppBundle\Entity\UserStatRessource;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * UserStatRessourceRepository
@@ -10,4 +12,20 @@ namespace AppBundle\Repository;
  */
 class UserStatRessourceRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function findbyUser($user)
+    {
+        $em = $this->getEntityManager();
+        $UserStatRessources = $em->getRepository('AppBundle:UserStatRessource')->findBy(array('user' => $user));
+
+        $stats = new ArrayCollection();
+        if ($UserStatRessources) {
+            /* @var UserStatRessource $statRessource */
+            foreach ($UserStatRessources as $statRessource) {
+                if ($statRessource->getRessource()) {
+                    $stats->add($statRessource);
+                }
+            }
+        }
+        return $stats;
+    }
 }

@@ -461,6 +461,7 @@ label.alertMustBeSet{
 }
 .btnAdmin.btnSaveInputChange{
     background: #00A0D1;
+    padding: 8px 15px;
 }
 .inEdition{
     border: 4px solid #00A0D1;

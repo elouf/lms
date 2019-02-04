@@ -31,10 +31,12 @@
 {% endblock %}
 
 {% block main %}
-    <link rel="stylesheet" href="{{ asset('vendors/tablesorter/dist/css/theme.default.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendors/tablesorter/dist/css/theme.default.min.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('vendors/tablesorter/dist/css/jquery.tablesorter.pager.min.css') }}" />
 
     <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/jquery.tablesorter.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/jquery.tablesorter.widgets.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/extras/jquery.tablesorter.pager.min.js') }}"></script>
     <script>
         jQuery(document).ready(function () {
             $('.modal').modal();
@@ -128,6 +130,9 @@
                 var idItem = $('.verrouille_item').attr('data-idItem');
                 var idUser = $('[data-userIdFiche]').attr('data-userIdFiche');
                 $('.modal').modal('toggle');
+                $('.causeModal').hide();
+                $('.causeModal.desinscr').show();
+
                 $('.valideDesinscr').unbind('click').click(function(){
                     $.ajax({
                         type: "POST",
@@ -188,6 +193,8 @@
                 var idSession = $(this).closest('.sessionLine').attr('data-sessionId');
 
                 $('.modal').modal('toggle');
+                $('.causeModal').hide();
+                $('.causeModal.desinscr').show();
                 $('.valideDesinscr').unbind('click').click(function(){
                     desinscrireUserSession(idUser, idSession);
                 });
@@ -233,6 +240,8 @@
                 var idCoh = $(this).closest('.cohorteLine').attr('data-cohorteId');
 
                 $('.modal').modal('toggle');
+                $('.causeModal').hide();
+                $('.causeModal.desinscr').show();
                 $('.valideDesinscr').unbind('click').click(function(){
                     desinscrireUserCohorte(idUser, idCoh);
                 });
@@ -266,8 +275,74 @@
             if($('#form_created_at').val() == '01/12/0002'){
                 $('#form_created_at').val('Avant le 27/07/2018');
             }
+
+            $(".tablesorter").each(function(){
+                var numPager = $(this).attr('data-numPager');
+                $(this)
+                    .tablesorter({
+                        widthFixed: true,
+                        widgets: ['zebra', 'filter', 'output']
+                    })
+                    .tablesorterPager({
+                        container: $("#pagerYes"+numPager),
+                        output: 'de {startRow} à {endRow} sur {totalRows} lignes',
+                        size: 10
+                    });
+            });
+
+            $('.deleteDatas, .btnDeleteDatas').click(function(e){
+                e.preventDefault();
+                var typeDatas = $(this).attr('data-typeDatas');
+                $('.modal').modal('toggle');
+                $('.causeModal').hide();
+                $('.causeModal.deleteDat').show();
+                $('.valideDesinscr').unbind('click').click(function(){
+                    $.ajax({
+                        type: "POST",
+                        url: "{{path('deleteUserDatas_ajax')}}",
+                        data: {
+                            idUser: '{{ user.id }}',
+                            typeDatas: typeDatas
+                        },
+                        dataType: "json",
+                        success: function (response) {
+                            setTimeout(function(){
+                                window.location.href = window.location.href;
+                            }, 300);
+                        },
+                        error: function(xhr, status, error) {
+                        }
+                    });
+                });
+                $('.cancelDesinscr').unbind('click').click(function(){
+                    $('.modal').modal('toggle');
+                });
+            });
         });
     </script>
+    <style>
+        .formRow {
+            margin-bottom: 5px;
+        }
+
+        .formRow.lastRow {
+            margin-bottom: 20px
+        }
+        .formRow label{
+            width: 300px;
+        }
+
+        .formRow input{
+            width: 250px;
+        }
+        .deleteDatas{
+            background-color: #d64600;
+            color: #fff;
+        }
+        .deleteDatas:hover{
+            background-color: #d6611d;
+        }
+    </style>
 
     <div class="container mt-220 mb-40" data-userIdFiche="{{ user.id }}">
         <div class="col-sm-3">
@@ -286,6 +361,9 @@
                 </li>
                 <li role="presentation"  class="ongletSection">
                     <a href="#OngletEditionUser" aria-controls="OngletEditionUser" role="tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-user-circle fa-fw" aria-hidden="true"> </i>Profil</a>
+                </li>
+                <li role="presentation"  class="ongletSection">
+                    <a href="#InfosRGPD" aria-controls="InfosRGPD" role="tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-database" aria-hidden="true"></i> Données personnelles</a>
                 </li>
             </ul>
         </div>
@@ -348,9 +426,37 @@
                     </div>
                 </div>
                 <div role="tabpanel" class="tab-pane fade" id="OngletEditionUser">
-                    {{ form_start(form) }}
-                    {{ form_widget(form) }}
-                    {{ form_end(form) }}
+                    <div class="firstCol">
+                        {{ form_start(form) }}
+                        <div class="errorsPart">
+                            {{ form_errors(form) }}
+                        </div>
+                        <div class="formRow">
+                            {{ form_label(form.lastname) }}
+                            {{ form_widget(form.lastname) }}
+                        </div>
+                        <div class="formRow">
+                            {{ form_label(form.firstname) }}
+                            {{ form_widget(form.firstname) }}
+                        </div>
+                        <div class="formRow">
+                            {{ form_label(form.email) }}
+                            {{ form_widget(form.email) }}
+                        </div>
+                        <div class="formRow">
+                            {{ form_label(form.institut) }}
+                            {{ form_widget(form.institut) }}
+                        </div>
+                        <div class="formRow">
+                            {{ form_label(form.enabled) }}
+                            {{ form_widget(form.enabled) }}
+                        </div>
+                        <div class="formRow lastRow">
+                            {{ form_label(form.receiveAutoNotifs) }}
+                            {{ form_widget(form.receiveAutoNotifs) }}
+                        </div>
+                        {{ form_end(form) }}
+                    </div>
                 </div>
                 <div role="tabpanel" class="tab-pane fade" id="InfosSess">
                     <div class="coloneTable col-md-12">
@@ -416,6 +522,286 @@
                                 </tbody>
                             </table>
                         </div>
+                    </div>
+                </div>
+                <div role="tabpanel" class="tab-pane fade" id="InfosRGPD">
+                    <div class="btnDeleteDatas btn btn-warning" data-typeDatas="ALL">Supprimer toutes les données</div>
+
+                    <h3>Connexions</h3>
+                    <table class="tablesorter" data-numPager="1">
+                        <thead>
+                        <tr>
+                            <th data-filter="false">Id</th>
+                            <th>Date</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for login in userStatLogin %}
+                            <tr class="userLine">
+                                <td>{{ login.id }}</td>
+                                <td>{{ login.dateAcces|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <div id="pagerYes1" class="pager">
+                        <form>
+                            <img src="{{ asset('vendors/tablesorter/dist/css/images/first.png') }}" class="first"/>
+                            <img src="{{ asset('vendors/tablesorter/dist/css/images/prev.png') }}" class="prev"/>
+                            <input type="text" class="pagedisplay"/>
+                            <img src="{{ asset('vendors/tablesorter/dist/css/images/next.png') }}" class="next"/>
+                            <img src="{{ asset('vendors/tablesorter/dist/css/images/last.png') }}" class="last"/>
+                            <select class="pagesize">
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="30">30</option>
+                                <option value="40">40</option>
+                                <option value="all">Toutes les lignes</option>
+                            </select>
+                            <button class="deleteDatas" data-typeDatas="Login">Effacer ces données</button>
+                        </form>
+                    </div>
+                    <h3>Accès aux cours</h3>
+                    <table class="tablesorter" data-numPager="2">
+                        <thead>
+                        <tr>
+                            <th data-filter="false">Id</th>
+                            <th>Discipline</th>
+                            <th>Cours</th>
+                            <th>Date</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for coursAcces in userStatCours %}
+                            <tr class="userLine">
+                                <td>{{ coursAcces.id }}</td>
+                                <td>{{ coursAcces.cours.discipline.nom }}</td>
+                                <td>{{ coursAcces.cours.nom }}</td>
+                                <td>{{ coursAcces.dateAcces|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <div id="pagerYes2" class="pager">
+                        <form>
+                            <img src="{{ asset('vendors/tablesorter/dist/css/images/first.png') }}" class="first"/>
+                            <img src="{{ asset('vendors/tablesorter/dist/css/images/prev.png') }}" class="prev"/>
+                            <input type="text" class="pagedisplay"/>
+                            <img src="{{ asset('vendors/tablesorter/dist/css/images/next.png') }}" class="next"/>
+                            <img src="{{ asset('vendors/tablesorter/dist/css/images/last.png') }}" class="last"/>
+                            <select class="pagesize">
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="30">30</option>
+                                <option value="40">40</option>
+                                <option value="all">Toutes les lignes</option>
+                            </select>
+                            <button class="deleteDatas" data-typeDatas="Cours">Effacer ces données</button>
+                        </form>
+                    </div>
+                    <h3>Accès aux ressources</h3>
+                    <table class="tablesorter" data-numPager="3">
+                        <thead>
+                        <tr>
+                            <th data-filter="false">Id</th>
+                            <th>Discipline</th>
+                            <th>Cours</th>
+                            <th>Ressource</th>
+                            <th>Date</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for ressourceAcces in userStatRess %}
+                            <tr class="userLine">
+                                <td>{{ ressourceAcces.id }}</td>
+                                <td>{{ ressourceAcces.ressource.cours.discipline.nom }}</td>
+                                <td>{{ ressourceAcces.ressource.cours.nom }}</td>
+                                <td>{{ ressourceAcces.ressource.nom }}</td>
+                                <td>{{ ressourceAcces.dateAcces|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <div id="pagerYes3" class="pager">
+                        <form>
+                            <img src="{{ asset('vendors/tablesorter/dist/css/images/first.png') }}" class="first"/>
+                            <img src="{{ asset('vendors/tablesorter/dist/css/images/prev.png') }}" class="prev"/>
+                            <input type="text" class="pagedisplay"/>
+                            <img src="{{ asset('vendors/tablesorter/dist/css/images/next.png') }}" class="next"/>
+                            <img src="{{ asset('vendors/tablesorter/dist/css/images/last.png') }}" class="last"/>
+                            <select class="pagesize">
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="30">30</option>
+                                <option value="40">40</option>
+                                <option value="all">Toutes les lignes</option>
+                            </select>
+                            <button class="deleteDatas" data-typeDatas="Ressource">Effacer ces données</button>
+                        </form>
+                    </div>
+                    <h3>Copies rendues</h3>
+                    <table class="tablesorter" data-numPager="4">
+                        <thead>
+                        <tr>
+                            <th data-filter="false">Id</th>
+                            <th>Discipline</th>
+                            <th>Cours</th>
+                            <th>Devoir</th>
+                            <th>Note</th>
+                            <th>Date</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for copie in copies %}
+                            <tr class="userLine">
+                                <td>{{ copie.id }}</td>
+                                <td>{{ copie.devoir.cours.discipline.nom }}</td>
+                                <td>{{ copie.devoir.cours.nom }}</td>
+                                <td>{{ copie.devoir.nom }}</td>
+                                <td>{{ copie.note }} / {{ copie.devoir.bareme }}</td>
+                                <td>{{ copie.dateCreation|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <div id="pagerYes4" class="pager">
+                        <form>
+                            <img src="{{ asset('vendors/tablesorter/dist/css/images/first.png') }}" class="first"/>
+                            <img src="{{ asset('vendors/tablesorter/dist/css/images/prev.png') }}" class="prev"/>
+                            <input type="text" class="pagedisplay"/>
+                            <img src="{{ asset('vendors/tablesorter/dist/css/images/next.png') }}" class="next"/>
+                            <img src="{{ asset('vendors/tablesorter/dist/css/images/last.png') }}" class="last"/>
+                            <select class="pagesize">
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="30">30</option>
+                                <option value="40">40</option>
+                                <option value="all">Toutes les lignes</option>
+                            </select>
+                            <button class="deleteDatas" data-typeDatas="Ressource">Effacer ces données</button>
+                        </form>
+                    </div>
+                    <h3>Documents déposés</h3>
+                    <table class="tablesorter" data-numPager="5">
+                        <thead>
+                        <tr>
+                            <th data-filter="false">Id</th>
+                            <th>Nom</th>
+                            <th>Date de dépôt</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for document in documents %}
+                            <tr class="userLine">
+                                <td>{{ document.id }}</td>
+                                <td>{{ document.nom }}</td>
+                                <td>{{ document.dateCrea|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <div id="pagerYes5" class="pager">
+                        <form>
+                            <img src="{{ asset('vendors/tablesorter/dist/css/images/first.png') }}" class="first"/>
+                            <img src="{{ asset('vendors/tablesorter/dist/css/images/prev.png') }}" class="prev"/>
+                            <input type="text" class="pagedisplay"/>
+                            <img src="{{ asset('vendors/tablesorter/dist/css/images/next.png') }}" class="next"/>
+                            <img src="{{ asset('vendors/tablesorter/dist/css/images/last.png') }}" class="last"/>
+                            <select class="pagesize">
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="30">30</option>
+                                <option value="40">40</option>
+                                <option value="all">Toutes les lignes</option>
+                            </select>
+                            <button class="deleteDatas" data-typeDatas="Document">Effacer ces données</button>
+                        </form>
+                    </div>
+                    <h3>Sujets de Forum créés</h3>
+                    <table class="tablesorter" data-numPager="6">
+                        <thead>
+                        <tr>
+                            <th data-filter="false">Id</th>
+                            <th>Discipline</th>
+                            <th>Cours</th>
+                            <th>Titre du Forum</th>
+                            <th>Titre du Sujet</th>
+                            <th>Date de création</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for sujet in sujets %}
+                            <tr class="userLine">
+                                <td>{{ sujet.id }}</td>
+                                <td>{{ sujet.forum.cours.discipline.nom }}</td>
+                                <td>{{ sujet.forum.cours.nom }}</td>
+                                <td>{{ sujet.forum.nom }}</td>
+                                <td>{{ sujet.titre }}</td>
+                                <td>{{ sujet.createdAt|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <div id="pagerYes6" class="pager">
+                        <form>
+                            <img src="{{ asset('vendors/tablesorter/dist/css/images/first.png') }}" class="first"/>
+                            <img src="{{ asset('vendors/tablesorter/dist/css/images/prev.png') }}" class="prev"/>
+                            <input type="text" class="pagedisplay"/>
+                            <img src="{{ asset('vendors/tablesorter/dist/css/images/next.png') }}" class="next"/>
+                            <img src="{{ asset('vendors/tablesorter/dist/css/images/last.png') }}" class="last"/>
+                            <select class="pagesize">
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="30">30</option>
+                                <option value="40">40</option>
+                                <option value="all">Toutes les lignes</option>
+                            </select>
+                            <button class="deleteDatas" data-typeDatas="ForumSujet">Effacer ces données</button>
+                        </form>
+                    </div>
+                    <h3>Posts de Forum créés</h3>
+                    <table class="tablesorter" data-numPager="7">
+                        <thead>
+                        <tr>
+                            <th data-filter="false">Id</th>
+                            <th>Discipline</th>
+                            <th>Cours</th>
+                            <th>Titre du Forum</th>
+                            <th>Titre du Sujet</th>
+                            <th>Message</th>
+                            <th>Date de création</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for post in posts %}
+                            <tr class="userLine">
+                                <td>{{ post.id }}</td>
+                                <td>{{ post.sujet.forum.cours.discipline.nom }}</td>
+                                <td>{{ post.sujet.forum.cours.nom }}</td>
+                                <td>{{ post.sujet.forum.nom }}</td>
+                                <td>{{ post.sujet.titre }}</td>
+                                <td>{{ post.texte|striptags|slice(0, 100) }}...</td>
+                                <td>{{ post.createdAt|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <div id="pagerYes7" class="pager">
+                        <form>
+                            <img src="{{ asset('vendors/tablesorter/dist/css/images/first.png') }}" class="first"/>
+                            <img src="{{ asset('vendors/tablesorter/dist/css/images/prev.png') }}" class="prev"/>
+                            <input type="text" class="pagedisplay"/>
+                            <img src="{{ asset('vendors/tablesorter/dist/css/images/next.png') }}" class="next"/>
+                            <img src="{{ asset('vendors/tablesorter/dist/css/images/last.png') }}" class="last"/>
+                            <select class="pagesize">
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="30">30</option>
+                                <option value="40">40</option>
+                                <option value="all">Toutes les lignes</option>
+                            </select>
+                            <button class="deleteDatas" data-typeDatas="ForumPost">Effacer ces données</button>
+                        </form>
                     </div>
                 </div>
                 <div role="tabpanel" class="tab-pane fade" id="InfosDev">
@@ -537,7 +923,8 @@
                         <div class="bginverse">
                             <div class="">
                                 <div class="alert alert-danger mb-10">
-                                    <strong>Attention!</strong> Vous allez désinscrire l'utilisateur.
+                                    <p class="causeModal desinscr"><strong>Attention!</strong> Vous allez désinscrire l'utilisateur.</p>
+                                    <p class="causeModal deleteDat"><strong>Attention!</strong> Vous allez effacer des données de l'utilisateur.</p>
                                 </div>
 
                                 <div class="row mb-10" style="text-align: center">

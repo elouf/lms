@@ -15,7 +15,7 @@ class LoadCorrigeFichierData extends AbstractFixture implements OrderedFixtureIn
 
     public function load(ObjectManager $manager)
     {
-        for($i=1; $i<50; $i++){
+        for($i=1; $i<19; $i++){
             $ress = $this->createItem($manager,
                 'www.google.fr',
                 'corrige Fichier 1',

@@ -2,6 +2,9 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Document;
+use AppBundle\Entity\ForumPost;
+use AppBundle\Entity\ForumSujet;
 use AppBundle\Entity\Inscription;
 use AppBundle\Entity\Inscription_c;
 use AppBundle\Entity\Inscription_d;
@@ -12,11 +15,18 @@ use AppBundle\Entity\Inscription_sess;
 use AppBundle\Entity\Role;
 use AppBundle\Entity\User;
 use AppBundle\Repository\CohorteRepository;
+use AppBundle\Repository\InstitutRepository;
+use AppBundle\Repository\UserStatCoursRepository;
+use AppBundle\Repository\UserStatLoginRepository;
+use AppBundle\Repository\UserStatRessourceRepository;
 use DateTime;
 use AppBundle\Entity\Inscription_coh;
+use Doctrine\Common\Collections\ArrayCollection;
 use Ivory\CKEditorBundle\Form\Type\CKEditorType;
+use Sonata\CoreBundle\Form\Type\BooleanType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -31,6 +41,112 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class UsersController extends Controller
 {
+    /**
+     * @Route("/myprofile", name="myprofile")
+     */
+    public function myProfileAction(Request $request, $fromCommandeCode=null)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $instituts = $this->getDoctrine()->getRepository('AppBundle:Institut')->findAll();
+
+        /* @var $user User */
+        $user = $this->getUser();
+
+        $form = $this->createFormBuilder()
+            ->add('nom', TextType::class, array(
+                'label' => 'Nom ',
+                'data' => $user->getLastname()
+            ))
+            ->add('prenom', TextType::class, array(
+                'label' => 'Prénom ',
+                'data' => $user->getFirstname()
+            ))
+            ->add('email', EmailType::class, array(
+                'label' => 'Email ',
+                'data' => $user->getEmail()
+            ))
+            ->add('plainPassword', RepeatedType::class, array(
+                'label' => 'Mot de passe ',
+                'type' => PasswordType::class,
+                'invalid_message' => 'Les mots de passe doivent être identiques.',
+                'error_bubbling' => true,
+                'options' => array('attr' => array('class' => 'password-field')),
+                'required' => false,
+                'first_options' => array('label' => 'Mot de passe'),
+                'second_options' => array('label' => 'Répétez le mot de passe'),
+            ))
+            ->add('notifs', CheckboxType::class, array(
+                'label' => 'Recevoir les notifications ',
+                'data' => $user->getReceiveAutoNotifs()
+            ))
+            ->add('institut', EntityType::class, array(
+                'label' => 'Institut ',
+                'class' => 'AppBundle:Institut',
+                'query_builder' => function (InstitutRepository $in) {
+                    return $in->createQueryBuilder('i')
+                        ->orderBy('i.nom', 'ASC')
+                        ->where('i.actif = true');
+                },
+                'multiple' => false,
+                'data' => $user->getInstitut()
+            ))
+            ->add('submit', SubmitType::class, array(
+                'label' => 'Mettre à jour',
+                'attr' => array('class' => 'button btn btnAdmin btnSaveInputChange')
+            ))
+            ->getForm();
+        $form->handleRequest($request);
+
+
+        if ($form->isValid()) {
+            $user->setLastname($form['nom']->getData());
+            $user->setFirstname($form['prenom']->getData());
+            $user->setEmail($form['email']->getData());
+            $user->setEmailCanonical($form['email']->getData());
+            $user->setUsername($form['email']->getData());
+            $user->setUsernameCanonical($form['email']->getData());
+            $user->setPlainPassword($form['plainPassword']->getData());
+            $user->setInstitut($form['institut']->getData());
+
+            $em->flush();
+            return $this->redirectToRoute('myprofile', array('user' => $user));
+        }
+
+        /* @var UserStatRessourceRepository $userStatRessRepo */
+        $userStatRessRepo = $this->getDoctrine()->getRepository('AppBundle:UserStatRessource');
+
+        /* @var UserStatCoursRepository $userStatCoursRepo */
+        $userStatCoursRepo = $this->getDoctrine()->getRepository('AppBundle:UserStatCours');
+
+        /* @var ArrayCollection $userStatLogin */
+        $userStatLogin = $this->getDoctrine()->getRepository('AppBundle:UserStatLogin')->findBy(array('user' => $user));
+
+        /* @var ArrayCollection $copies */
+        $copies = $this->getDoctrine()->getRepository('AppBundle:Copie')->findBy(array('auteur' => $user));
+
+        /* @var ArrayCollection $documents */
+        $documents = $this->getDoctrine()->getRepository('AppBundle:Document')->findBy(array('proprietaire' => $user));
+
+        /* @var ArrayCollection $sujets */
+        $sujets = $this->getDoctrine()->getRepository('AppBundle:ForumSujet')->findBy(array('createur' => $user));
+
+        /* @var ArrayCollection $posts */
+        $posts = $this->getDoctrine()->getRepository('AppBundle:ForumPost')->findBy(array('auteur' => $user));
+
+        return $this->render('user/myProfile.html.twig', [
+            'base_dir' => realpath($this->getParameter('kernel.root_dir') . '/..'),
+            'user' => $user,
+            'form' => $form->createView(),
+            'userStatRess' => $userStatRessRepo->findbyUser($user),
+            'userStatCours' => $userStatCoursRepo->findbyUser($user),
+            'userStatLogin' => $userStatLogin,
+            'copies' => $copies,
+            'documents' => $documents,
+            'sujets' => $sujets,
+            'posts' => $posts
+        ]);
+    }
 
     /**
      * @Route("/usersManag", name="usersManag")
@@ -253,41 +369,20 @@ class UsersController extends Controller
 
         $form = $this->createFormBuilder($user)
             ->add('lastname', TextType::class, array(
-                'label' => 'Nom',
-                'label_attr' => array('class' => 'col-sm-4'),
-                'attr' => array('class' => 'col-sm-8')
+                'label' => 'Nom'
             ))
             ->add('firstname', TextType::class, array(
-                'label' => 'Prénom',
-                'label_attr' => array('class' => 'col-sm-4'),
-                'attr' => array('class' => 'col-sm-8')
+                'label' => 'Prénom'
             ))
             ->add('email', EmailType::class, array(
-                'label_attr' => array('class' => 'col-sm-4'),
-                'attr' => array('class' => 'col-sm-8')
             ))
-            ->add('phone', TextType::class, array(
-                'label' => 'Numéro de téléphone',
-                'required' => false,
-                'label_attr' => array('class' => 'col-sm-4'),
-                'attr' => array('class' => 'col-sm-8')
-            ))
-            ->add('created_at', 'date', array(
-                'widget' => 'single_text',
-                'input' => 'datetime',
-                'format' => 'dd/MM/yyyy',
-                'label' => 'Date d\'inscription',
-                'label_attr' => array('class' => 'col-sm-4'),
-                'attr' => array(
-                    'class' => 'col-sm-8',
-                    'readonly' => true,
-                )
+            ->add('receiveAutoNotifs', CheckboxType::class, array(
+                'label' => 'Recevoir les notifications '
             ))
             ->add('institut', EntityType::class, array(
                 'class' => 'AppBundle:Institut',
                 'choice_label' => 'nom',
-                'multiple' => false,
-                'label_attr' => array('class' => 'col-sm-4')
+                'multiple' => false
             ))
             ->add('enabled', CheckboxType::class, array(
                 'label' => 'Activé'
@@ -305,7 +400,23 @@ class UsersController extends Controller
             $em->persist($user);
             $em->flush();
         }
+        /* @var UserStatRessourceRepository $userStatRessRepo */
+        $userStatRessRepo = $this->getDoctrine()->getRepository('AppBundle:UserStatRessource');
 
+        /* @var UserStatCoursRepository $userStatCoursRepo */
+        $userStatCoursRepo = $this->getDoctrine()->getRepository('AppBundle:UserStatCours');
+
+        /* @var ArrayCollection $userStatLogin */
+        $userStatLogin = $this->getDoctrine()->getRepository('AppBundle:UserStatLogin')->findBy(array('user' => $user));
+
+        /* @var ArrayCollection $documents */
+        $documents = $this->getDoctrine()->getRepository('AppBundle:Document')->findBy(array('proprietaire' => $user));
+
+        /* @var ArrayCollection $sujets */
+        $sujets = $this->getDoctrine()->getRepository('AppBundle:ForumSujet')->findBy(array('createur' => $user));
+
+        /* @var ArrayCollection $posts */
+        $posts = $this->getDoctrine()->getRepository('AppBundle:ForumPost')->findBy(array('auteur' => $user));
 
         return $this->render('user/one.html.twig', [
             'user' => $user,
@@ -314,7 +425,14 @@ class UsersController extends Controller
             'coursInsc' => $cours_inscr,
             'form' => $form->createView(),
             'sessions' => $sessions_tab,
-            'copies' => $myCopies
+            'copies' => $myCopies,
+            'userStatRess' => $userStatRessRepo->findbyUser($user),
+            'userStatCours' => $userStatCoursRepo->findbyUser($user),
+            'userStatLogin' => $userStatLogin,
+            'documents' => $documents,
+            'sujets' => $sujets,
+            'posts' => $posts
+
         ]);
     }
 
@@ -674,6 +792,79 @@ class UsersController extends Controller
             $em->flush();
 
             return new JsonResponse(array('action' =>'Inscription user session'));
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
+    /**
+     * @Route("/deleteUserDatas_ajax", name="deleteUserDatas_ajax")
+     */
+    public function deleteUserDatasAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+
+            $typeDatas = $request->request->get('typeDatas');
+            $userId = $request->request->get('idUser');
+
+            $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
+
+            if($typeDatas == 'Cours' || $typeDatas == 'Ressource' || $typeDatas == 'Login'){
+                $stats = $em->getRepository('AppBundle:UserStat'.$typeDatas)->findBy(array('user' => $user));
+                foreach ($stats as $stat) {
+                    $em->remove($stat);
+                }
+            }elseif ($typeDatas == 'Document'){
+                $docs = $em->getRepository('AppBundle:Document')->findBy(array('proprietaire' => $user));
+                /* @var Document $doc */
+                foreach ($docs as $doc) {
+                    $doc->setProprietaire(null);
+                }
+            }elseif ($typeDatas == 'ForumSujet'){
+                $sujets = $em->getRepository('AppBundle:ForumSujet')->findBy(array('createur' => $user));
+                /* @var ForumSujet $sujet */
+                foreach ($sujets as $sujet) {
+                    $sujet->setCreateur(null);
+                }
+            }elseif ($typeDatas == 'ForumPost'){
+                $posts = $em->getRepository('AppBundle:ForumPost')->findBy(array('auteur' => $user));
+                /* @var ForumPost $post */
+                foreach ($posts as $post) {
+                    $post->setAuteur(null);
+                }
+            }elseif ($typeDatas == 'ALL'){
+                $stats = $em->getRepository('AppBundle:UserStatLogin')->findBy(array('user' => $user));
+                foreach ($stats as $stat) {
+                    $em->remove($stat);
+                }
+
+                $stats = $em->getRepository('AppBundle:UserStatRessource')->findBy(array('user' => $user));
+                foreach ($stats as $stat) {
+                    $em->remove($stat);
+                }
+
+                $stats = $em->getRepository('AppBundle:UserStatCours')->findBy(array('user' => $user));
+                foreach ($stats as $stat) {
+                    $em->remove($stat);
+                }
+
+                $docs = $em->getRepository('AppBundle:Document')->findBy(array('proprietaire' => $user));
+                /* @var Document $doc */
+                foreach ($docs as $doc) {
+                    $doc->setProprietaire(null);
+                }
+
+                $sujets = $em->getRepository('AppBundle:ForumSujet')->findBy(array('createur' => $user));
+                /* @var ForumSujet $sujet */
+                foreach ($sujets as $sujet) {
+                    $sujet->setCreateur(null);
+                }
+            }
+
+            $em->flush();
+
+            return new JsonResponse(array('action' =>'Delete RGPD datas'));
         }
 
         return new JsonResponse('This is not ajax!', 400);

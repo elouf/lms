@@ -39,6 +39,7 @@ class LoadInstitutData extends AbstractFixture implements OrderedFixtureInterfac
         $item = new Institut();
         $item->setNom($nom);
         $item->setVille($ville);
+        $item->setActif(true);
         $manager->persist($item);
         return $item;
     }

@@ -1,6 +1,8 @@
 <?php
 
 namespace AppBundle\Repository;
+use AppBundle\Entity\UserStatCours;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * UserStatCoursRepository
@@ -10,4 +12,20 @@ namespace AppBundle\Repository;
  */
 class UserStatCoursRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function findbyUser($user)
+    {
+        $em = $this->getEntityManager();
+        $UserStatCourses = $em->getRepository('AppBundle:UserStatCours')->findBy(array('user' => $user));
+
+        $stats = new ArrayCollection();
+        if ($UserStatCourses) {
+            /* @var UserStatCours $statCours */
+            foreach ($UserStatCourses as $statCours) {
+                if ($statCours->getCours()) {
+                    $stats->add($statCours);
+                }
+            }
+        }
+        return $stats;
+    }
 }
