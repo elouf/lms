@@ -12,6 +12,24 @@ class LoadCopieData extends AbstractFixture implements OrderedFixtureInterface
 
     public function load(ObjectManager $manager)
     {
+        $dateR = new \DateTime();
+        $dateR->setDate(2017, 3, mt_rand(1, 5));
+        $ress = $this->createItem($manager,
+            $this->getReference('user_admin'),
+            $this->getReference('dev_cours_alg_1'),
+            $dateR
+        );
+        $this->addReference('copie_dev_cours_alg_1_admin', $ress);
+
+        $dateR = new \DateTime();
+        $dateR->setDate(2017, 3, mt_rand(1, 5));
+        $ress = $this->createItem($manager,
+            $this->getReference('user_admin'),
+            $this->getReference('dev_cours_alg_2'),
+            $dateR
+        );
+        $this->addReference('copie_dev_cours_alg_2_admin', $ress);
+
         for($i=1; $i<20; $i++){
             $dateR = new \DateTime();
             $dateR->setDate(2017, 3, mt_rand(1, 5));

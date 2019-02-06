@@ -16,7 +16,7 @@ class LoadDocumentData extends AbstractFixture implements OrderedFixtureInterfac
 
         for($i=0; $i<15; $i++) {
             $dateC = new \DateTime();
-            $dateC->setDate(2017, 3, $i);
+            $dateC->setDate(2019, 1, $i);
 
             $ress = $this->createItem($manager,
                 'www.google.fr'.$i,

@@ -53,18 +53,15 @@ class UsersController extends Controller
         /* @var $user User */
         $user = $this->getUser();
 
-        $form = $this->createFormBuilder()
-            ->add('nom', TextType::class, array(
-                'label' => 'Nom ',
-                'data' => $user->getLastname()
+        $form = $this->createFormBuilder($user)
+            ->add('lastname', TextType::class, array(
+                'label' => 'Nom '
             ))
-            ->add('prenom', TextType::class, array(
-                'label' => 'Prénom ',
-                'data' => $user->getFirstname()
+            ->add('firstname', TextType::class, array(
+                'label' => 'Prénom '
             ))
             ->add('email', EmailType::class, array(
-                'label' => 'Email ',
-                'data' => $user->getEmail()
+                'label' => 'Email '
             ))
             ->add('plainPassword', RepeatedType::class, array(
                 'label' => 'Mot de passe ',
@@ -76,20 +73,14 @@ class UsersController extends Controller
                 'first_options' => array('label' => 'Mot de passe'),
                 'second_options' => array('label' => 'Répétez le mot de passe'),
             ))
-            ->add('notifs', CheckboxType::class, array(
+            ->add('receiveAutoNotifs', CheckboxType::class, array(
                 'label' => 'Recevoir les notifications ',
-                'data' => $user->getReceiveAutoNotifs()
+                'required' => false
             ))
             ->add('institut', EntityType::class, array(
-                'label' => 'Institut ',
                 'class' => 'AppBundle:Institut',
-                'query_builder' => function (InstitutRepository $in) {
-                    return $in->createQueryBuilder('i')
-                        ->orderBy('i.nom', 'ASC')
-                        ->where('i.actif = true');
-                },
-                'multiple' => false,
-                'data' => $user->getInstitut()
+                'choice_label' => 'nom',
+                'multiple' => false
             ))
             ->add('submit', SubmitType::class, array(
                 'label' => 'Mettre à jour',
@@ -100,15 +91,9 @@ class UsersController extends Controller
 
 
         if ($form->isValid()) {
-            $user->setLastname($form['nom']->getData());
-            $user->setFirstname($form['prenom']->getData());
-            $user->setEmail($form['email']->getData());
-            $user->setEmailCanonical($form['email']->getData());
-            $user->setUsername($form['email']->getData());
-            $user->setUsernameCanonical($form['email']->getData());
-            $user->setPlainPassword($form['plainPassword']->getData());
-            $user->setInstitut($form['institut']->getData());
-
+            $user = $form->getData();
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($user);
             $em->flush();
             return $this->redirectToRoute('myprofile', array('user' => $user));
         }
@@ -377,7 +362,8 @@ class UsersController extends Controller
             ->add('email', EmailType::class, array(
             ))
             ->add('receiveAutoNotifs', CheckboxType::class, array(
-                'label' => 'Recevoir les notifications '
+                'label' => 'Recevoir les notifications ',
+                'required' => false
             ))
             ->add('institut', EntityType::class, array(
                 'class' => 'AppBundle:Institut',
@@ -393,8 +379,6 @@ class UsersController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // $form->getData() holds the submitted values
-            // but, the original `$task` variable has also been updated
             $user = $form->getData();
             $em = $this->getDoctrine()->getManager();
             $em->persist($user);

@@ -43,6 +43,13 @@ class Corrige
      */
     private $dateRendu;
 
+    /**
+     * @var Log
+     *
+     * @ORM\Column(name="preuveEnvoiNotif", type="text", nullable=true)
+     */
+    protected $preuveEnvoiNotif;
+
 
     /**
      * Get id
@@ -100,6 +107,30 @@ class Corrige
     public function getCopie()
     {
         return $this->copie;
+    }
+
+    /**
+     * Set preuveEnvoiNotif
+     *
+     * @param string $preuveEnvoiNotif
+     *
+     * @return Corrige
+     */
+    public function setPreuveEnvoiNotif($preuveEnvoiNotif)
+    {
+        $this->preuveEnvoiNotif = $preuveEnvoiNotif;
+
+        return $this;
+    }
+
+    /**
+     * Get preuveEnvoiNotif
+     *
+     * @return string
+     */
+    public function getPreuveEnvoiNotif()
+    {
+        return $this->preuveEnvoiNotif;
     }
 
     /**

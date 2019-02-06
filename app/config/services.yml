@@ -10,7 +10,7 @@ services:
 
     notifsSender:
         class: AppBundle\Service\NotifsSender
-        arguments: ['@doctrine.orm.entity_manager']
+        arguments: ['@doctrine.orm.entity_manager', '@mailer', '@twig']
 
     admin.cours:
         class: AppBundle\Admin\CoursAdmin

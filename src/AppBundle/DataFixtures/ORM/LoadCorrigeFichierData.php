@@ -15,6 +15,20 @@ class LoadCorrigeFichierData extends AbstractFixture implements OrderedFixtureIn
 
     public function load(ObjectManager $manager)
     {
+        $ress = $this->createItem($manager,
+            'www.google.fr',
+            'corrige Fichier 1',
+            $this->getReference('corrige_copie_dev_cours_alg_1_admin')
+        );
+        $this->addReference('corrigeFichier_copie_dev_cours_alg_1_admin', $ress);
+
+        $ress = $this->createItem($manager,
+            'www.google.fr',
+            'corrige Fichier 1',
+            $this->getReference('corrige_copie_dev_cours_alg_2_admin')
+        );
+        $this->addReference('corrigeFichier_copie_dev_cours_alg_2_admin', $ress);
+
         for($i=1; $i<19; $i++){
             $ress = $this->createItem($manager,
                 'www.google.fr',

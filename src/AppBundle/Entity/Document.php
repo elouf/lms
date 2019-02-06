@@ -28,6 +28,13 @@ class Document extends Fichier
     private $proprietaire;
 
     /**
+     * @var Log
+     *
+     * @ORM\Column(name="preuveEnvoiNotif", type="text", nullable=true)
+     */
+    protected $preuveEnvoiNotif;
+
+    /**
      * Set description
      *
      * @param string $description
@@ -49,6 +56,30 @@ class Document extends Fichier
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * Set preuveEnvoiNotif
+     *
+     * @param string $preuveEnvoiNotif
+     *
+     * @return Document
+     */
+    public function setPreuveEnvoiNotif($preuveEnvoiNotif)
+    {
+        $this->preuveEnvoiNotif = $preuveEnvoiNotif;
+
+        return $this;
+    }
+
+    /**
+     * Get preuveEnvoiNotif
+     *
+     * @return string
+     */
+    public function getPreuveEnvoiNotif()
+    {
+        return $this->preuveEnvoiNotif;
     }
 
     /**
