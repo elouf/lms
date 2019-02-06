@@ -111,6 +111,11 @@ services:
         arguments: [~, AppBundle\Entity\User, ~]
         tags:
             - { name: sonata.admin, manager_type: orm, label: Utilisateurs, group: "Utilisateurs" }
+    admin.logs:
+        class: AppBundle\Admin\LogAdmin
+        arguments: [~, AppBundle\Entity\Log, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: Logs, group: "Administration" }
 
     chat.topic_sample_service:
         class: AppBundle\Service\Chat\ChatTopic

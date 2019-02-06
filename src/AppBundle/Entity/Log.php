@@ -42,7 +42,7 @@ class Log
     private $createdAt;
 
     /**
-     * @ORM\Column(name="log", type="blob", nullable=true)
+     * @ORM\Column(name="log", type="text", nullable=true)
      */
     protected $log;
 
@@ -127,7 +127,7 @@ class Log
      */
     public function appendLogDate()
     {
-        $this->log .= "\n----------------\n[date : ".date("Y-m-d H:i:s")."]\n";
+        $this->log .= "<br>----------------<br>[date : ".date("Y-m-d H:i:s")."]<br>";
     }
 
     /**
@@ -135,7 +135,7 @@ class Log
      */
     public function appendLogType()
     {
-        $this->log .= "[type : ".$this->getType()."]\n";
+        $this->log .= "[type : ".$this->getType()."]<br>";
     }
 
     /**
@@ -143,7 +143,7 @@ class Log
      */
     public function appendLog($newlog)
     {
-        $this->log .= "\n".$newlog;
+        $this->log .= "<br>".$newlog;
     }
 
     /**
