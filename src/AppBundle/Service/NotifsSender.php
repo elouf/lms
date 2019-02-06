@@ -248,10 +248,9 @@ class NotifsSender
 
     public function sendMail(User $user, $contenuDocuments)
     {
-        $this->addLog('sendMail : '.$user->getEmail());
-
+        $this->addLog($user->getEmail());
         $pos = strpos($user->getEmail(), 'erwa');
-        if($pos){
+        if($pos !== false){
             $message = \Swift_Message::newInstance()
                 ->setSubject('[AFADEC] Document déposé')
                 ->setFrom('noreply@afadec.fr')
@@ -282,6 +281,7 @@ class NotifsSender
                 )
             ;
             $this->mailer->send($message);
+            $this->addLog('sendMail : '.$user->getEmail());
         }
 
     }
