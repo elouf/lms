@@ -33,7 +33,7 @@ class NotifsSender
         $this->templating = $templating;
         $this->cp = new Log();
         $this->cp->setType('Envoi de notifications');
-        $this->dateLimit = new \DateTime('2019-01-01 00:00:00');
+        $this->dateLimit = new \DateTime('2019-02-01 00:00:00');
     }
 
     /**
@@ -115,46 +115,46 @@ class NotifsSender
                             $inscr_c = $this->em->getRepository('AppBundle:Inscription_c')->findOneBy(array('id' => $idAssoc));
                             $user = null;
                             $cibleIdStr = "";
-                            if($inscr_c){
+                            if ($inscr_c) {
                                 $user = $inscr_c->getUser();
                                 $cibleIdStr = strval($inscr_c->getCours()->getId());
                                 $typeAssoc = 'Inscription_c';
-                            }else{
+                            } else {
                                 /* @var Inscription_d $inscr_d */
                                 $inscr_d = $this->em->getRepository('AppBundle:Inscription_d')->findOneBy(array('id' => $idAssoc));
-                                if($inscr_d){
+                                if ($inscr_d) {
                                     $user = $inscr_d->getUser();
                                     $cibleIdStr = strval($inscr_d->getDiscipline()->getId());
                                     $typeAssoc = 'Inscription_d';
-                                }else{
+                                } else {
                                     /* @var Inscription_coh $inscr_coh */
                                     $inscr_coh = $this->em->getRepository('AppBundle:Inscription_coh')->findOneBy(array('id' => $idAssoc));
-                                    if($inscr_coh){
+                                    if ($inscr_coh) {
                                         $user = $inscr_coh->getUser();
                                         $cibleIdStr = strval($inscr_coh->getCohorte()->getId());
                                         $typeAssoc = 'Inscription_coh';
-                                    }else{
+                                    } else {
                                         $this->addLog('PB : type Inscription non trouvé');
                                     }
                                 }
                             }
-                            if($user){
+                            if ($user) {
                                 $userIdStr = strval($user->getId());
                                 /*if ($assocDocsInscr->getCours()) {
                                     $cibleIdStr = strval($inscr_c->getCours()->getId());
                                     $typeAssoc = 'Inscription_c';
                                     $this->appendInUsersTab($userIdStr, $cibleIdStr, 'docsCours', $tabMailsToSend, $doc);
                                 } else {*/
-                                    // on cherche le type d'inscription
-                                    if ($typeAssoc == 'Inscription_c') {
-                                        $this->appendInUsersTab($userIdStr, $cibleIdStr, 'docsCours', $tabMailsToSend, $doc);
-                                    } elseif ($typeAssoc == 'Inscription_d') {
-                                        $this->appendInUsersTab($userIdStr, $cibleIdStr, 'docsDisc', $tabMailsToSend, $doc);
-                                    } elseif ($typeAssoc == 'Inscription_coh') {
-                                        $this->appendInUsersTab($userIdStr, $cibleIdStr, 'docsCoh', $tabMailsToSend, $doc);
-                                    }else{
-                                        $this->addLog('PB : Inscription non trouvée');
-                                    }
+                                // on cherche le type d'inscription
+                                if ($typeAssoc == 'Inscription_c') {
+                                    $this->appendInUsersTab($userIdStr, $cibleIdStr, 'docsCours', $tabMailsToSend, $doc);
+                                } elseif ($typeAssoc == 'Inscription_d') {
+                                    $this->appendInUsersTab($userIdStr, $cibleIdStr, 'docsDisc', $tabMailsToSend, $doc);
+                                } elseif ($typeAssoc == 'Inscription_coh') {
+                                    $this->appendInUsersTab($userIdStr, $cibleIdStr, 'docsCoh', $tabMailsToSend, $doc);
+                                } else {
+                                    $this->addLog('PB : Inscription non trouvée');
+                                }
                                 //}
                             }
                         }
@@ -165,7 +165,7 @@ class NotifsSender
         $this->addLog(json_encode($tabMailsToSend));
 
         // on envoi les mails à tout ce petit monde !!!!
-        foreach ($tabMailsToSend as $idUser => $userMailsToSend){
+        foreach ($tabMailsToSend as $idUser => $userMailsToSend) {
             /* @var User $user */
             $user = $this->em->getRepository('AppBundle:User')->findOneBy(array('id' => $idUser));
             $contenuDocuments = "";
@@ -173,39 +173,39 @@ class NotifsSender
                 array_key_exists('docsCours', $userMailsToSend) ||
                 array_key_exists('docsCoh', $userMailsToSend)) {
                 $contenuDocuments .= "<p>Des documents ont été déposés à votre intention sur la plateforme :</p><ul>";
-                if (array_key_exists('docsDisc', $userMailsToSend)){
-                    foreach ($userMailsToSend['docsDisc'] as $idDisc => $docs){
+                if (array_key_exists('docsDisc', $userMailsToSend)) {
+                    foreach ($userMailsToSend['docsDisc'] as $idDisc => $docs) {
                         /* @var Discipline $dis */
                         $dis = $this->em->getRepository('AppBundle:Discipline')->findOneBy(array('id' => $idDisc));
                         $nom = $dis->getNom();
-                        foreach ($docs as $idDoc){
+                        foreach ($docs as $idDoc) {
                             /* @var Document $doc */
                             $doc = $this->em->getRepository('AppBundle:Document')->findOneBy(array('id' => $idDoc));
-                            $contenuDocuments .= "<li>".$doc->getNom()." dans la discipline ".$nom."</li>";
+                            $contenuDocuments .= "<li>" . $doc->getNom() . " dans la discipline " . $nom . "</li>";
                         }
                     }
                 }
-                if (array_key_exists('docsCours', $userMailsToSend)){
-                    foreach ($userMailsToSend['docsCours'] as $idCours => $docs){
+                if (array_key_exists('docsCours', $userMailsToSend)) {
+                    foreach ($userMailsToSend['docsCours'] as $idCours => $docs) {
                         /* @var Cours $cours */
                         $cours = $this->em->getRepository('AppBundle:Cours')->findOneBy(array('id' => $idCours));
                         $nom = $cours->getNom();
-                        foreach ($docs as $idDoc){
+                        foreach ($docs as $idDoc) {
                             /* @var Document $doc */
                             $doc = $this->em->getRepository('AppBundle:Document')->findOneBy(array('id' => $idDoc));
-                            $contenuDocuments .= "<li>".$doc->getNom()." dans le cours ".$nom."</li>";
+                            $contenuDocuments .= "<li>" . $doc->getNom() . " dans le cours " . $nom . "</li>";
                         }
                     }
                 }
-                if (array_key_exists('docsCoh', $userMailsToSend)){
-                    foreach ($userMailsToSend['docsCoh'] as $idCoh => $docs){
+                if (array_key_exists('docsCoh', $userMailsToSend)) {
+                    foreach ($userMailsToSend['docsCoh'] as $idCoh => $docs) {
                         /* @var Cohorte $coh */
                         $coh = $this->em->getRepository('AppBundle:Cohorte')->findOneBy(array('id' => $idCoh));
                         $nom = $coh->getNom();
-                        foreach ($docs as $idDoc){
+                        foreach ($docs as $idDoc) {
                             /* @var Document $doc */
                             $doc = $this->em->getRepository('AppBundle:Document')->findOneBy(array('id' => $idDoc));
-                            $contenuDocuments .= "<li>".$doc->getNom()." en ".$nom."</li>";
+                            $contenuDocuments .= "<li>" . $doc->getNom() . " en " . $nom . "</li>";
                         }
                     }
                 }
@@ -215,16 +215,17 @@ class NotifsSender
 
             //TODO : envoi de mails pour les dépôts de copies
 
-            $this->sendMail($user, '');
+            $this->sendMail($user, $contenuDocuments);
         }
     }
 
-    public function appendInUsersTab($userIdStr, $idLien, $strInTab, &$tabMailsToSend, Document $doc){
+    public function appendInUsersTab($userIdStr, $idLien, $strInTab, &$tabMailsToSend, Document $doc)
+    {
         if (array_key_exists($userIdStr, $tabMailsToSend)) {
             if (array_key_exists($strInTab, $tabMailsToSend[$userIdStr])) {
                 if (array_key_exists($idLien, $tabMailsToSend[$userIdStr][$strInTab])) {
                     array_push($tabMailsToSend[$userIdStr][$strInTab][$idLien], $doc->getId());
-                }else{
+                } else {
                     $tabMailsToSend[$userIdStr][$strInTab][$idLien] = [$doc->getId()];
                 }
             } else {
@@ -248,41 +249,36 @@ class NotifsSender
 
     public function sendMail(User $user, $contenuDocuments)
     {
-        $this->addLog($user->getEmail());
-        $pos = strpos($user->getEmail(), 'erwa');
-        if($pos !== false){
-            $message = \Swift_Message::newInstance()
-                ->setSubject('[AFADEC] Document déposé')
-                ->setFrom('noreply@afadec.fr')
-                ->setTo($user->getEmail())
-                ->setBody(
-                    $this->templating->render(
-                        'emailNotif.html.twig',
-                        array(
-                            'prenom' => $user->getFirstname(),
-                            'nom' => $user->getLastname(),
-                            'id' => $user->getId(),
-                            'contenuDocuments' => $contenuDocuments
-                        )
-                    ),
-                    'text/html'
-                )
-                ->addPart(
-                    $this->templating->render(
-                        'emailNotif.html.twig',
-                        array(
-                            'prenom' => $user->getFirstname(),
-                            'nom' => $user->getLastname(),
-                            'id' => $user->getId(),
-                            'contenuDocuments' => $contenuDocuments
-                        )
-                    ),
-                    'text/html'
-                )
-            ;
-            $this->mailer->send($message);
-            $this->addLog('sendMail : '.$user->getEmail());
-        }
+        $message = \Swift_Message::newInstance()
+            ->setSubject('[AFADEC] Document déposé')
+            ->setFrom('noreply@afadec.fr')
+            ->setTo($user->getEmail())
+            ->setBody(
+                $this->templating->render(
+                    'emailNotif.html.twig',
+                    array(
+                        'prenom' => $user->getFirstname(),
+                        'nom' => $user->getLastname(),
+                        'id' => $user->getId(),
+                        'contenuDocuments' => $contenuDocuments
+                    )
+                ),
+                'text/html'
+            )
+            ->addPart(
+                $this->templating->render(
+                    'emailNotif.html.twig',
+                    array(
+                        'prenom' => $user->getFirstname(),
+                        'nom' => $user->getLastname(),
+                        'id' => $user->getId(),
+                        'contenuDocuments' => $contenuDocuments
+                    )
+                ),
+                'text/html'
+            );
+        $this->mailer->send($message);
+
 
     }
 }
