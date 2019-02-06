@@ -127,7 +127,7 @@ class Log
      */
     public function appendLogDate()
     {
-        $this->log .= "<br>----------------<br>[date : ".date("Y-m-d H:i:s")."]<br>";
+        $this->log .= "<br>\n----------------<br>\n[date : ".date("Y-m-d H:i:s")."]<br>\n";
     }
 
     /**
@@ -135,7 +135,7 @@ class Log
      */
     public function appendLogType()
     {
-        $this->log .= "[type : ".$this->getType()."]<br>";
+        $this->log .= "[type : ".$this->getType()."]<br>\n";
     }
 
     /**
@@ -143,7 +143,7 @@ class Log
      */
     public function appendLog($newlog)
     {
-        $this->log .= "<br>".$newlog;
+        $this->log .= "<br>\n".$newlog;
     }
 
     /**
