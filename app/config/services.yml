@@ -4,7 +4,7 @@ parameters:
     dateLimiNotifs: 2019-01-01 00:00:00
     upload_directory: 'var/upload/'
     upload_steps: '../'
-    upload_srcSteps: '../'
+    upload_srcSteps: '../../'
     upload_course: '../../'
     distant_host: 'stdi.nfrance.com'
     distant_user: 'chamilo'

@@ -73,3 +73,8 @@ Chat :
 
 28/06/2017
 upload images dans sonata
+
+crontab
+attention aux paramètres au composer update, il faut maj les chemins
+composer update
+maj de la bdd
