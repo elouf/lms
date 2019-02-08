@@ -1,0 +1,154 @@
+{% extends 'base.html.twig' %}
+
+{% block pageHeader %}
+    <div>{{ template }}</div>
+    <div class="page-header littleScroll">
+        <div class="container">
+            <h2 class="color3">Notifications</h2>
+            <ul class="breadcrumb">
+                <li class="color3">
+
+                </li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+
+{% block main %}
+    <link rel="stylesheet" href="{{ asset('vendors/tablesorter/dist/css/theme.default.min.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('vendors/tablesorter/dist/css/jquery.tablesorter.pager.min.css') }}"/>
+
+    <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/jquery.tablesorter.min.js') }}"></script>
+    <script type="text/javascript"
+            src="{{ asset('vendors/tablesorter/dist/js/jquery.tablesorter.widgets.min.js') }}"></script>
+    <script type="text/javascript"
+            src="{{ asset('vendors/tablesorter/dist/js/extras/jquery.tablesorter.pager.min.js') }}"></script>
+    <script type="text/javascript"
+            src="{{ asset('vendors/tablesorter/dist/js/widgets/widget-output.min.js') }}"></script>
+    <style>
+    </style>
+    <script>
+        jQuery(document).ready(function () {
+            $('.modal').modal();
+            $('.modal').modal('toggle');
+
+            $('.cancelSend').click(function () {
+                $('.modal').modal('toggle');
+            });
+
+            $(".tablesorter.tableYes")
+                .tablesorter({
+                    widthFixed: true,
+                    widgets: ['zebra', 'filter', 'output']
+                })
+                .tablesorterPager({
+                    container: $("#pagerYes"),
+                    output: 'de {startRow} à {endRow} sur {totalRows} lignes',
+                    size: 10
+                });
+
+            $('.btnSendNotifs').click(function(e){
+                e.preventDefault();
+                $('.modal').modal('toggle');
+                $('.valideSend').unbind('click').click(function(){
+                    $.ajax({
+                        type: "POST",
+                        url: "{{path('sendNotifs_ajax')}}",
+                        data: {
+                        },
+                        dataType: "json",
+                        success: function (response) {
+                            setTimeout(function(){
+                                window.location.href = window.location.href;
+                            }, 300);
+                        },
+                        error: function(xhr, status, error) {
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+
+    <div class="container mt-220 mb-40">
+        <div class="row">
+            <div class="coloneTable col-xl-6">
+                <p>Les documents ci-dessous ont été déposés sur la plateforme. Aucune notification de dépôt n'a
+                    pour le moment été envoyée. Vous pouvez forcer son envoi en cliquant sur le bouton
+                    "Envoyer".</p>
+                <div class="btnSendNotifs btn btn-warning">Envoyer les notifications</div>
+                <table class="tablesorter tableYes">
+                    <thead>
+                    <tr>
+                        <th data-filter="false">Id</th>
+                        <th>Déposé par</th>
+                        <th>Lien</th>
+                        <th>Nom</th>
+                        <th>Description</th>
+                        <th>Date de dépôt</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for doc in documents %}
+                        <tr class="userLine" data-userId="{{ doc.id }}">
+                            <td>{{ doc.id }}</td>
+                            <td>
+                                <a href="{{ path('user', {id:doc.proprietaire.id }) }}">{{ doc.proprietaire.email }}</a>
+                            </td>
+                            <td>{{ doc.url }}</td>
+                            <td>{{ doc.nom }}</td>
+                            <td>{{ doc.description }}</td>
+                            <td>{{ doc.dateCrea|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <div id="pagerYes" class="pager">
+                    <form>
+                        <img src="{{ asset('vendors/tablesorter/dist/css/images/first.png') }}" class="first"/>
+                        <img src="{{ asset('vendors/tablesorter/dist/css/images/prev.png') }}" class="prev"/>
+                        <input type="text" class="pagedisplay"/>
+                        <img src="{{ asset('vendors/tablesorter/dist/css/images/next.png') }}" class="next"/>
+                        <img src="{{ asset('vendors/tablesorter/dist/css/images/last.png') }}" class="last"/>
+                        <select class="pagesize">
+                            <option value="10">10</option>
+                            <option value="20">20</option>
+                            <option value="30">30</option>
+                            <option value="40">40</option>
+                            <option value="all">Toutes les lignes</option>
+                        </select>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    </div>
+
+    <div class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+
+                <div class="modal-body" data-contentModal="devoirDisplay" data-idItem=""
+                     style="background:#aaa; background-size:cover">
+                    <div class="row">
+                        <div class="bginverse">
+                            <div class="">
+                                <div class="alert alert-danger mb-10">
+                                    <strong>Attention!</strong> Vous allez forcer l'envoi de toutes les notifications par mails.
+                                </div>
+
+                                <div class="row mb-10" style="text-align: center">
+                                    <div class="btn btn-sm btn-info mb-3 valideSend">Valider</div>
+                                    <div class="btn btn-sm btn-info mb-3 cancelSend">Annuler</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

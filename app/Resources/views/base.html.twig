@@ -88,6 +88,19 @@
                     error: function (xhr, status, error) {
                     }
                 });
+                $.ajax({
+                    type: 'POST',
+                    url: "{{path('getUsersToActivate_ajax')}}",
+                    async: false,
+                    dataType: "json",
+                    success: function (data) {
+                        if(data['users'].length){
+                            $('.adminAlertUsersToValidate').show();
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                    }
+                });
             });
         </script>
     {% endblock %}
@@ -105,6 +118,16 @@
 <header>
     <nav class="navbar navbar-default navbar-fixed-top">         <!-- Navigation Bar -->
         <div class="container">
+            {% if app.user %}
+                {% if not app.user.confirmedByAdmin and not app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                    <div class="AlertNotValidatedByAdmin">
+                        Votre compte {{ app.user.statut }} sera bientôt confirmé par l'administrateur
+                    </div>
+                {% endif %}
+                {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                    <a class="adminAlertUsersToValidate" href="{{ path('activateSpecialStatus') }}">Des formateurs et Responsables sont en attente d'activation de leur compte.</a>
+                {% endif %}
+            {% endif %}
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-navigation" aria-expanded="false">
                     <span class="sr-only">Toggle Menu</span>
@@ -173,6 +196,7 @@
                                             <li><a href="{{ path('discCoursManag') }}">Des disciplines/cours</a></li>
                                             <li><a href="{{ path('devoirsManag') }}">Des devoirs</a></li>
                                             <li><a href="{{ path('usersManag') }}">Des utilisateurs</a></li>
+                                            <li><a href="{{ path('notifsManag') }}">Des notifications</a></li>
                                         </ul>
                                     </li>
                                     <li><a target="_blank" href="{{ path('sonata_admin_dashboard') }}">BackOffice</a></li>

@@ -387,7 +387,8 @@
                                         <tr class="cohorteLine" data-cohorteId="{{ val['cohorte'].id }}">
                                             <td>{{ val['cohorte'].id }}</td>
                                             <td>
-                                                <a href="{{ path('itemUsers', {id: val['cohorte'].id, type: "cohorte"}) }}">{{ val['cohorte'].nom }}</a>
+                                                <a href="{{ path('itemUsers', {id: val['cohorte'].id, type: "cohorte"}) }}">{{ val['cohorte'].nom }}
+                                                    {% if val['inscription']|length %} ({{ val['inscription'][0].role.nom|replace({ 'Enseignant': 'Enseignant correcteur' }) }}){% endif %}</a>
                                             </td>
                                             <td class="btnCellFilter">
                                                 <i class="btndesinscr btndesinscrCoh fa fa-sign-out" aria-hidden="true"></i>
@@ -654,12 +655,12 @@
                         <tbody>
                         {% for copie in copies %}
                             <tr class="userLine">
-                                <td>{{ copie.id }}</td>
-                                <td>{{ copie.devoir.cours.discipline.nom }}</td>
-                                <td>{{ copie.devoir.cours.nom }}</td>
-                                <td>{{ copie.devoir.nom }}</td>
-                                <td>{{ copie.note }} / {{ copie.devoir.bareme }}</td>
-                                <td>{{ copie.dateCreation|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}</td>
+                                <td>{{ copie.copie.id }}</td>
+                                <td>{{ copie.copie.devoir.cours.discipline.nom }}</td>
+                                <td>{{ copie.copie.devoir.cours.nom }}</td>
+                                <td>{{ copie.copie.devoir.nom }}</td>
+                                <td>{{ copie.copie.note }} / {{ copie.copie.devoir.bareme }}</td>
+                                <td>{{ copie.copie.dateCreation|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}</td>
                             </tr>
                         {% endfor %}
                         </tbody>
@@ -833,7 +834,7 @@
                         <ul>
                             {% for key,val in cohortesInsc %}
                                 {% if val['isInscrit'] == 1 %}
-                                    <li><a href="{{ path('itemUsers', {id: val['cohorte'].id, type: "cohorte"}) }}">{{ val['cohorte'].nom }}</a></li>
+                                    <li><a href="{{ path('itemUsers', {id: val['cohorte'].id, type: "cohorte"}) }}">{{ val['cohorte'].nom }}{% if val['inscription']|length %} ({{ val['inscription'][0].role.nom|replace({ 'Enseignant': 'Enseignant correcteur' }) }}){% endif %}</a></li>
                                 {% endif %}
                             {% endfor %}
                         </ul>

@@ -1,0 +1,232 @@
+{% extends 'base.html.twig' %}
+
+{% block pageHeader %}
+    <div>{{ template }}</div>
+    <div class="page-header">
+        <div class="container">
+            <h2 class="color3">Utilisateurs en attente de confirmation</h2>
+            <ul class="breadcrumb">
+                <li class="color3">Comptes Formateur et Responsable</li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+
+{% block main %}
+    <link rel="stylesheet" href="{{ asset('vendors/tablesorter/dist/css/theme.default.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendors/tablesorter/dist/css/jquery.tablesorter.pager.min.css') }}" />
+
+    <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/jquery.tablesorter.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/jquery.tablesorter.widgets.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/extras/jquery.tablesorter.pager.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/widgets/widget-output.min.js') }}"></script>
+
+    <script>
+        jQuery(document).ready(function () {
+            $('.download').click(function(e){
+                e.preventDefault();
+                let table = $(this).closest('.container').find('.tablesorter');
+                table.trigger('outputTable');
+            });
+            $(".tablesorter")
+                .tablesorter({
+                    widthFixed: true,
+                    widgets: ['zebra', 'filter', 'output']
+                })
+                .tablesorterPager({
+                    container: $("#pager"),
+                    output: 'de {startRow} à {endRow} sur {totalRows} lignes',
+                    size: 50
+                });
+
+
+            $('.btnConfirmStatut').click(function(){
+                let idUser = $(this).closest('.userLine').attr('data-userId');
+                confirmUser(idUser, true);
+            });
+            $('.btnRefuseStatut').click(function(){
+                let idUser = $(this).closest('.userLine').attr('data-userId');
+                $('.modal').modal('toggle');
+                $('.valideConfirm').unbind('click').click(function(){
+                    confirmUser(idUser, false);
+                });
+                $('.cancelConfirm').unbind('click').click(function(){
+                    $('.modal').modal('toggle');
+                });
+            });
+            $('.selectAll').click(function(e){
+                e.preventDefault();
+                var select = $('.selectUser:checked').length === 0;
+                $('.selectUser').prop('checked', select);
+            });
+            $('.confirmSelected').click(function(e){
+                e.preventDefault();
+
+                $('.selectUser:checked').each(function(){
+                    let idUser = $(this).closest('.userLine').attr('data-userId');
+                    confirmUser(idUser, true);
+
+                });
+            });
+            $('.refuseSelected').click(function(e){
+                e.preventDefault();
+                $('.modal').modal('toggle');
+                $('.valideConfirm').unbind('click').click(function(){
+                    $('.selectUser:checked').each(function(){
+                        let idUser = $(this).closest('.userLine').attr('data-userId');
+                        confirmUser(idUser, false);
+                    });
+                });
+                $('.cancelConfirm').unbind('click').click(function(){
+                    $('.modal').modal('toggle');
+                });
+
+            });
+            $('.btnConfirmAll').click(function(e){
+                e.preventDefault();
+                $.ajax({
+                    type: "POST",
+                    url: "{{path('confirmAllUsers_ajax')}}",
+                    data: {
+                    },
+                    dataType: "json",
+                    success: function (response) {
+                        setTimeout(function(){
+                            window.location.href = window.location.href;
+                        }, 300);
+                    }
+                });
+            });
+            function confirmUser(idUser, isConfirmed){
+                $.ajax({
+                    type: "POST",
+                    url: "{{path('confirmUser_ajax')}}",
+                    data: {
+                        isConfirmed: isConfirmed,
+                        idUser: idUser
+                    },
+                    dataType: "json",
+                    success: function (response) {
+                        setTimeout(function(){
+                            window.location.href = window.location.href;
+                        }, 300);
+                    }
+                });
+            }
+        });
+    </script>
+
+    <div class="container mt-10 mb-40">
+        <div class="row">
+            <div class="col-md-12">
+                <p>Les utilisateurs suivants ont créé un compte en spécifiant leur statut comme "Formateur" ou "Responsable"</p>
+                <p>Ces statuts occasionnent des accès supplémentaires :</p>
+                <ul>
+                    <li>Ils ne seront pas désactivés lors des campagnes de désinscription</li>
+                    <li>Ils pourront parcourir les sessions, sections, ressources qui ne sont pas actives</li>
+                    <li>Le responsable pourra s'inscrire à plusieurs disciplines</li>
+                    <li>Ils pourront accéder aux données des étudiants (tracking)</li>
+                </ul>
+                <p>Pour que ces fonctions supplémentaires soient actives, vous devez confirmer leur statut.</p>
+                <p>Vous pouvez le faire individuellement, par lot, ou tous ensemble en cliquant sur le bouton ci-dessous (Confirmer tous).</p>
+                <div class="btnConfirmAll btn btn-warning">Confirmer tous</div>
+                <table class="tablesorter ">
+                    <thead>
+                    <tr>
+                        <th data-filter="false"></th>
+                        <th>Id</th>
+                        <th>Email</th>
+                        <th>Prénom</th>
+                        <th>Nom</th>
+                        <th>Cohortes</th>
+                        <th class="filter-select">Institut</th>
+                        <th class="filter-select">Activé</th>
+                        <th>Statut</th>
+                        <th class="filter-select">Statut confirmé</th>
+                        <th>Confirmer</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for myUser in myUsers %}
+                        <tr class="userLine" data-userId="{{ myUser.user.id }}">
+                            <td><input class="selectUser" type="checkbox"></td>
+                            <td><a href="{{ path('user', {id:myUser.user.id }) }}">{{ myUser.user.id }}</a></td>
+                            <td><a href="{{ path('user', {id:myUser.user.id }) }}">{{ myUser.user.email }}</a></td>
+                            <td>{{ myUser.user.firstname }}</td>
+                            <td>{{ myUser.user.lastname }}</td>
+                            <td>
+                                {% for coh in myUser.cohortes %}
+                                    <a href="{{ path('itemUsers', {id: coh.id, type: "cohorte"}) }}">{{ coh.nom }}</a>
+                                {% endfor %}
+                            </td>
+                            <td>{{ myUser.user.institut }}</td>
+                            <td>
+                                {% if myUser.user.enabled == 1 %}
+                                    oui
+                                {% else %}
+                                    non
+                                {% endif %}
+                            </td>
+                            <td>{{ myUser.user.statut }}</td>
+                            <td>
+                                {% if myUser.user.confirmedByAdmin == 1 %}
+                                    oui
+                                {% else %}
+                                    non
+                                {% endif %}
+                            </td>
+                            <td class="btnCellFilter">
+                                <i class="btnConfirmStatut fa fa-check-circle-o" aria-hidden="true"></i>
+                                <i class="btnRefuseStatut fa fa-ban" aria-hidden="true"></i>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <div id="pager" class="pager">
+                    <form>
+                        <img src="{{ asset('vendors/tablesorter/dist/css/images/first.png') }}" class="first"/>
+                        <img src="{{ asset('vendors/tablesorter/dist/css/images/prev.png') }}" class="prev"/>
+                        <input type="text" class="pagedisplay"/>
+                        <img src="{{ asset('vendors/tablesorter/dist/css/images/next.png') }}" class="next"/>
+                        <img src="{{ asset('vendors/tablesorter/dist/css/images/last.png') }}" class="last"/>
+                        <select class="pagesize">
+                            <option value="10">10</option>
+                            <option value="20">20</option>
+                            <option value="30">30</option>
+                            <option value="40">40</option>
+                            <option value="all">Toutes les lignes</option>
+                        </select>
+                        <button class="confirmSelected">Confirmer les sélectionnés</button>
+                        <button class="refuseSelected">Refuser les sélectionnés</button>
+                        <button class="selectAll">Sélectionner tous</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+                <div class="modal-body" data-contentModal="devoirDisplay" data-idItem="" style="background:#aaa; background-size:cover">
+                    <div class="row">
+                        <div class="bginverse">
+                            <div class="">
+                                <div class="alert alert-danger mb-10">
+                                    <strong>Attention!</strong> Voulez-vous vraiment refuser ces statuts ? Ces utilisateurs auront alors le statut "Étudiant".
+                                </div>
+
+                                <div class="row mb-10" style="text-align: center">
+                                    <div class="btn btn-sm btn-info mb-3 valideConfirm">Valider</div>
+                                    <div class="btn btn-sm btn-info mb-3 cancelConfirm">Annuler</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

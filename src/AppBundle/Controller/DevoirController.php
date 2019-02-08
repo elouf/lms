@@ -482,7 +482,6 @@ class DevoirController extends Controller
             /* @var $user User */
             $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
             $etu = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $etuId));
-
             $copie = $em->getRepository('AppBundle:Copie')->findOneBy(array('auteur' => $etu, 'devoir' => $devoir));
 
             $checkCorrige = $em->getRepository('AppBundle:Corrige')->findOneBy(array('copie' => $copie));
@@ -520,6 +519,9 @@ class DevoirController extends Controller
 
             $em->persist($corrigeFichier);
             $em->flush();
+
+            $this->sendMailCorrigeDepose($etu, $devoir);
+
 
             return new JsonResponse(array('action' =>'upload File', 'id' => $idDevoir, 'ext' => $ext, 'nouvelle copie ' => $corrigeFichier->getUrl()));
         }
@@ -732,6 +734,34 @@ class DevoirController extends Controller
         }
 
         return new JsonResponse('This is not ajax!', 400);
+    }
+
+    public function sendMailCorrigeDepose(User $user, $devoir){
+        $message = \Swift_Message::newInstance()
+            ->setSubject('[AFADEC] Corrigé déposé')
+            ->setFrom('noreply@afadec.fr')
+            ->setTo($user->getEmail())
+            ->setBody(
+                $this->renderView(
+                    'ressources/sendCorrigeMail.html.twig',
+                    array(
+                        'user' => $user,
+                        'devoir' => $devoir
+                    )
+                ),
+                'text/html'
+            )
+            ->addPart(
+                $this->renderView(
+                    'ressources/sendCorrigeMail.html.twig',
+                    array(
+                        'user' => $user,
+                        'devoir' => $devoir
+                    )
+                ),
+                'text/html'
+            );
+        $this->get('mailer')->send($message);
     }
 
 }

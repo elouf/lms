@@ -71,6 +71,21 @@ class User extends BaseUser
      */
     private $receiveAutoNotifs = true;
 
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="confirmedByAdmin", type="boolean", nullable=true)
+     */
+    private $confirmedByAdmin = false;
+
+    const STATUT_ETUDIANT = 'Etudiant';
+    const STATUT_FORMATEUR = 'Formateur';
+    const STATUT_PROFSTAGIAIRE = 'Prof_stagiaire';
+    const STATUT_RESPONSABLE = 'Responsable';
+
+    /** @ORM\Column(name="statut", type="string") */
+    private $statut = 'Etudiant';
+
     public function __construct()
     {
         parent::__construct();
@@ -273,5 +288,68 @@ class User extends BaseUser
     public function getReceiveAutoNotifs()
     {
         return $this->receiveAutoNotifs;
+    }
+
+    /**
+     * Set confirmedByAdmin
+     *
+     * @param boolean $confirmedByAdmin
+     *
+     * @return User
+     */
+    public function setConfirmedByAdmin($confirmedByAdmin)
+    {
+        $this->confirmedByAdmin = $confirmedByAdmin;
+
+        return $this;
+    }
+
+    /**
+     * Get confirmedByAdmin
+     *
+     * @return bool
+     */
+    public function getConfirmedByAdmin()
+    {
+        return $this->confirmedByAdmin;
+    }
+
+    /**
+     * Set statut
+     *
+     * @param string $statut
+     *
+     * @return User
+     */
+    public function setStatut($statut)
+    {
+        $this->statut = $statut;
+
+        return $this;
+    }
+
+    /**
+     * Get statut
+     *
+     * @return string
+     */
+    public function getStatut()
+    {
+        return $this->statut;
+    }
+
+    /**
+     * Get statuts
+     *
+     * @return array
+     */
+    public static function getStatuts()
+    {
+        return [
+            "Étudiant" => self::STATUT_ETUDIANT,
+            "Formateur" => self::STATUT_FORMATEUR,
+            "Professeur Stagiaire" => self::STATUT_PROFSTAGIAIRE,
+            "Responsable" => self::STATUT_RESPONSABLE
+        ];
     }
 }

@@ -1,0 +1,21 @@
+<p>Bonjour {{ user.firstname }} {{ user.lastname }}!</p>
+
+<p>Vous avez créé un compte sur la plateforme de l'Afadec avec un statut {{ user.statut }}.</p>
+
+{% if isConfirm %}
+    <p>Ce statut a été accepté par l'administration de l'afadec. Vous pouvez maintenant profiter des fonctionnalités qui sont liées à ce statut :</p>
+    <ul>
+        <li>Votre compte ne sera pas désactivé lors des campagnes de désinscription</li>
+        <li>Vous pourrez parcourir les sessions, sections, ressources qui ne sont pas actives (invisibles pour les étudiants)</li>
+        <li>Vous pourrez accéder aux données de navigation des étudiants (tracking)</li>
+        {% if user.statut == 'Responsable' %}
+            <li>Vous pourrez vous inscrire à plusieurs disciplines</li>
+        {% endif %}
+    </ul>
+{% else %}
+    <p>Ce statut a été refusé par l'administration de l'afadec. Vous pouvez néanmoins accéder à la plateforme, mais avec un statut d'Étudiant.</p>
+{% endif %}
+
+<p>Merci!</p>
+<p>L'équipe AFADEC</p>
+<p><a class="studitBlueFC" href="mailTo:contact.afadec@gmail.com">contact.afadec@gmail.com</a></p>

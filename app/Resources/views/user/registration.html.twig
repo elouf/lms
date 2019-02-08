@@ -20,12 +20,7 @@
                 <p>Bonjour {{ user.firstname }} {{ user.lastname }} ! Votre compte est bien créé.</p>
                 <p>Pour l'activer, veuillez cliquer sur le lien que vous avez reçu à l'adresse mail {{ user.email }}</p>
 
-                {% set datetimeStart = '2017-07-01' %}
-                {% if "now"|date('Y-m-d') >= datetimeStart|date('Y-m-d') %}
-                    <p>Vous pourrez ensuite vous authentifier sur <a href="{{ path('homepage') }}">la page d'accueil</a></p>
-                {% else %}
-                    <p>Vous serez averti prochainement de l’ouverture de la plateforme.</p>
-                {% endif %}
+                <p>Vous pourrez ensuite vous authentifier sur <a href="{{ path('homepage') }}">la page d'accueil</a></p>
 
                 <p>Merci !</p>
                 <p>L'équipe AFADEC</p>

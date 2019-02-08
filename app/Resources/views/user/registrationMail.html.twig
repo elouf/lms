@@ -3,12 +3,11 @@
 <p>Bonjour {{ prenom }} {{ nom }}! Votre compte est bien créé.</p>
 <p>Pour l'activer, veuillez cliquer sur ce lien : <a href="{{ url }}/{{ id }}">Lien d'activation</a>
 
+<p>Vous pourrez ensuite vous authentifier sur <a href="{{ urlLogin }}">la page d'accueil</a></p>
 
-{% set datetimeStart = '2017-07-01' %}
-{% if "now"|date('Y-m-d') >= datetimeStart|date('Y-m-d') %}
-    <p>Vous pourrez ensuite vous authentifier sur <a href="{{ urlLogin }}">la page d'accueil</a></p>
-{% else %}
-    <p>Vous serez averti prochainement de l’ouverture de la plateforme.</p>
+{% if not confirmedByAdmin %}
+    <p>Attention ! Vous avez choisi un statut {{ statut }}.</p>
+    <p>Ce statut vous donne droit à des fonctionnalités supplémentaires. Elles seront actives lorsque l'administrateur de l'AFADEC aura confirmé votre compte. Vous serez averti dans les 24h de cette confirmation.</p>
 {% endif %}
 
 <p>Merci!</p>

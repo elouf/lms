@@ -39,6 +39,7 @@
                     })
                     .tablesorterPager({
                         container: $("#pager"),
+                        output: 'de {startRow} à {endRow} sur {totalRows} lignes',
                         size: 50
                     });
         });
@@ -68,7 +69,9 @@
                             <td>{{ myUser.user.lastname }}</td>
                             <td>
                                 {% for coh in myUser.cohortes %}
-                                    <a href="{{ path('itemUsers', {id: coh.id, type: "cohorte"}) }}">{{ coh.nom }}</a>
+                                    {% for key, inscr in coh %}
+                                    <a href="{{ path('itemUsers', {id: inscr.cohorte.id, type: "cohorte"}) }}">{{ inscr.cohorte.nom }} ({{ inscr.role.nom|replace({ 'Enseignant': 'Enseignant correcteur' }) }}), </a>
+                                    {% endfor %}
                                 {% endfor %}
                             </td>
                             <td>{{ myUser.user.institut }}</td>
@@ -95,7 +98,7 @@
                             <option value="20">20</option>
                             <option value="30">30</option>
                             <option value="40">40</option>
-                            <option value="all">All Rows</option>
+                            <option value="all">Toutes les lignes</option>
                         </select>
                         <button class="download">Télécharger le CSV</button>
                     </form>

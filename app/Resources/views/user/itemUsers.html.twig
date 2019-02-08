@@ -12,10 +12,12 @@
                     {% elseif entityName == "Discipline" %}
 
                     {% elseif entityName == "Cours" %}
-                        <a href="{{ path('itemUsers', {id: item.discipline.id, type: "discipline" }) }}" class="label label-info">{{ item.discipline.nom }}</a>
+                        <a href="{{ path('itemUsers', {id: item.discipline.id, type: "discipline" }) }}"
+                           class="label label-info">{{ item.discipline.nom }}</a>
                         >
                     {% endif %}
-                    <a href="{{ path('itemUsers', {id: item.id, type: entityName|lower }) }}" class="label label-info">{{ item.nom }}</a>
+                    <a href="{{ path('itemUsers', {id: item.id, type: entityName|lower }) }}"
+                       class="label label-info">{{ item.nom }}</a>
                 </li>
             </ul>
         </div>
@@ -23,117 +25,122 @@
 {% endblock %}
 
 {% block main %}
-    <link rel="stylesheet" href="{{ asset('vendors/tablesorter/dist/css/theme.default.min.css') }}" />
-    <link rel="stylesheet" href="{{ asset('vendors/tablesorter/dist/css/jquery.tablesorter.pager.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendors/tablesorter/dist/css/theme.default.min.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('vendors/tablesorter/dist/css/jquery.tablesorter.pager.min.css') }}"/>
 
     <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/jquery.tablesorter.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/jquery.tablesorter.widgets.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/extras/jquery.tablesorter.pager.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/widgets/widget-output.min.js') }}"></script>
+    <script type="text/javascript"
+            src="{{ asset('vendors/tablesorter/dist/js/jquery.tablesorter.widgets.min.js') }}"></script>
+    <script type="text/javascript"
+            src="{{ asset('vendors/tablesorter/dist/js/extras/jquery.tablesorter.pager.min.js') }}"></script>
+    <script type="text/javascript"
+            src="{{ asset('vendors/tablesorter/dist/js/widgets/widget-output.min.js') }}"></script>
     <style>
-</style>
+    </style>
     <script>
         jQuery(document).ready(function () {
 
             var typeItem = "{{ entityName }}".toLowerCase();
 
-            $('.download').click(function(e){
+            $('.download').click(function (e) {
                 e.preventDefault();
                 var table = $(this).closest('.coloneTable').find('.tablesorter')
                 table.trigger('outputTable');
             });
             $(".tablesorter.tableYes")
-                    .tablesorter({
-                        widthFixed: true,
-                        widgets: ['zebra', 'filter', 'output'],
-                        widgetOptions : {
-                              output_delivery      : 'd',
-                              output_saveFileName  : 'mytable.csv'
-                        }
-                    })
-                    .tablesorterPager({
-                        container: $("#pagerYes"),
-                        size: 10
-                    });
+                .tablesorter({
+                    widthFixed: true,
+                    widgets: ['zebra', 'filter', 'output'],
+                    widgetOptions: {
+                        output_delivery: 'd',
+                        output_saveFileName: 'mytable.csv'
+                    }
+                })
+                .tablesorterPager({
+                    container: $("#pagerYes"),
+                    output: 'de {startRow} à {endRow} sur {totalRows} lignes',
+                    size: 10
+                });
             $(".tablesorter.tableNo")
-                    .tablesorter({
-                        widthFixed: true,
-                        widgets: ['zebra', 'filter', 'output'],
-                        widgetOptions : {
-                              output_delivery      : 'd',
-                              output_saveFileName  : 'mytable.csv'
-                        }
-                    })
-                    .tablesorterPager({
-                        container: $("#pagerNo"),
-                        size: 10
-                    });
+                .tablesorter({
+                    widthFixed: true,
+                    widgets: ['zebra', 'filter', 'output'],
+                    widgetOptions: {
+                        output_delivery: 'd',
+                        output_saveFileName: 'mytable.csv'
+                    }
+                })
+                .tablesorterPager({
+                    container: $("#pagerNo"),
+                    output: 'de {startRow} à {endRow} sur {totalRows} lignes',
+                    size: 10
+                });
 
-            $('.btndesinscr').click(function(){
+            $('.btndesinscr').click(function () {
                 var idUser = $(this).closest('.userLine').attr('data-userId');
 
                 $('.modal').modal('toggle');
-                $('.valideDesinscr').unbind('click').click(function(){
+                $('.valideDesinscr').unbind('click').click(function () {
                     desinscrireUser(typeItem, idUser, "{{ item.id }}");
                 });
-                $('.cancelDesinscr').unbind('click').click(function(){
+                $('.cancelDesinscr').unbind('click').click(function () {
                     $('.modal').modal('toggle');
                 });
             });
-            $('.btninscr').click(function(){
+            $('.btninscr').click(function () {
                 var idUser = $(this).closest('.userLine').attr('data-userId');
                 inscrireUser(typeItem, idUser, "{{ item.id }}");
             });
-            $('.selectAll').click(function(e){
+            $('.selectAll').click(function (e) {
                 e.preventDefault();
                 var col = $(this).closest('.coloneTable');
                 var select = col.find('.selectUser:checked').length == 0;
                 col.find('.selectUser').prop('checked', select);
             });
-            $('.inscrSelected').click(function(e){
+            $('.inscrSelected').click(function (e) {
                 e.preventDefault();
 
-                $('.tableNo .selectUser:checked').each(function(){
+                $('.tableNo .selectUser:checked').each(function () {
                     var idUser = $(this).closest('.userLine').attr('data-userId');
                     inscrireUser(typeItem, idUser, "{{ item.id }}");
 
                 });
             });
-            $('.desinscrSelected').click(function(e){
+            $('.desinscrSelected').click(function (e) {
                 e.preventDefault();
-                $('.tableYes .selectUser:checked').each(function(){
+                $('.tableYes .selectUser:checked').each(function () {
                     var idUser = $(this).closest('.userLine').attr('data-userId');
 
                     $('.modal').modal('toggle');
-                    $('.valideDesinscr').unbind('click').click(function(){
+                    $('.valideDesinscr').unbind('click').click(function () {
                         desinscrireUser(typeItem, idUser, "{{ item.id }}");
                     });
-                    $('.cancelDesinscr').unbind('click').click(function(){
+                    $('.cancelDesinscr').unbind('click').click(function () {
                         $('.modal').modal('toggle');
                     });
                 });
             });
 
-            function inscrireUser(typeItem, idUser, itemId){
-                if(typeItem == 'session'){
+            function inscrireUser(typeItem, idUser, itemId) {
+                if (typeItem == 'session') {
                     $.ajax({
                         type: "POST",
-                        url: "{{path('inscrSessUser_ajax')}}",
+                        url: "{{ path('inscrSessUser_ajax') }}",
                         data: {
                             id: itemId,
                             idUser: idUser
                         },
                         dataType: "json",
                         success: function (response) {
-                            setTimeout(function(){
+                            setTimeout(function () {
                                 window.location.href = window.location.href;
                             }, 300);
                         }
                     });
-                }else{
+                } else {
                     $.ajax({
                         type: "POST",
-                        url: "{{path('inscrireUser_ajax')}}",
+                        url: "{{ path('inscrireUser_ajax') }}",
                         data: {
                             idItem: itemId,
                             idUser: idUser,
@@ -141,33 +148,34 @@
                         },
                         dataType: "json",
                         success: function (response) {
-                            setTimeout(function(){
+                            setTimeout(function () {
                                 window.location.href = window.location.href;
                             }, 300);
                         }
                     });
                 }
             }
-            function desinscrireUser(typeItem, idUser, itemId){
-                if(typeItem == 'session'){
+
+            function desinscrireUser(typeItem, idUser, itemId) {
+                if (typeItem == 'session') {
                     $.ajax({
                         type: "POST",
-                        url: "{{path('desinscrSessUser_ajax')}}",
+                        url: "{{ path('desinscrSessUser_ajax') }}",
                         data: {
                             id: itemId,
                             idUser: idUser
                         },
                         dataType: "json",
                         success: function (response) {
-                            setTimeout(function(){
+                            setTimeout(function () {
                                 window.location.href = window.location.href;
                             }, 300);
                         }
                     });
-                }else{
+                } else {
                     $.ajax({
                         type: "POST",
-                        url: "{{path('desInscrireUser_ajax')}}",
+                        url: "{{ path('desInscrireUser_ajax') }}",
                         data: {
                             idItem: itemId,
                             idUser: idUser,
@@ -175,7 +183,7 @@
                         },
                         dataType: "json",
                         success: function (response) {
-                            setTimeout(function(){
+                            setTimeout(function () {
                                 window.location.href = window.location.href;
                             }, 300);
                         }
@@ -188,8 +196,15 @@
     <div class="container mt-220 mb-40">
         <div class="row">
             <ul class="nav nav-tabs" role="tablist">
-                <li role="presentation" class="active"><a href="#InscrDesinscr" aria-controls="InscrDesinscr" role="tab" data-toggle="tab"><i class="fa fa-external-link  fa-fw"></i> Inscriptions</a></li>
-                <li role="presentation"><a href="#InfosGen" aria-controls="InfosGen" role="tab" data-toggle="tab"><i class="fa fa-university fa-fw"></i> Informations générales</a></li>
+                <li role="presentation" class="active">
+                    <a href="#InscrDesinscr" aria-controls="InscrDesinscr" role="tab" data-toggle="tab">
+                        <i class="fa fa-external-link  fa-fw"></i>
+                        Inscriptions</a>
+                </li>
+                <li role="presentation">
+                    <a href="#InfosGen" aria-controls="InfosGen" role="tab" data-toggle="tab">
+                        <i class="fa fa-university fa-fw"></i> Informations générales</a>
+                </li>
             </ul>
             <div class="tab-content">
                 <div role="tabpanel" class="tab-pane fade" id="InfosGen">
@@ -215,6 +230,7 @@
                                 <th>Prénom</th>
                                 <th>Nom</th>
                                 <th class="filter-select">Institut</th>
+                                <th>Statut</th>
                                 <th>Role</th>
                                 <th>Cohortes</th>
                                 <th>Désinscrire</th>
@@ -229,10 +245,11 @@
                                     <td>{{ user.user.firstname }}</td>
                                     <td>{{ user.user.lastname }}</td>
                                     <td>{{ user.user.institut }}</td>
-                                    <td>{{ user.role.nom }}</td>
+                                    <td>{{ user.user.statut }}</td>
+                                    <td>{{ user.role.nom|replace({ 'Enseignant': 'Enseignant correcteur' }) }}</td>
                                     <td>
-                                        {% for coh in user.myCohs %}
-                                            <a href="{{ path('itemUsers', {id: coh.id, type: "cohorte"}) }}">{{ coh.nom }}</a>
+                                        {% for key, inscr in user.myCohs %}
+                                            <a href="{{ path('itemUsers', {id: inscr.cohorte.id, type: "cohorte"}) }}">{{ inscr.cohorte.nom }} ({{ inscr.role.nom|replace({ 'Enseignant': 'Enseignant correcteur' }) }}){% if key < user.myCohs|length-1 %}, {% endif %}</a>
                                         {% endfor %}
                                     </td>
                                     <td class="btnCellFilter">
@@ -256,7 +273,7 @@
                                     <option value="20">20</option>
                                     <option value="30">30</option>
                                     <option value="40">40</option>
-                                    <option value="all">All Rows</option>
+                                    <option value="all">Toutes les lignes</option>
                                 </select>
                                 <button class="download">Télécharger le CSV</button>
                                 <button class="desinscrSelected">Désinscrire les sélectionnés</button>
@@ -275,6 +292,7 @@
                                 <th>Prénom</th>
                                 <th>Nom</th>
                                 <th class="filter-select">Institut</th>
+                                <th>Statut</th>
                                 <th>Cohortes</th>
                                 <th>Inscrire</th>
                             </tr>
@@ -288,12 +306,14 @@
                                     <td>{{ user.user.firstname }}</td>
                                     <td>{{ user.user.lastname }}</td>
                                     <td>{{ user.user.institut }}</td>
+                                    <td>{{ user.user.statut }}</td>
                                     <td>
-                                    {% for coh in user.myCohs %}
-                                            {{ coh.nom }}
+                                        {% for key, inscr in user.myCohs %}
+                                            {{ inscr.cohorte.nom }} ({{ inscr.role.nom|replace({ 'Enseignant': 'Enseignant correcteur' }) }}){% if key < user.myCohs|length-1 %}, {% endif %}
                                         {% endfor %}
                                     </td>
-                                    <td class="btnCellFilter"><i class="btninscr fa fa-sign-in" aria-hidden="true"></i></td>
+                                    <td class="btnCellFilter"><i class="btninscr fa fa-sign-in" aria-hidden="true"></i>
+                                    </td>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -310,7 +330,7 @@
                                     <option value="20">20</option>
                                     <option value="30">30</option>
                                     <option value="40">40</option>
-                                    <option value="all">All Rows</option>
+                                    <option value="all">Toutes les lignes</option>
                                 </select>
                                 <button class="download">Télécharger le CSV</button>
                                 <button class="inscrSelected">Inscrire les sélectionnés</button>
@@ -321,16 +341,16 @@
                 </div>
             </div>
         </div>
-
-        </div>
     </div>
 
     <div class="modal fade" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
 
-                <div class="modal-body" data-contentModal="devoirDisplay" data-idItem="" style="background:#aaa; background-size:cover">
+                <div class="modal-body" data-contentModal="devoirDisplay" data-idItem=""
+                     style="background:#aaa; background-size:cover">
                     <div class="row">
                         <div class="bginverse">
                             <div class="">

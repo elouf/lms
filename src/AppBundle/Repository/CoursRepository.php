@@ -113,13 +113,16 @@ class CoursRepository extends \Doctrine\ORM\EntityRepository
 
     public function userIsInscrit($userId, $coursId)
     {
+        return $this->getUserInscr($userId, $coursId)!=null;
+    }
+
+    public function getUserInscr($userId, $coursId){
         $em = $this->getEntityManager();
         $cours = $this->findOneBy(array('id'=> $coursId));
         $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
 
         $insc = $em->getRepository('AppBundle:Inscription_c')->findBy(array('cours' => $cours, 'user' => $user));
-
-        return $insc!=null;
+        return $insc;
     }
 
     public function userHasAccess($userId, $coursId)

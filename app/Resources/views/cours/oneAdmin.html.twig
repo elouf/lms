@@ -12,7 +12,7 @@
 {% block vueAdmin %}
     {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
         <li><a href="{{ path('oneCours', {id: cours.id, mode: 'etu'}) }}">Vue étudiant</a></li>
-        <li><a href="{{ path('oneCours', {id: cours.id, mode: 'ens'}) }}">Vue enseignant</a></li>
+        <li><a href="{{ path('oneCours', {id: cours.id, mode: 'ens'}) }}">Vue enseignant correcteur</a></li>
     {% endif %}
 {% endblock %}
 

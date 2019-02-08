@@ -71,13 +71,16 @@ class DisciplineRepository extends \Doctrine\ORM\EntityRepository
 
     public function userIsInscrit($userId, $disId)
     {
+        return $this->getUserInscr($userId, $disId)!=null;
+    }
+
+    public function getUserInscr($userId, $disId){
         $em = $this->getEntityManager();
         $dis = $this->findOneBy(array('id'=> $disId));
         $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
 
         $insc = $em->getRepository('AppBundle:Inscription_d')->findBy(array('discipline' => $dis, 'user' => $user));
-
-        return $insc!=null;
+        return $insc;
     }
 
     public function userHasAccess($userId, $discId)

@@ -29,33 +29,24 @@ class InscriptionController extends Controller
     public function inscriptionAction (Request $request)
     {
         date_default_timezone_set('Europe/Paris');
-
+        $user = new User();
         $form = $this->createFormBuilder()
             ->add('nom', TextType::class, array(
-                'label_attr' => array('class' => 'col-sm-4'),
-                'attr' => array('class' => 'col-sm-8')
             ))
             ->add('prenom', TextType::class, array(
-                'label_attr' => array('class' => 'col-sm-4'),
-                'attr' => array('class' => 'col-sm-8')
             ))
             ->add('email', EmailType::class, array(
-                'label_attr' => array('class' => 'col-sm-4'),
-                'attr' => array('class' => 'col-sm-8')
             ))
             ->add('phone', TextType::class, array(
                 'label' => 'Numéro de téléphone',
-                'required' => false,
-                'label_attr' => array('class' => 'col-sm-4'),
-                'attr' => array('class' => 'col-sm-8')
+                'required' => false
             ))
             ->add('mdp', RepeatedType::class, array(
                 'type' => PasswordType::class,
                 'invalid_message' => 'Les mots de passe ne sont pas identiques',
                 'required' => true,
                 'first_options'  => array('label' => 'Mot de passe'),
-                'second_options' => array('label' => 'Confirmation du mot de passe'),
-                'options' => array('attr' => array('class' => 'col-sm-8'))
+                'second_options' => array('label' => 'Confirmation du mot de passe')
                 ))
             ->add('institut', EntityType::class, array(
                 'class' => 'AppBundle:Institut',
@@ -65,17 +56,12 @@ class InscriptionController extends Controller
                         ->where('i.actif = true');
                 },
                 'choice_label' => 'nom',
+                'placeholder' => '',
                 'multiple' => false,
-                'label_attr' => array('class' => 'col-sm-4')
                 ))
             ->add('typeUser', ChoiceType::class, array(
-                'choices'  => array(
-                    'Étudiant' => 0,
-                    'Formateur' => 1,
-                    'Professeur stagiaire' => 2
-                ),
+                'choices'  => $user->getStatuts(),
                 'label' => 'Vous êtes',
-                'label_attr' => array('class' => 'col-sm-4')
             ))
             ->add('concours', ChoiceType::class, array(
                 'choices'  => array(
@@ -83,7 +69,6 @@ class InscriptionController extends Controller
                     '2nd Degré' => 1
                 ),
                 'label' => 'Concours préparé',
-                'label_attr' => array('class' => 'col-sm-4')
             ))
             ->add('sectionEns', ChoiceType::class, array(
                 'choices'  => array(
@@ -91,7 +76,6 @@ class InscriptionController extends Controller
                     '2nd Degré' => 1
                 ),
                 'label' => "Section d'enseignement",
-                'label_attr' => array('class' => 'col-sm-4')
             ))
             ->add('matiereEtu', ChoiceType::class, array(
                 'choices'  => array(
@@ -105,7 +89,6 @@ class InscriptionController extends Controller
                     'SVT' => 'SVT'
                 ),
                 'label' => "Matière",
-                'label_attr' => array('class' => 'col-sm-4')
             ))
             ->add('matiereForm', ChoiceType::class, array(
                 'choices'  => array(
@@ -130,7 +113,6 @@ class InscriptionController extends Controller
                     'SVT' => 'SVT'
                 ),
                 'label' => "Matière",
-                'label_attr' => array('class' => 'col-sm-4')
             ))
             ->add('matiereProfStag', ChoiceType::class, array(
                 'choices'  => array(
@@ -147,7 +129,6 @@ class InscriptionController extends Controller
                     'STMS - Biotechnologies' => 'STMS'
                 ),
                 'label' => "Matière",
-                'label_attr' => array('class' => 'col-sm-4')
             ))
             /*->add('optionsDisc', ChoiceType::class, array(
                 'choices'  => array(
@@ -181,13 +162,13 @@ class InscriptionController extends Controller
                 $user->setPlainPassword($data['mdp']);
                 $user->setPhone($data['phone']);
                 $user->setInstitut($data['institut']);
+                $user->setStatut($data['typeUser']);
 
                 $em->persist($user);
 
-
                 $nomCoh = "";
                 $role = "";
-                if($data['typeUser'] == 0){
+                if($data['typeUser'] == 'Etudiant'){
                     // Etudiant
                     $role = $em->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Etudiant'));
                     if($data['concours'] == 0){
@@ -197,7 +178,8 @@ class InscriptionController extends Controller
                         // CAPES étudiant
                         $nomCoh = $data['matiereEtu'];
                     }
-                }elseif($data['typeUser'] == 1){
+                    $user->setConfirmedByAdmin(true);
+                }elseif($data['typeUser'] == 'Formateur' || $data['typeUser'] == 'Responsable'){
                     // Formateur
                     $role = $em->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Enseignant'));
                     if($data['sectionEns'] == 0){
@@ -207,10 +189,12 @@ class InscriptionController extends Controller
                         // CAPES étudiant
                         $nomCoh = $data['matiereForm'];
                     }
-                }elseif($data['typeUser'] == 2){
+                    $user->setConfirmedByAdmin(false);
+                }elseif($data['typeUser'] == 'Prof_stagiaire'){
                     // Prof stagiaire
                     $role = $em->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Stagiaire'));
                     $nomCoh = $data['matiereProfStag'];
+                    $user->setConfirmedByAdmin(true);
                 }
                 $coh = $em->getRepository('AppBundle:Cohorte')->findOneBy(array('nom' => $nomCoh));
                 $inscr = new Inscription_coh();
@@ -219,17 +203,6 @@ class InscriptionController extends Controller
                 $inscr->setDateInscription(new DateTime());
                 $inscr->setRole($role);
                 $em->persist($inscr);
-
-                /*if($data['optionsDisc'] != '0'){
-                    $disc = $em->getRepository('AppBundle:Discipline')->findOneBy(array('nom' => $data['optionsDisc']));
-                    $inscrD = new Inscription_d();
-                    $inscrD->setDiscipline($disc);
-                    $inscrD->setDateInscription(new DateTime());
-                    $inscrD->setRole($role);
-                    $inscrD->setUser($user);
-                    $em->persist($inscrD);
-
-                }*/
 
                 $em->flush();
 
@@ -248,7 +221,9 @@ class InscriptionController extends Controller
                                 'nom' => $user->getLastname(),
                                 'id' => $user->getId(),
                                 'url' => str_replace($routeName, 'activation', $actual_link),
-                                'urlLogin' =>str_replace($routeName, 'login', $actual_link)
+                                'urlLogin' =>str_replace($routeName, 'login', $actual_link),
+                                'confirmedByAdmin' => $user->getConfirmedByAdmin(),
+                                'statut' => $user->getStatut(),
                             )
                         ),
                         'text/html'

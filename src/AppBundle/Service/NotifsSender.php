@@ -26,14 +26,20 @@ class NotifsSender
     protected $templating;
     protected $cp;
 
-    public function __construct(\Doctrine\ORM\EntityManager $em, \Swift_Mailer $mailer, \Twig_Environment $templating)
+    public function __construct(\Doctrine\ORM\EntityManager $em, \Swift_Mailer $mailer, \Twig_Environment $templating, $dateLimit)
     {
+        /*
+        TODO : ajouter la commande dans la crontable
+        php /home/users/afadec.demo/html/lms/bin/console app:sendnotifscommand
+        */
+
         $this->em = $em;
         $this->mailer = $mailer;
         $this->templating = $templating;
         $this->cp = new Log();
         $this->cp->setType('Envoi de notifications');
-        $this->dateLimit = new \DateTime('2019-02-01 00:00:00');
+        $this->dateLimit = new \DateTime();
+        $this->dateLimit->setTimestamp($dateLimit);
     }
 
     /**
@@ -51,9 +57,8 @@ class NotifsSender
         } catch (ORMException $e) {
         }
         $docs = $this->em->getRepository('AppBundle:Document')->findBy(array('preuveEnvoiNotif' => null));
-        if ($docs) {
 
-            /*
+        /*
              * Format du tableau :
              * ['idUser' =>
              *      [
@@ -68,10 +73,12 @@ class NotifsSender
              * ]
              *
              */
-            $tabMailsToSend = [];
+        $tabMailsToSend = [];
 
+        if ($docs) {
             /* @var Document $doc */
             foreach ($docs as $key => $doc) {
+                $this->addLog('doc ' . $doc->getId());
                 if ($doc->getDateCrea() > $this->dateLimit) {
                     // une notif doit être envoyée, on commence par regarder dans les docs de discipline
                     /* @var AssocDocDisc $assocsDocsDisc */
@@ -160,6 +167,7 @@ class NotifsSender
                         }
                     }
                 }
+                $doc->setPreuveEnvoiNotif("done");
             }
         }
         $this->addLog(json_encode($tabMailsToSend));
@@ -217,6 +225,10 @@ class NotifsSender
 
             $this->sendMail($user, $contenuDocuments);
         }
+        // envoi de mail à l'admin pour le tenir informé
+        /* @var User $admin */
+        $admin = $this->em->getRepository('AppBundle:User')->findOneBy(array('email' => "erwannig.louf@gmail.com"));
+        $this->sendMail($admin, "Ci-dessous les logs d'un envoi groupé de mails :<br><br>".$this->cp->getLog());
     }
 
     public function appendInUsersTab($userIdStr, $idLien, $strInTab, &$tabMailsToSend, Document $doc)
@@ -249,36 +261,39 @@ class NotifsSender
 
     public function sendMail(User $user, $contenuDocuments)
     {
-        $message = \Swift_Message::newInstance()
-            ->setSubject('[AFADEC] Document déposé')
-            ->setFrom('noreply@afadec.fr')
-            ->setTo($user->getEmail())
-            ->setBody(
-                $this->templating->render(
-                    'emailNotif.html.twig',
-                    array(
-                        'prenom' => $user->getFirstname(),
-                        'nom' => $user->getLastname(),
-                        'id' => $user->getId(),
-                        'contenuDocuments' => $contenuDocuments
-                    )
-                ),
-                'text/html'
-            )
-            ->addPart(
-                $this->templating->render(
-                    'emailNotif.html.twig',
-                    array(
-                        'prenom' => $user->getFirstname(),
-                        'nom' => $user->getLastname(),
-                        'id' => $user->getId(),
-                        'contenuDocuments' => $contenuDocuments
-                    )
-                ),
-                'text/html'
-            );
-        $this->mailer->send($message);
+        if($user->getReceiveAutoNotifs()){
+            $email = $user->getEmail();
 
-
+            $message = \Swift_Message::newInstance()
+                ->setSubject('[AFADEC] Document déposé')
+                ->setFrom('noreply@afadec.fr')
+                ->setTo($email)
+                ->setBody(
+                    $this->templating->render(
+                        'emailNotif.html.twig',
+                        array(
+                            'prenom' => $user->getFirstname(),
+                            'nom' => $user->getLastname(),
+                            'id' => $user->getId(),
+                            'contenuDocuments' => $contenuDocuments
+                        )
+                    ),
+                    'text/html'
+                )
+                ->addPart(
+                    $this->templating->render(
+                        'emailNotif.html.twig',
+                        array(
+                            'prenom' => $user->getFirstname(),
+                            'nom' => $user->getLastname(),
+                            'id' => $user->getId(),
+                            'contenuDocuments' => $contenuDocuments
+                        )
+                    ),
+                    'text/html'
+                );
+            $this->mailer->send($message);
+            $this->addLog('Send mail : '.$email);
+        }
     }
 }
