@@ -1051,6 +1051,38 @@ class UsersController extends Controller
         return new JsonResponse('This is not ajax!', 400);
     }
 
+    /**
+     * @Route("/actionLotsUsers_ajax", name="actionLotsUsers_ajax")
+     */
+    public function actionLotsUsersAjaxAction(Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+
+            $userIds = $request->request->get('userIds');
+            $mode = $request->request->get('mode');
+            if ($userIds) {
+                foreach ($userIds as $userId){
+                    /* @var User $user */
+                    $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
+                    if($mode == 'delete'){
+                        $em->remove($user);
+                    }elseif ($mode == "desact"){
+                        $user->setEnabled(false);
+                    }elseif ($mode == "react"){
+                        $user->setEnabled(true);
+                    }
+                }
+            }
+
+            $em->flush();
+
+            return new JsonResponse(array('action' => 'desactive List of Users'));
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
     public function allSessionsAction()
     {
         $em = $this->getDoctrine()->getEntityManager();

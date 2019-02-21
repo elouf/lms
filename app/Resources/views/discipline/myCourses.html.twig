@@ -61,8 +61,14 @@
             });
         });
     </script>
-    <div class="container mt-140">
+
+    {% set hasVisibilityRights = app.user.hasRole('ROLE_SUPER_ADMIN') or app.user.statut == 'Responsable' or app.user.statut == 'Formateur' %}
+
+    <div class="container mt-120">
         <div class="row mt-20 mb-100">
+            {% if app.user.statut == 'Responsable' or app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                <div style="margin-bottom: 10px;"><a href="{{ path('inscriptionDiscipline') }}">Gérer mes inscriptions</a></div>
+            {% endif %}
             <div class="col-sm-12">
                 {% set idActive = 0 %}
                 {% if active > 0 %}

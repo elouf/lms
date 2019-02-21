@@ -2,8 +2,10 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Discipline;
 use AppBundle\Entity\Inscription_c;
 use AppBundle\Entity\Inscription_d;
+use AppBundle\Repository\DisciplineRepository;
 use AppBundle\Repository\InstitutRepository;
 use DateTime;
 use AppBundle\Entity\Inscription_coh;
@@ -18,6 +20,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 class InscriptionController extends Controller
@@ -266,6 +269,93 @@ class InscriptionController extends Controller
 
 
     }
+
+    /**
+     * @Route("/inscriptionDiscipline", name="inscriptionDiscipline")
+     */
+    public function inscriptionDisciplineAction(Request $request)
+    {
+        /* @var $user User */
+        $user = $this->getUser();
+        if($user->getStatut() !== 'Responsable' && !$this->getUser()->hasRole('ROLE_SUPER_ADMIN')){
+            return $this->redirectToRoute('homepage');
+        }
+
+        /* @var $discRepo DisciplineRepository */
+        $discRepo = $this->getDoctrine()->getRepository('AppBundle:Discipline');
+
+        $disciplines = $this->getDoctrine()->getRepository('AppBundle:Discipline')->findAll();
+        $discAccess = [];
+        $discNoAccess = [];
+        if($disciplines){
+            /* @var $discipline Discipline */
+            foreach ($disciplines as $discipline){
+                if($discRepo->userHasAccessOrIsInscrit($user->getId(), $discipline->getId())){
+                    array_push($discAccess, $discipline);
+                }else{
+                    array_push($discNoAccess, $discipline);
+                }
+            }
+        }
+
+        return $this->render('user/myInscriptions.html.twig', array(
+            'discAccess' => $discAccess,
+            'discNoAccess' => $discNoAccess
+        ));
+    }
+
+    /**
+     * @Route("/updateDisInscrDatas_ajax", name="updateDisInscrDatas_ajax")
+     */
+    public function updateDisInscrDatasAjaxAction(Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+
+            $noAction = false;
+
+            $idUser = $request->request->get('idUser');
+            $idDisc = $request->request->get('idDisc');
+            $isInscr = $request->request->get('isInscr') == "true";
+
+            /* @var $discipline Discipline */
+            $discipline = $this->getDoctrine()->getRepository('AppBundle:Discipline')
+                ->findOneBy(array('id' => $idDisc));
+
+            /* @var $user User */
+            $user = $this->getDoctrine()->getRepository('AppBundle:User')
+                ->findOneBy(array('id' => $idUser));
+
+            if($isInscr){
+                /* @var $role Role */
+                $role = $this->getDoctrine()->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Etudiant'));
+                $inscr = new Inscription_d();
+                $inscr->setUser($user);
+                $inscr->setDiscipline($discipline);
+                $inscr->setDateInscription(new DateTime());
+                $inscr->setRole($role);
+                $em->persist($inscr);
+            }else{
+                $inscr = $this->getDoctrine()->getRepository('AppBundle:Inscription_d')
+                    ->findOneBy(array('user' => $user, 'discipline' => $discipline));
+                if($inscr){
+                    $em->remove($inscr);
+                }else{
+                    $noAction = true;
+                }
+            }
+
+            $em->flush();
+
+            return new JsonResponse(array(
+                'action' => 'delete inscription of user to a discipline',
+                'noAction' => $noAction
+            ));
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
 
     /**
      * @Route("/activation/{id}", name="activation")

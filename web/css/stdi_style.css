@@ -105,6 +105,9 @@ body{
 .mt-140 {
     margin-top: 140px;
 }
+.mt-120 {
+    margin-top: 120px;
+}
 .mt-220 {
     margin-top: 220px;
 }
@@ -480,7 +483,7 @@ label.alertMustBeSet{
 }
 
 .visibility_{
-    opacity: .3;
+    opacity: .3 !important;
 }
 
 .adminSectionRow input[data-champName="nom"], .adminSectionRow input[data-champName="faIcon"]{

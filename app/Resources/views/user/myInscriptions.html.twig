@@ -1,0 +1,135 @@
+{% extends 'base.html.twig' %}
+
+{% block pageHeader %}
+    <div>{{ template }}</div>
+    <div class="page-header">
+        <div class="container">
+            <h2 class="color3">Gestion de mes inscriptions</h2>
+            <ul class="breadcrumb">
+                <li class="color3">{{ app.user.firstname }} {{ app.user.lastname }}</li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+
+{% block main %}
+    <link rel="stylesheet" href="{{ asset('vendors/tablesorter/dist/css/theme.default.min.css') }}" />
+
+    <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/jquery.tablesorter.min.js') }}"></script>
+
+    <script>
+        jQuery(document).ready(function () {
+            $('.download').click(function(e){
+                e.preventDefault();
+                let table = $(this).closest('.container').find('.tablesorter');
+                table.trigger('outputTable');
+            });
+            $(".tablesorter")
+                    .tablesorter({
+                        widthFixed: true,
+                        widgets: ['zebra', 'filter']
+                    });
+
+            $('.btnHandleInscr').click(function() {
+                $('.errorDesinscr').hide();
+                let idDisc = $(this).closest('.disLine').attr('data-disId');
+                let isIncr = $(this).hasClass('btnInscr');
+                $.ajax({
+                    type: "POST",
+                    url: "{{path('updateDisInscrDatas_ajax')}}",
+                    data: {
+                        idUser: '{{ app.user.id }}',
+                        idDisc: idDisc,
+                        isInscr: isIncr
+                    },
+                    dataType: "json",
+                    success: function (response) {
+                        if(response['noAction']){
+                            $('.errorDesinscr').show();
+                        }else{
+                            setTimeout(function(){
+                                window.location.href = window.location.href;
+                            }, 300);
+                        }
+
+                    },
+                    error: function(xhr, status, error) {
+                    }
+                });
+            });
+        });
+    </script>
+    <style>
+        .disLine{
+            border: 5px solid #b10e00;
+            border-bottom: none;
+            border-top: none;
+        }
+        .noAccess .fa{
+            color: #0ba204;
+        }
+        .hasAccess{
+            border-color: #0ba204;
+        }
+        .hasAccess .fa{
+            color: #b10e00;
+        }
+        .btnHandleInscr{
+            padding: 3px 8px;
+            background-color: #a2b0b1;
+        }
+        .btnHandleInscr:hover, .btnHandleInscr:hover .fa{
+            color: #eee;
+        }
+        .hasAccess .btnHandleInscr:hover{
+            background-color: #b10e00;
+        }
+        .noAccess .btnHandleInscr:hover{
+            background-color: #0ba204;
+        }
+        .errorDesinscr{
+            display: none;
+            background: #ffc6a9;
+            border: 1px solid #ff1d00;
+            color: #ff1d00;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+    </style>
+
+    <div class="container mt-10 mb-40">
+        <div class="errorDesinscr">Vous ne pouvez pas effectuer cette désinscription. Vous êtes certainement inscrit à un groupe de plus haut niveau que cette discipline.</div>
+        <div class="row">
+            <div class="col-md-12">
+                <table class="tablesorter ">
+                    <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Discipline</th>
+                        <th class="filter-select">Accès</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for disc in discAccess %}
+                        <tr class="disLine hasAccess" data-disId="{{ disc.id }}">
+                            <td>{{ disc.id }}</td>
+                            <td>{{ disc.nom }}</td>
+                            <td><a class="btn btnHandleInscr btnDesinscr"><i class="fa fa-ban" aria-hidden="true"></i> Désinscrire
+                                </a></td>
+                        </tr>
+                    {% endfor %}
+                    {% for disc in discNoAccess %}
+                        <tr class="disLine noAccess" data-disId="{{ disc.id }}">
+                            <td>{{ disc.id }}</td>
+                            <td>{{ disc.nom }}</td>
+                            <td><a class="btn btnHandleInscr btnInscr"><i class="fa fa-sign-in" aria-hidden="true"></i>
+                                    Inscrire
+                                </a></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

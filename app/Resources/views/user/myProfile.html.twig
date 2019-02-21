@@ -90,18 +90,21 @@
             width: 250px;
         }
 
-        .blocRGPD {
+        .block{
             background-color: #eee;
             padding: 15px;
+            border-radius: 2px;
+            -webkit-box-shadow: 2px 2px 21px -4px rgba(0, 0, 0, 0.66);
+            -moz-box-shadow: 2px 2px 21px -4px rgba(0, 0, 0, 0.66);
+            box-shadow: 2px 2px 21px -4px rgba(0, 0, 0, 0.66);
+            height: fit-content;
+        }
+        .blocRGPD {
             margin-left: 29px;
             flex: 1;
             -webkit-box-flex: 1;
             -webkit-flex: 1;
             -ms-flex: 1;
-            border-radius: 2px;
-            -webkit-box-shadow: 2px 2px 21px -4px rgba(0, 0, 0, 0.66);
-            -moz-box-shadow: 2px 2px 21px -4px rgba(0, 0, 0, 0.66);
-            box-shadow: 2px 2px 21px -4px rgba(0, 0, 0, 0.66);
         }
 
         .errorsPart {
@@ -126,10 +129,22 @@
         .deleteDatas:hover{
             background-color: #d6611d;
         }
+        @media (max-width: 1000px) {
+            .containerProfile {
+                flex-direction: column;
+                -webkit-flex-direction: column;
+                -webkit-box-orient: vertical;
+            }
+            .block{
+                margin: 0;
+                margin-bottom: 20px;
+            }
+        }
+
     </style>
 
     <div class="container mt-220 mb-40 containerProfile">
-        <div class="firstCol">
+        <div class="firstCol block">
             {{ form_start(form) }}
             <div class="errorsPart">
                 {{ form_errors(form) }}
@@ -164,8 +179,12 @@
             </div>
             {{ form_widget(form.submit) }}
             {{ form_end(form) }}
+
+            {% if app.user.statut == 'Responsable' or app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                <div style="margin-top: 30px;"><a href="{{ path('inscriptionDiscipline') }}">Gérer mes inscriptions</a></div>
+            {% endif %}
         </div>
-        <div class="blocRGPD">
+        <div class="blocRGPD block">
             <div class="sectionRGPD">Ici, un texte pour présenter la rgpd et dire qu'on peut supprimer ses données
                 personnelles
             </div>

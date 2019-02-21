@@ -344,6 +344,8 @@
         });
     </script>
 
+    {% set hasVisibilityRights = app.user.hasRole('ROLE_SUPER_ADMIN') or app.user.statut == 'Responsable' or app.user.statut == 'Formateur' %}
+
     <div class="container mt-140" data-coursId="{{ cours.id }}" data-folderUpload="{{ folderUpload }}"
          data-uploadSteps="{{ uploadSteps }}" data-uploadSrcSteps="{{ uploadSrcSteps }}"
          data-courseUpload="{{ uploadCourse }}">
@@ -377,8 +379,8 @@
             <div class="col-sm-3">
                 <ul class="nav nav-pills nav-stacked pull-left" role="tablist"
                     style="padding-bottom: 5px;padding-top: 5px">
-                    {% for key,val in zonesSections if val.section.isVisible == 1 %}
-                        <li role="presentation" class="ongletSection{% if loop.index == 1 %} active{% endif %}"
+                    {% for key,val in zonesSections if val.section.isVisible == 1 or hasVisibilityRights %}
+                        <li role="presentation" class="ongletSection{% if loop.index == 1 %} active{% endif %} {% if val.section.isVisible == 0 %} visibility_{% endif %}"
                             data-idsection="{{ val.section.id }}">
                             <a href="#t1body{{ val.section.id }}" aria-controls="t1body{{ val.section.id }}" role="tab"
                                data-toggle="tab" aria-expanded="true"><i class="fa {{ val.section.faIcon }} fa-fw"
@@ -397,20 +399,20 @@
             </div>
             <div class="col-sm-9">
                 <div class="tab-content">
-                    {% for key,val in zonesSections if val.section.isVisible %}
+                    {% for key,val in zonesSections if val.section.isVisible or hasVisibilityRights %}
                         <div role="tabpanel" data-idSection="{{ val.section.id }}"
-                             class="section tab-pane fade{% if loop.index == 1 %} in active {% endif %}"
+                             class="section tab-pane fade{% if loop.index == 1 %} in active {% endif %} {% if val.section.isVisible == 0 %} visibility_{% endif %}"
                              id="t1body{{ val.section.id }}">
                             <div class="editor">
                                 <ul class="list-default">
                                     {% for keyR,valR in val.zones.content %}
-                                        {% if val.zones.containers[keyR].isVisible %}
+                                        {% if val.zones.containers[keyR].isVisible or hasVisibilityRights %}
                                             {% if val.zones.type[keyR] == "lien" %}
                                                 <!--
                                                         LIEN
                                                 -->
                                                 <li data-idZone="{{ val.zones.containers[keyR].id }}"
-                                                    class="courseElem lien">
+                                                    class="courseElem lien {% if val.zones.containers[keyR].isVisible == 0 %} visibility_{% endif %}">
                                                     <div class="row">
 
                                                         <div class="itemInfos itemHeader col-xs-10">
@@ -451,7 +453,7 @@
                                                         DEVOIR
                                                 -->
                                                 <li data-idZone="{{ val.zones.containers[keyR].id }}"
-                                                    class="courseElem devoir" data-idItem="{{ valR.id }}">
+                                                    class="courseElem devoir {% if val.zones.containers[keyR].isVisible == 0 %} visibility_{% endif %}" data-idItem="{{ valR.id }}">
                                                     <div class="">
                                                         <div class="row">
                                                             <div class="itemHeader col-xs-9 mb-10">
@@ -631,7 +633,7 @@
                                                         GROUPE
                                                 -->
                                                 <li data-idZone="{{ val.zones.containers[keyR].id }}"
-                                                    class="courseElem groupsRessource">
+                                                    class="courseElem groupsRessource {% if val.zones.containers[keyR].isVisible == 0 %} visibility_{% endif %}">
                                                     <div class="row">
                                                         <div class="itemInfos itemHeader col-xs-10">
                                                             <div class="itemTitle">{{ val.zones.groupe[keyR].nom }}</div>
@@ -680,7 +682,7 @@
                                                         FORUM
                                                 -->
                                                 <li data-idZone="{{ val.zones.containers[keyR].id }}"
-                                                    class="courseElem forum">
+                                                    class="courseElem forum {% if val.zones.containers[keyR].isVisible == 0 %} visibility_{% endif %}">
                                                     <div class="row">
 
                                                         <div class="itemInfos itemHeader col-xs-10">
@@ -704,7 +706,7 @@
                                                         CHAT
                                                 -->
                                                 <li data-idZone="{{ val.zones.containers[keyR].id }}"
-                                                    class="courseElem chat">
+                                                    class="courseElem chat {% if val.zones.containers[keyR].isVisible == 0 %} visibility_{% endif %}">
                                                     <div class="row">
 
                                                         <div class="itemInfos itemHeader col-xs-10">
@@ -728,7 +730,7 @@
                                                         LIBRE
                                                 -->
                                                 <li data-idZone="{{ val.zones.containers[keyR].id }}"
-                                                    class="courseElem freeRessource">
+                                                    class="courseElem freeRessource {% if val.zones.containers[keyR].isVisible == 0 %} visibility_{% endif %}">
                                                     <div class="">{{ val.zones.content[keyR].description | raw }}</div>
                                                 </li>
                                             {% endif %}

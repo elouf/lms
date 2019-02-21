@@ -119,7 +119,8 @@
     <nav class="navbar navbar-default navbar-fixed-top">         <!-- Navigation Bar -->
         <div class="container">
             {% if app.user %}
-                {% if not app.user.confirmedByAdmin and not app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                {% if not app.user.confirmedByAdmin and not app.user.hasRole('ROLE_SUPER_ADMIN') and (app.user.statut == 'Formateur' or app.user.statut == 'Responsable') %}
+
                     <div class="AlertNotValidatedByAdmin">
                         Votre compte {{ app.user.statut }} sera bientôt confirmé par l'administrateur
                     </div>
@@ -202,6 +203,9 @@
                                     <li><a target="_blank" href="{{ path('sonata_admin_dashboard') }}">BackOffice</a></li>
                                     <li><a href="{{ path('emailing') }}">Emailing</a></li>
                                     <li><a href="{{ path('stats') }}">Statistiques</a></li>
+                                {% endif %}
+                                {% if app.user.statut == 'Responsable' or app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                    <li><a href="{{ path('inscriptionDiscipline') }}">Mes inscriptions</a></li>
                                 {% endif %}
                                 {% block vueAdmin %}{% endblock %}
                                 <li><a href="{{ path('calendrier') }}">Mon calendrier</a></li>
