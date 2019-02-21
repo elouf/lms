@@ -1,6 +1,7 @@
 <?php
 namespace AppBundle\Admin;
 
+use AppBundle\Entity\User;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
@@ -35,6 +36,9 @@ class UserAdmin extends AbstractAdmin
             ->add('firstname')
             ->add('lastname')
             ->add('phone')
+            ->add('statut',
+                'choice',
+                array('choices' => User::getStatuts()))
             ->add('institut', 'sonata_type_model')
         ;
 
@@ -49,6 +53,7 @@ class UserAdmin extends AbstractAdmin
             ->add('firstname')
             ->add('lastname')
             ->add('phone')
+            ->add('statut')
             ->add('institut', null, array(), 'entity', array(
                 'class'    => 'AppBundle\Entity\Institut',
                 'choice_label' => 'nom',
@@ -66,6 +71,7 @@ class UserAdmin extends AbstractAdmin
             ->add('lastname')
             ->add('phone')
             ->add('institut')
+            ->add('statut')
         ;
     }
 

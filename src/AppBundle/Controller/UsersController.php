@@ -348,6 +348,7 @@ class UsersController extends Controller
         $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
 
         $user = $this->getDoctrine()->getRepository('AppBundle:User')->find($id);
+        $roles = $this->getDoctrine()->getRepository('AppBundle:Role')->findAll();
 
         /* @var $coh_repo CohorteRepository */
         $coh_repo = $this->getDoctrine()->getRepository('AppBundle:Cohorte');
@@ -488,6 +489,7 @@ class UsersController extends Controller
 
         return $this->render('user/one.html.twig', [
             'user' => $user,
+            'roles' => $roles,
             'cohortesInsc' => $cohortes_inscr,
             'disciplinesInsc' => $discs_inscr,
             'coursInsc' => $cours_inscr,
@@ -510,6 +512,8 @@ class UsersController extends Controller
     public function itemUsersAction(Request $request, $id, $type)
     {
         $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
+
+        $roles = $this->getDoctrine()->getRepository('AppBundle:Role')->findAll();
 
         $entityName = "";
         if ($type == "cohorte") {
@@ -627,6 +631,7 @@ class UsersController extends Controller
 
         return $this->render('user/itemUsers.html.twig', [
             'item' => $item,
+            'roles' => $roles,
             'entityName' => $entityName,
             'usersNoHavingAccess' => $usersNoAccessTab,
             'usersHavingAccess' => $usersAccessTab,
@@ -647,8 +652,10 @@ class UsersController extends Controller
             $itemId = $request->request->get('idItem');
             $itemType = $request->request->get('typeItem');
             $userId = $request->request->get('idUser');
+            $roleId = $request->request->get('idRole');
+
             $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
-            $role = $em->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Etudiant'));
+            $role = $em->getRepository('AppBundle:Role')->findOneBy(array('id' => $roleId));
 
             if ($itemType == 'cohorte') {
                 // commence par désinscrire le user des disciplines et des cours qui en découlent
@@ -813,12 +820,13 @@ class UsersController extends Controller
 
             $id = $request->request->get('id');
             $userId = $request->request->get('idUser');
+            $roleId = $request->request->get('idRole');
 
             $session = $em->getRepository('AppBundle:Session')->findOneBy(array('id' => $id));
 
             $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
 
-            $role = $em->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Etudiant'));
+            $role = $em->getRepository('AppBundle:Role')->findOneBy(array('id' => $roleId));
 
             $inscr = new Inscription_sess();
             $inscr->setSession($session);

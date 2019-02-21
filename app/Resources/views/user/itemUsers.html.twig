@@ -80,16 +80,20 @@
                 var idUser = $(this).closest('.userLine').attr('data-userId');
 
                 $('.modal').modal('toggle');
+                $('.modeDesinscr').show();
+                $('.modeInscr').hide();
                 $('.valideDesinscr').unbind('click').click(function () {
                     desinscrireUser(typeItem, idUser, "{{ item.id }}");
-                });
-                $('.cancelDesinscr').unbind('click').click(function () {
-                    $('.modal').modal('toggle');
                 });
             });
             $('.btninscr').click(function () {
                 var idUser = $(this).closest('.userLine').attr('data-userId');
-                inscrireUser(typeItem, idUser, "{{ item.id }}");
+                $('.modal').modal('toggle');
+                $('.modeDesinscr').hide();
+                $('.modeInscr').show();
+                $('.valideInscr').unbind('click').click(function () {
+                    inscrireUser(typeItem, idUser, "{{ item.id }}", $('.selectRole').val());
+                });
             });
             $('.selectAll').click(function (e) {
                 e.preventDefault();
@@ -100,10 +104,14 @@
             $('.inscrSelected').click(function (e) {
                 e.preventDefault();
 
-                $('.tableNo .selectUser:checked').each(function () {
-                    var idUser = $(this).closest('.userLine').attr('data-userId');
-                    inscrireUser(typeItem, idUser, "{{ item.id }}");
-
+                $('.modal').modal('toggle');
+                $('.modeDesinscr').hide();
+                $('.modeInscr').show();
+                $('.valideInscr').unbind('click').click(function () {
+                    $('.tableNo .selectUser:checked').each(function () {
+                        var idUser = $(this).closest('.userLine').attr('data-userId');
+                        inscrireUser(typeItem, idUser, "{{ item.id }}", $('.selectRole').val());
+                    });
                 });
             });
             $('.desinscrSelected').click(function (e) {
@@ -112,23 +120,26 @@
                     var idUser = $(this).closest('.userLine').attr('data-userId');
 
                     $('.modal').modal('toggle');
+                    $('.modeDesinscr').show();
+                    $('.modeInscr').hide();
                     $('.valideDesinscr').unbind('click').click(function () {
                         desinscrireUser(typeItem, idUser, "{{ item.id }}");
                     });
-                    $('.cancelDesinscr').unbind('click').click(function () {
-                        $('.modal').modal('toggle');
-                    });
                 });
             });
+            $('.cancel').click(function () {
+                $('.modal').modal('toggle');
+            });
 
-            function inscrireUser(typeItem, idUser, itemId) {
+            function inscrireUser(typeItem, idUser, itemId, roleId) {
                 if (typeItem == 'session') {
                     $.ajax({
                         type: "POST",
                         url: "{{ path('inscrSessUser_ajax') }}",
                         data: {
                             id: itemId,
-                            idUser: idUser
+                            idUser: idUser,
+                            idRole: roleId
                         },
                         dataType: "json",
                         success: function (response) {
@@ -144,7 +155,8 @@
                         data: {
                             idItem: itemId,
                             idUser: idUser,
-                            typeItem: typeItem
+                            typeItem: typeItem,
+                            idRole: roleId
                         },
                         dataType: "json",
                         success: function (response) {
@@ -353,14 +365,29 @@
                      style="background:#aaa; background-size:cover">
                     <div class="row">
                         <div class="bginverse">
-                            <div class="">
+                            <div class="modeDesinscr">
                                 <div class="alert alert-danger mb-10">
                                     <strong>Attention!</strong> Voulez-vous vraiment procéder à cette désinscription ?
                                 </div>
 
                                 <div class="row mb-10" style="text-align: center">
                                     <div class="btn btn-sm btn-info mb-3 valideDesinscr">Valider</div>
-                                    <div class="btn btn-sm btn-info mb-3 cancelDesinscr">Annuler</div>
+                                    <div class="btn btn-sm btn-info mb-3 cancel">Annuler</div>
+                                </div>
+                            </div>
+                            <div class="modeInscr">
+                                <div class="alert alert-info mb-10">
+                                    Sélectionnez un role pour cette inscription
+                                    <select class="selectRole">
+                                        {% for role in roles %}
+                                            <option value="{{ role.id }}">{{ role.nom }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <div class="row mb-10" style="text-align: center">
+                                    <div class="btn btn-sm btn-info mb-3 valideInscr">Valider</div>
+                                    <div class="btn btn-sm btn-info mb-3 cancel">Annuler</div>
                                 </div>
                             </div>
                         </div>
