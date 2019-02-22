@@ -215,7 +215,7 @@ class DocumentController extends Controller
                 $inscrits = $em->getRepository('AppBundle:Discipline')->findInscrits($discipline->getId());
                 if($inscrits){
                     foreach($inscrits as $inscrit){
-                        $this->sendMailDoc($inscrit, $proprietaire, 'la discipline '.$discipline->getNom());
+                        //$this->sendMailDoc($inscrit, $proprietaire, 'la discipline '.$discipline->getNom());
                     }
                 }
             }else{
@@ -249,7 +249,7 @@ class DocumentController extends Controller
                         }
                     }
                     if($estAssocie){
-                        $this->sendMailDoc($user, $proprietaire, 'la discipline '.$discipline->getNom());
+                        //$this->sendMailDoc($user, $proprietaire, 'la discipline '.$discipline->getNom());
                         $em->persist($assocInscr);
                     }
                 }
