@@ -942,7 +942,7 @@ class UsersController extends Controller
 
     public function sendMailConfirmStatut(User $user, $isConfirm){
         $message = \Swift_Message::newInstance()
-            ->setSubject('[AFADEC] Document déposé')
+            ->setSubject('[AFADEC] Confirmation de votre statut')
             ->setFrom('noreply@afadec.fr')
             ->setTo($user->getEmail())
             ->setBody(
