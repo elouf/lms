@@ -386,10 +386,12 @@
                     <a href="#InfosCoh" aria-controls="InfosCoh" role="tab" data-toggle="tab" aria-expanded="true"><i
                                 class="fa fa-university fa-fw" aria-hidden="true"> </i>Cohortes</a>
                 </li>
-                <li role="presentation">
-                    <a href="#t1body2" aria-controls="t1body2" role="tab" data-toggle="tab"><i
-                                class="fa fa-sign-in fa-fw" aria-hidden="true"> </i>Cours</a>
-                </li>
+                {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                    <li role="presentation">
+                        <a href="#t1body2" aria-controls="t1body2" role="tab" data-toggle="tab"><i
+                                    class="fa fa-sign-in fa-fw" aria-hidden="true"> </i>Cours</a>
+                    </li>
+                {% endif %}
                 <li role="presentation">
                     <a href="#InfosSess" aria-controls="InfosSess" role="tab" data-toggle="tab"><i
                                 class="fa fa-graduation-cap fa-fw"></i> Sessions</a>
@@ -398,10 +400,12 @@
                     <a href="#InfosDev" aria-controls="InfosDev" role="tab" data-toggle="tab"><i
                                 class="fa fa-certificate fa-fw"></i> Devoirs</a>
                 </li>
-                <li role="presentation" class="ongletSection">
-                    <a href="#OngletEditionUser" aria-controls="OngletEditionUser" role="tab" data-toggle="tab"
-                       aria-expanded="true"><i class="fa fa-user-circle fa-fw" aria-hidden="true"> </i>Profil</a>
-                </li>
+                {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                    <li role="presentation" class="ongletSection">
+                        <a href="#OngletEditionUser" aria-controls="OngletEditionUser" role="tab" data-toggle="tab"
+                           aria-expanded="true"><i class="fa fa-user-circle fa-fw" aria-hidden="true"> </i>Profil</a>
+                    </li>
+                {% endif %}
                 <li role="presentation" class="ongletSection">
                     <a href="#InfosRGPD" aria-controls="InfosRGPD" role="tab" data-toggle="tab" aria-expanded="true"><i
                                 class="fa fa-database" aria-hidden="true"></i> Données personnelles</a>
@@ -419,7 +423,9 @@
                                 <tr>
                                     <th data-filter="false">Id</th>
                                     <th>Nom</th>
-                                    <th data-filter="false">Désinscrire</th>
+                                    {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                        <th data-filter="false">Désinscrire</th>
+                                    {% endif %}
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -431,9 +437,11 @@
                                         <a href="{{ path('itemUsers', {id: val['cohorte'].id, type: "cohorte"}) }}">{{ val['cohorte'].nom }}
                                             {% if val['inscription']|length %} ({{ val['inscription'][0].role.nom|replace({ 'Enseignant': 'Enseignant correcteur' }) }}){% endif %}</a>
                                     </td>
-                                    <td class="btnCellFilter">
-                                        <i class="btndesinscr btndesinscrCoh fa fa-sign-out" aria-hidden="true"></i>
-                                    </td>
+                                    {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                        <td class="btnCellFilter">
+                                            <i class="btndesinscr btndesinscrCoh fa fa-sign-out" aria-hidden="true"></i>
+                                        </td>
+                                    {% endif %}
                                     {% endif %}
                                     {% endfor %}
                                 </tbody>
@@ -446,7 +454,9 @@
                                 <tr>
                                     <th data-filter="false">Id</th>
                                     <th>Nom</th>
-                                    <th data-filter="false">Inscrire</th>
+                                    {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                        <th data-filter="false">Inscrire</th>
+                                    {% endif %}
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -457,9 +467,11 @@
                                     <td>
                                         <a href="{{ path('itemUsers', {id: val['cohorte'].id, type: "cohorte"}) }}">{{ val['cohorte'].nom }}</a>
                                     </td>
-                                    <td class="btnCellFilter">
-                                        <i class="btninscr btninscrCoh fa fa-sign-in" aria-hidden="true"></i>
-                                    </td>
+                                    {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                        <td class="btnCellFilter">
+                                            <i class="btninscr btninscrCoh fa fa-sign-in" aria-hidden="true"></i>
+                                        </td>
+                                    {% endif %}
                                     {% endif %}
                                     {% endfor %}
                                 </tbody>
@@ -572,7 +584,10 @@
                     </div>
                 </div>
                 <div role="tabpanel" class="tab-pane fade" id="InfosRGPD">
-                    <div class="btnDeleteDatas btn btn-warning" data-typeDatas="ALL">Supprimer toutes les données</div>
+                    {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                        <div class="btnDeleteDatas btn btn-warning" data-typeDatas="ALL">Supprimer toutes les données
+                        </div>
+                    {% endif %}
 
                     <h3>Connexions</h3>
                     <table class="tablesorter" data-numPager="1">
@@ -605,7 +620,9 @@
                                 <option value="40">40</option>
                                 <option value="all">Toutes les lignes</option>
                             </select>
-                            <button class="deleteDatas" data-typeDatas="Login">Effacer ces données</button>
+                            {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                <button class="deleteDatas" data-typeDatas="Login">Effacer ces données</button>
+                            {% endif %}
                         </form>
                     </div>
                     <h3>Accès aux cours</h3>
@@ -643,7 +660,9 @@
                                 <option value="40">40</option>
                                 <option value="all">Toutes les lignes</option>
                             </select>
-                            <button class="deleteDatas" data-typeDatas="Cours">Effacer ces données</button>
+                            {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                <button class="deleteDatas" data-typeDatas="Cours">Effacer ces données</button>
+                            {% endif %}
                         </form>
                     </div>
                     <h3>Accès aux ressources</h3>
@@ -683,7 +702,9 @@
                                 <option value="40">40</option>
                                 <option value="all">Toutes les lignes</option>
                             </select>
-                            <button class="deleteDatas" data-typeDatas="Ressource">Effacer ces données</button>
+                            {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                <button class="deleteDatas" data-typeDatas="Ressource">Effacer ces données</button>
+                            {% endif %}
                         </form>
                     </div>
                     <h3>Copies rendues</h3>
@@ -725,7 +746,9 @@
                                 <option value="40">40</option>
                                 <option value="all">Toutes les lignes</option>
                             </select>
-                            <button class="deleteDatas" data-typeDatas="Ressource">Effacer ces données</button>
+                            {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                <button class="deleteDatas" data-typeDatas="Ressource">Effacer ces données</button>
+                            {% endif %}
                         </form>
                     </div>
                     <h3>Documents déposés</h3>
@@ -761,7 +784,9 @@
                                 <option value="40">40</option>
                                 <option value="all">Toutes les lignes</option>
                             </select>
-                            <button class="deleteDatas" data-typeDatas="Document">Effacer ces données</button>
+                            {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                <button class="deleteDatas" data-typeDatas="Document">Effacer ces données</button>
+                            {% endif %}
                         </form>
                     </div>
                     <h3>Sujets de Forum créés</h3>
@@ -803,7 +828,9 @@
                                 <option value="40">40</option>
                                 <option value="all">Toutes les lignes</option>
                             </select>
-                            <button class="deleteDatas" data-typeDatas="ForumSujet">Effacer ces données</button>
+                            {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                <button class="deleteDatas" data-typeDatas="ForumSujet">Effacer ces données</button>
+                            {% endif %}
                         </form>
                     </div>
                     <h3>Posts de Forum créés</h3>
@@ -847,7 +874,9 @@
                                 <option value="40">40</option>
                                 <option value="all">Toutes les lignes</option>
                             </select>
-                            <button class="deleteDatas" data-typeDatas="ForumPost">Effacer ces données</button>
+                            {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                <button class="deleteDatas" data-typeDatas="ForumPost">Effacer ces données</button>
+                            {% endif %}
                         </form>
                     </div>
                 </div>

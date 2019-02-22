@@ -207,25 +207,29 @@
 
     <div class="container mt-220 mb-40">
         <div class="row">
-            <ul class="nav nav-tabs" role="tablist">
-                <li role="presentation" class="active">
-                    <a href="#InscrDesinscr" aria-controls="InscrDesinscr" role="tab" data-toggle="tab">
-                        <i class="fa fa-external-link  fa-fw"></i>
-                        Inscriptions</a>
-                </li>
-                <li role="presentation">
-                    <a href="#InfosGen" aria-controls="InfosGen" role="tab" data-toggle="tab">
-                        <i class="fa fa-university fa-fw"></i> Informations générales</a>
-                </li>
-            </ul>
+            {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active">
+                        <a href="#InscrDesinscr" aria-controls="InscrDesinscr" role="tab" data-toggle="tab">
+                            <i class="fa fa-external-link  fa-fw"></i>
+                            Inscriptions</a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#InfosGen" aria-controls="InfosGen" role="tab" data-toggle="tab">
+                            <i class="fa fa-university fa-fw"></i> Informations générales</a>
+                    </li>
+                </ul>
+            {% endif %}
             <div class="tab-content">
-                <div role="tabpanel" class="tab-pane fade" id="InfosGen">
-                    <div class="containerItemForm">
-                        {{ form_start(form) }}
-                        {{ form_widget(form) }}
-                        {{ form_end(form) }}
+                {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                    <div role="tabpanel" class="tab-pane fade" id="InfosGen">
+                        <div class="containerItemForm">
+                            {{ form_start(form) }}
+                            {{ form_widget(form) }}
+                            {{ form_end(form) }}
+                        </div>
                     </div>
-                </div>
+                {% endif %}
                 <div role="tabpanel" class="tab-pane fade in active" id="InscrDesinscr">
                     <div class="coloneTable col-xl-6">
                         <p>Utilisateurs qui sont :</p>
@@ -245,7 +249,9 @@
                                 <th>Statut</th>
                                 <th>Role</th>
                                 <th>Cohortes</th>
-                                <th>Désinscrire</th>
+                                {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                    <th>Désinscrire</th>
+                                {% endif %}
                             </tr>
                             </thead>
                             <tbody>
@@ -261,14 +267,18 @@
                                     <td>{{ user.role.nom|replace({ 'Enseignant': 'Enseignant correcteur' }) }}</td>
                                     <td>
                                         {% for key, inscr in user.myCohs %}
-                                            <a href="{{ path('itemUsers', {id: inscr.cohorte.id, type: "cohorte"}) }}">{{ inscr.cohorte.nom }} ({{ inscr.role.nom|replace({ 'Enseignant': 'Enseignant correcteur' }) }}){% if key < user.myCohs|length-1 %}, {% endif %}</a>
+                                            <a href="{{ path('itemUsers', {id: inscr.cohorte.id, type: "cohorte"}) }}">{{ inscr.cohorte.nom }}
+                                                ({{ inscr.role.nom|replace({ 'Enseignant': 'Enseignant correcteur' }) }}
+                                                ){% if key < user.myCohs|length-1 %}, {% endif %}</a>
                                         {% endfor %}
                                     </td>
-                                    <td class="btnCellFilter">
-                                        {% if user.isInscrit %}
-                                            <i class="btndesinscr fa fa-sign-out" aria-hidden="true"></i>
-                                        {% endif %}
-                                    </td>
+                                    {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                        <td class="btnCellFilter">
+                                            {% if user.isInscrit %}
+                                                <i class="btndesinscr fa fa-sign-out" aria-hidden="true"></i>
+                                            {% endif %}
+                                        </td>
+                                    {% endif %}
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -287,69 +297,79 @@
                                     <option value="40">40</option>
                                     <option value="all">Toutes les lignes</option>
                                 </select>
-                                <button class="download">Télécharger le CSV</button>
-                                <button class="desinscrSelected">Désinscrire les sélectionnés</button>
-                                <button class="selectAll">Sélectionner tous</button>
+                                {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                    <button class="download">Télécharger le CSV</button>
+                                    <button class="desinscrSelected">Désinscrire les sélectionnés</button>
+                                    <button class="selectAll">Sélectionner tous</button>
+                                {% endif %}
                             </form>
                         </div>
                     </div>
-                    <div class="coloneTable col-xl-6">
-                        <p>Utilisateurs qui n'ont aucun accès</p>
-                        <table class="tablesorter tableNo">
-                            <thead>
-                            <tr>
-                                <th data-filter="false"></th>
-                                <th>Id</th>
-                                <th>Email</th>
-                                <th>Prénom</th>
-                                <th>Nom</th>
-                                <th class="filter-select">Institut</th>
-                                <th>Statut</th>
-                                <th>Cohortes</th>
-                                <th>Inscrire</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for user in usersNoHavingAccess %}
-                                <tr class="userLine" data-userId="{{ user.user.id }}">
-                                    <td><input class="selectUser" type="checkbox"></td>
-                                    <td><a href="{{ path('user', {id:user.user.id }) }}">{{ user.user.id }}</a></td>
-                                    <td><a href="{{ path('user', {id:user.user.id }) }}">{{ user.user.email }}</a></td>
-                                    <td>{{ user.user.firstname }}</td>
-                                    <td>{{ user.user.lastname }}</td>
-                                    <td>{{ user.user.institut }}</td>
-                                    <td>{{ user.user.statut }}</td>
-                                    <td>
-                                        {% for key, inscr in user.myCohs %}
-                                            {{ inscr.cohorte.nom }} ({{ inscr.role.nom|replace({ 'Enseignant': 'Enseignant correcteur' }) }}){% if key < user.myCohs|length-1 %}, {% endif %}
-                                        {% endfor %}
-                                    </td>
-                                    <td class="btnCellFilter"><i class="btninscr fa fa-sign-in" aria-hidden="true"></i>
-                                    </td>
+                    {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                        <div class="coloneTable col-xl-6">
+                            <p>Utilisateurs qui n'ont aucun accès</p>
+                            <table class="tablesorter tableNo">
+                                <thead>
+                                <tr>
+                                    <th data-filter="false"></th>
+                                    <th>Id</th>
+                                    <th>Email</th>
+                                    <th>Prénom</th>
+                                    <th>Nom</th>
+                                    <th class="filter-select">Institut</th>
+                                    <th>Statut</th>
+                                    <th>Cohortes</th>
+                                    <th>Inscrire</th>
                                 </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                        <div id="pagerNo" class="pager">
-                            <form>
-                                <img src="{{ asset('vendors/tablesorter/dist/css/images/first.png') }}" class="first"/>
-                                <img src="{{ asset('vendors/tablesorter/dist/css/images/prev.png') }}" class="prev"/>
-                                <input type="text" class="pagedisplay"/>
-                                <img src="{{ asset('vendors/tablesorter/dist/css/images/next.png') }}" class="next"/>
-                                <img src="{{ asset('vendors/tablesorter/dist/css/images/last.png') }}" class="last"/>
-                                <select class="pagesize">
-                                    <option value="10">10</option>
-                                    <option value="20">20</option>
-                                    <option value="30">30</option>
-                                    <option value="40">40</option>
-                                    <option value="all">Toutes les lignes</option>
-                                </select>
-                                <button class="download">Télécharger le CSV</button>
-                                <button class="inscrSelected">Inscrire les sélectionnés</button>
-                                <button class="selectAll">Sélectionner tous</button>
-                            </form>
+                                </thead>
+                                <tbody>
+                                {% for user in usersNoHavingAccess %}
+                                    <tr class="userLine" data-userId="{{ user.user.id }}">
+                                        <td><input class="selectUser" type="checkbox"></td>
+                                        <td><a href="{{ path('user', {id:user.user.id }) }}">{{ user.user.id }}</a></td>
+                                        <td><a href="{{ path('user', {id:user.user.id }) }}">{{ user.user.email }}</a>
+                                        </td>
+                                        <td>{{ user.user.firstname }}</td>
+                                        <td>{{ user.user.lastname }}</td>
+                                        <td>{{ user.user.institut }}</td>
+                                        <td>{{ user.user.statut }}</td>
+                                        <td>
+                                            {% for key, inscr in user.myCohs %}
+                                                {{ inscr.cohorte.nom }} ({{ inscr.role.nom|replace({ 'Enseignant': 'Enseignant correcteur' }) }}){% if key < user.myCohs|length-1 %}, {% endif %}
+                                            {% endfor %}
+                                        </td>
+                                        <td class="btnCellFilter"><i class="btninscr fa fa-sign-in"
+                                                                     aria-hidden="true"></i>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                            <div id="pagerNo" class="pager">
+                                <form>
+                                    <img src="{{ asset('vendors/tablesorter/dist/css/images/first.png') }}"
+                                         class="first"/>
+                                    <img src="{{ asset('vendors/tablesorter/dist/css/images/prev.png') }}"
+                                         class="prev"/>
+                                    <input type="text" class="pagedisplay"/>
+                                    <img src="{{ asset('vendors/tablesorter/dist/css/images/next.png') }}"
+                                         class="next"/>
+                                    <img src="{{ asset('vendors/tablesorter/dist/css/images/last.png') }}"
+                                         class="last"/>
+                                    <select class="pagesize">
+                                        <option value="10">10</option>
+                                        <option value="20">20</option>
+                                        <option value="30">30</option>
+                                        <option value="40">40</option>
+                                        <option value="all">Toutes les lignes</option>
+                                    </select>
+                                    <button class="download">Télécharger le CSV</button>
+                                    <button class="inscrSelected">Inscrire les sélectionnés</button>
+                                    <button class="selectAll">Sélectionner tous</button>
+                                </form>
+                            </div>
                         </div>
-                    </div>
+                    {% endif %}
                 </div>
             </div>
         </div>

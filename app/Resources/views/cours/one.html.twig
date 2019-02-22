@@ -344,7 +344,7 @@
         });
     </script>
 
-    {% set hasVisibilityRights = app.user.hasRole('ROLE_SUPER_ADMIN') or app.user.statut == 'Responsable' or app.user.statut == 'Formateur' %}
+    {% set hasVisibilityRights = app.user.hasRole('ROLE_SUPER_ADMIN') or ((app.user.statut == 'Responsable' or app.user.statut == 'Formateur') and app.user.confirmedByAdmin) %}
 
     <div class="container mt-140" data-coursId="{{ cours.id }}" data-folderUpload="{{ folderUpload }}"
          data-uploadSteps="{{ uploadSteps }}" data-uploadSrcSteps="{{ uploadSrcSteps }}"
@@ -393,6 +393,13 @@
                             <a href="#sectionDocs" aria-controls="sectionDocs" role="tab" data-toggle="tab"
                                aria-expanded="true"><i class="fa fa-pencil fa-fw" aria-hidden="true"> </i>Documents
                                 partagés</a>
+                        </li>
+                    {% endif %}
+                    {% if hasVisibilityRights %}
+                        <li role="presentation" class="ongletAdmin">
+                            <a href="{{ path('itemUsers', {id:cours.id, type: "cours" }) }}" aria-expanded="true">
+                                <i class="fa fa-users fa-fw" aria-hidden="true"> </i>Les inscrits
+                            </a>
                         </li>
                     {% endif %}
                 </ul>

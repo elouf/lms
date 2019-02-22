@@ -106,6 +106,7 @@
     {% endblock %}
 
 </head>
+
 <body class="bgcolor3">
 
 <div class="loader-backdrop">           <!-- Loader -->
@@ -170,6 +171,7 @@
                     {% endif %}
 
                     {% if app.user %}
+                        {% set hasResponsableMinRights = app.user.hasRole('ROLE_SUPER_ADMIN') or (app.user.statut == 'Responsable' and app.user.confirmedByAdmin) %}
                         <li>
                             <a href="#" data-userId="{{ app.user.id }}">{{ app.user.firstname }} {{ app.user.lastname }}</a>
                             <ul class="sub-menu" style="margin-left: -30px;">
@@ -204,7 +206,7 @@
                                     <li><a href="{{ path('emailing') }}">Emailing</a></li>
                                     <li><a href="{{ path('stats') }}">Statistiques</a></li>
                                 {% endif %}
-                                {% if app.user.statut == 'Responsable' or app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                {% if hasResponsableMinRights %}
                                     <li><a href="{{ path('inscriptionDiscipline') }}">Mes inscriptions</a></li>
                                 {% endif %}
                                 {% block vueAdmin %}{% endblock %}

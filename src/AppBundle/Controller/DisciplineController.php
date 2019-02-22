@@ -140,7 +140,7 @@ class DisciplineController extends Controller
 
                     if($currentDate >= $session->getDateDebut() &&
                         $currentDate <= $session->getDateFin() &&
-                        ($inscrSess || $this->getUser()->hasRole('ROLE_SUPER_ADMIN') || $this->getUser()->getStatut() == 'Responsable' || $this->getUser()->getStatut() == 'Formateur' || $isEns)
+                        ($inscrSess || $this->getUser()->hasRole('ROLE_SUPER_ADMIN') || (($this->getUser()->getStatut() == 'Responsable' || $this->getUser()->getStatut() == 'Formateur') && $this->getUser()->getConfirmedByAdmin()) || $isEns)
                         )
                     {
                         // on peut rentrer dans la session et on est dans les dates
@@ -152,7 +152,7 @@ class DisciplineController extends Controller
                     }elseif($currentDate >= $session->getDateFinAlerte() && $currentDate < $session->getDateFin()){
                         // on affiche le message de fin de session
                         array_push($courses[$i]["sessionsFinSession"], $coursesT[$j]);
-                    }elseif($this->getUser()->hasRole('ROLE_SUPER_ADMIN') || $isEns  || $this->getUser()->getStatut() == 'Responsable' || $this->getUser()->getStatut() == 'Formateur'){
+                    }elseif($this->getUser()->hasRole('ROLE_SUPER_ADMIN') || $isEns  || (($this->getUser()->getStatut() == 'Responsable' || $this->getUser()->getStatut() == 'Formateur') && $this->getUser()->getConfirmedByAdmin())){
                         // on peut rentrer dans la session hors des dates
                         array_push($courses[$i]["sessionsAdmin"], $coursesT[$j]);
                     }

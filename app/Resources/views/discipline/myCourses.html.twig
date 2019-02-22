@@ -62,11 +62,12 @@
         });
     </script>
 
-    {% set hasVisibilityRights = app.user.hasRole('ROLE_SUPER_ADMIN') or app.user.statut == 'Responsable' or app.user.statut == 'Formateur' %}
+    {% set hasVisibilityRights = app.user.hasRole('ROLE_SUPER_ADMIN') or ((app.user.statut == 'Responsable' or app.user.statut == 'Formateur') and app.user.confirmedByAdmin) %}
+    {% set hasResponsableMinRights = app.user.hasRole('ROLE_SUPER_ADMIN') or (app.user.statut == 'Responsable' and app.user.confirmedByAdmin) %}
 
     <div class="container mt-120">
         <div class="row mt-20 mb-100">
-            {% if app.user.statut == 'Responsable' or app.user.hasRole('ROLE_SUPER_ADMIN') %}
+            {% if hasResponsableMinRights %}
                 <div style="margin-bottom: 10px;"><a href="{{ path('inscriptionDiscipline') }}">Gérer mes inscriptions</a></div>
             {% endif %}
             <div class="col-sm-12">

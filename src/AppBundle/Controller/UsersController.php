@@ -345,7 +345,11 @@ class UsersController extends Controller
      */
     public function userAction(Request $request, $id)
     {
-        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
+        /* @var $user User */
+        $user = $this->getUser();
+        if(($user->getStatut() !== 'Responsable' || !$user->getConfirmedByAdmin()) && !$this->getUser()->hasRole('ROLE_SUPER_ADMIN')){
+            return $this->redirectToRoute('homepage');
+        }
 
         $user = $this->getDoctrine()->getRepository('AppBundle:User')->find($id);
         $roles = $this->getDoctrine()->getRepository('AppBundle:Role')->findAll();
@@ -511,7 +515,11 @@ class UsersController extends Controller
      */
     public function itemUsersAction(Request $request, $id, $type)
     {
-        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
+        /* @var $user User */
+        $user = $this->getUser();
+        if(($user->getStatut() !== 'Responsable' || !$user->getConfirmedByAdmin()) && !$this->getUser()->hasRole('ROLE_SUPER_ADMIN')){
+            return $this->redirectToRoute('homepage');
+        }
 
         $roles = $this->getDoctrine()->getRepository('AppBundle:Role')->findAll();
 
