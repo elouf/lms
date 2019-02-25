@@ -1195,10 +1195,10 @@ ul.list-default>li.studitWhiteFC:before{
 .containerItemForm{
     max-width: 600px;
 }
-.tablesorter td a{
+.tablesorter td a:not(.selColor){
     color: #d58b00;
 }
-.tablesorter td a:hover{
+.tablesorter td a:not(.selColor):hover{
     color: #008cd5;
 }
 
