@@ -1,6 +1,7 @@
 <?php
 
 namespace AppBundle\Repository;
+use AppBundle\Entity\Cohorte;
 
 /**
  * CohorteRepository
@@ -77,5 +78,26 @@ class CohorteRepository extends \Doctrine\ORM\EntityRepository
             return $inscr->getRole();
         }
         return null;
+    }
+
+    public function getLinkedCourses(Cohorte $cohorte)
+    {
+        $em = $this->getEntityManager();
+
+        $courses = $cohorte->getCours();
+        $discs = $cohorte->getDisciplines();
+        if($discs){
+            foreach ($discs as $disc){
+                $cours_arr = $em->getRepository('AppBundle:Cours')->findBy(array('discipline' => $disc));
+                if($cours_arr) {
+                    foreach ($cours_arr as $cours) {
+                        if(!$courses->contains($cours)){
+                            $courses->add($cours);
+                        }
+                    }
+                }
+            }
+        }
+        return $courses;
     }
 }

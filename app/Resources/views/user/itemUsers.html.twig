@@ -75,6 +75,34 @@
                     output: 'de {startRow} à {endRow} sur {totalRows} lignes',
                     size: 10
                 });
+            $(".tablesorter.tableRess")
+                .tablesorter({
+                    widthFixed: true,
+                    widgets: ['zebra', 'filter', 'output'],
+                    widgetOptions: {
+                        output_delivery: 'd',
+                        output_saveFileName: 'mytable.csv'
+                    }
+                })
+                .tablesorterPager({
+                    container: $("#pagerRess"),
+                    output: 'de {startRow} à {endRow} sur {totalRows} lignes',
+                    size: 10
+                });
+            $(".tablesorter.tableLinkedCourses")
+                .tablesorter({
+                    widthFixed: true,
+                    widgets: ['zebra', 'filter', 'output'],
+                    widgetOptions: {
+                        output_delivery: 'd',
+                        output_saveFileName: 'mytable.csv'
+                    }
+                })
+                .tablesorterPager({
+                    container: $("#pageLinkedCourses"),
+                    output: 'de {startRow} à {endRow} sur {totalRows} lignes',
+                    size: 10
+                });
 
             $('.btndesinscr').click(function () {
                 var idUser = $(this).closest('.userLine').attr('data-userId');
@@ -207,19 +235,33 @@
 
     <div class="container mt-220 mb-40">
         <div class="row">
-            {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
-                <ul class="nav nav-tabs" role="tablist">
-                    <li role="presentation" class="active">
-                        <a href="#InscrDesinscr" aria-controls="InscrDesinscr" role="tab" data-toggle="tab">
-                            <i class="fa fa-external-link  fa-fw"></i>
-                            Inscriptions</a>
+
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active">
+                    <a href="#InscrDesinscr" aria-controls="InscrDesinscr" role="tab" data-toggle="tab">
+                        <i class="fa fa-external-link  fa-fw"></i>
+                        Inscrits</a>
+                </li>
+                {% if (entityName == "Cours" or entityName == "Session") and ressources is defined %}
+                    <li role="presentation">
+                        <a href="#Ressources" aria-controls="Ressources" role="tab" data-toggle="tab">
+                            <i class="fa fa-database fa-fw"></i>
+                            Ressources</a>
                     </li>
+                {% else %}
+                    <li role="presentation">
+                        <a href="#linkedCourses" aria-controls="linkedCourses" role="tab" data-toggle="tab">
+                            <i class="fa fa-database fa-fw"></i>
+                            Cours contenus</a>
+                    </li>
+                {% endif %}
+                {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
                     <li role="presentation">
                         <a href="#InfosGen" aria-controls="InfosGen" role="tab" data-toggle="tab">
                             <i class="fa fa-university fa-fw"></i> Informations générales</a>
                     </li>
-                </ul>
-            {% endif %}
+                {% endif %}
+            </ul>
             <div class="tab-content">
                 {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
                     <div role="tabpanel" class="tab-pane fade" id="InfosGen">
@@ -246,7 +288,7 @@
                                 <th>Prénom</th>
                                 <th>Nom</th>
                                 <th class="filter-select">Institut</th>
-                                <th>Statut</th>
+                                <th class="filter-select">Statut</th>
                                 <th>Role</th>
                                 <th>Cohortes</th>
                                 {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
@@ -317,7 +359,7 @@
                                     <th>Prénom</th>
                                     <th>Nom</th>
                                     <th class="filter-select">Institut</th>
-                                    <th>Statut</th>
+                                    <th class="filter-select">Statut</th>
                                     <th>Cohortes</th>
                                     <th>Inscrire</th>
                                 </tr>
@@ -371,6 +413,96 @@
                         </div>
                     {% endif %}
                 </div>
+                {% if entityName == "Cours" and ressources is defined %}
+                    <div role="tabpanel" class="tab-pane" id="Ressources">
+                        <div class="coloneTable col-xl-6">
+                            <p>Ressources présentes dans le cours</p>
+                            <table class="tablesorter tableRess">
+                                <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Nom</th>
+                                    <th class="filter-select">Type</th>
+                                    <th>Nombre de clicks</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for ressoure in ressources %}
+                                    <tr class="userLine">
+                                        <td>{{ ressoure.ressource.id }}</td>
+                                        <td>{{ ressoure.ressource.nom }}</td>
+                                        <td>{{ ressoure.ressource.type }}</td>
+                                        <td>{{ ressoure.stats|length }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                            <div id="pagerRess" class="pager">
+                                <form>
+                                    <img src="{{ asset('vendors/tablesorter/dist/css/images/first.png') }}"
+                                         class="first"/>
+                                    <img src="{{ asset('vendors/tablesorter/dist/css/images/prev.png') }}"
+                                         class="prev"/>
+                                    <input type="text" class="pagedisplay"/>
+                                    <img src="{{ asset('vendors/tablesorter/dist/css/images/next.png') }}"
+                                         class="next"/>
+                                    <img src="{{ asset('vendors/tablesorter/dist/css/images/last.png') }}"
+                                         class="last"/>
+                                    <select class="pagesize">
+                                        <option value="10">10</option>
+                                        <option value="20">20</option>
+                                        <option value="30">30</option>
+                                        <option value="40">40</option>
+                                        <option value="all">Toutes les lignes</option>
+                                    </select>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div role="tabpanel" class="tab-pane" id="linkedCourses">
+                        <div class="coloneTable col-xl-6">
+                            <table class="tablesorter tableLinkedCourses">
+                                <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Discipline</th>
+                                    <th>Cours</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for linkedCourse in linkedCourses %}
+                                    <tr class="userLine">
+                                        <td>{{ linkedCourse.id }}</td>
+                                        <td><a href="{{ path('itemUsers', {id: linkedCourse.discipline.id, type: "discipline"}) }}">{{ linkedCourse.discipline.nom }}</a></td>
+                                        <td><a href="{{ path('itemUsers', {id: linkedCourse.id, type: "cours"}) }}">{{ linkedCourse.nom }}</a></td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                            <div id="pagerLinkedCourses" class="pager">
+                                <form>
+                                    <img src="{{ asset('vendors/tablesorter/dist/css/images/first.png') }}"
+                                         class="first"/>
+                                    <img src="{{ asset('vendors/tablesorter/dist/css/images/prev.png') }}"
+                                         class="prev"/>
+                                    <input type="text" class="pagedisplay"/>
+                                    <img src="{{ asset('vendors/tablesorter/dist/css/images/next.png') }}"
+                                         class="next"/>
+                                    <img src="{{ asset('vendors/tablesorter/dist/css/images/last.png') }}"
+                                         class="last"/>
+                                    <select class="pagesize">
+                                        <option value="10">10</option>
+                                        <option value="20">20</option>
+                                        <option value="30">30</option>
+                                        <option value="40">40</option>
+                                        <option value="all">Toutes les lignes</option>
+                                    </select>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>

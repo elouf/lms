@@ -92,7 +92,7 @@
                             <div class="container mt-0 mb-60">
                                 <div class="row">
                                     <div class="col-sm-8">
-                                        {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                        {% if hasResponsableMinRights %}
                                             <div class="course-list" style="margin-top: 0;">
                                                 <div class="course-media text-center mt-10">
                                                     <i class="fa fa-users fa-3" aria-hidden="true"></i>

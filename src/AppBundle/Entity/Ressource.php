@@ -44,7 +44,7 @@ abstract class Ressource extends Evenement
      *
      * @param Cours $cours
      *
-     * @return Section
+     * @return Ressource
      */
     public function setCours($cours)
     {

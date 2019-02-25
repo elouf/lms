@@ -680,8 +680,8 @@
                         {% for ressourceAcces in userStatRess %}
                             <tr class="userLine">
                                 <td>{{ ressourceAcces.id }}</td>
-                                <td>{{ ressourceAcces.ressource.cours.discipline.nom }}</td>
-                                <td>{{ ressourceAcces.ressource.cours.nom }}</td>
+                                <td><a href="{{ path('itemUsers', {id: ressourceAcces.ressource.cours.discipline.id, type: "discipline" }) }}">{{ ressourceAcces.ressource.cours.discipline.nom }}</a></td>
+                                <td><a href="{{ path('itemUsers', {id: ressourceAcces.ressource.cours.id, type: "cours" }) }}">{{ ressourceAcces.ressource.cours.nom }}</a></td>
                                 <td>{{ ressourceAcces.ressource.nom }}</td>
                                 <td>{{ ressourceAcces.dateAcces|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}</td>
                             </tr>
@@ -723,9 +723,9 @@
                         {% for copie in copies %}
                             <tr class="userLine">
                                 <td>{{ copie.copie.id }}</td>
-                                <td>{{ copie.copie.devoir.cours.discipline.nom }}</td>
-                                <td>{{ copie.copie.devoir.cours.nom }}</td>
-                                <td>{{ copie.copie.devoir.nom }}</td>
+                                <td><a href="{{ path('itemUsers', {id: copie.copie.devoir.cours.discipline.id, type: "discipline" }) }}">{{ copie.copie.devoir.cours.discipline.nom }}</a></td>
+                                <td><a href="{{ path('itemUsers', {id: copie.copie.devoir.cours.id, type: "cours" }) }}">{{ copie.copie.devoir.cours.nom }}</a></td>
+                                <td><a href="{{ path('oneDevoirEns', {id:copie.copie.devoir.id}) }}">{{ copie.copie.devoir.nom }}</a></td>
                                 <td>{{ copie.copie.note }} / {{ copie.copie.devoir.bareme }}</td>
                                 <td>{{ copie.copie.dateCreation|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}</td>
                             </tr>
@@ -805,10 +805,10 @@
                         {% for sujet in sujets %}
                             <tr class="userLine">
                                 <td>{{ sujet.id }}</td>
-                                <td>{{ sujet.forum.cours.discipline.nom }}</td>
-                                <td>{{ sujet.forum.cours.nom }}</td>
-                                <td>{{ sujet.forum.nom }}</td>
-                                <td>{{ sujet.titre }}</td>
+                                <td><a href="{{ path('itemUsers', {id: sujet.forum.cours.discipline.id, type: "discipline" }) }}">{{ sujet.forum.cours.discipline.nom }}</a></td>
+                                <td><a href="{{ path('itemUsers', {id: sujet.forum.cours.id, type: "cours" }) }}">{{ sujet.forum.cours.nom }}</a></td>
+                                <td><a href="{{ path('forum', {id: sujet.forum.id }) }}">{{ sujet.forum.nom }}</a></td>
+                                <td><a href="{{ path('forumSujet', {id: sujet.id }) }}">{{ sujet.titre }}</a></td>
                                 <td>{{ sujet.createdAt|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}</td>
                             </tr>
                         {% endfor %}
@@ -850,10 +850,10 @@
                         {% for post in posts %}
                             <tr class="userLine">
                                 <td>{{ post.id }}</td>
-                                <td>{{ post.sujet.forum.cours.discipline.nom }}</td>
-                                <td>{{ post.sujet.forum.cours.nom }}</td>
-                                <td>{{ post.sujet.forum.nom }}</td>
-                                <td>{{ post.sujet.titre }}</td>
+                                <td><a href="{{ path('itemUsers', {id: post.sujet.forum.cours.discipline.id, type: "discipline" }) }}">{{ post.sujet.forum.cours.discipline.nom }}</a></td>
+                                <td><a href="{{ path('itemUsers', {id: post.sujet.forum.cours.id, type: "cours" }) }}">{{ post.sujet.forum.cours.nom }}</a></td>
+                                <td><a href="{{ path('forum', {id: post.sujet.forum.id }) }}">{{ post.sujet.forum.nom }}</a></td>
+                                <td><a href="{{ path('forumSujet', {id: post.sujet.id }) }}">{{ post.sujet.titre }}</a></td>
                                 <td>{{ post.texte|striptags|slice(0, 100) }}...</td>
                                 <td>{{ post.createdAt|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}</td>
                             </tr>
@@ -889,6 +889,7 @@
                                 <th>Devoir</th>
                                 <th>Copie</th>
                                 <th>Date de rendu</th>
+                                <th>Note</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -899,6 +900,7 @@
                                             > {{ copie.copie.devoir.cours.nom }} > {{ copie.copie.devoir.nom }}</a></td>
                                     <td><a target="_blank" href="{{ copie.fichier.url }}">Copie</a></td>
                                     <td>{{ copie.copie.dateCreation|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}</td>
+                                    <td>{{ copie.copie.note }} / {{ copie.copie.devoir.bareme }}</td>
                                 </tr>
                             {% endfor %}
                             </tbody>

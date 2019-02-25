@@ -536,8 +536,6 @@ class UsersController extends Controller
 
         $inscrCohRepo = $this->getDoctrine()->getRepository('AppBundle:Inscription_coh');
 
-        $cohRepo = $this->getDoctrine()->getRepository('AppBundle:Cohorte');
-
         $itemRepo = $this->getDoctrine()->getRepository('AppBundle:' . $entityName);
         $item = $this->getDoctrine()->getRepository('AppBundle:' . $entityName)->findOneBy(array('id' => $id));
 
@@ -562,7 +560,8 @@ class UsersController extends Controller
                 ]);
             }
         }
-
+        $ressources = new ArrayCollection();
+        $linkedCourses = new ArrayCollection();
         if ($type == "cohorte") {
             $form = $this->createFormBuilder($item)
                 ->add('nom', TextType::class, array(
@@ -575,6 +574,11 @@ class UsersController extends Controller
                 ))
                 ->add('save', SubmitType::class, array('label' => 'Enregistrer'))
                 ->getForm();
+
+            /* @var $cohs CohorteRepository */
+            $cohs = $this->getDoctrine()->getRepository('AppBundle:Cohorte');
+            $linkedCourses = $cohs->getLinkedCourses($item);
+
         } else if ($type == "discipline") {
             $form = $this->createFormBuilder($item)
                 ->add('nom', TextType::class, array(
@@ -587,6 +591,13 @@ class UsersController extends Controller
                 ))
                 ->add('save', SubmitType::class, array('label' => 'Enregistrer'))
                 ->getForm();
+
+            $linkedCourses_arr = $this->getDoctrine()->getRepository('AppBundle:Cours')->findBy(array('discipline' => $item));
+            if($linkedCourses_arr){
+                foreach ($linkedCourses_arr as $linkedCourses_arrOne){
+                    $linkedCourses->add($linkedCourses_arrOne);
+                }
+            }
         } else if ($type == "cours") {
             $form = $this->createFormBuilder($item)
                 ->add('nom', TextType::class, array(
@@ -611,6 +622,15 @@ class UsersController extends Controller
                 ))
                 ->add('save', SubmitType::class, array('label' => 'Enregistrer'))
                 ->getForm();
+
+            $c_ressources = $this->getDoctrine()->getRepository('AppBundle:Ressource')->findBy(array('cours' => $item));
+            if($c_ressources){
+                foreach ($c_ressources as $c_ressource){
+                    $ressStats = $this->getDoctrine()->getRepository('AppBundle:UserStatRessource')->findBy(array('ressource' => $c_ressource));
+
+                    $ressources->add(["ressource" => $c_ressource, "stats" => $ressStats]);
+                }
+            }
         } else if ($type == "session") {
             $form = $this->createFormBuilder($item)
                 ->add('nom', TextType::class, array(
@@ -623,8 +643,15 @@ class UsersController extends Controller
                 ))
                 ->add('save', SubmitType::class, array('label' => 'Enregistrer'))
                 ->getForm();
-        }
+            $c_ressources = $this->getDoctrine()->getRepository('AppBundle:Ressource')->findBy(array('cours' => $item));
+            if($c_ressources){
+                foreach ($c_ressources as $c_ressource){
+                    $ressStats = $this->getDoctrine()->getRepository('AppBundle:UserStatRessource')->findBy(array('ressource' => $c_ressource));
 
+                    $ressources->add(["ressource" => $c_ressource, "stats" => $ressStats]);
+                }
+            }
+        }
 
         $form->handleRequest($request);
 
@@ -639,6 +666,8 @@ class UsersController extends Controller
 
         return $this->render('user/itemUsers.html.twig', [
             'item' => $item,
+            'ressources' => $ressources,
+            'linkedCourses' => $linkedCourses,
             'roles' => $roles,
             'entityName' => $entityName,
             'usersNoHavingAccess' => $usersNoAccessTab,

@@ -1195,10 +1195,10 @@ ul.list-default>li.studitWhiteFC:before{
 .containerItemForm{
     max-width: 600px;
 }
-.userLine td a{
+.tablesorter td a{
     color: #d58b00;
 }
-.userLine td a:hover{
+.tablesorter td a:hover{
     color: #008cd5;
 }
 
