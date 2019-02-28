@@ -38,7 +38,8 @@
 
                 $('.valideDownload').unbind('click').click(function(){
                     btnValidAssocCorrecteur.click();
-                    window.location.href = link;
+                    //window.location.href = link;
+                    window.open(link);
                 });
             });
 
@@ -450,7 +451,7 @@
                                 </ul>
 
                                 <div class="row mb-10" style="text-align: center">
-                                    <div class="btn btn-sm btn-info mb-3 valideDownload">Valider</div>
+                                    <a class="btn btn-sm btn-info mb-3 valideDownload">Valider</a>
                                     <div class="btn btn-sm btn-info mb-3 cancelDownload">Annuler</div>
                                 </div>
                             </div>
