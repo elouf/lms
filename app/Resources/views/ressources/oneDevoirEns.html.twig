@@ -24,6 +24,24 @@
     <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/jquery.tablesorter.min.js') }}"></script>
     <script>
         jQuery(document).ready(function () {
+            $('.cancelDownload').click(function () {
+                $('.modal').modal('toggle');
+            });
+
+            $('.btnDownCopie').click(function(){
+                $('.modal').modal('toggle');
+                var tr = $(this).closest('tr');
+                var link = $(this).attr('data-href');
+                var btnValidAssocCorrecteur = tr.find('.btnValidAssocCorrecteur');
+                $('.modal-studentName').text(tr.find('.etudiantNom').text());
+                $('.modal-dateDepot').text(tr.find('.dateDepot').text());
+
+                $('.valideDownload').unbind('click').click(function(){
+                    btnValidAssocCorrecteur.click();
+                    window.location.href = link;
+                });
+            });
+
             var steps = $('[data-uploadSteps]').attr('data-uploadSteps');
             var upload_srcSteps = $('[data-uploadSrcSteps]').attr('data-uploadSrcSteps');
             var folderLocation = $('[data-folderUpload]').attr('data-folderUpload');
@@ -287,7 +305,7 @@
 
     <div class="container mt-10" data-coursId="{{ cours.id }}" data-idDevoir="{{ devoir.id }}" data-folderUpload="{{ folderUpload }}" data-uploadSteps="{{ uploadSteps }}" data-uploadSrcSteps="{{ uploadSrcSteps }}">
         <div class="alert alert-info mb-10">
-            <p>Vous pouvez déposer un corrigé pour chaque copie déposée.</p>
+            <p>Pour télécharger une copie, cliquez sur le bouton <a class="btn btn-warning btn-sm selColor"><i class="fa fa-external-link fa-2x"></i></a></p>
         </div>
 
         <div class="clearfix"></div>
@@ -338,11 +356,11 @@
 
                                 <tr data-userId="{{ val.copie.auteur.id }}" data-copieId="{{ val.copie.id }}">
                                     <th scope="row">{{ val.copie.auteur.id }}</th>
-                                    <td>{{ val.copie.auteur.lastname }} {{ val.copie.auteur.firstname }}</td>
+                                    <td class="etudiantNom">{{ val.copie.auteur.lastname }} {{ val.copie.auteur.firstname }}</td>
                                     <td>
                                         {% if val.copieFichier is not null %}
-                                            {{ val.copie.dateCreation|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}
-                                            <a class="btn btn-warning btn-sm" target="_blank" href="{{ val.copieFichier.url }}"><i class="fa fa-external-link fa-2x"></i></a>
+                                            <span class="dateDepot">{{ val.copie.dateCreation|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}</span>
+                                            <a class="btn btn-warning btn-sm selColor {% if not app.user.hasRole('ROLE_SUPER_ADMIN') %}btnDownCopie{% endif %}" target="_blank" {% if not app.user.hasRole('ROLE_SUPER_ADMIN') %}data-{% endif %}href="{{ val.copieFichier.url }}"><i class="fa fa-external-link fa-2x"></i></a>
                                         {% else %}
                                             Pas de copie déposée
                                         {% endif %}
@@ -378,14 +396,14 @@
                                         {% if val.copie.note >= 0 %}
                                             <span class="copieNote">{{ val.copie.note }}</span>
                                             <input class="copieNoteEdit hidden" id="copieNoteEdit_{{ val.copie.id }}" type="text" value="{{ val.copie.note }}" />
-                                            <a class="btn btnEditNote inversedBtn btn-success btn-sm" ><i class="fa fa-pencil fa-2x"></i></a>
-                                            <a class="btn btnValidNote hidden inversedBtn btn-success btn-sm" ><i class="fa fa-check fa-2x"></i></a>
+                                            <a class="btn btnEditNote inversedBtn btn-success btn-sm selColor" ><i class="fa fa-pencil fa-2x"></i></a>
+                                            <a class="btn btnValidNote hidden inversedBtn btn-success btn-sm selColor" ><i class="fa fa-check fa-2x"></i></a>
                                         {% endif %}
                                     </td>
                                     <td>
                                         {% if val.corrige != "undefined" %}
                                             {{ val.corrige.dateRendu|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}
-                                            <a class="btn btn-success btn-sm" target="_blank" href="{{ val.corrigeFichier.url }}"><i class="fa fa-external-link fa-2x"></i></a>
+                                            <a class="btn btn-success btn-sm selColor" target="_blank" href="{{ val.corrigeFichier.url }}"><i class="fa fa-external-link fa-2x"></i></a>
                                         {% endif %}
                                     </td>
                                     <td>
@@ -415,12 +433,27 @@
     <div class="modal fade" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
 
-                <div class="modal-body" data-contentModal="devoirDisplay" data-idItem="" style="background:#aaa; background-size:cover">
+                <div class="modal-body" data-contentModal="devoirDisplay" data-idItem=""
+                     style="background:#aaa; background-size:cover">
                     <div class="row">
                         <div class="bginverse">
+                            <div class="">
+                                <div class="alert alert-info mb-10">
+                                    <strong>Attention!</strong> Confirmez-vous être le correcteur de cette copie ?
+                                </div>
+                                <ul>
+                                    <li>Étudiant : <span class="modal-studentName"></span></li>
+                                    <li>Copie déposée le : <span class="modal-dateDepot"></span></li>
+                                </ul>
 
+                                <div class="row mb-10" style="text-align: center">
+                                    <div class="btn btn-sm btn-info mb-3 valideDownload">Valider</div>
+                                    <div class="btn btn-sm btn-info mb-3 cancelDownload">Annuler</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
