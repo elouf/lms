@@ -68,4 +68,14 @@ class DefaultController extends Controller
             'base_dir' => realpath($this->getParameter('kernel.root_dir').'/..'),
         ]);
     }
+
+    /**
+     * @Route("/deleteCompte", name="pageSuppressionCompte")
+     */
+    public function pageSuppressionCompteAction(Request $request)
+    {
+        return $this->render('pagesFixes/pageSuppressionCompte.html.twig', [
+            'base_dir' => realpath($this->getParameter('kernel.root_dir').'/..'),
+        ]);
+    }
 }

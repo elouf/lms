@@ -108,19 +108,19 @@
                 var idUser = $(this).closest('.userLine').attr('data-userId');
 
                 $('.modal').modal('toggle');
+                $('.mode').hide();
                 $('.modeDesinscr').show();
-                $('.modeInscr').hide();
                 $('.valideDesinscr').unbind('click').click(function () {
-                    desinscrireUser(typeItem, idUser, "{{ item.id }}");
+                    desinscrireUsers(typeItem, [idUser], "{{ item.id }}");
                 });
             });
             $('.btninscr').click(function () {
                 var idUser = $(this).closest('.userLine').attr('data-userId');
                 $('.modal').modal('toggle');
-                $('.modeDesinscr').hide();
+                $('.mode').hide();
                 $('.modeInscr').show();
                 $('.valideInscr').unbind('click').click(function () {
-                    inscrireUser(typeItem, idUser, "{{ item.id }}", $('.selectRole').val());
+                    inscrireUsers(typeItem, [idUser], "{{ item.id }}", $('.selectRole').val());
                 });
             });
             $('.selectAll').click(function (e) {
@@ -133,40 +133,72 @@
                 e.preventDefault();
 
                 $('.modal').modal('toggle');
-                $('.modeDesinscr').hide();
+                $('.mode').hide();
                 $('.modeInscr').show();
                 $('.valideInscr').unbind('click').click(function () {
+                    var idUsers = [];
                     $('.tableNo .selectUser:checked').each(function () {
                         var idUser = $(this).closest('.userLine').attr('data-userId');
-                        inscrireUser(typeItem, idUser, "{{ item.id }}", $('.selectRole').val());
+                        idUsers.push(idUser);
                     });
-                });
-            });
-            $('.desinscrSelected').click(function (e) {
-                e.preventDefault();
-                $('.tableYes .selectUser:checked').each(function () {
-                    var idUser = $(this).closest('.userLine').attr('data-userId');
-
-                    $('.modal').modal('toggle');
-                    $('.modeDesinscr').show();
-                    $('.modeInscr').hide();
-                    $('.valideDesinscr').unbind('click').click(function () {
-                        desinscrireUser(typeItem, idUser, "{{ item.id }}");
-                    });
+                    inscrireUsers(typeItem, idUsers, "{{ item.id }}", $('.selectRole').val());
                 });
             });
             $('.cancel').click(function () {
                 $('.modal').modal('toggle');
             });
+            $('.withSelectedInscrits').on('change', function () {
+                var action = $(this).val();
+                var idUsers = [];
+                $('.tableYes .selectUser:checked').each(function () {
+                    var idUser = $(this).closest('.userLine').attr('data-userId');
+                    idUsers.push(idUser);
+                });
+                $('.modal').modal('toggle');
+                $('.mode').hide();
 
-            function inscrireUser(typeItem, idUser, itemId, roleId) {
+                if (action === 'desinscrSelected') {
+                    $('.modeDesinscr').show();
+                    $('.valideDesinscr').unbind('click').click(function () {
+                        desinscrireUsers(typeItem, idUsers, "{{ item.id }}");
+                    });
+                } else if (action === 'changeRoleSelected') {
+                    $('.modeChangeRole').show();
+
+                    $('.valideChangeRole').unbind('click').click(function () {
+                        changeRoleUsers(typeItem, idUsers, "{{ item.id }}", $('.selectRole').val());
+                    });
+                }
+            });
+
+            function changeRoleUsers(typeItem, idUsers, itemId, roleId) {
+                $.ajax({
+                    type: "POST",
+                    url: "{{ path('changeRoleUsers_ajax') }}",
+                    data: {
+                        id: itemId,
+                        idUsers: idUsers,
+                        idRole: roleId,
+                        idItem: itemId,
+                        typeItem: typeItem,
+                    },
+                    dataType: "json",
+                    success: function (response) {
+                        setTimeout(function () {
+                            window.location.href = window.location.href;
+                        }, 300);
+                    }
+                });
+            }
+
+            function inscrireUsers(typeItem, idUsers, itemId, roleId) {
                 if (typeItem == 'session') {
                     $.ajax({
                         type: "POST",
-                        url: "{{ path('inscrSessUser_ajax') }}",
+                        url: "{{ path('inscrSessUsers_ajax') }}",
                         data: {
                             id: itemId,
-                            idUser: idUser,
+                            idUsers: idUsers,
                             idRole: roleId
                         },
                         dataType: "json",
@@ -179,10 +211,10 @@
                 } else {
                     $.ajax({
                         type: "POST",
-                        url: "{{ path('inscrireUser_ajax') }}",
+                        url: "{{ path('inscrireUsers_ajax') }}",
                         data: {
                             idItem: itemId,
-                            idUser: idUser,
+                            idUsers: idUsers,
                             typeItem: typeItem,
                             idRole: roleId
                         },
@@ -196,14 +228,14 @@
                 }
             }
 
-            function desinscrireUser(typeItem, idUser, itemId) {
+            function desinscrireUsers(typeItem, idUsers, itemId) {
                 if (typeItem == 'session') {
                     $.ajax({
                         type: "POST",
-                        url: "{{ path('desinscrSessUser_ajax') }}",
+                        url: "{{ path('desinscrSessUsers_ajax') }}",
                         data: {
                             id: itemId,
-                            idUser: idUser
+                            idUsers: idUsers
                         },
                         dataType: "json",
                         success: function (response) {
@@ -215,10 +247,10 @@
                 } else {
                     $.ajax({
                         type: "POST",
-                        url: "{{ path('desInscrireUser_ajax') }}",
+                        url: "{{ path('desInscrireUsers_ajax') }}",
                         data: {
                             idItem: itemId,
-                            idUser: idUser,
+                            idUsers: idUsers,
                             typeItem: typeItem
                         },
                         dataType: "json",
@@ -299,7 +331,11 @@
                             <tbody>
                             {% for user in usersHavingAccess %}
                                 <tr class="userLine" data-userId="{{ user.user.id }}">
-                                    <td><input class="selectUser" type="checkbox"></td>
+                                    <td>
+                                        {% if user.isInscrit %}
+                                            <input class="selectUser" type="checkbox">
+                                        {% endif %}
+                                    </td>
                                     <td><a href="{{ path('user', {id:user.user.id }) }}">{{ user.user.id }}</a></td>
                                     <td><a href="{{ path('user', {id:user.user.id }) }}">{{ user.user.email }}</a></td>
                                     <td>{{ user.user.firstname }}</td>
@@ -341,8 +377,12 @@
                                 </select>
                                 {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
                                     <button class="download">Télécharger le CSV</button>
-                                    <button class="desinscrSelected">Désinscrire les sélectionnés</button>
                                     <button class="selectAll">Sélectionner tous</button>
+                                    <select class="withSelectedInscrits">
+                                        <option>Avec les sélectionnés....</option>
+                                        <option value="changeRoleSelected">Changer de rôle</option>
+                                        <option value="desinscrSelected">Désinscrire</option>
+                                    </select>
                                 {% endif %}
                             </form>
                         </div>
@@ -474,8 +514,12 @@
                                 {% for linkedCourse in linkedCourses %}
                                     <tr class="userLine">
                                         <td>{{ linkedCourse.id }}</td>
-                                        <td><a href="{{ path('itemUsers', {id: linkedCourse.discipline.id, type: "discipline"}) }}">{{ linkedCourse.discipline.nom }}</a></td>
-                                        <td><a href="{{ path('itemUsers', {id: linkedCourse.id, type: "cours"}) }}">{{ linkedCourse.nom }}</a></td>
+                                        <td>
+                                            <a href="{{ path('itemUsers', {id: linkedCourse.discipline.id, type: "discipline"}) }}">{{ linkedCourse.discipline.nom }}</a>
+                                        </td>
+                                        <td>
+                                            <a href="{{ path('itemUsers', {id: linkedCourse.id, type: "cours"}) }}">{{ linkedCourse.nom }}</a>
+                                        </td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>
@@ -517,7 +561,7 @@
                      style="background:#aaa; background-size:cover">
                     <div class="row">
                         <div class="bginverse">
-                            <div class="modeDesinscr">
+                            <div class="mode modeDesinscr">
                                 <div class="alert alert-danger mb-10">
                                     <strong>Attention!</strong> Voulez-vous vraiment procéder à cette désinscription ?
                                 </div>
@@ -527,12 +571,31 @@
                                     <div class="btn btn-sm btn-info mb-3 cancel">Annuler</div>
                                 </div>
                             </div>
-                            <div class="modeInscr">
+                            <div class="mode modeChangeRole">
+                                <div class="alert alert-info mb-10">
+                                    Sélectionnez le role que vous voulez attribuer à ces utilisateurs
+                                    <select class="selectRole">
+                                        {% for role in roles %}
+                                            {% if role.nom != "Admin" %}
+                                                <option value="{{ role.id }}">{{ role.nom }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <div class="row mb-10" style="text-align: center">
+                                    <div class="btn btn-sm btn-info mb-3 valideChangeRole">Valider</div>
+                                    <div class="btn btn-sm btn-info mb-3 cancel">Annuler</div>
+                                </div>
+                            </div>
+                            <div class="mode modeInscr">
                                 <div class="alert alert-info mb-10">
                                     Sélectionnez un role pour cette inscription
                                     <select class="selectRole">
                                         {% for role in roles %}
-                                            <option value="{{ role.id }}">{{ role.nom }}</option>
+                                            {% if role.nom != "Admin" %}
+                                                <option value="{{ role.id }}">{{ role.nom }}</option>
+                                            {% endif %}
                                         {% endfor %}
                                     </select>
                                 </div>

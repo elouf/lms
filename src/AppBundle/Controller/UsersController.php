@@ -676,120 +676,160 @@ class UsersController extends Controller
         ]);
     }
 
-
     /**
-     * @Route("/inscrireUser_ajax", name="inscrireUser_ajax")
+     * @Route("/changeRoleUsers_ajax", name="changeRoleUsers_ajax")
      */
-    public function inscrireUserAjaxAction(Request $request)
+    public function changeRoleUsersAjaxAction(Request $request)
     {
         if ($request->isXMLHttpRequest()) {
             $em = $this->getDoctrine()->getEntityManager();
-            $test = "";
 
             $itemId = $request->request->get('idItem');
             $itemType = $request->request->get('typeItem');
-            $userId = $request->request->get('idUser');
+            $userIds = $request->request->get('idUsers');
             $roleId = $request->request->get('idRole');
+            $role = $em->getRepository('AppBundle:Role')->findOneBy(array('id' => $roleId));
+            $EntityName = '';
+            $EntityInscrName = '';
 
-            $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
+            foreach ($userIds as $userId) {
+                $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
+
+                if ($itemType == 'cohorte') {
+                    $EntityName = 'Cohorte';
+                    $EntityInscrName = 'Inscription_coh';
+                } else if ($itemType == 'discipline') {
+                    $EntityName = 'Discipline';
+                    $EntityInscrName = 'Inscription_d';
+                } else if ($itemType == 'cours') {
+                    $EntityName = 'Cours';
+                    $EntityInscrName = 'Inscription_c';
+                }
+                $item = $em->getRepository('AppBundle:'.$EntityName)->findOneBy(array('id' => $itemId));
+                /* @var $inscr Inscription_coh */
+                $inscr = $em->getRepository('AppBundle:'.$EntityInscrName)->findOneBy(array($itemType => $item, 'user' => $user));
+                $inscr->setRole($role);
+            }
+            $em->flush();
+
+            return new JsonResponse(array(
+                'action' => 'change inscription of users'
+            ));
+        }
+    }
+
+    /**
+     * @Route("/inscrireUsers_ajax", name="inscrireUsers_ajax")
+     */
+    public function inscrireUsersAjaxAction(Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+
+            $itemId = $request->request->get('idItem');
+            $itemType = $request->request->get('typeItem');
+            $userIds = $request->request->get('idUsers');
+            $roleId = $request->request->get('idRole');
             $role = $em->getRepository('AppBundle:Role')->findOneBy(array('id' => $roleId));
 
-            if ($itemType == 'cohorte') {
-                // commence par désinscrire le user des disciplines et des cours qui en découlent
-                $cohorte = $em->getRepository('AppBundle:Cohorte')->findOneBy(array('id' => $itemId));
-                foreach ($cohorte->getDisciplines() as $disc) {
+            foreach ($userIds as $userId) {
+                $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
 
-                    // d'abords les disciplines associées à la cohorte
-                    $inscriptionsDs = $em->getRepository('AppBundle:Inscription_d')->findBy(array(
-                        'discipline' => $disc,
-                        'user' => $user
-                    ));
-                    if ($inscriptionsDs) {
-                        foreach ($inscriptionsDs as $inscr) {
-                            $em->remove($inscr);
+                if ($itemType == 'cohorte') {
+                    // commence par désinscrire le user des disciplines et des cours qui en découlent
+                    $cohorte = $em->getRepository('AppBundle:Cohorte')->findOneBy(array('id' => $itemId));
+                    foreach ($cohorte->getDisciplines() as $disc) {
+
+                        // d'abords les disciplines associées à la cohorte
+                        $inscriptionsDs = $em->getRepository('AppBundle:Inscription_d')->findBy(array(
+                            'discipline' => $disc,
+                            'user' => $user
+                        ));
+                        if ($inscriptionsDs) {
+                            foreach ($inscriptionsDs as $inscr) {
+                                $em->remove($inscr);
+                            }
                         }
+                        // puis les cours dont la discipline est associée
                     }
-                    // puis les cours dont la discipline est associée
-                }
 
-                // puis on supprime les inscriptions au cours associés à la cohorte
-                foreach ($cohorte->getCours() as $co) {
-                    $inscriptionsCs = $em->getRepository('AppBundle:Inscription_c')->findBy(array(
-                        'cours' => $co,
-                        'user' => $user
-                    ));
-                    if ($inscriptionsCs) {
-
-                        foreach ($inscriptionsCs as $inscr) {
-                            $em->remove($inscr);
-                        }
-                    }
-                }
-
-                // puis on supprime les inscriptions au cours dont la discipline est associée à la cohorte
-                $inscriptionsCs = $em->getRepository('AppBundle:Inscription_c')->findBy(array(
-                    'user' => $user
-                ));
-                if ($inscriptionsCs) {
-                    foreach ($inscriptionsCs as $inscr) {
-                        if ($cohorte->getDisciplines()->contains($inscr->getCours()->getDiscipline())) {
-                            $em->remove($inscr);
-                        }
-                    }
-                }
-
-                // puis on créé l'inscription
-                $new_inscr = new Inscription_coh();
-                $new_inscr->setUser($user);
-                $new_inscr->setCohorte($cohorte);
-                $new_inscr->setDateInscription(new DateTime());
-                $new_inscr->setRole($role);
-                $em->persist($new_inscr);
-
-            } else if ($itemType == 'discipline') {
-                $discipline = $em->getRepository('AppBundle:Discipline')->findOneBy(array('id' => $itemId));
-
-                // on supprime les inscriptions au cours dont c'est la discipline
-                $cours = $em->getRepository('AppBundle:Cours')->findBy(array(
-                    'discipline' => $discipline
-                ));
-                if ($cours) {
-                    foreach ($cours as $co) {
-                        $inscriptionsC = $em->getRepository('AppBundle:Inscription_c')->findBy(array(
+                    // puis on supprime les inscriptions au cours associés à la cohorte
+                    foreach ($cohorte->getCours() as $co) {
+                        $inscriptionsCs = $em->getRepository('AppBundle:Inscription_c')->findBy(array(
                             'cours' => $co,
                             'user' => $user
                         ));
-                        if ($inscriptionsC) {
-                            foreach ($inscriptionsC as $inscr) {
+                        if ($inscriptionsCs) {
+
+                            foreach ($inscriptionsCs as $inscr) {
                                 $em->remove($inscr);
                             }
                         }
                     }
+
+                    // puis on supprime les inscriptions au cours dont la discipline est associée à la cohorte
+                    $inscriptionsCs = $em->getRepository('AppBundle:Inscription_c')->findBy(array(
+                        'user' => $user
+                    ));
+                    if ($inscriptionsCs) {
+                        foreach ($inscriptionsCs as $inscr) {
+                            if ($cohorte->getDisciplines()->contains($inscr->getCours()->getDiscipline())) {
+                                $em->remove($inscr);
+                            }
+                        }
+                    }
+
+                    // puis on créé l'inscription
+                    $new_inscr = new Inscription_coh();
+                    $new_inscr->setUser($user);
+                    $new_inscr->setCohorte($cohorte);
+                    $new_inscr->setDateInscription(new DateTime());
+                    $new_inscr->setRole($role);
+                    $em->persist($new_inscr);
+
+                } else if ($itemType == 'discipline') {
+                    $discipline = $em->getRepository('AppBundle:Discipline')->findOneBy(array('id' => $itemId));
+
+                    // on supprime les inscriptions au cours dont c'est la discipline
+                    $cours = $em->getRepository('AppBundle:Cours')->findBy(array(
+                        'discipline' => $discipline
+                    ));
+                    if ($cours) {
+                        foreach ($cours as $co) {
+                            $inscriptionsC = $em->getRepository('AppBundle:Inscription_c')->findBy(array(
+                                'cours' => $co,
+                                'user' => $user
+                            ));
+                            if ($inscriptionsC) {
+                                foreach ($inscriptionsC as $inscr) {
+                                    $em->remove($inscr);
+                                }
+                            }
+                        }
+                    }
+
+                    // puis on créé l'inscription
+                    $new_inscr = new Inscription_d();
+                    $new_inscr->setUser($user);
+                    $new_inscr->setDiscipline($discipline);
+                    $new_inscr->setDateInscription(new DateTime());
+                    $new_inscr->setRole($role);
+                    $em->persist($new_inscr);
+                } else if ($itemType == 'cours') {
+                    $cours = $em->getRepository('AppBundle:Cours')->findOneBy(array('id' => $itemId));
+
+                    $new_inscr = new Inscription_c();
+                    $new_inscr->setUser($user);
+                    $new_inscr->setCours($cours);
+                    $new_inscr->setDateInscription(new DateTime());
+                    $new_inscr->setRole($role);
+                    $em->persist($new_inscr);
                 }
-
-                // puis on créé l'inscription
-                $new_inscr = new Inscription_d();
-                $new_inscr->setUser($user);
-                $new_inscr->setDiscipline($discipline);
-                $new_inscr->setDateInscription(new DateTime());
-                $new_inscr->setRole($role);
-                $em->persist($new_inscr);
-            } else if ($itemType == 'cours') {
-                $cours = $em->getRepository('AppBundle:Cours')->findOneBy(array('id' => $itemId));
-
-                $new_inscr = new Inscription_c();
-                $new_inscr->setUser($user);
-                $new_inscr->setCours($cours);
-                $new_inscr->setDateInscription(new DateTime());
-                $new_inscr->setRole($role);
-                $em->persist($new_inscr);
             }
-
             $em->flush();
 
             return new JsonResponse(array(
-                'action' => 'change inscription of user',
-                'test' => $test
+                'action' => 'change inscription of users'
             ));
         }
 
@@ -797,48 +837,49 @@ class UsersController extends Controller
     }
 
     /**
-     * @Route("/desInscrireUser_ajax", name="desInscrireUser_ajax")
+     * @Route("/desInscrireUsers_ajax", name="desInscrireUsers_ajax")
      */
-    public function desInscrireUserAjaxAction(Request $request)
+    public function desInscrireUsersAjaxAction(Request $request)
     {
         if ($request->isXMLHttpRequest()) {
             $em = $this->getDoctrine()->getEntityManager();
-            $test = "";
 
             $itemId = $request->request->get('idItem');
             $itemType = $request->request->get('typeItem');
-            $userId = $request->request->get('idUser');
-            $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
+            $userIds = $request->request->get('idUsers');
 
-            $item = null;
-            $inscrEntityName = "";
+            foreach ($userIds as $userId) {
+                $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
 
-            if ($itemType == 'cohorte') {
-                $item = $em->getRepository('AppBundle:Cohorte')->findOneBy(array('id' => $itemId));
-                $inscrEntityName = "Inscription_coh";
+                $item = null;
+                $inscrEntityName = "";
 
-            } else if ($itemType == 'discipline') {
-                $item = $em->getRepository('AppBundle:Discipline')->findOneBy(array('id' => $itemId));
-                $inscrEntityName = "Inscription_d";
-            } else if ($itemType == 'cours') {
-                $item = $em->getRepository('AppBundle:Cours')->findOneBy(array('id' => $itemId));
-                $inscrEntityName = "Inscription_c";
-            }
-            $inscriptions = $em->getRepository('AppBundle:' . $inscrEntityName)->findBy(array(
-                $itemType => $item,
-                'user' => $user
-            ));
-            if ($inscriptions) {
-                foreach ($inscriptions as $inscr) {
-                    $em->remove($inscr);
+                if ($itemType == 'cohorte') {
+                    $item = $em->getRepository('AppBundle:Cohorte')->findOneBy(array('id' => $itemId));
+                    $inscrEntityName = "Inscription_coh";
+
+                } else if ($itemType == 'discipline') {
+                    $item = $em->getRepository('AppBundle:Discipline')->findOneBy(array('id' => $itemId));
+                    $inscrEntityName = "Inscription_d";
+                } else if ($itemType == 'cours') {
+                    $item = $em->getRepository('AppBundle:Cours')->findOneBy(array('id' => $itemId));
+                    $inscrEntityName = "Inscription_c";
+                }
+                $inscriptions = $em->getRepository('AppBundle:' . $inscrEntityName)->findBy(array(
+                    $itemType => $item,
+                    'user' => $user
+                ));
+                if ($inscriptions) {
+                    foreach ($inscriptions as $inscr) {
+                        $em->remove($inscr);
+                    }
                 }
             }
 
             $em->flush();
 
             return new JsonResponse(array(
-                'action' => 'change inscription of user',
-                'test' => $test
+                'action' => 'change inscription of users'
             ));
         }
 
@@ -846,9 +887,9 @@ class UsersController extends Controller
     }
 
     /**
-     * @Route("/inscrSessUser_ajax", name="inscrSessUser_ajax")
+     * @Route("/inscrSessUsers_ajax", name="inscrSessUsers_ajax")
      */
-    public function inscrSessUserAjaxAction(Request $request)
+    public function inscrSessUsersAjaxAction(Request $request)
     {
         if ($request->isXMLHttpRequest()) {
             $em = $this->getDoctrine()->getEntityManager();
@@ -856,24 +897,26 @@ class UsersController extends Controller
             date_default_timezone_set('Europe/Paris');
 
             $id = $request->request->get('id');
-            $userId = $request->request->get('idUser');
             $roleId = $request->request->get('idRole');
+            $userIds = $request->request->get('idUsers');
 
             $session = $em->getRepository('AppBundle:Session')->findOneBy(array('id' => $id));
-
-            $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
-
             $role = $em->getRepository('AppBundle:Role')->findOneBy(array('id' => $roleId));
 
-            $inscr = new Inscription_sess();
-            $inscr->setSession($session);
-            $inscr->setUser($user);
-            $inscr->setDateInscription(new DateTime());
-            if ($role) {
-                $inscr->setRole($role);
+            foreach ($userIds as $userId) {
+                $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
+
+                $inscr = new Inscription_sess();
+                $inscr->setSession($session);
+                $inscr->setUser($user);
+                $inscr->setDateInscription(new DateTime());
+                if ($role) {
+                    $inscr->setRole($role);
+                }
+
+                $em->persist($inscr);
             }
 
-            $em->persist($inscr);
             $em->flush();
 
             return new JsonResponse(array('action' => 'Inscription user session'));
@@ -883,9 +926,9 @@ class UsersController extends Controller
     }
 
     /**
-     * @Route("/desinscrSessUser_ajax", name="desinscrSessUser_ajax")
+     * @Route("/desinscrSessUsers_ajax", name="desinscrSessUsers_ajax")
      */
-    public function desinscrSessUserAjaxAction(Request $request)
+    public function desinscrSessUsersAjaxAction(Request $request)
     {
         if ($request->isXMLHttpRequest()) {
             $em = $this->getDoctrine()->getEntityManager();
@@ -893,15 +936,16 @@ class UsersController extends Controller
             date_default_timezone_set('Europe/Paris');
 
             $id = $request->request->get('id');
-            $userId = $request->request->get('idUser');
+            $userIds = $request->request->get('idUsers');
 
             $session = $em->getRepository('AppBundle:Session')->findOneBy(array('id' => $id));
-
-            $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
-
             $inscr = $em->getRepository('AppBundle:Inscription_sess')->findOneBy(array('session' => $session, 'user' => $user));
 
-            $em->remove($inscr);
+            foreach ($userIds as $userId) {
+                $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
+
+                $em->remove($inscr);
+            }
 
             $em->flush();
 

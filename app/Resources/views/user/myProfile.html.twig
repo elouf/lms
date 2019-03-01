@@ -181,8 +181,9 @@
             {{ form_end(form) }}
 
             {% if app.user.statut == 'Responsable' or app.user.hasRole('ROLE_SUPER_ADMIN') %}
-                <div style="margin-top: 30px;"><a href="{{ path('inscriptionDiscipline') }}">Gérer mes inscriptions</a></div>
+                <a class="btn btn-warning" style="margin-top: 30px;" href="{{ path('inscriptionDiscipline') }}">Gérer mes inscriptions</a>
             {% endif %}
+            <a class="btn btn-danger" style="margin-top: 30px;" href="{{ path('pageSuppressionCompte') }}">Supprimer mon compte</a>
         </div>
         <div class="blocRGPD block">
             <div class="sectionRGPD">

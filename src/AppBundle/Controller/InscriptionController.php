@@ -184,7 +184,7 @@ class InscriptionController extends Controller
                     $user->setConfirmedByAdmin(true);
                 }elseif($data['typeUser'] == 'Formateur' || $data['typeUser'] == 'Responsable'){
                     // Formateur
-                    $role = $em->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Enseignant'));
+                    $role = $em->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Formateur'));
                     if($data['sectionEns'] == 0){
                         // CRPE formateur
                         $nomCoh = 'crpe';

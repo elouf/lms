@@ -39,6 +39,9 @@ class UserAdmin extends AbstractAdmin
             ->add('statut',
                 'choice',
                 array('choices' => User::getStatuts()))
+            ->add('confirmedByAdmin', null, array(
+                'label' => "Statut confirmé par l'admin"
+            ))
             ->add('institut', 'sonata_type_model')
         ;
 
@@ -54,6 +57,9 @@ class UserAdmin extends AbstractAdmin
             ->add('lastname')
             ->add('phone')
             ->add('statut')
+            ->add('confirmedByAdmin', null, array(
+                'label' => "Statut confirmé par l'admin"
+            ))
             ->add('institut', null, array(), 'entity', array(
                 'class'    => 'AppBundle\Entity\Institut',
                 'choice_label' => 'nom',
@@ -72,6 +78,9 @@ class UserAdmin extends AbstractAdmin
             ->add('phone')
             ->add('institut')
             ->add('statut')
+            ->add('confirmedByAdmin', null, array(
+                'label' => "Statut confirmé par l'admin"
+            ))
         ;
     }
 
