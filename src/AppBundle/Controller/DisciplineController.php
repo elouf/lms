@@ -66,7 +66,7 @@ class DisciplineController extends Controller
         $coursesIndiv = array();
 
         // si ce n'est pas l'admin, on fait le tri
-        if (!$this->getUser()->hasRole('ROLE_SUPER_ADMIN')){
+        if (!($this->getUser()->hasRole('ROLE_SUPER_ADMIN') || $this->getUser()->getStatut() == 'Responsable' || $this->getUser()->getStatut() == 'Formateur')){
             // on créé un tableau qui contient les disciplines auxquelles l' user est inscrit par cohorte
             $repositoryInscrCoh = $this->getDoctrine()->getRepository('AppBundle:Inscription_coh');
             $inscrsCoh = $repositoryInscrCoh->findBy(array('user'=> $this->getUser()));
@@ -117,7 +117,7 @@ class DisciplineController extends Controller
             $courses[$i]["sessionsFinSession"] = array();
             $courses[$i]["discipline"] = $disciplinesArray2Consider[$i];
             $courses[$i]["cohortesLiees"] = array();
-            if ($this->getUser()->hasRole('ROLE_SUPER_ADMIN')){
+            if ($this->getUser()->hasRole('ROLE_SUPER_ADMIN')  || $this->getUser()->getStatut() == 'Responsable' || $this->getUser()->getStatut() == 'Formateur'){
                 $courses[$i]["cohortesLiees"] = $cohLiees[$i];
             }
             $coursesT = $repositoryCours->findBy(array('discipline' =>$disciplinesArray2Consider[$i]), array('position' => 'ASC'));
