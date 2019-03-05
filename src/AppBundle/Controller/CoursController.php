@@ -104,7 +104,7 @@ class CoursController extends Controller
                 $mode = 'etu';
             }
         }
-        
+
         $typeLiens = $this->getDoctrine()->getRepository('AppBundle:TypeLien')->findAll();
         $categorieLiens = $this->getDoctrine()->getRepository('AppBundle:CategorieLien')->findAll();
 

@@ -129,6 +129,7 @@
                 </ul>
                 <p>Pour que ces fonctions supplémentaires soient actives, vous devez confirmer leur statut.</p>
                 <p>Vous pouvez le faire individuellement, par lot, ou tous ensemble en cliquant sur le bouton ci-dessous (Confirmer tous).</p>
+                <p>Si vous refusez, ces utilisateurs garderont alors un statut Étudiant.</p>
                 <div class="btnConfirmAll btn btn-warning">Confirmer tous</div>
                 <table class="tablesorter ">
                     <thead>
@@ -142,7 +143,6 @@
                         <th class="filter-select">Institut</th>
                         <th class="filter-select">Activé</th>
                         <th>Statut</th>
-                        <th class="filter-select">Statut confirmé</th>
                         <th>Confirmer</th>
                     </tr>
                     </thead>
@@ -168,13 +168,6 @@
                                 {% endif %}
                             </td>
                             <td>{{ myUser.user.statut }}</td>
-                            <td>
-                                {% if myUser.user.confirmedByAdmin == 1 %}
-                                    oui
-                                {% else %}
-                                    non
-                                {% endif %}
-                            </td>
                             <td class="btnCellFilter">
                                 <i class="btnConfirmStatut fa fa-check-circle-o" aria-hidden="true"></i>
                                 <i class="btnRefuseStatut fa fa-ban" aria-hidden="true"></i>

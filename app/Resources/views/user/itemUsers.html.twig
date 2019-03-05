@@ -321,7 +321,7 @@
                                 <th>Nom</th>
                                 <th class="filter-select">Institut</th>
                                 <th class="filter-select">Statut</th>
-                                <th>Role</th>
+                                <th class="filter-select">Role</th>
                                 <th>Cohortes</th>
                                 {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
                                     <th>Désinscrire</th>
@@ -594,7 +594,7 @@
                                     <select class="selectRole">
                                         {% for role in roles %}
                                             {% if role.nom != "Admin" %}
-                                                <option value="{{ role.id }}">{{ role.nom }}</option>
+                                                <option value="{{ role.id }}">{{ role.nom|replace({ 'Enseignant': 'Enseignant correcteur' }) }}</option>
                                             {% endif %}
                                         {% endfor %}
                                     </select>

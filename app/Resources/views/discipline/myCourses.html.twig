@@ -12,23 +12,23 @@
             var uncheckedClass = 'fa-square-o';
             var checkedClass = 'fa-check-square-o';
 
-            $('.activationDocBtn').click(function(){
+            $('.activationDocBtn').click(function () {
                 var id = $(this).closest('[data-discId]').attr('data-discId');
                 var isVisible = $(this).hasClass(checkedClass);
                 var myBtn = $(this);
                 $.ajax({
                     type: "POST",
-                    url: "{{path('changeActivationDocsDisc_ajax')}}",
+                    url: "{{ path('changeActivationDocsDisc_ajax') }}",
                     data: {
                         id: id,
                         isVisible: isVisible
                     },
                     dataType: "json",
                     success: function (response) {
-                        if(isVisible){
+                        if (isVisible) {
                             myBtn.removeClass(checkedClass).addClass(uncheckedClass);
                             myBtn.closest('[data-activated]').attr('data-activated', "0");
-                        }else{
+                        } else {
                             myBtn.removeClass(uncheckedClass).addClass(checkedClass);
                             myBtn.closest('[data-activated]').attr('data-activated', "1");
                         }
@@ -36,16 +36,16 @@
                 });
             });
 
-            $('.btnInscrSess').click(function(){
+            $('.btnInscrSess').click(function () {
                 var btn = $(this);
-                if(!btn.hasClass('inactivate')){
+                if (!btn.hasClass('inactivate')) {
                     btn.addClass('inactivate');
                     var block = btn.closest('[data-idSession]');
                     var id = block.attr('data-idSession');
                     var idCours = block.attr('data-idCours');
                     $.ajax({
                         type: "POST",
-                        url: "{{path('inscrSess_ajax')}}",
+                        url: "{{ path('inscrSess_ajax') }}",
                         data: {
                             id: id,
                             idCours: idCours
@@ -68,27 +68,33 @@
     <div class="container mt-120">
         <div class="row mt-20 mb-100">
             {% if hasResponsableMinRights %}
-                <div style="margin-bottom: 10px;"><a href="{{ path('inscriptionDiscipline') }}">Gérer mes inscriptions</a></div>
+                <div style="margin-bottom: 10px;"><a href="{{ path('inscriptionDiscipline') }}">Gérer mes
+                        inscriptions</a></div>
             {% endif %}
             <div class="col-sm-12">
                 {% set idActive = 0 %}
                 {% if active > 0 %}
                     {% set idActive = active %}
                 {% endif %}
-                <ul class="nav nav-pills nav-stacked pull-left" role="tablist" style="padding-bottom: 5px;padding-top: 5px">
+                <ul class="nav nav-pills nav-stacked pull-left" role="tablist"
+                    style="padding-bottom: 5px;padding-top: 5px">
                     {% for key,val in courses %}
                         <li role="presentation"
                                 {% if idActive != 0 and val.discipline.id == active or idActive == 0 and loop.index == 1 %}
                             class="active"
                                 {% endif %}>
-                            <a href="#p1body{{ val.discipline.id }}" aria-controls="p1body{{ val.discipline.id }}" role="tab" data-toggle="tab"><i class="fa {{ val.discipline.faIcon }} fa-fw"></i> {{ val.discipline }}</a>
+                            <a href="#p1body{{ val.discipline.id }}" aria-controls="p1body{{ val.discipline.id }}"
+                               role="tab" data-toggle="tab"><i
+                                        class="fa {{ val.discipline.faIcon }} fa-fw"></i> {{ val.discipline }}</a>
                         </li>
                     {% endfor %}
                 </ul>
 
                 <div class="tab-content">
                     {% for key,val in courses %}
-                        <div data-discId="{{ val.discipline.id }}" role="tabpanel" class="tab-pane fade{% if idActive != 0 and val.discipline.id == active or idActive == 0 and loop.index == 1 %} in active{% endif %}" id="p1body{{ val.discipline.id }}" {% if loop.index == 1 %} style="padding-top: 0;" {% endif %}>
+                        <div data-discId="{{ val.discipline.id }}" role="tabpanel"
+                             class="tab-pane fade{% if idActive != 0 and val.discipline.id == active or idActive == 0 and loop.index == 1 %} in active{% endif %}"
+                             id="p1body{{ val.discipline.id }}" {% if loop.index == 1 %} style="padding-top: 0;" {% endif %}>
                             <div class="container mt-0 mb-60">
                                 <div class="row">
                                     <div class="col-sm-8">
@@ -99,19 +105,26 @@
                                                 </div>
                                                 <div class="course-detail">
                                                     <h4 class="heading">Gestion des inscriptions</h4>
-                                                    {% for key2,val2 in val.cohortesLiees %}
-                                                        <div class="resumeDocs mt-20 col-xs-12">
-                                                            <a href="{{ path('itemUsers', {id: val2.id, type:"cohorte"}) }}" class="btn btn-warning btn-sm">Inscrits via la cohorte {{ val2.nom }}</a>
-                                                        </div>
-                                                    {% endfor %}
+                                                    {% if val.cohortesLiees is defined %}
+                                                        {% for key2,val2 in val.cohortesLiees %}
+                                                            <div class="resumeDocs mt-20 col-xs-12">
+                                                                <a href="{{ path('itemUsers', {id: val2.id, type:"cohorte"}) }}"
+                                                                   class="btn btn-warning btn-sm">Inscrits via la
+                                                                    cohorte {{ val2.nom }}</a>
+                                                            </div>
+                                                        {% endfor %}
+                                                    {% endif %}
                                                     <div class="resumeDocs mt-20 col-xs-12">
-                                                        <a href="{{ path('itemUsers', {id: val.discipline.id, type:"discipline"}) }}" class="btn btn-warning btn-sm">Inscrits à la discipline</a>
+                                                        <a href="{{ path('itemUsers', {id: val.discipline.id, type:"discipline"}) }}"
+                                                           class="btn btn-warning btn-sm">Inscrits à la discipline</a>
                                                     </div>
                                                 </div>
                                             </div>
                                         {% endif %}
                                         {% if app.user.hasRole('ROLE_SUPER_ADMIN') or val.discipline.docsActivated==1 %}
-                                            <div class="course-list documentsDisc" data-activated="{{ val.discipline.docsActivated }}" style="margin-top: 0;">
+                                            <div class="course-list documentsDisc"
+                                                 data-activated="{{ val.discipline.docsActivated }}"
+                                                 style="margin-top: 0;">
                                                 <div class="course-media text-center mt-10">
                                                     <i class="fa fa-file-o fa-3" aria-hidden="true"></i>
                                                 </div>
@@ -128,10 +141,13 @@
                                                         </div>
                                                     {% endif %}
                                                     {% if val.nbNewDocs != 0 %}
-                                                        <p class="newDocsP"><span class="newDocsPuce">{{ val.nbNewDocs }}</span> nouveaux documents</p>
+                                                        <p class="newDocsP"><span
+                                                                    class="newDocsPuce">{{ val.nbNewDocs }}</span>
+                                                            nouveaux documents</p>
                                                     {% endif %}
                                                     <div class="resumeDocs mt-20 col-xs-12">
-                                                        <a href="{{ path('documents', {id: val.discipline.id}) }}" class="btn btn-primary btn-sm">Accéder</a>
+                                                        <a href="{{ path('documents', {id: val.discipline.id}) }}"
+                                                           class="btn btn-primary btn-sm">Accéder</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -145,9 +161,11 @@
                                         {% endif %}
                                         {% if val.sessions is defined %}
                                             {% for keyC,valC in val.sessions %}
-                                                <div class="course-list course-session" data-idCours="{{ valC.id }}" style="margin-top: 0;">
+                                                <div class="course-list course-session" data-idCours="{{ valC.id }}"
+                                                     style="margin-top: 0;">
                                                     <div class="course-media">
-                                                        <img src="{{ asset('images/cours/') }}{{ valC.imageFilename }}" class="img-responsive course-img" alt="">
+                                                        <img src="{{ asset('images/cours/') }}{{ valC.imageFilename }}"
+                                                             class="img-responsive course-img" alt="">
                                                     </div>
                                                     <div class="course-detail">
                                                         <h4 class="heading">{{ valC.nom }}</h4>
@@ -155,26 +173,37 @@
                                                             <li><i class="fa fa-map-marker"></i> À distance</li>
                                                             <br/>
                                                             {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
-                                                                <li><i class="fa fa-hourglass-start"></i> {{ valC.session.dateDebut|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}</li>
+                                                                <li>
+                                                                    <i class="fa fa-hourglass-start"></i> {{ valC.session.dateDebut|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}
+                                                                </li>
                                                             {% endif %}
-                                                            <li><i class="fa fa-hourglass-end"></i> {{ valC.session.dateFin|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}</li>
+                                                            <li>
+                                                                <i class="fa fa-hourglass-end"></i> {{ valC.session.dateFin|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}
+                                                            </li>
                                                             {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
                                                                 <br/>
-                                                                <li><i class="fa fa-bell-o" aria-hidden="true"></i> {{ valC.session.dateDebutAlerte|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}</li>
-                                                                <li><i class="fa fa-bell-slash-o" aria-hidden="true"></i> {{ valC.session.dateFinAlerte|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}</li>
+                                                                <li><i class="fa fa-bell-o"
+                                                                       aria-hidden="true"></i> {{ valC.session.dateDebutAlerte|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}
+                                                                </li>
+                                                                <li><i class="fa fa-bell-slash-o"
+                                                                       aria-hidden="true"></i> {{ valC.session.dateFinAlerte|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}
+                                                                </li>
                                                             {% endif %}
                                                         </ul>
                                                         <p class="brief">{{ valC.description|raw }}</p>
-                                                        <a href="{{ path('oneCours', {id: valC.id, mode: 'etu'}) }}" class="btn btn-primary btn-sm">Entrer</a>
+                                                        <a href="{{ path('oneCours', {id: valC.id, mode: 'etu'}) }}"
+                                                           class="btn btn-primary btn-sm">Entrer</a>
                                                     </div>
                                                 </div>
                                             {% endfor %}
                                         {% endif %}
                                         {% if val.sessionsAdmin is defined %}
                                             {% for keyC,valC in val.sessionsAdmin %}
-                                                <div class="course-list course-session" data-idCours="{{ valC.id }}" style="margin-top: 0; opacity: .6;">
+                                                <div class="course-list course-session" data-idCours="{{ valC.id }}"
+                                                     style="margin-top: 0; opacity: .6;">
                                                     <div class="course-media">
-                                                        <img src="{{ asset('images/cours/') }}{{ valC.imageFilename }}" class="img-responsive course-img" alt="">
+                                                        <img src="{{ asset('images/cours/') }}{{ valC.imageFilename }}"
+                                                             class="img-responsive course-img" alt="">
                                                     </div>
                                                     <div class="course-detail">
                                                         <h4 class="heading">{{ valC.nom }}</h4>
@@ -182,36 +211,51 @@
                                                             <li><i class="fa fa-map-marker"></i> À distance</li>
                                                             <br/>
                                                             {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
-                                                                <li><i class="fa fa-hourglass-start"></i> {{ valC.session.dateDebut|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}</li>
+                                                                <li>
+                                                                    <i class="fa fa-hourglass-start"></i> {{ valC.session.dateDebut|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}
+                                                                </li>
                                                             {% endif %}
-                                                            <li><i class="fa fa-hourglass-end"></i> {{ valC.session.dateFin|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}</li>
+                                                            <li>
+                                                                <i class="fa fa-hourglass-end"></i> {{ valC.session.dateFin|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}
+                                                            </li>
                                                             {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
                                                                 <br/>
-                                                                <li><i class="fa fa-bell-o" aria-hidden="true"></i> {{ valC.session.dateDebutAlerte|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}</li>
-                                                                <li><i class="fa fa-bell-slash-o" aria-hidden="true"></i> {{ valC.session.dateFinAlerte|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}</li>
+                                                                <li><i class="fa fa-bell-o"
+                                                                       aria-hidden="true"></i> {{ valC.session.dateDebutAlerte|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}
+                                                                </li>
+                                                                <li><i class="fa fa-bell-slash-o"
+                                                                       aria-hidden="true"></i> {{ valC.session.dateFinAlerte|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}
+                                                                </li>
                                                             {% endif %}
                                                         </ul>
                                                         <p class="brief">{{ valC.description|raw }}</p>
-                                                        <a href="{{ path('oneCours', {id: valC.id, mode: 'etu'}) }}" class="btn btn-primary btn-sm">Entrer</a>
+                                                        <a href="{{ path('oneCours', {id: valC.id, mode: 'etu'}) }}"
+                                                           class="btn btn-primary btn-sm">Entrer</a>
                                                     </div>
                                                 </div>
                                             {% endfor %}
                                         {% endif %}
                                         {% if val.sessionsAlerte is defined %}
                                             {% for keyC,valC in val.sessionsAlerte %}
-                                                <div class="course-list course-sessionAlerte"  data-idCours="{{ valC.id }}" data-idSession="{{ valC.session.id }}" style="margin-top: 0;">
+                                                <div class="course-list course-sessionAlerte"
+                                                     data-idCours="{{ valC.id }}" data-idSession="{{ valC.session.id }}"
+                                                     style="margin-top: 0;">
                                                     <div class="course-media">
-                                                        <img src="{{ asset('images/cours/') }}{{ valC.imageFilename }}" class="img-responsive course-img" alt="">
+                                                        <img src="{{ asset('images/cours/') }}{{ valC.imageFilename }}"
+                                                             class="img-responsive course-img" alt="">
                                                     </div>
                                                     <div class="course-detail">
                                                         <h4 class="heading">{{ valC.nom }}</h4>
                                                         <ul class="course-features">
                                                             <li><i class="fa fa-map-marker"></i> À distance</li>
                                                             <br/>
-                                                            <li><i class="fa fa-hourglass-start"></i> {{ valC.session.dateDebut|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}</li>
+                                                            <li>
+                                                                <i class="fa fa-hourglass-start"></i> {{ valC.session.dateDebut|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}
+                                                            </li>
                                                         </ul>
                                                         <p class="brief">{{ valC.session.messageAlerte|raw }}</p>
-                                                        <p class="brief fdbackInscUserSess{% if not val.sessionsAlerteIsInscrit[keyC] %} hidden{% endif %}">Vous êtes inscrit à cette future session.</p>
+                                                        <p class="brief fdbackInscUserSess{% if not val.sessionsAlerteIsInscrit[keyC] %} hidden{% endif %}">
+                                                            Vous êtes inscrit à cette future session.</p>
 
                                                         {% if not val.sessionsAlerteIsInscrit[keyC] %}
                                                             <a class="btn btn-warning btn-sm btnInscrSess">S'inscrire</a>
@@ -222,16 +266,21 @@
                                         {% endif %}
                                         {% if val.sessionsFinSession is defined %}
                                             {% for keyC,valC in val.sessionsFinSession %}
-                                                <div class="course-list course-sessionAlerte"  data-idCours="{{ valC.id }}" data-idSession="{{ valC.session.id }}" style="margin-top: 0;">
+                                                <div class="course-list course-sessionAlerte"
+                                                     data-idCours="{{ valC.id }}" data-idSession="{{ valC.session.id }}"
+                                                     style="margin-top: 0;">
                                                     <div class="course-media">
-                                                        <img src="{{ asset('images/cours/') }}{{ valC.imageFilename }}" class="img-responsive course-img" alt="">
+                                                        <img src="{{ asset('images/cours/') }}{{ valC.imageFilename }}"
+                                                             class="img-responsive course-img" alt="">
                                                     </div>
                                                     <div class="course-detail">
                                                         <h4 class="heading">{{ valC.nom }}</h4>
                                                         <ul class="course-features">
                                                             <li><i class="fa fa-map-marker"></i> À distance</li>
                                                             <br/>
-                                                            <li><i class="fa fa-hourglass-start"></i> {{ valC.session.dateDebut|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}</li>
+                                                            <li>
+                                                                <i class="fa fa-hourglass-start"></i> {{ valC.session.dateDebut|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}
+                                                            </li>
                                                         </ul>
                                                         <p class="brief">{{ valC.session.messageFinSession|raw }}</p>
                                                     </div>
@@ -239,9 +288,11 @@
                                             {% endfor %}
                                         {% endif %}
                                         {% for keyC,valC in val.courses %}
-                                            <div class="course-list" data-idCours="{{ valC.id }}" style="margin-top: 0;">
+                                            <div class="course-list" data-idCours="{{ valC.id }}"
+                                                 style="margin-top: 0;">
                                                 <div class="course-media">
-                                                    <img src="{{ asset('images/cours/') }}{{ valC.imageFilename }}" class="img-responsive course-img" alt="">
+                                                    <img src="{{ asset('images/cours/') }}{{ valC.imageFilename }}"
+                                                         class="img-responsive course-img" alt="">
                                                 </div>
                                                 <div class="course-detail">
                                                     <h4 class="heading">{{ valC.nom }}</h4>
@@ -250,9 +301,11 @@
                                                         <!--<li><i class="fa fa-clock-o"></i> 2 mois</li>-->
                                                     </ul>
                                                     <p class="brief">{{ valC.description|raw }}</p>
-                                                    <a href="{{ path('oneCours', {id: valC.id, mode: 'etu'}) }}" class="btn btn-primary btn-sm">Entrer</a>
+                                                    <a href="{{ path('oneCours', {id: valC.id, mode: 'etu'}) }}"
+                                                       class="btn btn-primary btn-sm">Entrer</a>
                                                     {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
-                                                        <a href="{{ path('itemUsers', {id: valC.id, type:"cours"}) }}" class="btn btn-warning btn-sm">Inscrits</a>
+                                                        <a href="{{ path('itemUsers', {id: valC.id, type:"cours"}) }}"
+                                                           class="btn btn-warning btn-sm">Inscrits</a>
                                                     {% endif %}
                                                 </div>
                                             </div>

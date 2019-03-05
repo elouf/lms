@@ -66,7 +66,7 @@ class DisciplineController extends Controller
         $coursesIndiv = array();
 
         // si ce n'est pas l'admin, on fait le tri
-        if (!($this->getUser()->hasRole('ROLE_SUPER_ADMIN') || $this->getUser()->getStatut() == 'Responsable' || $this->getUser()->getStatut() == 'Formateur')){
+        if (!($this->getUser()->hasRole('ROLE_SUPER_ADMIN'))){
             // on créé un tableau qui contient les disciplines auxquelles l' user est inscrit par cohorte
             $repositoryInscrCoh = $this->getDoctrine()->getRepository('AppBundle:Inscription_coh');
             $inscrsCoh = $repositoryInscrCoh->findBy(array('user'=> $this->getUser()));
@@ -99,7 +99,8 @@ class DisciplineController extends Controller
                     array_push($coursesIndiv, $inscrC->getCours());
                 }
             }
-        }else{
+        }
+        if ($this->getUser()->hasRole('ROLE_SUPER_ADMIN') || $this->getUser()->getStatut() == 'Responsable' || $this->getUser()->getStatut() == 'Formateur'){
             // on ajoute les cohortes liées pour l'admin pour qu'il puisse accéder aux pages d'inscriptions à ces cohortes
             for($i=0; $i<count($disciplinesArray2Consider); $i++){
                 $cohLiees[$i] = $this->getDoctrine()->getRepository('AppBundle:Discipline')->getCohortes($disciplinesArray2Consider[$i]->getId());
@@ -117,7 +118,7 @@ class DisciplineController extends Controller
             $courses[$i]["sessionsFinSession"] = array();
             $courses[$i]["discipline"] = $disciplinesArray2Consider[$i];
             $courses[$i]["cohortesLiees"] = array();
-            if ($this->getUser()->hasRole('ROLE_SUPER_ADMIN')  || $this->getUser()->getStatut() == 'Responsable' || $this->getUser()->getStatut() == 'Formateur'){
+            if ($this->getUser()->hasRole('ROLE_SUPER_ADMIN') || $this->getUser()->getStatut() == 'Responsable' || $this->getUser()->getStatut() == 'Formateur'){
                 $courses[$i]["cohortesLiees"] = $cohLiees[$i];
             }
             $coursesT = $repositoryCours->findBy(array('discipline' =>$disciplinesArray2Consider[$i]), array('position' => 'ASC'));
@@ -176,7 +177,7 @@ class DisciplineController extends Controller
         }
 
         // on recherche les infos liées aux documents
-        ////Comme un accès aux documents de la discipline existe, on doit afficher l'info-bulle si certains n'ont pas été visités
+        // Comme un accès aux documents de la discipline existe, on doit afficher l'info-bulle si certains n'ont pas été visités
         for($j=0; $j<count($courses); $j++){
             $docs = $this->getDoctrine()->getRepository('AppBundle:Document')->findByDisc($courses[$j]["discipline"], $this->getUser());
             $documents = array_merge($docs[0], $docs[1]);
@@ -190,7 +191,7 @@ class DisciplineController extends Controller
             }
             $courses[$j]["nbNewDocs"] = $nbNewDocs;
         }
-
+dump($courses);
         return $this->render('discipline/myCourses.html.twig', ['courses' => $courses, 'active' => $id]);
     }
 
