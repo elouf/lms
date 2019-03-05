@@ -98,7 +98,6 @@ class CoursController extends Controller
                     $role = $inscrC->getRole()->getNom();
                 }
             }
-            dump($role);
             if($role == "Enseignant" || $role == "Formateur"){
                 $mode = 'ens';
             }else{
