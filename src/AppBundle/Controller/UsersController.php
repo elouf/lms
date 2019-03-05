@@ -1271,6 +1271,7 @@ class UsersController extends Controller
         if ($inscrs) {
             $user->setStatut($statutDestName);
             $hasChanged = true;
+            dump($user.' ; '.$statutDestName);
         }
         $em->flush();
 
