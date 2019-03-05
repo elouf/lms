@@ -1200,5 +1200,80 @@ class UsersController extends Controller
         );
     }
 
+    /**
+     * @Route("/userTreatments", name="userTreatments")
+     */
+    public function userTreatmentsAction(Request $request)
+    {
+        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
 
+        /* @var $roleFormateur Role */
+        $roleFormateur = $this->getDoctrine()->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Formateur'));
+
+        // passe tous les roles Enseignants en Formateur
+        $this->convertRoles("Enseignant", "Inscription_c", $roleFormateur);
+        $this->convertRoles("Enseignant", "Inscription_coh", $roleFormateur);
+        $this->convertRoles("Enseignant", "Inscription_d", $roleFormateur);
+        $this->convertRoles("Enseignant", "Inscription_sess", $roleFormateur);
+
+        $users = $this->getDoctrine()->getRepository('AppBundle:User')->findAll();
+        $this->giveStatut2Role1($users, "Formateur", "Formateur");
+        $this->giveStatut2Role1($users, "Stagiaire", "Prof_stagiaire");
+        $this->giveStatut2Role1($users, "Formateur", "Formateur");
+
+        return $this->render('index.html.twig');
+    }
+
+    public function convertRoles($roleName, $entityInscrName, Role $roleDest)
+    {
+        $em = $this->getDoctrine()->getEntityManager();
+        $inscrs = $this->getDoctrine()->getRepository('AppBundle:'.$entityInscrName)->findAll();
+        $myInscrs = array();
+        /* @var $inscr Inscription */
+        foreach ($inscrs as $inscr) {
+            if ($inscr->getRole()->getNom() == $roleName) {
+                $inscr->setRole($roleDest);
+                array_push($myInscrs, ['user' => $inscr->getUser()->getEmail(), 'role' => $inscr->getRole(), 'id' => $inscr->getId()]);
+            }
+        }
+        $em->flush();
+        dump($myInscrs);
+    }
+
+    public function giveStatut2Role1($users, $roleName, $statutDestName)
+    {
+        /* @var $user User */
+        foreach ($users as $user) {
+            $hasChanged = $this->giveStatut2Role2($roleName, $user, $statutDestName, "Inscription_c");
+            if(!$hasChanged){
+                $hasChanged = $this->giveStatut2Role2($roleName, $user, $statutDestName, "Inscription_d");
+            }
+            if(!$hasChanged){
+                $hasChanged = $this->giveStatut2Role2($roleName, $user, $statutDestName, "Inscription_coh");
+            }
+            if(!$hasChanged){
+                $hasChanged = $this->giveStatut2Role2($roleName, $user, $statutDestName, "Inscription_sess");
+            }
+        }
+    }
+
+    public function giveStatut2Role2($roleName, User $user, $statutDestName, $entityInscrName)
+    {
+        $em = $this->getDoctrine()->getEntityManager();
+        $hasChanged = false;
+
+        /* @var $role Role */
+        $role = $this->getDoctrine()->getRepository('AppBundle:Role')->findOneBy(array('nom' => $roleName));
+
+        $inscrs = $this->getDoctrine()->getRepository('AppBundle:'.$entityInscrName)->findBy(array('user' => $user, 'role' => $role));
+
+        /* @var $inscr Inscription */
+        if ($inscrs) {
+            $user->setStatut($statutDestName);
+            $hasChanged = true;
+        }
+        $em->flush();
+
+        return $hasChanged;
+    }
 }

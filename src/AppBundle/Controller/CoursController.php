@@ -72,7 +72,7 @@ class CoursController extends Controller
         }
 
         // on corrige le statut du user. Si c'est un enseignant, il ne doit pas être en etu. Si ce n'est pas un admin, il ne doit pas être admin
-        if(! ($this->getUser()->hasRole('ROLE_SUPER_ADMIN') || $this->getUser()->getStatut() === 'Responsable' || $this->getUser()->getStatut() === 'Formateur')){
+        //if(! ($this->getUser()->hasRole('ROLE_SUPER_ADMIN') || $this->getUser()->getStatut() === 'Responsable' || $this->getUser()->getStatut() === 'Formateur')){
             $role = "";
             $cohortes = $this->getDoctrine()->getRepository('AppBundle:Cohorte')->findAll();
             if($cohortes){
@@ -98,12 +98,13 @@ class CoursController extends Controller
                     $role = $inscrC->getRole()->getNom();
                 }
             }
+            dump($role);
             if($role == "Enseignant" || $role == "Formateur"){
                 $mode = 'ens';
             }else{
                 $mode = 'etu';
             }
-        }
+        //}
 
         $typeLiens = $this->getDoctrine()->getRepository('AppBundle:TypeLien')->findAll();
         $categorieLiens = $this->getDoctrine()->getRepository('AppBundle:CategorieLien')->findAll();
