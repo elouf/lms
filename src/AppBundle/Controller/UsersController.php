@@ -1217,7 +1217,7 @@ class UsersController extends Controller
         $this->convertRoles("Enseignant", "Inscription_sess", $roleFormateur);*/
 
         $users = $this->getDoctrine()->getRepository('AppBundle:User')->findAll();
-        //$this->giveStatut2Role1($users, "Formateur", "Formateur");
+        $this->giveStatut2Role1($users, "Formateur", "Formateur");
         //$this->giveStatut2Role1($users, "Stagiaire", "Prof_stagiaire");
 
         return $this->render('index.html.twig');
@@ -1242,17 +1242,19 @@ class UsersController extends Controller
     public function giveStatut2Role1($users, $roleName, $statutDestName)
     {
         /* @var $user User */
-        foreach ($users as $user) {
-            $hasChanged = $this->giveStatut2Role2($roleName, $user, $statutDestName, "Inscription_c");
-            /*if(!$hasChanged){
-                $hasChanged = $this->giveStatut2Role2($roleName, $user, $statutDestName, "Inscription_d");
+        foreach ($users as $key => $user) {
+            if($key < 100) {
+                $hasChanged = $this->giveStatut2Role2($roleName, $user, $statutDestName, "Inscription_c");
+                if (!$hasChanged) {
+                    $hasChanged = $this->giveStatut2Role2($roleName, $user, $statutDestName, "Inscription_d");
+                }
+                if (!$hasChanged) {
+                    $hasChanged = $this->giveStatut2Role2($roleName, $user, $statutDestName, "Inscription_coh");
+                }
+                if (!$hasChanged) {
+                    $hasChanged = $this->giveStatut2Role2($roleName, $user, $statutDestName, "Inscription_sess");
+                }
             }
-            if(!$hasChanged){
-                $hasChanged = $this->giveStatut2Role2($roleName, $user, $statutDestName, "Inscription_coh");
-            }
-            if(!$hasChanged){
-                $hasChanged = $this->giveStatut2Role2($roleName, $user, $statutDestName, "Inscription_sess");
-            }*/
         }
     }
 
