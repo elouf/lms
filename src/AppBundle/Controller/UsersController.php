@@ -1208,7 +1208,7 @@ class UsersController extends Controller
         $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
 
         /* @var $roleFormateur Role */
-        $roleFormateur = $this->getDoctrine()->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Formateur'));
+        //$roleFormateur = $this->getDoctrine()->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Formateur'));
 
         // passe tous les roles Enseignants en Formateur
         /*$this->convertRoles("Enseignant", "Inscription_c", $roleFormateur);
@@ -1244,7 +1244,7 @@ class UsersController extends Controller
         /* @var $user User */
         foreach ($users as $user) {
             $hasChanged = $this->giveStatut2Role2($roleName, $user, $statutDestName, "Inscription_c");
-            if(!$hasChanged){
+            /*if(!$hasChanged){
                 $hasChanged = $this->giveStatut2Role2($roleName, $user, $statutDestName, "Inscription_d");
             }
             if(!$hasChanged){
@@ -1252,7 +1252,7 @@ class UsersController extends Controller
             }
             if(!$hasChanged){
                 $hasChanged = $this->giveStatut2Role2($roleName, $user, $statutDestName, "Inscription_sess");
-            }
+            }*/
         }
     }
 
