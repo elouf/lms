@@ -1217,7 +1217,7 @@ class UsersController extends Controller
         $this->convertRoles("Enseignant", "Inscription_sess", $roleFormateur);*/
 
         $users = $this->getDoctrine()->getRepository('AppBundle:User')->findAll();
-        $this->giveStatut2Role1($users, "Formateur", "Formateur");
+        //$this->giveStatut2Role1($users, "Formateur", "Formateur");
         //$this->giveStatut2Role1($users, "Stagiaire", "Prof_stagiaire");
 
         return $this->render('index.html.twig');
