@@ -1218,7 +1218,7 @@ class UsersController extends Controller
 
         $users = $this->getDoctrine()->getRepository('AppBundle:User')->findAll();
         $this->giveStatut2Role1($users, "Formateur", "Formateur");
-        $this->giveStatut2Role1($users, "Stagiaire", "Prof_stagiaire");
+        //$this->giveStatut2Role1($users, "Stagiaire", "Prof_stagiaire");
 
         return $this->render('index.html.twig');
     }
