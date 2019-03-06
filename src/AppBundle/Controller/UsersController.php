@@ -1243,7 +1243,7 @@ class UsersController extends Controller
     {
         /* @var $user User */
         foreach ($users as $key => $user) {
-            if($key >= 1200 && $key < 1300) {
+            if($key >= 1300 && $key < 1400) {
                 $hasChanged = $this->giveStatut2Role2($roleName, $user, $statutDestName, "Inscription_c");
                 if (!$hasChanged) {
                     $hasChanged = $this->giveStatut2Role2($roleName, $user, $statutDestName, "Inscription_d");
