@@ -1211,15 +1211,14 @@ class UsersController extends Controller
         $roleFormateur = $this->getDoctrine()->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Formateur'));
 
         // passe tous les roles Enseignants en Formateur
-        $this->convertRoles("Enseignant", "Inscription_c", $roleFormateur);
+        /*$this->convertRoles("Enseignant", "Inscription_c", $roleFormateur);
         $this->convertRoles("Enseignant", "Inscription_coh", $roleFormateur);
         $this->convertRoles("Enseignant", "Inscription_d", $roleFormateur);
-        $this->convertRoles("Enseignant", "Inscription_sess", $roleFormateur);
+        $this->convertRoles("Enseignant", "Inscription_sess", $roleFormateur);*/
 
-        /*$users = $this->getDoctrine()->getRepository('AppBundle:User')->findAll();
+        $users = $this->getDoctrine()->getRepository('AppBundle:User')->findAll();
         $this->giveStatut2Role1($users, "Formateur", "Formateur");
         $this->giveStatut2Role1($users, "Stagiaire", "Prof_stagiaire");
-        $this->giveStatut2Role1($users, "Formateur", "Formateur");*/
 
         return $this->render('index.html.twig');
     }
