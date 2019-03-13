@@ -277,7 +277,7 @@ class InscriptionController extends Controller
     {
         /* @var $user User */
         $user = $this->getUser();
-        if(($user->getStatut() !== 'Responsable' || !$user->getConfirmedByAdmin()) && !$this->getUser()->hasRole('ROLE_SUPER_ADMIN')){
+        if((($user->getStatut() !== 'Responsable' && $user->getStatut() !== 'Formateur') || !$user->getConfirmedByAdmin()) && !$this->getUser()->hasRole('ROLE_SUPER_ADMIN')){
             return $this->redirectToRoute('homepage');
         }
 

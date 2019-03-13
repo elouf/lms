@@ -95,8 +95,12 @@ class UsersController extends Controller
 
         if ($form->isValid()) {
             $user = $form->getData();
+            $pass = $form['plainPassword']->getData();
+            if($pass){
+                $user->setPassword($this->container->get('security.encoder_factory')->getEncoder($user)->encodePassword($pass, $user->getSalt()));
+            }
+
             $em = $this->getDoctrine()->getManager();
-            $em->persist($user);
             $em->flush();
             return $this->redirectToRoute('myprofile', array('user' => $user));
         }
@@ -347,7 +351,7 @@ class UsersController extends Controller
     {
         /* @var $user User */
         $user = $this->getUser();
-        if(($user->getStatut() !== 'Responsable' || !$user->getConfirmedByAdmin()) && !$this->getUser()->hasRole('ROLE_SUPER_ADMIN')){
+        if((($user->getStatut() !== 'Responsable' && $user->getStatut() !== 'Formateur') || !$user->getConfirmedByAdmin()) && !$this->getUser()->hasRole('ROLE_SUPER_ADMIN')){
             return $this->redirectToRoute('homepage');
         }
 
@@ -517,7 +521,7 @@ class UsersController extends Controller
     {
         /* @var $user User */
         $user = $this->getUser();
-        if(($user->getStatut() !== 'Responsable' || !$user->getConfirmedByAdmin()) && !$this->getUser()->hasRole('ROLE_SUPER_ADMIN')){
+        if((($user->getStatut() !== 'Responsable' && $user->getStatut() !== 'Formateur') || !$user->getConfirmedByAdmin()) && !$this->getUser()->hasRole('ROLE_SUPER_ADMIN')){
             return $this->redirectToRoute('homepage');
         }
 

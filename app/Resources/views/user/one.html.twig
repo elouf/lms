@@ -522,7 +522,9 @@
                                     <th data-filter="false">Id</th>
                                     <th>Nom</th>
                                     <th data-filter="false">Accès de l'utilisateur</th>
-                                    <th data-filter="false">Désinscrire</th>
+                                    {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                        <th data-filter="false">Désinscrire</th>
+                                    {% endif %}
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -538,10 +540,12 @@
                                                     <div>{{ cours.discipline.nom }} > {{ cours.nom }}</div>
                                                 {% endfor %}
                                             </td>
-                                            <td class="btnCellFilter">
-                                                <i class="btndesinscr btndesinscrSess fa fa-sign-out"
-                                                   aria-hidden="true"></i>
-                                            </td>
+                                            {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                                <td class="btnCellFilter">
+                                                    <i class="btndesinscr btndesinscrSess fa fa-sign-out"
+                                                       aria-hidden="true"></i>
+                                                </td>
+                                            {% endif %}
                                         </tr>
                                     {% endif %}
                                 {% endfor %}
@@ -556,7 +560,9 @@
                                     <th data-filter="false">Id</th>
                                     <th>Nom</th>
                                     <th data-filter="false">Accès de l'utilisateur</th>
-                                    <th data-filter="false">Inscrire</th>
+                                    {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                        <th data-filter="false">Inscrire</th>
+                                    {% endif %}
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -572,9 +578,12 @@
                                                     <div>{{ cours.discipline.nom }} > {{ cours.nom }}</div>
                                                 {% endfor %}
                                             </td>
-                                            <td class="btnCellFilter">
-                                                <i class="btninscr btninscrSess fa fa-sign-in" aria-hidden="true"></i>
-                                            </td>
+                                            {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                                <td class="btnCellFilter">
+                                                    <i class="btninscr btninscrSess fa fa-sign-in"
+                                                       aria-hidden="true"></i>
+                                                </td>
+                                            {% endif %}
                                         </tr>
                                     {% endif %}
                                 {% endfor %}
