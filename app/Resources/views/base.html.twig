@@ -171,7 +171,7 @@
                     {% endif %}
 
                     {% if app.user %}
-                        {% set hasResponsableMinRights = app.user.hasRole('ROLE_SUPER_ADMIN') or (app.user.statut == 'Responsable' and app.user.confirmedByAdmin) %}
+                        {% set hasResponsableMinRights = app.user.hasRole('ROLE_SUPER_ADMIN') or ((app.user.statut == 'Responsable' or app.user.statut == 'Formateur') and app.user.confirmedByAdmin) %}
                         <li>
                             <a href="#" data-userId="{{ app.user.id }}">{{ app.user.firstname }} {{ app.user.lastname }}</a>
                             <ul class="sub-menu" style="margin-left: -30px;">

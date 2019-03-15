@@ -179,8 +179,9 @@
             </div>
             {{ form_widget(form.submit) }}
             {{ form_end(form) }}
+            {% set hasResponsableMinRights = app.user.hasRole('ROLE_SUPER_ADMIN') or ((app.user.statut == 'Responsable' or app.user.statut == 'Formateur') and app.user.confirmedByAdmin) %}
 
-            {% if app.user.statut == 'Responsable' or app.user.hasRole('ROLE_SUPER_ADMIN') %}
+            {% if hasResponsableMinRights %}
                 <a class="btn btn-warning" style="margin-top: 30px;" href="{{ path('inscriptionDiscipline') }}">Gérer mes inscriptions</a>
             {% endif %}
             <a class="btn btn-danger" style="margin-top: 30px;" href="{{ path('pageSuppressionCompte') }}">Supprimer mon compte</a>

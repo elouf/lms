@@ -13,3 +13,11 @@ _sonata_admin:
     resource: .
     type: sonata_admin
     prefix: /admin
+
+emmedy_h5p.demo:
+    resource: "@EmmedyH5PBundle/Resources/config/routing_demo.yml"
+    prefix:   /
+
+emmedy_h5p:
+    resource: "@EmmedyH5PBundle/Resources/config/routing.yml"
+    prefix:   /

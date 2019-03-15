@@ -8,6 +8,7 @@ use AppBundle\Entity\Forum;
 use AppBundle\Entity\GroupeLiens;
 use AppBundle\Entity\Lien;
 use AppBundle\Entity\Cours;
+use AppBundle\Entity\RessourceH5P;
 use AppBundle\Entity\RessourceLibre;
 use AppBundle\Entity\ZoneRessource;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -90,6 +91,8 @@ class ZoneRessourceController extends Controller
                 $entityRessourceName = "Forum";
             }elseif($typeItem == "chat"){
                 $entityRessourceName = "Chat";
+            }elseif($typeItem == "h5p"){
+                $entityRessourceName = "RessourceH5P";
             }
 
             if($entityRessourceName == ""){
@@ -122,6 +125,8 @@ class ZoneRessourceController extends Controller
                         $ressource = new Forum();
                     }elseif($typeItem == "chat"){
                         $ressource = new Chat();
+                    }elseif($typeItem == "h5p"){
+                        $ressource = new RessourceH5P();
                     }
                     $ressource->setDescription("");
                     $ressource->setNom("");

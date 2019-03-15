@@ -138,3 +138,11 @@ gos_web_socket:
         router:
             resources:
                 - "@AppBundle/Resources/config/pubsub/routing.yml"
+
+#Appel du bundle H5P avec ses configs
+emmedy_h5_p:
+    use_permission: false # This is false by default to let the demo work out of the box.
+    storage_dir: h5p # Location to store all H5P libraries and files
+    web_dir: web # Location of the public web directory
+    save_content_state: true
+    enable_lrs_content_types: true
