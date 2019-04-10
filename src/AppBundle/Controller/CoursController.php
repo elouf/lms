@@ -55,6 +55,8 @@ class CoursController extends Controller
 
         $users = $this->getDoctrine()->getRepository('AppBundle:User')->findBy(array('enabled' => true));
 
+        $repoSess = $this->getDoctrine()->getRepository('AppBundle:Session');
+
         $allcourses = $repositoryC->findBy(array('discipline' => $discipline));
         $courses = array();
         foreach($allcourses as $coursFiltre){
@@ -63,7 +65,7 @@ class CoursController extends Controller
             }else{
                 $currentDate = new DateTime();
                 $sess = $coursFiltre->getSession();
-                if($this->getDoctrine()->getRepository('AppBundle:Session')->userIsInscrit($this->getUser()->getId(), $sess->getId()) &&
+                if($repoSess->userIsInscrit($this->getUser()->getId(), $sess->getId()) &&
                     $currentDate >= $sess->getDateDebut() &&
                     $currentDate <= $sess->getDateFin()){
                     array_push($courses, $coursFiltre);
@@ -76,10 +78,13 @@ class CoursController extends Controller
         if(! $this->getUser()->hasRole('ROLE_SUPER_ADMIN')){
             $role = "";
             $cohortes = $this->getDoctrine()->getRepository('AppBundle:Cohorte')->findAll();
+            $repoInscription_coh = $this->getDoctrine()->getRepository('AppBundle:Inscription_coh');
+            $repoInscription_d = $this->getDoctrine()->getRepository('AppBundle:Inscription_d');
+            $repoInscription_c = $this->getDoctrine()->getRepository('AppBundle:Inscription_c');
             if($cohortes){
                 foreach($cohortes as $cohorte){
                     if($cohorte->getDisciplines()->contains($discipline) || $cohorte->getCours()->contains($cours)){
-                        $inscrCoh = $this->getDoctrine()->getRepository('AppBundle:Inscription_coh')->findOneBy(array('user' => $this->getUser(), 'cohorte' => $cohorte));
+                        $inscrCoh = $repoInscription_coh->findOneBy(array('user' => $this->getUser(), 'cohorte' => $cohorte));
                         if($inscrCoh){
                             $role = $inscrCoh->getRole()->getNom();
                             break;
@@ -88,13 +93,13 @@ class CoursController extends Controller
                 }
             }
             if($role == ""){
-                $inscrDis = $this->getDoctrine()->getRepository('AppBundle:Inscription_d')->findOneBy(array('user' => $this->getUser(), 'discipline' => $discipline));
+                $inscrDis = $repoInscription_d->findOneBy(array('user' => $this->getUser(), 'discipline' => $discipline));
                 if($inscrDis) {
                     $role = $inscrDis->getRole()->getNom();
                 }
             }
             if($role == ""){
-                $inscrC = $this->getDoctrine()->getRepository('AppBundle:Inscription_c')->findOneBy(array('user' => $this->getUser(), 'cours' => $cours));
+                $inscrC = $repoInscription_c->findOneBy(array('user' => $this->getUser(), 'cours' => $cours));
                 if($inscrC) {
                     $role = $inscrC->getRole()->getNom();
                 }
@@ -113,10 +118,20 @@ class CoursController extends Controller
 
         // On commence par récupérer le contenu des sections du cours
         $datas = array();
+        $repoZoneRessource = $this->getDoctrine()->getRepository('AppBundle:ZoneRessource');
+        $repoRessource = $this->getDoctrine()->getRepository('AppBundle:Ressource');
+        $repoDevoir = $this->getDoctrine()->getRepository('AppBundle:Devoir');
+        $repoDevoirSujet = $this->getDoctrine()->getRepository('AppBundle:DevoirSujet');
+        $repoDevoirCorrigeType = $this->getDoctrine()->getRepository('AppBundle:DevoirCorrigeType');
+        $repoCopie = $this->getDoctrine()->getRepository('AppBundle:Copie');
+        $repoCopieFichier = $this->getDoctrine()->getRepository('AppBundle:CopieFichier');
+        $repoCorrige = $this->getDoctrine()->getRepository('AppBundle:Corrige');
+        $repoCorrigeFichier = $this->getDoctrine()->getRepository('AppBundle:CorrigeFichier');
+        $repoAssocGroupeLiens = $this->getDoctrine()->getRepository('AppBundle:AssocGroupeLiens');
         for($i=0; $i<count($sections); $i++){
             $datas[$i]["section"] = $sections[$i];
 
-            $zones = $this->getDoctrine()->getRepository('AppBundle:ZoneRessource')->findBy(array('section' => $sections[$i]), array('position' => 'ASC'));
+            $zones = $repoZoneRessource->findBy(array('section' => $sections[$i]), array('position' => 'ASC'));
             $datas[$i]["zones"]["containers"] = $zones;
             $datas[$i]["zones"]["content"] = array();
             $datas[$i]["zones"]["type"] = array();
@@ -124,7 +139,7 @@ class CoursController extends Controller
                 $zone = $datas[$i]["zones"]["containers"][$j];
 
                 if($zone->getRessource() != null){
-                    $ressource = $this->getDoctrine()->getRepository('AppBundle:Ressource')->findOneBy(array('id' => $zone->getRessource()->getId()));
+                    $ressource = $repoRessource->findOneBy(array('id' => $zone->getRessource()->getId()));
                     $ressType = $ressource->getType();
                     $datas[$i]["zones"]["type"][$j] = $ressType;
 
@@ -140,13 +155,9 @@ class CoursController extends Controller
                     }elseif($ressType == "devoir"){
                         $datas[$i]["zones"]["type"][$j] = "devoir";
 
-                        $repositorySujet = $this->getDoctrine()
-                            ->getRepository('AppBundle:DevoirSujet')
-                            ->findBy(array('devoir' => $ressource), array('position' => 'ASC'));
+                        $repositorySujet = $repoDevoirSujet->findBy(array('devoir' => $ressource), array('position' => 'ASC'));
 
-                        $repositoryCorrigeType = $this->getDoctrine()
-                            ->getRepository('AppBundle:DevoirCorrigeType')
-                            ->findBy(array('devoir' => $ressource), array('position' => 'ASC'));
+                        $repositoryCorrigeType = $repoDevoirCorrigeType->findBy(array('devoir' => $ressource), array('position' => 'ASC'));
 
                         $datas[$i]["zones"]["content"][$j] = $ressource;
                         $datas[$i]["zones"]["sujet"][$j] = $repositorySujet;
@@ -164,12 +175,12 @@ class CoursController extends Controller
                             $datas[$i]["zones"]["copiesDeposes"][$j] = 0;
                             $datas[$i]["zones"]["corrigesDeposes"][$j] = 0;
 
-                            $copies = $this->getDoctrine()->getRepository('AppBundle:Copie')->findBy(array('devoir' => $ressource));
+                            $copies = $repoCopie->findBy(array('devoir' => $ressource));
                             for($u=0; $u<count($copies); $u++){
-                                $copieFichier = $this->getDoctrine()->getRepository('AppBundle:CopieFichier')->findOneBy(array('copie' => $copies[$u]));
+                                $copieFichier = $repoCopieFichier->findOneBy(array('copie' => $copies[$u]));
                                 if($copieFichier){
                                     $datas[$i]["zones"]["copiesDeposes"][$j]++;
-                                    $corrigeFichier = $this->getDoctrine()->getRepository('AppBundle:Corrige')->findOneBy(array('copie' => $copies[$u]));
+                                    $corrigeFichier = $repoCorrige->findOneBy(array('copie' => $copies[$u]));
                                     if($corrigeFichier){
                                         $datas[$i]["zones"]["corrigesDeposes"][$j]++;
                                     }
@@ -181,28 +192,26 @@ class CoursController extends Controller
                             $datas[$i]["zones"]["copieFichier"][$j] = "undefined";
                             $datas[$i]["zones"]["corrigeFichier"][$j] = "undefined";
 
-                            $copie = $this->getDoctrine()->getRepository('AppBundle:Copie')->findOneBy(array('devoir' => $ressource, 'auteur' => $this->getUser()));
+                            $copie = $repoCopie->findOneBy(array('devoir' => $ressource, 'auteur' => $this->getUser()));
                             if($copie){
                                 $datas[$i]["zones"]["copie"][$j] = $copie;
 
-                                $copieFichier = $this->getDoctrine()->getRepository('AppBundle:CopieFichier')->findOneBy(array('copie' => $copie));
+                                $copieFichier = $repoCopieFichier->findOneBy(array('copie' => $copie));
                                 if($copieFichier){
                                     $datas[$i]["zones"]["copieFichier"][$j] = $copieFichier;
                                 }
 
-                                $corrige = $this->getDoctrine()->getRepository('AppBundle:Corrige')->findOneBy(array('copie' => $copie));
+                                $corrige = $repoCorrige->findOneBy(array('copie' => $copie));
                                 if($corrige){
                                     $datas[$i]["zones"]["corrige"][$j] = $corrige;
-                                    $corrigeFichier = $this->getDoctrine()->getRepository('AppBundle:CorrigeFichier')->findOneBy(array('corrige' => $corrige));
+                                    $corrigeFichier = $repoCorrigeFichier->findOneBy(array('corrige' => $corrige));
                                     $datas[$i]["zones"]["corrigeFichier"][$j] = $corrigeFichier;
                                 }
                             }
                         }
 
                     }elseif($ressType == "groupe") {
-                        $repositoryGaL = $this->getDoctrine()
-                            ->getRepository('AppBundle:AssocGroupeLiens')
-                            ->findBy(array('groupe' => $ressource), array('position' => 'ASC'));
+                        $repositoryGaL = $repoAssocGroupeLiens->findBy(array('groupe' => $ressource), array('position' => 'ASC'));
                         $datas[$i]["zones"]["groupe"][$j] = $ressource;
                         $datas[$i]["zones"]["content"][$j] = $repositoryGaL;
                     }elseif($ressType == "libre"){
@@ -229,23 +238,17 @@ class CoursController extends Controller
         $cGroupesEntity = $this->getDoctrine()->getRepository('AppBundle:GroupeLiens')->findBy(array('cours' => $cours));
         $cGroupes = array();
         for($i=0; $i<count($cGroupesEntity); $i++){
-            $repositoryGaL = $this->getDoctrine()
-                ->getRepository('AppBundle:AssocGroupeLiens')
-                ->findBy(array('groupe' => $cGroupesEntity[$i]))
+            $repositoryGaL = $repoAssocGroupeLiens->findBy(array('groupe' => $cGroupesEntity[$i]))
             ;
             $cGroupes[$i]['groupe'] = $cGroupesEntity[$i];
             $cGroupes[$i]['content'] = $repositoryGaL;
         }
 
-        $cDevoirsEntity = $this->getDoctrine()->getRepository('AppBundle:Devoir')->findBy(array('cours' => $cours));
+        $cDevoirsEntity = $repoDevoir->findBy(array('cours' => $cours));
         $cDevoirs = array();
         for($i=0; $i<count($cDevoirsEntity); $i++){
-            $repositorySujet = $this->getDoctrine()
-                ->getRepository('AppBundle:DevoirSujet')
-                ->findBy(array('devoir' => $cDevoirsEntity[$i]));
-            $repositoryCorrigeType = $this->getDoctrine()
-                ->getRepository('AppBundle:DevoirCorrigeType')
-                ->findBy(array('devoir' => $cDevoirsEntity[$i]));
+            $repositorySujet = $repoDevoirSujet->findBy(array('devoir' => $cDevoirsEntity[$i]));
+            $repositoryCorrigeType = $repoDevoirCorrigeType->findBy(array('devoir' => $cDevoirsEntity[$i]));
 
             $cDevoirs[$i]['content'] = $cDevoirsEntity[$i];
             $cDevoirs[$i]['sujets'] = $repositorySujet;
@@ -257,8 +260,9 @@ class CoursController extends Controller
         $documents = array_merge($docs[0], $docs[1]);
 
         $nbNewDocs = 0;
+        $repoStatsUsersDocs = $this->getDoctrine()->getRepository('AppBundle:StatsUsersDocs');
         foreach($documents as $doc){
-            $stat = $this->getDoctrine()->getRepository('AppBundle:StatsUsersDocs')->findBy(array('user' => $this->getUser(), 'document' => $doc));
+            $stat = $repoStatsUsersDocs->findBy(array('user' => $this->getUser(), 'document' => $doc));
             if(!$stat){
                 $nbNewDocs++;
             }

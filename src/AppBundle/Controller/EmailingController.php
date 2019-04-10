@@ -46,9 +46,15 @@ class EmailingController extends Controller
 
             $users = array();
             $notUsers = array();
+            $repoCours = $em->getRepository('AppBundle:Cours');
+            $repoSession = $em->getRepository('AppBundle:Session');
+            $repoInscription_sess = $em->getRepository('AppBundle:Inscription_sess');
+            $repoCohorte = $em->getRepository('AppBundle:Cohorte');
+            $repoInscription_coh = $em->getRepository('AppBundle:Inscription_coh');
+
 
             for($i=0; $i<count($coursSubscribed); $i++){
-                $inscritIds = $em->getRepository('AppBundle:Cours')->findInscrits($coursSubscribed[$i]);
+                $inscritIds = $repoCours->findInscrits($coursSubscribed[$i]);
                 if($inscritIds){
                     foreach($inscritIds as $inscr){
                         array_push($users, $inscr->getId());
@@ -57,9 +63,9 @@ class EmailingController extends Controller
             }
 
             for($i=0; $i<count($sessionsSubscribed); $i++){
-                $session = $this->getDoctrine()->getRepository('AppBundle:Session')->findOneBy(array('id' => $sessionsSubscribed[$i]));
+                $session = $repoSession->findOneBy(array('id' => $sessionsSubscribed[$i]));
                 if($session){
-                    $inscrs = $this->getDoctrine()->getRepository('AppBundle:Inscription_sess')->findBy(array('session' => $session));
+                    $inscrs = $repoInscription_sess->findBy(array('session' => $session));
                     if($inscrs){
                         foreach($inscrs as $inscr){
                             if($inscr->getUser()->isEnabled())
@@ -69,9 +75,9 @@ class EmailingController extends Controller
                 }
             }
             for($i=0; $i<count($sessionsUnSubscribed); $i++){
-                $session = $this->getDoctrine()->getRepository('AppBundle:Session')->findOneBy(array('id' => $sessionsUnSubscribed[$i]));
+                $session = $repoSession->findOneBy(array('id' => $sessionsUnSubscribed[$i]));
                 if($session){
-                    $inscrs = $this->getDoctrine()->getRepository('AppBundle:Inscription_sess')->findBy(array('session' => $session));
+                    $inscrs = $repoInscription_sess->findBy(array('session' => $session));
                     if($inscrs){
                         foreach($inscrs as $inscr){
                             if($inscr->getUser()->isEnabled())
@@ -82,9 +88,9 @@ class EmailingController extends Controller
             }
 
             for($i=0; $i<count($cohSubscribed); $i++){
-                $cohorte = $this->getDoctrine()->getRepository('AppBundle:Cohorte')->findOneBy(array('id' => $cohSubscribed[$i]));
+                $cohorte = $repoCohorte->findOneBy(array('id' => $cohSubscribed[$i]));
                 if($cohorte){
-                    $inscrs = $this->getDoctrine()->getRepository('AppBundle:Inscription_coh')->findBy(array('cohorte' => $cohorte));
+                    $inscrs = $repoInscription_coh->findBy(array('cohorte' => $cohorte));
                     if($inscrs){
                         foreach($inscrs as $inscr){
                             if($inscr->getUser()->isEnabled())
@@ -95,9 +101,9 @@ class EmailingController extends Controller
             }
 
             for($i=0; $i<count($cohUnSubscribed); $i++){
-                $cohorte = $this->getDoctrine()->getRepository('AppBundle:Cohorte')->findOneBy(array('id' => $cohUnSubscribed[$i]));
+                $cohorte = $repoCohorte->findOneBy(array('id' => $cohUnSubscribed[$i]));
                 if($cohorte){
-                    $inscrs = $this->getDoctrine()->getRepository('AppBundle:Inscription_coh')->findBy(array('cohorte' => $cohorte));
+                    $inscrs = $repoInscription_coh->findBy(array('cohorte' => $cohorte));
                     if($inscrs){
                         foreach($inscrs as $inscr){
                             if($inscr->getUser()->isEnabled())
@@ -124,15 +130,16 @@ class EmailingController extends Controller
             $message = $request->request->get('message');
             $users = $request->request->get('users');
             $headers = null;
+            $repoUser = $this->getDoctrine()->getRepository('AppBundle:User');
             /* @var $admin User */
-            $admin = $this->getDoctrine()->getRepository('AppBundle:User')->findOneBy(array('email' => 'erwannig.louf@gmail.com'));
+            $admin = $repoUser->findOneBy(array('email' => 'erwannig.louf@gmail.com'));
             if($admin){
                 array_push($users, $admin->getId());
             }
 
             $arraySended = [];
             for($i=0; $i<count($users); $i++){
-                $user = $this->getDoctrine()->getRepository('AppBundle:User')->findOneBy(array('id' => $users[$i]));
+                $user = $repoUser->findOneBy(array('id' => $users[$i]));
                 $emailContent = \Swift_Message::newInstance()
                     ->setSubject($objet)
                     ->setFrom('noreply@afadec.fr')
@@ -264,8 +271,9 @@ class EmailingController extends Controller
             $users = $request->request->get('users');
 
             $data = array(['id','email','firstname','lastname']);
+            $repoUser = $this->getDoctrine()->getRepository('AppBundle:User');
             for($i=0; $i<count($users); $i++){
-                $user = $this->getDoctrine()->getRepository('AppBundle:User')->findOneBy(array('id' => $users[$i]));
+                $user = $repoUser->findOneBy(array('id' => $users[$i]));
                 array_push($data, [$user->getId(), $user->getEmail(), $user->getFirstname(), $user->getLastname()]);
             }
 

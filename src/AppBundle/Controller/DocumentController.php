@@ -19,8 +19,9 @@ class DocumentController extends Controller
 {
     public function pushArrayDocsAndNew($docs){
         $destDocs = array();
+        $repoStatsUsersDocs = $this->getDoctrine()->getRepository('AppBundle:StatsUsersDocs');
         foreach($docs as $doc){
-            $stat = $this->getDoctrine()->getRepository('AppBundle:StatsUsersDocs')->findBy(array('user' => $this->getUser(), 'document' => $doc));
+            $stat = $repoStatsUsersDocs->findBy(array('user' => $this->getUser(), 'document' => $doc));
             $isNew = 0;
             if(!$stat){
                 $isNew = 1;
@@ -57,9 +58,10 @@ class DocumentController extends Controller
             }
         }
         if($cohortes){
+            $repoInscription_coh = $this->getDoctrine()->getRepository('AppBundle:Inscription_coh');
             foreach($cohortes as $cohorte){
                 if($cohorte->getDisciplines()->contains($discipline)){
-                    $inscrCohs = $this->getDoctrine()->getRepository('AppBundle:Inscription_coh')->findBy(array('cohorte' => $cohorte));
+                    $inscrCohs = $repoInscription_coh->findBy(array('cohorte' => $cohorte));
                     foreach($inscrCohs as $inscrCoh){
                         if(!in_array($inscrCoh->getUser(), $users)  && $inscrCoh->getUser()->isEnabled()) {
                             array_push($users, [$inscrCoh->getUser(), $inscrCoh->getRole()->getNom() ]);
@@ -121,9 +123,10 @@ class DocumentController extends Controller
             }
         }
         if($cohortes){
+            $repoInscription_coh = $this->getDoctrine()->getRepository('AppBundle:Inscription_coh');
             foreach($cohortes as $cohorte){
                 if($cohorte->getDisciplines()->contains($discipline) || $cohorte->getCours()->contains($cours)){
-                    $inscrCohs = $this->getDoctrine()->getRepository('AppBundle:Inscription_coh')->findBy(array('cohorte' => $cohorte));
+                    $inscrCohs = $repoInscription_coh->findBy(array('cohorte' => $cohorte));
                     foreach($inscrCohs as $inscrCoh){
                         if(!in_array($inscrCoh->getUser(), $users)  && $inscrCoh->getUser()->isEnabled()) {
                             array_push($users, [$inscrCoh->getUser(), $inscrCoh->getRole()->getNom() ]);
@@ -187,7 +190,9 @@ class DocumentController extends Controller
             $urlTab = explode('/web', $currentUrl);
             $urlDestTab = explode('var', $urlDest);
 
-            $discipline = $em->getRepository('AppBundle:Discipline')->findOneBy(array('id' => $discId));
+            $repoDiscipline = $em->getRepository('AppBundle:Discipline');
+            $repoUser = $em->getRepository('AppBundle:User');
+            $discipline = $repoDiscipline->findOneBy(array('id' => $discId));
             $proprietaire = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
 
             $doc = new Document();
@@ -212,26 +217,29 @@ class DocumentController extends Controller
                 $assocDisc->setIsImportant($isImportant);
                 $em->persist($assocDisc);
 
-                $inscrits = $em->getRepository('AppBundle:Discipline')->findInscrits($discipline->getId());
+                $inscrits = $repoDiscipline->findInscrits($discipline->getId());
                 if($inscrits){
                     foreach($inscrits as $inscrit){
                         //$this->sendMailDoc($inscrit, $proprietaire, 'la discipline '.$discipline->getNom());
                     }
                 }
             }else{
+                $repoCohorte = $em->getRepository('AppBundle:Cohorte');
+                $repoInscription_coh = $em->getRepository('AppBundle:Inscription_coh');
+                $repoInscription_d = $em->getRepository('AppBundle:Inscription_d');
                 for($i=0; $i<count($users); $i++){
                     $assocInscr = new AssocDocInscr();
                     $assocInscr->setDocument($doc);
                     $assocInscr->setIsImportant($isImportant);
 
-                    $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $users[$i]));
+                    $user = $repoUser->findOneBy(array('id' => $users[$i]));
 
                     // on commence par voir si le user est inscrit à une cohorte qui est inscrite à cette discipline
-                    $cohortes = $this->getDoctrine()->getRepository('AppBundle:Cohorte')->findAll();
+                    $cohortes = $repoCohorte->findAll();
                     $estAssocie = false;
                     foreach($cohortes as $cohorte){
                         if($cohorte->getDisciplines()->contains($discipline)){
-                            $inscrCoh = $this->getDoctrine()->getRepository('AppBundle:Inscription_coh')->findOneBy(array('user' => $user, 'cohorte' => $cohorte));
+                            $inscrCoh = $repoInscription_coh->findOneBy(array('user' => $user, 'cohorte' => $cohorte));
                             if($inscrCoh){
                                 $assocInscr->setInscription($inscrCoh);
                                 $estAssocie = true;
@@ -242,7 +250,7 @@ class DocumentController extends Controller
 
                     // pas de cohorte, on cherche une inscription directe à la discipline
                     if(!$estAssocie){
-                        $inscrD = $this->getDoctrine()->getRepository('AppBundle:Inscription_d')->findOneBy(array('user' => $user, 'discipline' => $discipline));
+                        $inscrD = $repoInscription_d->findOneBy(array('user' => $user, 'discipline' => $discipline));
                         if($inscrD){
                             $assocInscr->setInscription($inscrD);
                             $estAssocie = true;
@@ -307,8 +315,10 @@ class DocumentController extends Controller
             $urlTab = explode('/web', $currentUrl);
             $urlDestTab = explode('var', $urlDest);
 
-            $cours = $em->getRepository('AppBundle:Cours')->findOneBy(array('id' => $coursId));
-            $proprietaire = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
+            $repoCours = $em->getRepository('AppBundle:Cours');
+            $repoUser = $em->getRepository('AppBundle:User');
+            $cours = $repoCours->findOneBy(array('id' => $coursId));
+            $proprietaire = $repoUser->findOneBy(array('id' => $userId));
 
             $doc = new Document();
             $doc->setProprietaire($proprietaire);
@@ -334,7 +344,7 @@ class DocumentController extends Controller
                 $em->flush();
 
 
-                $inscrits = $em->getRepository('AppBundle:Cours')->findInscrits($cours->getId());
+                $inscrits = $repoCours->findInscrits($cours->getId());
                 if($inscrits){
                     foreach($inscrits as $inscrit){
                         //$this->sendMailDoc($inscrit, $proprietaire, 'le cours '.$cours->getNom());
@@ -343,20 +353,24 @@ class DocumentController extends Controller
 
                 return new JsonResponse(array('action' =>'upload Document for Cours : All', 'id' => $coursId, 'ext' => $ext));
             }else{
+                $repoCohorte = $em->getRepository('AppBundle:Cohorte');
+                $repoInscription_coh = $em->getRepository('AppBundle:Inscription_coh');
+                $repoInscription_d = $em->getRepository('AppBundle:Inscription_d');
+                $repoInscription_c = $em->getRepository('AppBundle:Inscription_c');
                 for($i=0; $i<count($users); $i++){
                     $assocInscr = new AssocDocInscr();
                     $assocInscr->setDocument($doc);
                     $assocInscr->setIsImportant($isImportant);
                     $assocInscr->setCours($cours);
 
-                    $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $users[$i]));
+                    $user = $repoUser->findOneBy(array('id' => $users[$i]));
 
                     // on commence par voir si le user est inscrit à une cohorte qui est inscrite à ce cours
-                    $cohortes = $this->getDoctrine()->getRepository('AppBundle:Cohorte')->findAll();
+                    $cohortes = $repoCohorte->findAll();
                     $estAssocie = false;
                     foreach($cohortes as $cohorte){
                         if($cohorte->getDisciplines()->contains($cours->getDiscipline()) || $cohorte->getCours()->contains($cours)){
-                            $inscrCoh = $this->getDoctrine()->getRepository('AppBundle:Inscription_coh')->findOneBy(array('user' => $user, 'cohorte' => $cohorte));
+                            $inscrCoh = $repoInscription_coh->findOneBy(array('user' => $user, 'cohorte' => $cohorte));
                             if($inscrCoh){
                                 $assocInscr->setInscription($inscrCoh);
                                 $estAssocie = true;
@@ -367,14 +381,14 @@ class DocumentController extends Controller
 
                     // pas de cohorte, on cherche une inscription directe au cours
                     if(!$estAssocie){
-                        $inscrD = $this->getDoctrine()->getRepository('AppBundle:Inscription_d')->findOneBy(array('user' => $user, 'discipline' => $cours->getDiscipline()));
+                        $inscrD = $repoInscription_d->findOneBy(array('user' => $user, 'discipline' => $cours->getDiscipline()));
                         if($inscrD){
                             $assocInscr->setInscription($inscrD);
                             $estAssocie = true;
                         }
                     }
                     if(!$estAssocie){
-                        $inscrC = $this->getDoctrine()->getRepository('AppBundle:Inscription_c')->findOneBy(array('user' => $user, 'cours' => $cours));
+                        $inscrC = $repoInscription_c->findOneBy(array('user' => $user, 'cours' => $cours));
                         if($inscrC){
                             $assocInscr->setInscription($inscrC);
                             $estAssocie = true;

@@ -30,14 +30,14 @@ class ForumController extends Controller
         $sujetsepingles = array();
         $sujetsEntity = $this->getDoctrine()->getRepository('AppBundle:ForumSujet')->findBy(array('forum' => $forum));
 
-
+        $repoForumPost = $this->getDoctrine()->getRepository('AppBundle:ForumPost');
         for($i=0; $i<count($sujetsEntity); $i++){
             if($sujetsEntity[$i]->getEpingle()){
                 $sujetsepingles[$i]["sujet"] = $sujetsEntity[$i];
-                $sujetsepingles[$i]["posts"] = $this->getDoctrine()->getRepository('AppBundle:ForumPost')->findBy(array('sujet' => $sujetsEntity[$i]));
+                $sujetsepingles[$i]["posts"] = $repoForumPost->findBy(array('sujet' => $sujetsEntity[$i]));
             }else{
                 $sujets[$i]["sujet"] = $sujetsEntity[$i];
-                $sujets[$i]["posts"] = $this->getDoctrine()->getRepository('AppBundle:ForumPost')->findBy(array('sujet' => $sujetsEntity[$i]));
+                $sujets[$i]["posts"] = $repoForumPost->findBy(array('sujet' => $sujetsEntity[$i]));
             }
 
         }

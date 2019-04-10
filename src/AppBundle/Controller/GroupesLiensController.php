@@ -129,8 +129,10 @@ class GroupesLiensController extends Controller
             $em = $this->getDoctrine()->getEntityManager();
             $arrayAssocsId = $request->request->get('arrayAssocs');
 
+            $repoAssocGroupeLiens = $em->getRepository('AppBundle:AssocGroupeLiens');
+
             for($i=0; $i<count($arrayAssocsId); $i++){
-                $assoc = $em->getRepository('AppBundle:AssocGroupeLiens')->findOneBy(array('id' => $arrayAssocsId[$i]));
+                $assoc = $repoAssocGroupeLiens->findOneBy(array('id' => $arrayAssocsId[$i]));
                 $assoc->setPosition($i);
                 $em->persist($assoc);
             }

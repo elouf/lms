@@ -116,9 +116,91 @@
             $('.cancelDesinscr').click(function () {
                 $('.modal').modal('toggle');
             });
+
+            /* on va mettre à jour les données du tableau en ajax pour optimiser */
+            let usersIdArray = [];
+            $('.userLine').each(function(){
+                usersIdArray.push($(this).attr('data-userid'));
+            });
+            let partOfusersIdArray = chunkArray(usersIdArray, 200);
+
+            treatUsersPart(0, partOfusersIdArray);
+            function treatUsersPart(part, ids){
+                $.ajax({
+                    type: "POST",
+                    url: "{{ path('updateUsersTab_ajax') }}",
+                    data: {
+                        userIds: ids[part]
+                    },
+                    dataType: "json",
+                    success: function (response) {
+                        for (let i=0; i<response['users'].length; i++){
+                            let tabUser = response['users'][i];
+                            let userId = tabUser['userid'];
+                            let cohCell = $('.userLine[data-userid='+userId+'] .cohCell');
+
+                            for (let j=0; j<tabUser['cohortes'].length; j++){
+                                let coh = tabUser['cohortes'][j];
+                                let link = '<a href="{{ path("itemUsers", {id: "cohid", type: "cohorte"}) }}">'+coh['nom']+'(roleNom)</a>';
+                                link = link.replace("cohid", coh['id']);
+                                link = link.replace("roleNom", coh['role']);
+                                link = link.replace("Enseignant", 'Enseignant correcteur');
+                                cohCell.html(link);
+                            }
+
+                        }
+                        part++;
+                        if(part<=ids.length-1){
+                            treatUsersPart(part, ids);
+                        }else{
+                            $('thead tr [data-column="6"] .loader-backdrop').remove();
+                            $('thead tr [data-column="6"] input').show();
+                            $('.download').show();
+                        }
+                    }
+                });
+            }
+
+            function chunkArray(myArray, chunk_size){
+                let arrayLength = myArray.length;
+                let tempArray = [];
+
+                for (let index = 0; index < arrayLength; index += chunk_size) {
+                    let myChunk = myArray.slice(index, index+chunk_size);
+                    tempArray.push(myChunk);
+                }
+
+                return tempArray;
+            }
+
+            // masque la colonne cohorte au début
+            let loader = '<div class="loader-backdrop">\n' +
+            '    <div class="loader">\n' +
+            '        <div class="ball-1"></div>\n' +
+            '        <div class="ball-2"></div>\n' +
+            '    </div>\n' +
+            '</div>';
+            $('thead tr [data-column="6"]').css({
+                'position': 'relative'
+            });
+            $('thead tr [data-column="6"] input').hide().after(loader);
+            $('.download').hide();
         });
     </script>
-
+    <style>
+        thead tr [data-column="6"] .loader-backdrop{
+            position: absolute;
+            height: auto;
+            width: auto;
+            top:20px;
+            left: calc(50% - 15px);
+            display: block !important;
+        }
+        thead tr [data-column="6"] .loader{
+            width: 30px;
+            height: 30px;
+        }
+    </style>
     <div class="container mt-20 mb-40">
         <div class="row">
             <div class="col-md-12">
@@ -139,31 +221,25 @@
                     </thead>
                     <tbody>
                     {% for myUser in myUsers %}
-                        <tr class="userLine" data-userId="{{ myUser.user.id }}">
+                        <tr class="userLine" data-userId="{{ myUser.id }}">
                             <td><input class="selectUser" type="checkbox"></td>
-                            <td><a href="{{ path('user', {id:myUser.user.id }) }}">{{ myUser.user.id }}</a></td>
-                            <td><a href="{{ path('user', {id:myUser.user.id }) }}">{{ myUser.user.email }}</a></td>
-                            <td>{{ myUser.user.firstname }}</td>
-                            <td>{{ myUser.user.lastname }}</td>
-                            <td>{{ myUser.user.statut }}</td>
-                            <td>
-                                {% for coh in myUser.cohortes %}
-                                    {% for key, inscr in coh %}
-                                        <a href="{{ path('itemUsers', {id: inscr.cohorte.id, type: "cohorte"}) }}">{{ inscr.cohorte.nom }}
-                                            ({{ inscr.role.nom|replace({ 'Enseignant': 'Enseignant correcteur' }) }}
-                                            ), </a>
-                                    {% endfor %}
-                                {% endfor %}
+                            <td><a href="{{ path('user', {id:myUser.id }) }}">{{ myUser.id }}</a></td>
+                            <td><a href="{{ path('user', {id:myUser.id }) }}">{{ myUser.email }}</a></td>
+                            <td>{{ myUser.firstname }}</td>
+                            <td>{{ myUser.lastname }}</td>
+                            <td>{{ myUser.statut }}</td>
+                            <td class="cohCell">
+
                             </td>
-                            <td>{{ myUser.user.institut }}</td>
+                            <td>{{ myUser.institut }}</td>
                             <td>
-                                {% if myUser.user.enabled == 1 %}
+                                {% if myUser.enabled == 1 %}
                                     oui
                                 {% else %}
                                     non
                                 {% endif %}
                             </td>
-                            <td>{{ myUser.user.createdAt|localizeddate('none', 'none', null, null, 'Y/LL/dd' ) }}</td>
+                            <td>{{ myUser.createdAt|localizeddate('none', 'none', null, null, 'Y/LL/dd' ) }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>

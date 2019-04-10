@@ -57,7 +57,15 @@ class DisciplineController extends Controller
 
         $repositoryCoh = $this->getDoctrine()->getRepository('AppBundle:Cohorte');
 
-        $disciplines = $this->getDoctrine()->getRepository('AppBundle:Discipline')->findBy(array(), array('nom' => 'ASC'));
+        $repositoryDis = $this->getDoctrine()->getRepository('AppBundle:Discipline');
+
+        $repositoryInscrSess = $this->getDoctrine()->getRepository('AppBundle:Inscription_sess');
+
+        $repositoryStatsUsersDocs = $this->getDoctrine()->getRepository('AppBundle:StatsUsersDocs');
+
+        $repositoryDocuments = $this->getDoctrine()->getRepository('AppBundle:Document');
+
+        $disciplines = $repositoryDis->findBy(array(), array('nom' => 'ASC'));
 
         // Par défaut, admin : toutes les disciplines
         $disciplinesArray2Consider = $disciplines;
@@ -103,7 +111,7 @@ class DisciplineController extends Controller
         if ($this->getUser()->hasRole('ROLE_SUPER_ADMIN') || $this->getUser()->getStatut() == 'Responsable' || $this->getUser()->getStatut() == 'Formateur'){
             // on ajoute les cohortes liées pour l'admin pour qu'il puisse accéder aux pages d'inscriptions à ces cohortes
             for($i=0; $i<count($disciplinesArray2Consider); $i++){
-                $cohLiees[$i] = $this->getDoctrine()->getRepository('AppBundle:Discipline')->getCohortes($disciplinesArray2Consider[$i]->getId());
+                $cohLiees[$i] = $repositoryDis->getCohortes($disciplinesArray2Consider[$i]->getId());
             }
         }
 
@@ -128,9 +136,7 @@ class DisciplineController extends Controller
                 }else{
                     $session = $coursesT[$j]->getSession();
                     $currentDate = new DateTime();
-                    $inscrSess = $this->getDoctrine()
-                        ->getRepository('AppBundle:Inscription_sess')
-                        ->findOneBy(array('user' => $this->getUser(), 'session' => $session));
+                    $inscrSess = $repositoryInscrSess->findOneBy(array('user' => $this->getUser(), 'session' => $session));
                     // on est inscrit et les dates sont bonnes (ou on est admin ou enseignant)
                     $isEns = false;
                     if($inscrSess){
@@ -179,12 +185,12 @@ class DisciplineController extends Controller
         // on recherche les infos liées aux documents
         // Comme un accès aux documents de la discipline existe, on doit afficher l'info-bulle si certains n'ont pas été visités
         for($j=0; $j<count($courses); $j++){
-            $docs = $this->getDoctrine()->getRepository('AppBundle:Document')->findByDisc($courses[$j]["discipline"], $this->getUser());
+            $docs = $repositoryDocuments->findByDisc($courses[$j]["discipline"], $this->getUser());
             $documents = array_merge($docs[0], $docs[1]);
 
             $nbNewDocs = 0;
             foreach($documents as $doc){
-                $stat = $this->getDoctrine()->getRepository('AppBundle:StatsUsersDocs')->findBy(array('user' => $this->getUser(), 'document' => $doc));
+                $stat = $repositoryStatsUsersDocs->findBy(array('user' => $this->getUser(), 'document' => $doc));
                 if(!$stat){
                     $nbNewDocs++;
                 }

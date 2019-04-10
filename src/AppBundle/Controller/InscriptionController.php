@@ -284,7 +284,7 @@ class InscriptionController extends Controller
         /* @var $discRepo DisciplineRepository */
         $discRepo = $this->getDoctrine()->getRepository('AppBundle:Discipline');
 
-        $disciplines = $this->getDoctrine()->getRepository('AppBundle:Discipline')->findAll();
+        $disciplines = $discRepo->findAll();
         $discAccess = [];
         $discNoAccess = [];
         if($disciplines){

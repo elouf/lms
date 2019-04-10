@@ -52,9 +52,10 @@ class DevoirController extends Controller
 
         $myCopies = array();
         if($copies){
+            $repoCopieFichier = $this->getDoctrine()->getRepository('AppBundle:CopieFichier');
             /* @var $copie Copie */
             foreach($copies as $copie){
-                $fichier = $this->getDoctrine()->getRepository('AppBundle:CopieFichier')->findOneBy(array('copie' => $copie));
+                $fichier = $repoCopieFichier->findOneBy(array('copie' => $copie));
                 array_push($myCopies, [
                     'copie' => $copie,
                     'fichierCopie' => $fichier?"oui":"non",
@@ -85,16 +86,19 @@ class DevoirController extends Controller
         $datas = array();
 
         $copies = $this->getDoctrine()->getRepository('AppBundle:Copie')->findBy(array('devoir' => $devoir));
+        $repoCopieFichier = $this->getDoctrine()->getRepository('AppBundle:CopieFichier');
+        $repoCorrige = $this->getDoctrine()->getRepository('AppBundle:Corrige');
+        $repoCorrigeFichier = $this->getDoctrine()->getRepository('AppBundle:CorrigeFichier');
         for($u=0; $u<count($copies); $u++){
-            $copieFichier = $this->getDoctrine()->getRepository('AppBundle:CopieFichier')->findOneBy(array('copie' => $copies[$u]));
+            $copieFichier = $repoCopieFichier->findOneBy(array('copie' => $copies[$u]));
             $datas[$u]["copie"] = $copies[$u];
             $datas[$u]["copieFichier"] = $copieFichier;
             $datas[$u]["corrigeFichier"] = "undefined";
             $datas[$u]["corrige"] = "undefined";
             if($copieFichier){
-                $corrige = $this->getDoctrine()->getRepository('AppBundle:Corrige')->findOneBy(array('copie' => $copies[$u]));
+                $corrige = $repoCorrige->findOneBy(array('copie' => $copies[$u]));
                 if($corrige){
-                    $corrigeFichier = $this->getDoctrine()->getRepository('AppBundle:CorrigeFichier')->findOneBy(array('corrige' => $corrige));
+                    $corrigeFichier = $repoCorrigeFichier->findOneBy(array('corrige' => $corrige));
                     $datas[$u]["corrigeFichier"] = $corrigeFichier;
                     $datas[$u]["corrige"] = $corrige;
                 }
@@ -479,9 +483,11 @@ class DevoirController extends Controller
 
             /* @var $devoir Devoir */
             $devoir = $em->getRepository('AppBundle:Devoir')->findOneBy(array('id' => $idDevoir));
+
+            $repoUser = $em->getRepository('AppBundle:User');
             /* @var $user User */
-            $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
-            $etu = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $etuId));
+            $user = $repoUser->findOneBy(array('id' => $userId));
+            $etu = $repoUser->findOneBy(array('id' => $etuId));
             $copie = $em->getRepository('AppBundle:Copie')->findOneBy(array('auteur' => $etu, 'devoir' => $devoir));
 
             $checkCorrige = $em->getRepository('AppBundle:Corrige')->findOneBy(array('copie' => $copie));

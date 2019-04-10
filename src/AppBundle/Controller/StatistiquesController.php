@@ -18,12 +18,13 @@ class StatistiquesController extends Controller
     {
         $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
 
-        $cohortes = $this->getDoctrine()->getRepository('AppBundle:Cohorte')->findAll();
+        $repoCohorte = $this->getDoctrine()->getRepository('AppBundle:Cohorte');
+        $cohortes = $repoCohorte->findAll();
         $cohortesArr = array();
 
         for($i=0; $i<count($cohortes); $i++) {
             $cohortesArr[$i]["cohorte"] = $cohortes[$i];
-            $inscrits = $this->getDoctrine()->getRepository('AppBundle:Cohorte')->findInscrits($cohortes[$i]->getId());
+            $inscrits = $repoCohorte->findInscrits($cohortes[$i]->getId());
             $cohortesArr[$i]["inscrits"] = $inscrits;
         }
 

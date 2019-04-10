@@ -173,8 +173,9 @@ class ZoneRessourceController extends Controller
             $em = $this->getDoctrine()->getEntityManager();
             $arrayZonesId = $request->request->get('arrayZones');
 
+            $repoZoneRessource = $em->getRepository('AppBundle:ZoneRessource');
             for($i=0; $i<count($arrayZonesId); $i++){
-                $zone = $em->getRepository('AppBundle:ZoneRessource')->findOneBy(array('id' => $arrayZonesId[$i]));
+                $zone = $repoZoneRessource->findOneBy(array('id' => $arrayZonesId[$i]));
                 $zone->setPosition($i);
             }
 

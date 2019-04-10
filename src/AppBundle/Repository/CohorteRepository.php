@@ -87,8 +87,9 @@ class CohorteRepository extends \Doctrine\ORM\EntityRepository
         $courses = $cohorte->getCours();
         $discs = $cohorte->getDisciplines();
         if($discs){
+            $repositoryCours = $em->getRepository('AppBundle:Cours');
             foreach ($discs as $disc){
-                $cours_arr = $em->getRepository('AppBundle:Cours')->findBy(array('discipline' => $disc));
+                $cours_arr = $repositoryCours->findBy(array('discipline' => $disc));
                 if($cours_arr) {
                     foreach ($cours_arr as $cours) {
                         if(!$courses->contains($cours)){

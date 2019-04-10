@@ -40,10 +40,22 @@ class LoadInscription_cohData extends AbstractFixture implements OrderedFixtureI
             $this->getReference('user_enseignant_1'),
             $this->getReference('coh_maths'));
 
+        for ($i = 10; $i < 1900; $i++) {
+            $cohNames = array('coh_phy', 'coh_maths', 'coh_esp');
+            $randCoh = $this->getReference($cohNames[mt_rand(0, count($cohNames)-1)]);
+            $inscr = $this->createItem($manager,
+                $this->getReference('role_etu'),
+                $this->getReference('user_etudiant_' . $i),
+                $randCoh);
+            $this->addReference('inscr_auto' . $i, $inscr);
+        }
+
+
         $manager->flush();
     }
 
-    public function createItem(ObjectManager $manager, $role, $user, $cohorte){
+    public function createItem(ObjectManager $manager, $role, $user, $cohorte)
+    {
         $item = new Inscription_coh();
         $item->setUser($user);
         $item->setCohorte($cohorte);

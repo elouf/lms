@@ -96,7 +96,7 @@ class UsersController extends Controller
         if ($form->isValid()) {
             $user = $form->getData();
             $pass = $form['plainPassword']->getData();
-            if($pass){
+            if ($pass) {
                 $user->setPassword($this->container->get('security.encoder_factory')->getEncoder($user)->encodePassword($pass, $user->getSalt()));
             }
 
@@ -147,34 +147,58 @@ class UsersController extends Controller
     {
         $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
 
-        $userRepo = $this->getDoctrine()->getRepository('AppBundle:User');
-        $users = $userRepo->findAll();
+        $users = $this->getDoctrine()->getRepository('AppBundle:User')->findAll();
 
-        /* @var $cohRepo CohorteRepository */
-        $cohRepo = $this->getDoctrine()->getRepository('AppBundle:Cohorte');
-        $cohortes = $cohRepo->findAll();
-        $myUsers = [];
-        /* @var $user User */
-        foreach ($users as $user) {
-            if ($user->isEnabled()) {
-                $myCohortes = [];
-                if ($cohortes) {
-                    /* @var $cohorte Cohorte */
-                    foreach ($cohortes as $cohorte) {
-                        if ($cohRepo->userHasAccessOrIsInscrit($user->getId(), $cohorte->getId())) {
-                            array_push($myCohortes, $cohRepo->getUserInscr($user->getId(), $cohorte->getId()));
-                        }
-                    }
-                }
-                array_push($myUsers, ['user' => $user, 'cohortes' => $myCohortes]);
-            } else {
-                array_push($myUsers, ['user' => $user, 'cohortes' => []]);
-            }
-        }
         return $this->render('user/userFrontEnd.html.twig', [
-            'myUsers' => $myUsers
+            'myUsers' => $users
         ]);
     }
+
+    /**
+     * @Route("/updateUsersTab_ajax", name="updateUsersTab_ajax")
+     */
+    public function updateUsersTabAjaxAction(Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+
+            $userIds = $request->request->get('userIds');
+            $repoUser = $em->getRepository('AppBundle:User');
+            if ($userIds) {
+                $users = [];
+                /* @var $cohRepo CohorteRepository */
+                $cohRepo = $this->getDoctrine()->getRepository('AppBundle:Cohorte');
+                $Inscription_cohRepo = $this->getDoctrine()->getRepository('AppBundle:Inscription_coh');
+                $cohortes = $cohRepo->findAll();
+                foreach ($userIds as $userId) {
+                    $userTab['userid'] = $userId;
+                    $userTab['cohortes'] = [];
+                    /* @var User $user */
+                    $user = $repoUser->findOneBy(array('id' => $userId));
+                    /* @var $cohorte Cohorte */
+                    foreach ($cohortes as $cohorte) {
+                        $coh = $cohRepo->findOneBy(array('id'=> $cohorte->getId()));
+                        $inscrs = $Inscription_cohRepo->findBy(array('cohorte' => $coh, 'user' => $user));
+
+                        if ($inscrs) {
+                            /* @var Inscription_coh $inscr */
+                            foreach ($inscrs as $inscr) {
+                                array_push($userTab['cohortes'], array('nom' => $coh->getNom(), 'id' => $coh->getId(), 'role' => $inscr->getRole()->getNom()));
+                            }
+                        }
+                    }
+                    array_push($users, $userTab);
+                }
+            }
+
+            $em->flush();
+
+            return new JsonResponse(array('action' => 'ajoute les cohortes au tableau des users', 'users' => $users));
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
 
     /**
      * @Route("/notifsManag", name="notifsManag")
@@ -294,12 +318,16 @@ class UsersController extends Controller
         $arrayUsers = [];
 
         if ($users) {
+            $repoInscription_coh = $em->getRepository('AppBundle:Inscription_coh');
+            $repoInscription_d = $em->getRepository('AppBundle:Inscription_d');
+            $repoInscription_c = $em->getRepository('AppBundle:Inscription_c');
+
             $d1 = new DateTime($year . '-' . $month . '-' . $day . ' 00:00:00');
             /* @var $user User */
             foreach ($users as $user) {
                 $isEns = false;
 
-                $inscrs = $em->getRepository('AppBundle:Inscription_coh')->findBy(array('user' => $user));
+                $inscrs = $repoInscription_coh->findBy(array('user' => $user));
                 if ($inscrs) {
                     /* @var $inscr Inscription_coh */
                     foreach ($inscrs as $inscr) {
@@ -309,7 +337,7 @@ class UsersController extends Controller
                         }
                     }
                 }
-                $inscrs = $em->getRepository('AppBundle:Inscription_d')->findBy(array('user' => $user));
+                $inscrs = $repoInscription_d->findBy(array('user' => $user));
                 if ($inscrs) {
                     /* @var $inscr Inscription_d */
                     foreach ($inscrs as $inscr) {
@@ -319,7 +347,7 @@ class UsersController extends Controller
                         }
                     }
                 }
-                $inscrs = $em->getRepository('AppBundle:Inscription_c')->findBy(array('user' => $user));
+                $inscrs = $repoInscription_c->findBy(array('user' => $user));
                 if ($inscrs) {
                     /* @var $inscr Inscription_c */
                     foreach ($inscrs as $inscr) {
@@ -351,7 +379,7 @@ class UsersController extends Controller
     {
         /* @var $user User */
         $user = $this->getUser();
-        if((($user->getStatut() !== 'Responsable' && $user->getStatut() !== 'Formateur') || !$user->getConfirmedByAdmin()) && !$this->getUser()->hasRole('ROLE_SUPER_ADMIN')){
+        if ((($user->getStatut() !== 'Responsable' && $user->getStatut() !== 'Formateur') || !$user->getConfirmedByAdmin()) && !$this->getUser()->hasRole('ROLE_SUPER_ADMIN')) {
             return $this->redirectToRoute('homepage');
         }
 
@@ -374,8 +402,10 @@ class UsersController extends Controller
 
         $myCopies = array();
         if ($copies) {
+            $repoCopieFichier = $this->getDoctrine()->getRepository('AppBundle:CopieFichier');
+
             foreach ($copies as $copie) {
-                $fichier = $this->getDoctrine()->getRepository('AppBundle:CopieFichier')->findOneBy(array('copie' => $copie));
+                $fichier = $repoCopieFichier->findOneBy(array('copie' => $copie));
                 if ($fichier) {
                     array_push($myCopies, ['copie' => $copie, 'fichier' => $fichier]);
                 }
@@ -384,6 +414,7 @@ class UsersController extends Controller
         $allcourses = $cours_repo->findAll();
         $sessions_tab = array();
         $sessions_tabTest = array();
+        $repoSession = $this->getDoctrine()->getRepository('AppBundle:Session');
         foreach ($allcourses as $coursFiltre) {
             if ($coursFiltre->getSession() != null && $cours_repo->userHasAccess($user->getId(), $coursFiltre->getId())) {
                 $sess = $coursFiltre->getSession();
@@ -399,7 +430,7 @@ class UsersController extends Controller
                     }
 
                     array_push($sessions_tabTest, $sess);
-                    $isInscrit = $this->getDoctrine()->getRepository('AppBundle:Session')->userIsInscrit($user->getId(), $sess->getId());
+                    $isInscrit = $repoSession->userIsInscrit($user->getId(), $sess->getId());
                     array_push($sessions_tab, array(
                         'session' => $sess,
                         'isInscrit' => $isInscrit,
@@ -521,7 +552,7 @@ class UsersController extends Controller
     {
         /* @var $user User */
         $user = $this->getUser();
-        if((($user->getStatut() !== 'Responsable' && $user->getStatut() !== 'Formateur') || !$user->getConfirmedByAdmin()) && !$this->getUser()->hasRole('ROLE_SUPER_ADMIN')){
+        if ((($user->getStatut() !== 'Responsable' && $user->getStatut() !== 'Formateur') || !$user->getConfirmedByAdmin()) && !$this->getUser()->hasRole('ROLE_SUPER_ADMIN')) {
             return $this->redirectToRoute('homepage');
         }
 
@@ -564,6 +595,7 @@ class UsersController extends Controller
                 ]);
             }
         }
+        $repoUserStatRessource = $this->getDoctrine()->getRepository('AppBundle:UserStatRessource');
         $ressources = new ArrayCollection();
         $linkedCourses = new ArrayCollection();
         if ($type == "cohorte") {
@@ -597,8 +629,8 @@ class UsersController extends Controller
                 ->getForm();
 
             $linkedCourses_arr = $this->getDoctrine()->getRepository('AppBundle:Cours')->findBy(array('discipline' => $item));
-            if($linkedCourses_arr){
-                foreach ($linkedCourses_arr as $linkedCourses_arrOne){
+            if ($linkedCourses_arr) {
+                foreach ($linkedCourses_arr as $linkedCourses_arrOne) {
                     $linkedCourses->add($linkedCourses_arrOne);
                 }
             }
@@ -628,9 +660,9 @@ class UsersController extends Controller
                 ->getForm();
 
             $c_ressources = $this->getDoctrine()->getRepository('AppBundle:Ressource')->findBy(array('cours' => $item));
-            if($c_ressources){
-                foreach ($c_ressources as $c_ressource){
-                    $ressStats = $this->getDoctrine()->getRepository('AppBundle:UserStatRessource')->findBy(array('ressource' => $c_ressource));
+            if ($c_ressources) {
+                foreach ($c_ressources as $c_ressource) {
+                    $ressStats = $repoUserStatRessource->findBy(array('ressource' => $c_ressource));
 
                     $ressources->add(["ressource" => $c_ressource, "stats" => $ressStats]);
                 }
@@ -648,9 +680,9 @@ class UsersController extends Controller
                 ->add('save', SubmitType::class, array('label' => 'Enregistrer'))
                 ->getForm();
             $c_ressources = $this->getDoctrine()->getRepository('AppBundle:Ressource')->findBy(array('cours' => $item));
-            if($c_ressources){
-                foreach ($c_ressources as $c_ressource){
-                    $ressStats = $this->getDoctrine()->getRepository('AppBundle:UserStatRessource')->findBy(array('ressource' => $c_ressource));
+            if ($c_ressources) {
+                foreach ($c_ressources as $c_ressource) {
+                    $ressStats = $repoUserStatRessource->findBy(array('ressource' => $c_ressource));
 
                     $ressources->add(["ressource" => $c_ressource, "stats" => $ressStats]);
                 }
@@ -696,8 +728,10 @@ class UsersController extends Controller
             $EntityName = '';
             $EntityInscrName = '';
 
+            $repoUser = $em->getRepository('AppBundle:User');
+
             foreach ($userIds as $userId) {
-                $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
+                $user = $repoUser->findOneBy(array('id' => $userId));
 
                 if ($itemType == 'cohorte') {
                     $EntityName = 'Cohorte';
@@ -709,9 +743,9 @@ class UsersController extends Controller
                     $EntityName = 'Cours';
                     $EntityInscrName = 'Inscription_c';
                 }
-                $item = $em->getRepository('AppBundle:'.$EntityName)->findOneBy(array('id' => $itemId));
+                $item = $em->getRepository('AppBundle:' . $EntityName)->findOneBy(array('id' => $itemId));
                 /* @var $inscr Inscription_coh */
-                $inscr = $em->getRepository('AppBundle:'.$EntityInscrName)->findOneBy(array($itemType => $item, 'user' => $user));
+                $inscr = $em->getRepository('AppBundle:' . $EntityInscrName)->findOneBy(array($itemType => $item, 'user' => $user));
                 $inscr->setRole($role);
             }
             $em->flush();
@@ -736,16 +770,22 @@ class UsersController extends Controller
             $roleId = $request->request->get('idRole');
             $role = $em->getRepository('AppBundle:Role')->findOneBy(array('id' => $roleId));
 
+            $repoUser = $em->getRepository('AppBundle:User');
+            $repoCohorte = $em->getRepository('AppBundle:Cohorte');
+            $repoInscription_d = $em->getRepository('AppBundle:Inscription_d');
+            $repoInscription_c = $em->getRepository('AppBundle:Inscription_c');
+            $repoDiscipline = $em->getRepository('AppBundle:Discipline');
+            $repoCours = $em->getRepository('AppBundle:Cours');
             foreach ($userIds as $userId) {
-                $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
+                $user = $repoUser->findOneBy(array('id' => $userId));
 
                 if ($itemType == 'cohorte') {
                     // commence par désinscrire le user des disciplines et des cours qui en découlent
-                    $cohorte = $em->getRepository('AppBundle:Cohorte')->findOneBy(array('id' => $itemId));
+                    $cohorte = $repoCohorte->findOneBy(array('id' => $itemId));
                     foreach ($cohorte->getDisciplines() as $disc) {
 
                         // d'abords les disciplines associées à la cohorte
-                        $inscriptionsDs = $em->getRepository('AppBundle:Inscription_d')->findBy(array(
+                        $inscriptionsDs = $repoInscription_d->findBy(array(
                             'discipline' => $disc,
                             'user' => $user
                         ));
@@ -759,7 +799,7 @@ class UsersController extends Controller
 
                     // puis on supprime les inscriptions au cours associés à la cohorte
                     foreach ($cohorte->getCours() as $co) {
-                        $inscriptionsCs = $em->getRepository('AppBundle:Inscription_c')->findBy(array(
+                        $inscriptionsCs = $repoInscription_c->findBy(array(
                             'cours' => $co,
                             'user' => $user
                         ));
@@ -772,7 +812,7 @@ class UsersController extends Controller
                     }
 
                     // puis on supprime les inscriptions au cours dont la discipline est associée à la cohorte
-                    $inscriptionsCs = $em->getRepository('AppBundle:Inscription_c')->findBy(array(
+                    $inscriptionsCs = $repoInscription_c->findBy(array(
                         'user' => $user
                     ));
                     if ($inscriptionsCs) {
@@ -792,15 +832,15 @@ class UsersController extends Controller
                     $em->persist($new_inscr);
 
                 } else if ($itemType == 'discipline') {
-                    $discipline = $em->getRepository('AppBundle:Discipline')->findOneBy(array('id' => $itemId));
+                    $discipline = $repoDiscipline->findOneBy(array('id' => $itemId));
 
                     // on supprime les inscriptions au cours dont c'est la discipline
-                    $cours = $em->getRepository('AppBundle:Cours')->findBy(array(
+                    $cours = $repoCours->findBy(array(
                         'discipline' => $discipline
                     ));
                     if ($cours) {
                         foreach ($cours as $co) {
-                            $inscriptionsC = $em->getRepository('AppBundle:Inscription_c')->findBy(array(
+                            $inscriptionsC = $repoInscription_c->findBy(array(
                                 'cours' => $co,
                                 'user' => $user
                             ));
@@ -820,7 +860,7 @@ class UsersController extends Controller
                     $new_inscr->setRole($role);
                     $em->persist($new_inscr);
                 } else if ($itemType == 'cours') {
-                    $cours = $em->getRepository('AppBundle:Cours')->findOneBy(array('id' => $itemId));
+                    $cours = $repoCours->findOneBy(array('id' => $itemId));
 
                     $new_inscr = new Inscription_c();
                     $new_inscr->setUser($user);
@@ -852,21 +892,26 @@ class UsersController extends Controller
             $itemType = $request->request->get('typeItem');
             $userIds = $request->request->get('idUsers');
 
+            $repoUser = $em->getRepository('AppBundle:User');
+            $repoCohorte = $em->getRepository('AppBundle:Cohorte');
+            $repoDiscipline = $em->getRepository('AppBundle:Discipline');
+            $repoCours = $em->getRepository('AppBundle:Cours');
+
             foreach ($userIds as $userId) {
-                $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
+                $user = $repoUser->findOneBy(array('id' => $userId));
 
                 $item = null;
                 $inscrEntityName = "";
 
                 if ($itemType == 'cohorte') {
-                    $item = $em->getRepository('AppBundle:Cohorte')->findOneBy(array('id' => $itemId));
+                    $item = $repoCohorte->findOneBy(array('id' => $itemId));
                     $inscrEntityName = "Inscription_coh";
 
                 } else if ($itemType == 'discipline') {
-                    $item = $em->getRepository('AppBundle:Discipline')->findOneBy(array('id' => $itemId));
+                    $item = $repoDiscipline->findOneBy(array('id' => $itemId));
                     $inscrEntityName = "Inscription_d";
                 } else if ($itemType == 'cours') {
-                    $item = $em->getRepository('AppBundle:Cours')->findOneBy(array('id' => $itemId));
+                    $item = $repoCours->findOneBy(array('id' => $itemId));
                     $inscrEntityName = "Inscription_c";
                 }
                 $inscriptions = $em->getRepository('AppBundle:' . $inscrEntityName)->findBy(array(
@@ -906,9 +951,9 @@ class UsersController extends Controller
 
             $session = $em->getRepository('AppBundle:Session')->findOneBy(array('id' => $id));
             $role = $em->getRepository('AppBundle:Role')->findOneBy(array('id' => $roleId));
-
+            $repoUser = $em->getRepository('AppBundle:User');
             foreach ($userIds as $userId) {
-                $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
+                $user = $repoUser->findOneBy(array('id' => $userId));
 
                 $inscr = new Inscription_sess();
                 $inscr->setSession($session);
@@ -943,11 +988,11 @@ class UsersController extends Controller
             $userIds = $request->request->get('idUsers');
 
             $session = $em->getRepository('AppBundle:Session')->findOneBy(array('id' => $id));
-            $inscr = $em->getRepository('AppBundle:Inscription_sess')->findOneBy(array('session' => $session, 'user' => $user));
-
+            $repoUser = $em->getRepository('AppBundle:User');
+            $repoInscription_sess = $em->getRepository('AppBundle:Inscription_sess');
             foreach ($userIds as $userId) {
-                $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
-
+                $user = $repoUser->findOneBy(array('id' => $userId));
+                $inscr = $repoInscription_sess->findOneBy(array('session' => $session, 'user' => $user));
                 $em->remove($inscr);
             }
 
@@ -1005,7 +1050,7 @@ class UsersController extends Controller
     /**
      * @Route("/confirmAllUsers_ajax", name="confirmAllUsers_ajax")
      */
-    public function confirmAllUsersAjaxAction (Request $request)
+    public function confirmAllUsersAjaxAction(Request $request)
     {
         if ($request->isXMLHttpRequest()) {
             $em = $this->getDoctrine()->getEntityManager();
@@ -1025,7 +1070,8 @@ class UsersController extends Controller
         return new JsonResponse('This is not ajax!', 400);
     }
 
-    public function sendMailConfirmStatut(User $user, $isConfirm){
+    public function sendMailConfirmStatut(User $user, $isConfirm)
+    {
         $message = \Swift_Message::newInstance()
             ->setSubject('[AFADEC] Confirmation de votre statut')
             ->setFrom('noreply@afadec.fr')
@@ -1154,15 +1200,16 @@ class UsersController extends Controller
 
             $userIds = $request->request->get('userIds');
             $mode = $request->request->get('mode');
+            $repoUser = $em->getRepository('AppBundle:User');
             if ($userIds) {
-                foreach ($userIds as $userId){
+                foreach ($userIds as $userId) {
                     /* @var User $user */
-                    $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
-                    if($mode == 'delete'){
+                    $user = $repoUser->findOneBy(array('id' => $userId));
+                    if ($mode == 'delete') {
                         $em->remove($user);
-                    }elseif ($mode == "desact"){
+                    } elseif ($mode == "desact") {
                         $user->setEnabled(false);
-                    }elseif ($mode == "react"){
+                    } elseif ($mode == "react") {
                         $user->setEnabled(true);
                     }
                 }
@@ -1230,7 +1277,7 @@ class UsersController extends Controller
     public function convertRoles($roleName, $entityInscrName, Role $roleDest)
     {
         $em = $this->getDoctrine()->getEntityManager();
-        $inscrs = $this->getDoctrine()->getRepository('AppBundle:'.$entityInscrName)->findAll();
+        $inscrs = $this->getDoctrine()->getRepository('AppBundle:' . $entityInscrName)->findAll();
         $myInscrs = array();
         /* @var $inscr Inscription */
         foreach ($inscrs as $inscr) {
@@ -1240,14 +1287,13 @@ class UsersController extends Controller
             }
         }
         $em->flush();
-        dump($myInscrs);
     }
 
     public function giveStatut2Role1($users, $roleName, $statutDestName)
     {
         /* @var $user User */
         foreach ($users as $key => $user) {
-            if($key >= 2100) {
+            if ($key >= 2100) {
                 $hasChanged = $this->giveStatut2Role2($roleName, $user, $statutDestName, "Inscription_c");
                 if (!$hasChanged) {
                     $hasChanged = $this->giveStatut2Role2($roleName, $user, $statutDestName, "Inscription_d");
@@ -1270,13 +1316,12 @@ class UsersController extends Controller
         /* @var $role Role */
         $role = $this->getDoctrine()->getRepository('AppBundle:Role')->findOneBy(array('nom' => $roleName));
 
-        $inscrs = $this->getDoctrine()->getRepository('AppBundle:'.$entityInscrName)->findBy(array('user' => $user, 'role' => $role));
+        $inscrs = $this->getDoctrine()->getRepository('AppBundle:' . $entityInscrName)->findBy(array('user' => $user, 'role' => $role));
 
         /* @var $inscr Inscription */
         if ($inscrs) {
             $user->setStatut($statutDestName);
             $hasChanged = true;
-            dump($user.' ; '.$statutDestName);
         }
         $em->flush();
 

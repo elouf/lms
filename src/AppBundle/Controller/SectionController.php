@@ -177,8 +177,9 @@ class SectionController extends Controller
             $em = $this->getDoctrine()->getEntityManager();
             $arraySectionsId = $request->request->get('arraySections');
 
+            $repoSection = $em->getRepository('AppBundle:Section');
             for($i=0; $i<count($arraySectionsId); $i++){
-                $section = $em->getRepository('AppBundle:Section')->findOneBy(array('id' => $arraySectionsId[$i]));
+                $section = $repoSection->findOneBy(array('id' => $arraySectionsId[$i]));
                 $section->setPosition($i);
             }
 

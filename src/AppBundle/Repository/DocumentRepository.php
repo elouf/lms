@@ -39,16 +39,21 @@ class DocumentRepository extends \Doctrine\ORM\EntityRepository
                 }
             }
         }
+
+        $repoAssocDocInscr = $this->getEntityManager()->getRepository('AppBundle:AssocDocInscr');
+        $repoInscription_d = $this->getEntityManager()->getRepository('AppBundle:Inscription_d');
+
         // documents associés à une inscription à une cohorte (à laquelle le user est inscrite) inscrite à la discipline
         $cohortes = $this->getEntityManager()->getRepository('AppBundle:Cohorte')->findAll();
         if($cohortes){
+            $repoInscrCoh = $this->getEntityManager()->getRepository('AppBundle:Inscription_coh');
             foreach($cohortes as $cohorte){
                 if($cohorte->getDisciplines()->contains($discipline)){
                     if ($user->hasRole('ROLE_SUPER_ADMIN')){
-                        $inscrCohs = $this->getEntityManager()->getRepository('AppBundle:Inscription_coh')->findBy(array('cohorte' => $cohorte));
+                        $inscrCohs = $repoInscrCoh->findBy(array('cohorte' => $cohorte));
                         if($inscrCohs){
                             foreach($inscrCohs as $inscrCoh){
-                                $assocsInscr = $this->getEntityManager()->getRepository('AppBundle:AssocDocInscr')->findBy(array('inscription' => $inscrCoh, 'cours' => null));
+                                $assocsInscr = $repoAssocDocInscr->findBy(array('inscription' => $inscrCoh, 'cours' => null));
                                 for($i=0; $i<count($assocsInscr); $i++) {
                                     if($assocsInscr[$i]->getIsImportant()){
                                         if(!in_array($assocsInscr[$i]->getDocument(), $documentsImportants)){
@@ -63,12 +68,12 @@ class DocumentRepository extends \Doctrine\ORM\EntityRepository
                             }
                         }
                     }else{
-                        $inscrCoh = $this->getEntityManager()->getRepository('AppBundle:Inscription_coh')->findOneBy(array('user' => $user, 'cohorte' => $cohorte));
+                        $inscrCoh = $repoInscrCoh->findOneBy(array('user' => $user, 'cohorte' => $cohorte));
                         if($inscrCoh){
                             if($inscrCoh->getRole()->getNom() == "Enseignant"){
                                 $role = 'ens';
                             }
-                            $assocsInscr = $this->getEntityManager()->getRepository('AppBundle:AssocDocInscr')->findBy(array('inscription' => $inscrCoh, 'cours' => null));
+                            $assocsInscr = $repoAssocDocInscr->findBy(array('inscription' => $inscrCoh, 'cours' => null));
                             for($i=0; $i<count($assocsInscr); $i++) {
                                 if($assocsInscr[$i]->getIsImportant()){
                                     if(!in_array($assocsInscr[$i]->getDocument(), $documentsImportants)){
@@ -89,10 +94,10 @@ class DocumentRepository extends \Doctrine\ORM\EntityRepository
 
         // documents associés à une inscription à la discipline (à laquelle le user est inscrite)
         if ($user->hasRole('ROLE_SUPER_ADMIN')){
-            $inscrDiss = $this->getEntityManager()->getRepository('AppBundle:Inscription_d')->findBy(array('discipline' => $discipline));
+            $inscrDiss = $repoInscription_d->findBy(array('discipline' => $discipline));
             if($inscrDiss){
                 foreach($inscrDiss as $inscrDis){
-                    $assocsInscr = $this->getEntityManager()->getRepository('AppBundle:AssocDocInscr')->findBy(array('inscription' => $inscrDis, 'cours' => null));
+                    $assocsInscr = $repoAssocDocInscr->findBy(array('inscription' => $inscrDis, 'cours' => null));
                     for($i=0; $i<count($assocsInscr); $i++) {
                         if($assocsInscr[$i]->getIsImportant()){
                             if(!in_array($assocsInscr[$i]->getDocument(), $documentsImportants)){
@@ -107,12 +112,12 @@ class DocumentRepository extends \Doctrine\ORM\EntityRepository
                 }
             }
         }else{
-            $inscrDis = $this->getEntityManager()->getRepository('AppBundle:Inscription_d')->findOneBy(array('user' => $user, 'discipline' => $discipline));
+            $inscrDis = $repoInscription_d->findOneBy(array('user' => $user, 'discipline' => $discipline));
             if($inscrDis){
                 if($inscrDis->getRole()->getNom() == "Enseignant"){
                     $role = 'ens';
                 }
-                $assocsInscr = $this->getEntityManager()->getRepository('AppBundle:AssocDocInscr')->findBy(array('inscription' => $inscrDis, 'cours' => null));
+                $assocsInscr = $repoAssocDocInscr->findBy(array('inscription' => $inscrDis, 'cours' => null));
                 for($i=0; $i<count($assocsInscr); $i++) {
                     if($assocsInscr[$i]->getIsImportant()){
                         if(!in_array($assocsInscr[$i]->getDocument(), $documentsImportants)){
@@ -151,15 +156,19 @@ class DocumentRepository extends \Doctrine\ORM\EntityRepository
             }
         }
 
+        $repoAssocDocInscr = $this->getEntityManager()->getRepository('AppBundle:AssocDocInscr');
+        $repoInscription_coh = $this->getEntityManager()->getRepository('AppBundle:Inscription_coh');
+        $repoInscription_d = $this->getEntityManager()->getRepository('AppBundle:Inscription_d');
+
         // documents associés à une inscription à une cohorte (à laquelle le user est inscrit) inscrite au cours ou à la discipline qui la contient
         if($cohortes){
             foreach($cohortes as $cohorte){
                 if($cohorte->getDisciplines()->contains($discipline) || $cohorte->getCours()->contains($cours)){
                     if ($user->hasRole('ROLE_SUPER_ADMIN')){
-                        $inscrCohs = $this->getEntityManager()->getRepository('AppBundle:Inscription_coh')->findBy(array('cohorte' => $cohorte));
+                        $inscrCohs = $repoInscription_coh->findBy(array('cohorte' => $cohorte));
                         if ($inscrCohs) {
                             foreach($inscrCohs as $inscrCoh) {
-                                $assocsInscr = $this->getEntityManager()->getRepository('AppBundle:AssocDocInscr')->findBy(array('inscription' => $inscrCoh, 'cours' => $cours));
+                                $assocsInscr = $repoAssocDocInscr->findBy(array('inscription' => $inscrCoh, 'cours' => $cours));
                                 for ($i = 0; $i < count($assocsInscr); $i++) {
                                     if($assocsInscr[$i]->getIsImportant()){
                                         if (!in_array($assocsInscr[$i]->getDocument(), $documentsImportants) && $assocsInscr[$i]->getCours() != null) {
@@ -174,12 +183,12 @@ class DocumentRepository extends \Doctrine\ORM\EntityRepository
                             }
                         }
                     }else{
-                        $inscrCoh = $this->getEntityManager()->getRepository('AppBundle:Inscription_coh')->findOneBy(array('user' => $user, 'cohorte' => $cohorte));
+                        $inscrCoh = $repoInscription_coh->findOneBy(array('user' => $user, 'cohorte' => $cohorte));
                         if($inscrCoh){
                             if($role == 'etu' && $inscrCoh->getRole()->getNom() == "Enseignant"){
                                 $role = 'ens';
                             }
-                            $assocsInscr = $this->getEntityManager()->getRepository('AppBundle:AssocDocInscr')->findBy(array('inscription' => $inscrCoh, 'cours' => $cours));
+                            $assocsInscr = $repoAssocDocInscr->findBy(array('inscription' => $inscrCoh, 'cours' => $cours));
                             for($i=0; $i<count($assocsInscr); $i++) {
                                 if($assocsInscr[$i]->getIsImportant()){
                                     if (!in_array($assocsInscr[$i]->getDocument(), $documentsImportants) && $assocsInscr[$i]->getCours() != null) {
@@ -200,10 +209,10 @@ class DocumentRepository extends \Doctrine\ORM\EntityRepository
 
         // documents associés à une inscription à la discipline contenant le cours (à laquelle le user est inscrite)
         if ($user->hasRole('ROLE_SUPER_ADMIN')){
-            $inscrDiss = $this->getEntityManager()->getRepository('AppBundle:Inscription_d')->findOneBy(array('discipline' => $discipline));
+            $inscrDiss = $repoInscription_d->findOneBy(array('discipline' => $discipline));
             if($inscrDiss) {
                 foreach ($inscrDiss as $inscrDis) {
-                    $assocsInscr = $this->getEntityManager()->getRepository('AppBundle:AssocDocInscr')->findBy(array('inscription' => $inscrDis, 'cours' => $cours));
+                    $assocsInscr = $repoAssocDocInscr->findBy(array('inscription' => $inscrDis, 'cours' => $cours));
                     for ($i = 0; $i < count($assocsInscr); $i++) {
                         if($assocsInscr[$i]->getIsImportant()){
                             if (!in_array($assocsInscr[$i]->getDocument(), $documentsImportants) && $assocsInscr[$i]->getCours() != null) {
@@ -218,12 +227,12 @@ class DocumentRepository extends \Doctrine\ORM\EntityRepository
                 }
             }
         }else{
-            $inscrDis = $this->getEntityManager()->getRepository('AppBundle:Inscription_d')->findOneBy(array('user' => $user, 'discipline' => $discipline));
+            $inscrDis = $repoInscription_d->findOneBy(array('user' => $user, 'discipline' => $discipline));
             if($inscrDis){
                 if($role == 'etu' && $inscrDis->getRole()->getNom() == "Enseignant"){
                     $role = 'ens';
                 }
-                $assocsInscr = $this->getEntityManager()->getRepository('AppBundle:AssocDocInscr')->findBy(array('inscription' => $inscrDis, 'cours' => $cours));
+                $assocsInscr = $repoAssocDocInscr->findBy(array('inscription' => $inscrDis, 'cours' => $cours));
                 for($i=0; $i<count($assocsInscr); $i++) {
                     if($assocsInscr[$i]->getIsImportant()){
                         if (!in_array($assocsInscr[$i]->getDocument(), $documentsImportants) && $assocsInscr[$i]->getCours() != null) {

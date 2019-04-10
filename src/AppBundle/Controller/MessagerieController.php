@@ -36,6 +36,8 @@ class MessagerieController extends Controller
         $disciplines = array();
         $cours = array();
 
+        $repoCours = $this->getDoctrine()->getRepository('AppBundle:Cours');
+
         $users = $this->getDoctrine()->getRepository('AppBundle:User')->findBy(array('enabled' => true));
 
         $inscrCohs = $this->getDoctrine()->getRepository('AppBundle:Inscription_coh')->findBy(array('user' => $this->getUser()));
@@ -47,8 +49,6 @@ class MessagerieController extends Controller
             $inscrDiscs = $this->getDoctrine()->getRepository('AppBundle:Inscription_d')->findAll();
             $inscrCourss = $this->getDoctrine()->getRepository('AppBundle:Inscription_c')->findAll();
         }
-
-
 
         if($inscrCourss) {
             foreach ($inscrCourss as $inscrCours) {
@@ -63,7 +63,7 @@ class MessagerieController extends Controller
                 if(!in_array($disc_parse, $disciplines)) {
                     array_push($disciplines, $disc_parse);
 
-                    $courss = $this->getDoctrine()->getRepository('AppBundle:Cours')->findBy(array('discipline' => $disc_parse));
+                    $courss = $repoCours->findBy(array('discipline' => $disc_parse));
                     if($courss){
                         foreach ($courss as $cours_parse) {
                             if (!in_array($cours_parse, $cours)) {
@@ -84,7 +84,7 @@ class MessagerieController extends Controller
                         if(!in_array($disc, $disciplines)) {
                             array_push($disciplines, $disc);
 
-                            $courss = $this->getDoctrine()->getRepository('AppBundle:Cours')->findBy(array('discipline' => $disc));
+                            $courss = $repoCours->findBy(array('discipline' => $disc));
                             if($courss){
                                 foreach ($courss as $cours_parse) {
                                     if (!in_array($cours_parse, $cours)) {
@@ -187,6 +187,12 @@ class MessagerieController extends Controller
 
             $users = array();
             $users2Send = array();
+
+            $repoCohorte = $em->getRepository('AppBundle:Cohorte');
+            $repoInscription_coh = $em->getRepository('AppBundle:Inscription_coh');
+            $repoInscription_d = $em->getRepository('AppBundle:Inscription_d');
+            $repoInscription_c = $em->getRepository('AppBundle:Inscription_c');
+
             $admins = $this->getDoctrine()->getRepository('AppBundle:User')->findByRole('ROLE_SUPER_ADMIN');
             foreach($admins as $admin){
                 if(!in_array($admin, $users)) {
@@ -196,14 +202,14 @@ class MessagerieController extends Controller
             }
 
             if($type == "cohorte"){
-                $cohorte = $em->getRepository('AppBundle:Cohorte')->findOneBy(array('id' => $id));
-                $inscriptions = $em->getRepository('AppBundle:Inscription_coh')->findBy(array('cohorte' => $cohorte));
+                $cohorte = $repoCohorte->findOneBy(array('id' => $id));
+                $inscriptions = $repoInscription_coh->findBy(array('cohorte' => $cohorte));
             }else if($type == "discipline"){
                 $discipline = $em->getRepository('AppBundle:Discipline')->findOneBy(array('id' => $id));
-                $inscriptions = $em->getRepository('AppBundle:Inscription_d')->findBy(array('discipline' => $discipline));
+                $inscriptions = $repoInscription_d->findBy(array('discipline' => $discipline));
             }else if($type == "cours"){
                 $cours = $em->getRepository('AppBundle:Cours')->findOneBy(array('id' => $id));
-                $inscriptions = $em->getRepository('AppBundle:Inscription_c')->findBy(array('cours' => $cours));
+                $inscriptions = $repoInscription_c->findBy(array('cours' => $cours));
             }
             if($inscriptions){
                 foreach ($inscriptions as $inscription) {
@@ -214,11 +220,11 @@ class MessagerieController extends Controller
             }
 
             if($type == "discipline"){
-                $cohortes = $em->getRepository('AppBundle:Cohorte')->findAll();
+                $cohortes = $repoCohorte->findAll();
                 if($cohortes){
                     foreach ($cohortes as $coh) {
                         if (in_array($discipline, $coh->getDisciplines()->toArray())) {
-                            $inscriptions = $em->getRepository('AppBundle:Inscription_coh')->findBy(array('cohorte' => $coh));
+                            $inscriptions = $repoInscription_coh->findBy(array('cohorte' => $coh));
                             if($inscriptions){
                                 foreach ($inscriptions as $inscription) {
                                     $check = $this->checkArrayUser($inscription, $users, $users2Send);
@@ -230,11 +236,11 @@ class MessagerieController extends Controller
                     }
                 }
             }else if($type == "cours"){
-                $cohortes = $em->getRepository('AppBundle:Cohorte')->findAll();
+                $cohortes = $repoCohorte->findAll();
                 if($cohortes){
                     foreach ($cohortes as $coh) {
                         if (in_array($cours, $coh->getCours()->toArray())) {
-                            $inscriptions = $em->getRepository('AppBundle:Inscription_coh')->findBy(array('cohorte' => $coh));
+                            $inscriptions = $repoInscription_coh->findBy(array('cohorte' => $coh));
                             if($inscriptions){
                                 foreach ($inscriptions as $inscription) {
                                     $check = $this->checkArrayUser($inscription, $users, $users2Send);
@@ -247,7 +253,7 @@ class MessagerieController extends Controller
                     foreach ($cohortes as $coh) {
                         foreach ($coh->getDisciplines() as $disc) {
                             if($cours->getDiscipline()->getId() == $disc->getId()){
-                                $inscriptions = $em->getRepository('AppBundle:Inscription_coh')->findBy(array('cohorte' => $coh));
+                                $inscriptions = $repoInscription_coh->findBy(array('cohorte' => $coh));
                                 if($inscriptions){
                                     foreach ($inscriptions as $inscription) {
                                         $check = $this->checkArrayUser($inscription, $users, $users2Send);
@@ -260,7 +266,7 @@ class MessagerieController extends Controller
                     }
                 }
                 $discipline = $cours->getDiscipline();
-                $inscriptions = $em->getRepository('AppBundle:Inscription_d')->findBy(array('discipline' => $discipline));
+                $inscriptions = $repoInscription_d->findBy(array('discipline' => $discipline));
                 if($inscriptions){
                     foreach ($inscriptions as $inscription) {
                         $check = $this->checkArrayUser($inscription, $users, $users2Send);
@@ -322,8 +328,9 @@ class MessagerieController extends Controller
 
             $em->persist($message);
 
+            $repoUser = $em->getRepository('AppBundle:User');
             for($i=0; $i<count($users); $i++){
-                $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $users[$i]));
+                $user = $repoUser->findOneBy(array('id' => $users[$i]));
                 if($user){
                     $assoc = new AssocUserMsg();
                     $assoc->setUser($user);
