@@ -121,7 +121,7 @@ class DisciplineRepository extends \Doctrine\ORM\EntityRepository
         if($inscr){
             return $inscr->getRole();
         }else{
-            $inscrCohs = $em->getRepository('AppBundle:Inscription_coh')->findAll();
+            $inscrCohs = $em->getRepository('AppBundle:Inscription_coh')->findBy(array('user' => $userId));
             if($inscrCohs){
                 foreach($inscrCohs as $inscrCoh){
                     $coh = $inscrCoh->getCohorte();

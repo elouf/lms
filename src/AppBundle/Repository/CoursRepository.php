@@ -160,7 +160,7 @@ class CoursRepository extends \Doctrine\ORM\EntityRepository
             if($inscrD){
                 return $inscrD->getRole();
             }else{
-                $inscrCohs = $em->getRepository('AppBundle:Inscription_coh')->findAll();
+                $inscrCohs = $em->getRepository('AppBundle:Inscription_coh')->findBy(array('user' => $user));
                 if($inscrCohs){
                     foreach($inscrCohs as $inscrCoh){
                         $coh = $inscrCoh->getCohorte();
