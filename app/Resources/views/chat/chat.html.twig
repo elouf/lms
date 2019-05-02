@@ -26,13 +26,13 @@
         {% if  app.user in chat.administrateurs or app.user.hasRole('ROLE_SUPER_ADMIN') %}
             <div class="zoneBtnGestionChat">
                 {% if not chat.enabled %}
-                    <div class="btnDemarreChat btnToggleEnabledChat btn btnLien btn-sm btn-warning">
+                    <!--<div class="btnDemarreChat btnToggleEnabledChat btn btnLien btn-sm btn-warning">
                         Démarrer le chat
-                    </div>
+                    </div>-->
                 {% else %}
-                    <div class="btnDemarreChat btnToggleEnabledChat btn btnLien btn-sm btn-warning">
+                    <!--<div class="btnDemarreChat btnToggleEnabledChat btn btnLien btn-sm btn-warning">
                         Interrompre le chat
-                    </div>
+                    </div>-->
                 {% endif %}
             </div>
 
