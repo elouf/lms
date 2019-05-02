@@ -83,8 +83,49 @@
             border: 1px solid #48753d;
             margin: 10px 0;
         }
+        .btnSubmitZone{
+            /*display: none;*/
+        }
+        .myCaptcha{
+            background: #fff;
+            display: inline-block;
+            padding: 10px;
+            border-radius: 3px;
+        }
+        .etiq{
+            width: 35px;
+            height: 35px;
+            cursor: pointer;
+            display: inline-block;
+            margin: 2px;
+        }
+        .dest{
+            width: 40px;
+            height: 40px;
+            border: 1px solid #000;
+            background: #fff;
+            border-radius: 3px;
+        }
+        [data-color="etiq_bl"]{
+            background-color: #168dd1;
+        }
+        [data-color="etiq_b"]{
+            background-color: #000;
+        }
+        [data-color="etiq_g"]{
+            background-color: #0cad43;
+        }
+        [data-color="etiq_gr"]{
+            background-color: #a2b0b1;
+        }
+        [data-color="etiq_j"]{
+            background-color: #f5e822;
+        }
+        [data-color="etiq_r"]{
+            background-color: #ff1d00;
+        }
     </style>
-
+    <script src="{{ asset('vendors/jquery-ui/jquery-ui.min.js') }}" type=text/javascript></script>
     <script>
         jQuery(document).ready(function () {
 
@@ -155,6 +196,13 @@
                 $('.alertTypeUserValidation').hide();
             }
 
+            $( ".etiq" ).draggable({ revert: "valid" });
+            $( ".dest" ).droppable({
+                drop: function( event, ui ) {
+                    $(this).attr('data-color', ui.draggable.attr("data-color"));
+                    ui.draggable.remove();
+                }
+            });
         });
     </script>
 
@@ -228,7 +276,19 @@
                     <div class="formRow">
                         {{ form_label(form.matiereProfStag) }}{{ form_widget(form.matiereProfStag) }}
                     </div>
-                    <div class="formRow center">
+                    <!--<div class="myCaptcha">
+                        <div>Afin de vérifier que vous n'êtes pas un robot, nous vous demandons de déplacer dans l'ordre les carrés</div>
+                        <div class="dest"></div>
+                        <div class="start">
+                            <div class="etiq" data-color="etiq_r"></div>
+                            <div class="etiq" data-color="etiq_b"></div>
+                            <div class="etiq" data-color="etiq_j"></div>
+                            <div class="etiq" data-color="etiq_g"></div>
+                            <div class="etiq" data-color="etiq_bl"></div>
+                            <div class="etiq" data-color="etiq_gr"></div>
+                        </div>
+                    </div>-->
+                    <div class="formRow center btnSubmitZone">
                         {{ form_widget(form.submit) }}
                     </div>
                     {{ form_end(form) }}
