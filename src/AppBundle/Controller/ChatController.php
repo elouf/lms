@@ -212,7 +212,7 @@ class ChatController extends Controller
             $assoc = $em->getRepository('AppBundle:AssocUserChatSession')->findOneBy(array('session' => $session, 'chat' => $chat));
             $user = $assoc->getUser();
 
-            if($user->getId() != $userConnected->getId()){
+            if($user->getId() == $userId){
                 $newPost = new ChatPost();
                 $newPost->setAuteur($user);
                 $newPost->setChat($chat);
