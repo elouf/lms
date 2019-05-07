@@ -20,7 +20,7 @@ class SendNotifsCommand extends ContainerAwareCommand {
         $this->setDescription("Permet de lancer l'envoi de notifications aux utilisateurs");
 
         // On set l'aide
-        $this->setHelp("Lancez la commande bin/console app:sendnotifscommand -h");
+        $this->setHelp("Lancez la commande php bin/console app:sendnotifscommand -h");
     }
 
     public function execute (InputInterface $input, OutputInterface $output) {

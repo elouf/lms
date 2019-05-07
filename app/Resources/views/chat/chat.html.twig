@@ -8,7 +8,8 @@
                 <li class="color3">
                     <a href="{{ path('myCourses') }}" class="label label-info">{{ chat.cours.discipline.nom }}</a>
                     >
-                    <a href="{{ path('oneCours', {id: chat.cours.id, mode: 'etu'}) }}" class="label label-info">{{ chat.cours.nom }}</a>
+                    <a href="{{ path('oneCours', {id: chat.cours.id, mode: 'etu'}) }}"
+                       class="label label-info">{{ chat.cours.nom }}</a>
                     >
                     <a href="{{ path('chat', {id: chat.id}) }}" class="label label-info">{{ chat.nom }}</a>
                 </li>
@@ -26,13 +27,13 @@
         {% if  app.user in chat.administrateurs or app.user.hasRole('ROLE_SUPER_ADMIN') %}
             <div class="zoneBtnGestionChat">
                 {% if not chat.enabled %}
-                    <!--<div class="btnDemarreChat btnToggleEnabledChat btn btnLien btn-sm btn-warning">
+                    <div class="btnDemarreChat btnToggleEnabledChat btn btnLien btn-sm btn-warning">
                         Démarrer le chat
-                    </div>-->
+                    </div>
                 {% else %}
-                    <!--<div class="btnDemarreChat btnToggleEnabledChat btn btnLien btn-sm btn-warning">
+                    <div class="btnStopChat btnToggleEnabledChat btn btnLien btn-sm btn-warning">
                         Interrompre le chat
-                    </div>-->
+                    </div>
                 {% endif %}
             </div>
 
@@ -51,13 +52,15 @@
                     <table>
                         {% for key,val in posts %}
                             <tr class="msgChatRow">
-                                <td class="userTDchat"><div class="usrChat
+                                <td class="userTDchat">
+                                    <div class="usrChat
                                 {% if app.user.id == val.auteur.id %}
                                     meUsrChat
                                 {% elseif val.auteur.hasRole('ROLE_SUPER_ADMIN') %}
                                    adminUsrChat
                                 {% endif %}
-                                ">{{ val.auteur.firstname }} {{ val.auteur.lastname }}</div></td>
+                                ">{{ val.auteur.firstname }} {{ val.auteur.lastname }}</div>
+                                </td>
                                 <td class="msgChat">{{ val.texte|raw }}</td>
                             </tr>
                         {% endfor %}
@@ -78,12 +81,19 @@
                 </div>
             </div>
             <div class="row msgRow">
-                <div class="col-xs-10 colMsg">
-                    <textarea class="form-control simpleEditor" id="chatPostText"></textarea>
-                </div>
-                <div class="col-xs-2 colBtn text-right">
-                    <a class="btn btn-primary btn-sm"><i class="btnSendMsg fa fa-paper-plane-o" aria-hidden="true"></i></a>
-                </div>
+                {% if chat.enabled %}
+                    <div class="col-xs-10 colMsg">
+                        <textarea class="form-control simpleEditor" id="chatPostText"></textarea>
+                    </div>
+                    <div class="col-xs-2 colBtn text-right">
+                        <a class="btn btn-primary btn-sm"><i class="btnSendMsg fa fa-paper-plane-o"
+                                                             aria-hidden="true"></i></a>
+                    </div>
+                {% else %}
+                    <div class="col-xs-12 chatDisabledMsg">
+                        <i class="fa fa-exclamation-circle" aria-hidden="true"></i> Ce Chat n'est pas activé, vous pouvez néanmoins parcourir les messages qu'il contient
+                    </div>
+                {% endif %}
             </div>
         </div>
 
@@ -95,22 +105,67 @@
             var userId = $('[data-userId]').attr('data-userId');
             var chatId = $('[data-chatId]').attr('data-chatId');
 
-            // redémarre le chat au cas où le websocket soit fermé
-            $.ajax({
-                type: 'POST',
-                url: "{{path('reloadWS_ajax')}}",
-                async: false,
-                dataType: "json",
-                success: function (data) {
-                    //window.location.href = window.location.href;
-                },
-                error: function(xhr, status, error) {
-                }
+            redemarre();
+
+
+
+            $('.btnDemarreChat').click(function(){
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ path('demarreChat_ajax') }}",
+                    async: false,
+                    dataType: "json",
+                    data: {
+                        chatId: chatId
+                    },
+                    success: function (data) {
+                        window.location.href = window.location.href;
+                    },
+                    error: function (xhr, status, error) {
+                    }
+                });
             });
+            $('.btnStopChat').click(function(){
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ path('stopChat_ajax') }}",
+                    async: false,
+                    dataType: "json",
+                    data: {
+                        chatId: chatId
+                    },
+                    success: function (data) {
+                        window.location.href = window.location.href;
+                    },
+                    error: function (xhr, status, error) {
+                    }
+                });
+            });
+
+            setInterval(function(){
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ path('detectChangeEnabledChat_ajax') }}",
+                    async: false,
+                    dataType: "json",
+                    data: {
+                        chatId: chatId,
+                        enabled: "{{ chat.enabled }}"
+                    },
+                    success: function (data) {
+                        if(data['changement'] === true){
+                            window.location.href = window.location.href;
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                    }
+                });
+            }, 10000);
+
             // ajoute dans les stats que le user a accédé au chat
             $.ajax({
                 type: 'POST',
-                url: "{{path('addUserStatRessource_ajax')}}",
+                url: "{{ path('addUserStatRessource_ajax') }}",
                 async: false,
                 dataType: "json",
                 data: {
@@ -118,14 +173,17 @@
                 },
                 success: function (data) {
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                 }
             });
+
+            var scroll = $('.colMsgs');
+            scroll.animate({scrollTop: scroll.prop("scrollHeight")}, 1200);
 
             // on commence par nettoyer la table des associations entre le user et le chat
             $.ajax({
                 type: "POST",
-                url: "{{path('cleanAssocUserChat_ajax')}}",
+                url: "{{ path('cleanAssocUserChat_ajax') }}",
                 data: {
                     userId: userId,
                     chatId: chatId
@@ -134,19 +192,20 @@
                 success: function (response) {
 
                     var webSocket = WS.connect("ws://80.247.226.149:1338");
-                    webSocket.on("socket/connect", function(session){
+                    webSocket.on("socket/connect", function (session) {
                         // user is connected to websocket
 
-                        session.subscribe("app/chat/"+chatId, function(uri, payload){
+                        session.subscribe("app/chat/" + chatId, function (uri, payload) {
+                            redemarre();
                             console.log(payload);
-                            if(payload.type == "subscribe"){
+                            if (payload.type == "subscribe") {
                                 var sessionDB = payload.user;
 
                                 // c'est une souscription mais il faut qu'on vérifie si c'est bien nous car
                                 // ce code est exécuté sinon sur tous les postes connectés au websocket
                                 $.ajax({
                                     type: "POST",
-                                    url: "{{path('subsrcribeChat_ajax')}}",
+                                    url: "{{ path('subsrcribeChat_ajax') }}",
                                     data: {
                                         userId: userId,
                                         session: sessionDB,
@@ -154,19 +213,19 @@
                                     },
                                     dataType: "json",
                                     success: function (response) {
-                                        if(response['user'] != 'otherOne'){
-                                            if(!$('.colUsers [data-userId='+response['userId']+']').length){
+                                        if (response['user'] != 'otherOne') {
+                                            if (!$('.colUsers [data-userId=' + response['userId'] + ']').length) {
                                                 $('.colUsers').append('<div class="usrChatRow">' +
-                                                        '<div class="usrChat meUsrChat" data-userId="'+response['userId']+'">'+response['user']+'</div>' +
-                                                        '</div>');
+                                                    '<div class="usrChat meUsrChat" data-userId="' + response['userId'] + '">' + response['user'] + '</div>' +
+                                                    '</div>');
                                             }
-                                        }else{
+                                        } else {
                                             // c'est quelqu'un d'autre qui s'est subscribé, on lui laisse le
                                             // temps d'être dans la base et on va le chercher
-                                            setTimeout(function(){
+                                            setTimeout(function () {
                                                 $.ajax({
                                                     type: "POST",
-                                                    url: "{{path('getChatUserBySessionession_ajax')}}",
+                                                    url: "{{ path('getChatUserBySessionession_ajax') }}",
                                                     data: {
                                                         session: sessionDB,
                                                         chatId: chatId
@@ -174,67 +233,71 @@
                                                     dataType: "json",
                                                     success: function (response) {
                                                         var isAdmin = "";
-                                                        if(response['isAdmin'] == "true"){
+                                                        if (response['isAdmin'] == "true") {
                                                             isAdmin = " adminUsrChat";
                                                         }
-                                                        if(!$('.colUsers [data-userId='+response['userId']+']').length) {
+                                                        if (!$('.colUsers [data-userId=' + response['userId'] + ']').length) {
                                                             var chaine = '<div class="usrChatRow">' +
-                                                                    '<div class="usrChat'+isAdmin+'" data-userId="'+response["userId"]+'">' + response["user"] + '</div>' +
-                                                                    '</div>';
+                                                                '<div class="usrChat' + isAdmin + '" data-userId="' + response["userId"] + '">' + response["user"] + '</div>' +
+                                                                '</div>';
                                                             $('.colUsers').append(chaine);
                                                         }
                                                     }
                                                 });
-                                            },2000);
+                                            }, 2000);
 
                                         }
                                         //session.unsubscribe("app/chat/"+chatId);
                                     }
                                 });
-                            }else if(payload.type == "publish"){
+                            } else if (payload.type == "publish") {
                                 var message = payload.msg["msg"];
                                 $.ajax({
                                     type: "POST",
-                                    url: "{{path('publishChatPost_ajax')}}",
+                                    url: "{{ path('publishChatPost_ajax') }}",
                                     data: {
                                         session: payload.user,
-                                        chatId:  chatId,
+                                        chatId: chatId,
                                         message: message,
                                         userId: userId
                                     },
                                     dataType: "json",
                                     success: function (response) {
                                         $('.colMsgs table').append('<tr class="msgChatRow">' +
-                                                '<td class="userTDchat"><div class="usrChat">'+response['user']+'</div></td>' +
-                                                '<td class="msgChat">'+message+'</td>' +
-                                                '</tr>');
-                                        var n = $('.colMsgs').height();
-                                        $('.colMsgs').animate({ scrollTop: n }, 200);
+                                            '<td class="userTDchat"><div class="usrChat">' + response['user'] + '</div></td>' +
+                                            '<td class="msgChat"><div class="animatedPostRow"></div>' + message + '</td>' +
+                                            '</tr>');
+                                        var scroll = $('.colMsgs');
+                                        scroll.animate({scrollTop: scroll.prop("scrollHeight")}, 1200, function(){
+                                            $('.animatedPostRow').animate({opacity: 0}, 1000, function(){
+                                                $(this).removeClass('animatedPostRow');
+                                            })
+                                        });
                                     }
                                 });
-                            }else if(payload.type == "unsubscribe"){
+                            } else if (payload.type == "unsubscribe") {
                                 var sessionDB = payload.user;
                                 // c'est quelqu'un d'autre qui s'est unsubscribé
                                 $.ajax({
                                     type: "POST",
-                                    url: "{{path('getChatUserBySessionession_ajax')}}",
+                                    url: "{{ path('getChatUserBySessionession_ajax') }}",
                                     data: {
                                         session: sessionDB,
                                         chatId: chatId
                                     },
                                     dataType: "json",
                                     success: function (response) {
-                                        $('.colUsers [data-userid='+response['userId']+']').closest('.usrChatRow').remove();
+                                        $('.colUsers [data-userid=' + response['userId'] + ']').closest('.usrChatRow').remove();
                                     }
                                 });
                             }
 
-                            $('.colBtn .btn').unbind('click').click(function(){
+                            $('.colBtn .btn').unbind('click').click(function () {
                                 var message = CKEDITOR.instances['chatPostText'].getData();
-                                if(message == ""){
+                                if (message == "") {
 
-                                }else{
-                                    session.publish("app/chat/"+chatId, {msg: message});
+                                } else {
+                                    session.publish("app/chat/" + chatId, {msg: message});
                                     CKEDITOR.instances['chatPostText'].setData('');
                                 }
                             });
@@ -242,13 +305,28 @@
 
                     });
 
-                    webSocket.on("socket/disconnect", function(error){
+                    webSocket.on("socket/disconnect", function (error) {
                         //console.log("Disconnected for " + error.reason + " with code " + error.code);
                         console.log("Disconnected of socket ");
                     });
 
                 }
             });
+
+            function redemarre() {
+                // redémarre le chat au cas où le websocket soit fermé
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ path('reloadWS_ajax') }}",
+                    async: false,
+                    dataType: "json",
+                    success: function (data) {
+                        //window.location.href = window.location.href;
+                    },
+                    error: function (xhr, status, error) {
+                    }
+                });
+            }
         });
     </script>
 {% endblock %}

@@ -248,4 +248,78 @@ class ChatController extends Controller
 
         return new JsonResponse('This is not ajax!', 400);
     }
+
+    /**
+     * @Route("/demarreChat_ajax", name="demarreChat_ajax")
+     * @Method({"GET", "POST"})
+     */
+    public function demarreChatAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+            $chatId = $request->request->get('chatId');
+
+            /* @var $chat Chat  */
+            $chat = $em->getRepository('AppBundle:Chat')->findOneBy(array('id' => $chatId));
+            $chat->setEnabled(true);
+
+            $em->flush();
+            return new JsonResponse(array(
+                    'action' =>'demarre Chat'
+                )
+            );
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
+    /**
+     * @Route("/stopChat_ajax", name="stopChat_ajax")
+     * @Method({"GET", "POST"})
+     */
+    public function stopChatAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+            $chatId = $request->request->get('chatId');
+
+            /* @var $chat Chat  */
+            $chat = $em->getRepository('AppBundle:Chat')->findOneBy(array('id' => $chatId));
+            $chat->setEnabled(false);
+
+            $em->flush();
+            return new JsonResponse(array(
+                    'action' =>'stop Chat'
+                )
+            );
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
+    /**
+     * @Route("/detectChangeEnabledChat_ajax", name="detectChangeEnabledChat_ajax")
+     * @Method({"GET", "POST"})
+     */
+    public function detectChangeEnabledChatAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+            $chatId = $request->request->get('chatId');
+            $enabled = $request->request->get('enabled') == "1";
+
+            /* @var $chat Chat  */
+            $chat = $em->getRepository('AppBundle:Chat')->findOneBy(array('id' => $chatId));
+
+            $em->flush();
+            return new JsonResponse(array(
+                    'action' =>'stop Chat',
+                    'changement' => $enabled !== $chat->getEnabled()
+                )
+            );
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
 }
