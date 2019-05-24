@@ -1,0 +1,87 @@
+<div class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+
+            <!--                  POPUP EVT                     -->
+            {% set
+                canCreateDiscEvents = app.user.hasRole('ROLE_SUPER_ADMIN')
+                or
+                ((app.user.statut == 'Responsable' or app.user.statut == 'Formateur' or app.user.statut == 'Referent') and app.user.confirmedByAdmin)
+            %}
+            <div class="modal-body" data-contentModal="devoirDisplay"
+                 style="background:#aaa; background-size:cover">
+                <div class="row">
+                    <div class="bginverse">
+                        <div class="row">
+                            <label for="nomEvt" class="col-sm-3">Nom de l'évènement</label>
+                            <input id="nomEvt" class="col-sm-9 col-xs-12"/>
+                        </div>
+                        <div class="row eventTypeRow{% if not canCreateDiscEvents %} hidden{% endif %}">
+                            <label for="typeEvt" class="col-sm-3">Type de l'évènement</label>
+                            <div class="col-sm-9 col-xs-12" style="padding-left: 0">
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btnTypeUser btn-typeEvt">Personnel</button>
+                                    <button type="button" class="btn btnTypeDiscipline btn-typeEvt">Discipline</button>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row disciplineSelectorRow">
+                            <label for="choixDisc" class="col-sm-3">Choix de la discipline</label>
+                            <div class="dropdown col-sm-3 dropdownMenuDisc" style="padding-left: 0">
+                                <button class="btn dropdown-toggle" type="button" id="dropdownMenuDisc"
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" data-idDisc="">
+                                    Disciplines
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuDisc">
+                                    {% for discipline in myDiscs %}
+                                        <li><a class="discChoice"
+                                               data-idDisc="{{ discipline.id }}">{{ discipline.nom }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="datePickerEvtGroup">
+                                <div class="LabelAdmin col-sm-3">Date de début</div>
+                                <div class='col-sm-9 noPadding mb-10' data-champName="dateDebut">
+                                    <div class="form-group noMargin mb-10" style="width: 220px;">
+                                        <div class='input-group date evtDateD'
+                                             id='dateD'
+                                             data-date="">
+                                            <input type='text' class="form-control"/>
+                                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="LabelAdmin col-sm-3">Date de fin</div>
+                                <div class='col-sm-9 noPadding mb-10' data-champName="dateFin">
+                                    <div class="form-group noMargin" style="width: 220px;">
+                                        <div class='input-group date evtDateF'
+                                             id='dateF'
+                                             data-date="">
+                                            <input type='text' class="form-control"/>
+                                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-10 rowBtnValidateEventCreate">
+                            <div class="btn btn-sm btn-info mb-3 validateEvent" data-evtId="">Valider</div>
+                            <div class="btn btn-sm btn-info mb-3 deleteEvent">Supprimer</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -15,7 +15,9 @@
             <span class="myBtn btnMoveTotalUp btnCoteCote"><i class="fa fa-angle-double-up"></i></span>
             <span class="myBtn btnMoveTotalDown btnCoteCote"><i class="fa fa-angle-double-down"></i></span>
         </li>
-        <li class="myBtn btnDelete btnLeft btnDeleteElem"><i class="fa fa-reply-all"></i></li>
-        <li class="myBtn btnDelete btnLeft btnSupprElem"><i class="fa fa-times"></i></li>
+        {% if app.user.statut == 'Referent' or app.user.hasRole('ROLE_SUPER_ADMIN') %}
+            <li class="myBtn btnDelete btnLeft btnDeleteElem"><i class="fa fa-reply-all"></i></li>
+            <li class="myBtn btnDelete btnLeft btnSupprElem"><i class="fa fa-times"></i></li>
+        {% endif %}
     </ul>
 </div>

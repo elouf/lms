@@ -615,6 +615,32 @@ label.alertMustBeSet{
     font-family: "Oswald",sans-serif;
     letter-spacing: +0.03em;
 }
+.discBtns{
+    padding: 10px;
+}
+.discBtnActivation{
+    background-color: #456d94;
+    border: #456d94 solid 1px;
+    color: #fff;
+    display: inline-block;
+    border-radius: 20px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    padding: 2px 8px;
+    user-select: none;
+    cursor: pointer;
+}
+.discBtnActivation:hover, .discBtnActivation[data-actif=false]{
+    background-color: #fff;
+    border: #456d94 solid 1px;
+    color: #456d94;
+}
+.discBtnActivation[data-actif=true] .btnFiltreDiscCheck{
+    display: none;
+}
+.discBtnActivation[data-actif=false] .btnFiltreDiscUnheck{
+    display: none;
+}
 
 /* Etudiant Devoir */
 .devoirCptRenduTable{

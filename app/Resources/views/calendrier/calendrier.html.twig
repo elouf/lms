@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block pageHeader %}
+    <div>{{ template }}</div>
+    <div class="page-header">
+        <div class="container">
+            <h2 class="color3">Calendrier</h2>
+            <ul class="breadcrumb">
+                <li class="color3">Mes évènements</li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+
+{% block main %}
+    <div style="padding: 20px">
+        {% include "calendrier/calendrierWidget.html.twig" %}
+    </div>
+    {% include "calendrier/calendrierPopup.html.twig" %}
+{% endblock %}

@@ -1,0 +1,14 @@
+<h3>Vous avez un nouveau message !</h3>
+
+<p>Bonjour {{ prenom }} {{ nom }}!</p>
+<p>Un message vous a été adressé depuis la plateforme de l'AFADEC par {{ expediteur.firstname }} {{ expediteur.lastname }}</p>
+
+<p><b>Objet :</b> {{ objet }}</p>
+<p><b>Contenu du message :</b></p>
+<div>
+    {{ contenu|raw }}
+</div>
+
+<p>Merci!</p>
+<p>L'équipe AFADEC</p>
+<p><a class="studitBlueFC" href="mailTo:contact.afadec@gmail.com">contact.afadec@gmail.com</a></p>

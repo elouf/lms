@@ -14,8 +14,18 @@ class DefaultController extends Controller
      */
     public function indexAction(Request $request)
     {
+        $myEvents = null;
+        $myDiscs = null;
+        if($this->getUser()){
+            $myEvents = $this->get('calendarServ')->getMyCalendarDatas($this->getUser())['events'];
+            $myDiscs = $this->get('calendarServ')->getMyCalendarDatas($this->getUser())['myDiscs'];
+        }
+
         return $this->render('index.html.twig', [
             'base_dir' => realpath($this->getParameter('kernel.root_dir').'/..'),
+            'events' => $myEvents,
+            'myDiscs' => $myDiscs,
+            'total' => false
         ]);
     }
 

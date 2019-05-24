@@ -38,8 +38,6 @@
         <link href='https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400italic,700' rel='stylesheet' type='text/css'>
         <link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
 
-        <!-- Fullcalendar Stylesheet-->
-        <link rel='stylesheet' href='{{ asset("vendors/fullcalendar/dist/fullcalendar.css") }}' />
     {% endblock %}
     {% if template == "studit" %}
         <link rel="icon" type="image/x-icon" href="{{ asset('faviconSTUDIT.ico?v=4') }}" />
@@ -63,11 +61,6 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
         <![endif]-->
-
-        <!-- Fullcalendar Script-->
-        <script src='{{ asset("vendors/moment/min/moment.min.js") }}'></script>
-        <script src='{{ asset("vendors/fullcalendar/dist/fullcalendar.js") }}'></script>
-        <script src='{{ asset("vendors/fullcalendar/dist/locale/fr.js") }}'></script>
 
         <! -- bootstrap-number-input -->
         <script src='{{ asset("js/bootstrap-number-input.js") }}'></script>
@@ -171,7 +164,7 @@
                     {% endif %}
 
                     {% if app.user %}
-                        {% set hasResponsableMinRights = app.user.hasRole('ROLE_SUPER_ADMIN') or ((app.user.statut == 'Responsable' or app.user.statut == 'Formateur') and app.user.confirmedByAdmin) %}
+                        {% set hasResponsableMinRights = app.user.hasRole('ROLE_SUPER_ADMIN') or (app.user.statut == 'Responsable' and app.user.confirmedByAdmin) %}
                         <li>
                             <a href="#" data-userId="{{ app.user.id }}">{{ app.user.firstname }} {{ app.user.lastname }}</a>
                             <ul class="sub-menu" style="margin-left: -30px;">
@@ -211,7 +204,7 @@
                                 {% endif %}
                                 {% block vueAdmin %}{% endblock %}
                                 <li><a href="{{ path('calendrier') }}">Mon calendrier</a></li>
-                                {#<li><a href="{{ path('messagerie') }}">Messagerie</a><span class="newDocsPuce newMsgsPuce"></span></li>#}
+                                <li><a href="{{ path('messagerie') }}">Messagerie</a><span class="newDocsPuce newMsgsPuce"></span></li>
                                 <li><a href="{{ path('fos_user_security_logout') }}">Déconnexion</a></li>
                             </ul>
                         </li>

@@ -1,4 +1,9 @@
 {% extends 'base.html.twig' %}
+{% set
+    hasResponsableMinRights = app.user.hasRole('ROLE_SUPER_ADMIN')
+    or
+    (app.user.statut == 'Responsable' and app.user.confirmedByAdmin)
+%}
 
 {% block title %}
     <title>
@@ -7,7 +12,8 @@
 {% endblock %}
 
 {% block vueAdmin %}
-    {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+
+    {% if app.user.hasRole('ROLE_SUPER_ADMIN') or ((app.user.statut == 'Responsable' or app.user.statut == 'Formateur' or app.user.statut == 'Referent') and app.user.confirmedByAdmin) %}
         <li><a href="{{ path('oneCours', {id: cours.id, mode: 'admin'}) }}">Vue admin</a></li>
         <li><a href="{{ path('oneCours', {id: cours.id, mode: 'ens'}) }}">Vue enseignant correcteur</a></li>
         <li><a href="{{ path('oneCours', {id: cours.id, mode: 'etu'}) }}">Vue étudiant</a></li>
@@ -19,11 +25,9 @@
 {% endblock %}
 
 {% block main %}
-
     <script>
         var chrono;
         jQuery(document).ready(function () {
-
             var steps = $('[data-uploadSteps]').attr('data-uploadSteps');
             var upload_srcSteps = $('[data-uploadSrcSteps]').attr('data-uploadSrcSteps');
             var folderLocation = $('[data-folderUpload]').attr('data-folderUpload');
@@ -837,8 +841,6 @@
                                                 class="chrono_elem chrono_m"></span>:<span class="chrono_elem chrono_s">00</span>
                                     </div>
                                 </div>
-
-
                             </div>
                         </div>
                     </div>

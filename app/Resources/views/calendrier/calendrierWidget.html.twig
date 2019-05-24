@@ -1,0 +1,374 @@
+<!-- Fullcalendar Stylesheet-->
+<link rel='stylesheet' href='{{ asset("vendors/fullcalendar/dist/core/main.min.css") }}'/>
+<link rel='stylesheet' href='{{ asset("vendors/fullcalendar/dist/daygrid/main.min.css") }}'/>
+<link rel='stylesheet' href='{{ asset("vendors/fullcalendar/dist/timeGrid/main.min.css") }}'/>
+<!-- Fullcalendar Script-->
+<script src='{{ asset("vendors/fullcalendar/dist/core/main.min.js") }}'></script>
+<script src='{{ asset("vendors/fullcalendar/dist/daygrid/main.min.js") }}'></script>
+<script src='{{ asset("vendors/fullcalendar/dist/interaction/main.min.js") }}'></script>
+<script src='{{ asset("vendors/fullcalendar/dist/timeGrid/main.min.js") }}'></script>
+<script src='{{ asset("vendors/fullcalendar/dist/core/locales/fr.js") }}'></script>
+
+<script type="text/javascript" src="{{ asset('vendors/moment/min/moment.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('vendors/moment/min/moment-with-locales.min.js') }}"></script>
+<script type="text/javascript"
+        src="{{ asset('vendors/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js') }}"></script>
+<link rel="stylesheet"
+      href="{{ asset('vendors/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css') }}"/>
+
+<style>
+    .row {
+        margin: 0 0 10px 0;
+    }
+
+    .LabelAdmin {
+        padding-left: 15px;
+        font-weight: normal;
+        text-transform: uppercase;
+        font-size: 13px;
+    }
+
+    .modal .bginverse {
+        padding: 20px 10px;
+    }
+
+    .btn-typeEvt {
+        background: #b3b2bc;
+    }
+
+    .btn-typeEvt.selected {
+        background: #0ba204;
+        color: #fff;
+    }
+
+    .disciplineSelectorRow {
+        display: none;
+    }
+
+    .dropdownMenuDisc ul {
+        max-height: 300px;
+        overflow: auto;
+    }
+
+    .dropdownMenuDisc .btn {
+        background-color: #456d94;
+    }
+
+    .rowBtnValidateEventCreate {
+        display: none;
+        text-align: center;
+    }
+
+    .rowBtnValidateEventCreate .btn {
+        background-color: #456d94;
+    }
+
+    .deleteEvent {
+        background-color: #c74400 !important;
+    }
+
+    .discChoice {
+        cursor: pointer;
+    }
+
+    .fc-button-primary {
+        background-color: #567182;
+        border-color: #567182;
+    }
+</style>
+
+<script>
+    jQuery(document).ready(function () {
+        var events = [];
+        var dateD;
+        var dateF;
+        $('.event-data').each(function () {
+            var dateD = $(this).find('.dateD');
+            var dateDarray = {
+                year: dateD.find('.year').text(),
+                month: parseInt(dateD.find('.month').text()) - 1,
+                day: dateD.find('.day').text(),
+                hour: parseInt(dateD.find('.hour').text()),
+                minute: parseInt(dateD.find('.minute').text())
+            };
+            var dateF = $(this).find('.dateF');
+            var type = $(this).find('.typeEvt').text();
+
+            var myNewEvent = {
+                id: $(this).find('.idEvt').text(),
+                title: $(this).find('.nom').text(),
+                description: $(this).find('.description').html(),
+                lien: $(this).find('.lien').html(),
+                start: new Date(dateDarray.year, dateDarray.month, dateDarray.day, dateDarray.hour, dateDarray.minute),
+                classNames: ['discId-' + $(this).find('.discId').text()],
+                type: type,
+                discId: $(this).find('.discId').text()
+            };
+
+            if (dateF.length) {
+                var dateFarray = {
+                    year: dateF.find('.year').text(),
+                    month: parseInt(dateF.find('.month').text()) - 1,
+                    day: dateF.find('.day').text(),
+                    hour: parseInt(dateF.find('.hour').text()),
+                    minute: parseInt(dateF.find('.minute').text())
+                };
+                myNewEvent["end"] = new Date(dateFarray.year, dateFarray.month, dateFarray.day, dateFarray.hour, dateFarray.minute);
+            }
+
+            // si le début et la fin sont à 00:00, on passe en allday
+            if (dateDarray.hour == 0 && dateDarray.minute == 0 && dateFarray.hour == 0 && dateFarray.minute == 0) {
+                myNewEvent["allDay"] = true;
+            }
+
+            if (type == "devoirEvt") {
+                myNewEvent["color"] = "#ff3f46";
+            } else if (type == "coursEvt") {
+                myNewEvent["color"] = "#00A0D1";
+            } else if (type == "discEvt") {
+                myNewEvent["color"] = "#00A0D1";
+            } else if (type == "userEvt") {
+                myNewEvent["color"] = "#9179ef";
+            } else if (type == "sessionEvt") {
+                myNewEvent["color"] = "#ff9c00";
+            }
+
+            events.push(myNewEvent);
+        });
+        console.log(events)
+
+        var calendarEl = document.getElementById('calendar');
+        var _currentEvent;
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            plugins: ['dayGrid', 'interaction', 'timeGrid'],
+            events: events,
+            locale: 'fr',
+            defaultView: 'dayGridMonth',
+            selectable: true,
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            dateClick: function (info) {
+                $('.modal').modal('toggle');
+                checkFormValid();
+                //alert('clicked ' + info.dateStr);
+            },
+            select: function (info) {
+                $('.modal').modal('toggle');
+                dateD.data("DateTimePicker").date(toJSDate(info.startStr));
+                dateF.data("DateTimePicker").date(toJSDate(info.endStr));
+                $('.validateEvent').attr('data-evtId', '');
+                $('.deleteEvent').hide();
+                $('.eventTypeRow').show();
+                $('.btnTypeUser').click();
+                $('#nomEvt').val('');
+                checkFormValid();
+            },
+            eventClick: function (info) {
+                _currentEvent = info.event;
+                $('.modal').modal('toggle');
+                $('#nomEvt').val(info.event.title);
+                dateD.data("DateTimePicker").date(info.event.start);
+                dateF.data("DateTimePicker").date(info.event.end);
+                $('.validateEvent').attr('data-evtId', info.event.id);
+                $('.deleteEvent').show();
+                if (info.event.extendedProps.discId) {
+                    $('.btnTypeDiscipline').click();
+                    $('.discChoice[data-idDisc="' + info.event.extendedProps.discId + '"]').click();
+                } else {
+                    $('.btnTypeUser').click();
+                }
+                $('.eventTypeRow, .disciplineSelectorRow').hide();
+                checkFormValid();
+            }
+        });
+
+        calendar.render();
+
+        $('.discBtnActivation').click(function () {
+            var discId = $(this).attr('data-discid');
+            if ($(this).attr('data-actif') === 'true') {
+                $(this).attr('data-actif', 'false');
+                $('.fc-event').each(function () {
+                    var evt = $(this);
+                    var classes = evt.attr("class").split(' ');
+                    for (var i = 0; i < classes.length; i++) {
+                        if (classes[i].indexOf('discId') !== -1) {
+                            var idTab = classes[i].split('-');
+                            if (idTab[1] === discId) {
+                                evt.hide();
+                            }
+                        }
+                    }
+                });
+            } else {
+                $(this).attr('data-actif', 'true');
+                $('.fc-event').each(function () {
+                    var evt = $(this);
+                    var classes = evt.attr("class").split(' ');
+                    for (var i = 0; i < classes.length; i++) {
+                        if (classes[i].indexOf('discId') !== -1) {
+                            var idTab = classes[i].split('-');
+                            if (idTab[1] === discId) {
+                                evt.show();
+                            }
+                        }
+                    }
+                });
+            }
+        });
+
+        $('.datePickerEvtGroup').each(function () {
+            dateD = $(this).find('.evtDateD');
+            dateF = $(this).find('.evtDateF');
+            dateD.datetimepicker({
+                locale: 'fr'
+            });
+
+            dateF.datetimepicker({
+                locale: 'fr',
+                useCurrent: false
+            });
+            dateD.on("dp.change", function (e) {
+                dateF.data("DateTimePicker").minDate(e.date);
+            });
+            dateF.on("dp.change", function (e) {
+                dateD.data("DateTimePicker").maxDate(e.date);
+            });
+        });
+
+        function toJSDate(phpDateTime) {
+            var dateTime = phpDateTime.split(" ");
+
+            var time = '00:00';
+            var date = dateTime[0].split("-");
+            if (dateTime.length > 1) {
+                time = dateTime[1].split(":");
+            }
+
+            return new Date(date[0], (date[1] - 1), date[2], time[0], time[1], 0, 0);
+        }
+
+        $('#nomEvt').on('input', function () {
+            checkFormValid();
+        });
+
+        $('.btn-typeEvt').click(function () {
+            $('.btn-typeEvt').removeClass('selected');
+            $(this).addClass('selected');
+            if ($(this).hasClass('btnTypeUser')) {
+                $('.disciplineSelectorRow').hide();
+            } else {
+                $('.disciplineSelectorRow').show();
+            }
+            checkFormValid();
+        });
+        $('.btnTypeUser').click();
+
+        $('.discChoice').click(function () {
+            $('#dropdownMenuDisc').text($(this).text()).attr('data-idDisc', $(this).attr('data-idDisc'));
+            checkFormValid();
+        });
+
+        function checkFormValid() {
+            var valid = true;
+            if (
+                $('#nomEvt').val() === "" ||
+                ($('.btnTypeDiscipline').hasClass('selected') && $('#dropdownMenuDisc').attr('data-idDisc') === "") ||
+                $('.evtDateD input').val() === "" ||
+                $('.evtDateF input').val() === ""
+            ) {
+                valid = false;
+            }
+            if (valid) {
+                $('.rowBtnValidateEventCreate').show();
+            } else {
+                $('.rowBtnValidateEventCreate').hide();
+            }
+        }
+
+        $('.validateEvent').click(function () {
+            $.ajax({
+                type: "POST",
+                url: "{{ path('createCalendarEvent_ajax') }}",
+                data: {
+                    id: $('.validateEvent').attr('data-evtId'),
+                    titre: $('#nomEvt').val(),
+                    dateD: $('.evtDateD input').val(),
+                    dateF: $('.evtDateF input').val(),
+                    discId: $('#dropdownMenuDisc').attr('data-idDisc')
+                },
+                dataType: "json",
+                success: function (response) {
+                    window.location.href = window.location.href;
+                }
+            });
+        });
+        $('.deleteEvent').click(function () {
+            $.ajax({
+                type: "POST",
+                url: "{{ path('deleteCalendarEvent_ajax') }}",
+                data: {
+                    id: $('.validateEvent').attr('data-evtId'),
+                    discId: $('#dropdownMenuDisc').attr('data-idDisc')
+                },
+                dataType: "json",
+                success: function (response) {
+                    _currentEvent.remove();
+                    _currentEvent = null;
+                    $('.modal').modal('toggle');
+                }
+            });
+        });
+
+    });
+</script>
+{% if total %}
+<div class="container mt-20 mb-40">
+    <div class="row discBtns">
+        {% for discipline in myDiscs %}
+            <div class="discBtnActivation" data-actif="true" data-discId="{{ discipline.id }}">
+                {{ discipline.nom }} <i class="fa fa-check-circle-o btnFiltreDiscCheck" aria-hidden="true"></i><i
+                        class="fa fa-times btnFiltreDiscUnheck" aria-hidden="true"></i>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="row">
+        {% endif %}
+        <div id='datas' style="display: none">
+            {% for event in events %}
+                <div class="event-data" data-type="">
+                    <div class="typeEvt">{{ event.type }}</div>
+                    <div class="idEvt">{{ event.evt.id }}</div>
+                    <div class="dateD">
+                        <div class="year">{{ event.evt.dateDebut|date('Y') }}</div>
+                        <div class="month">{{ event.evt.dateDebut|date('m') }}</div>
+                        <div class="day">{{ event.evt.dateDebut|date('d') }}</div>
+                        <div class="hour">{{ event.evt.dateDebut|date('H') }}</div>
+                        <div class="minute">{{ event.evt.dateDebut|date('i') }}</div>
+                    </div>
+                    <div class="dateF">
+                        <div class="year">{{ event.evt.dateFin|date('Y') }}</div>
+                        <div class="month">{{ event.evt.dateFin|date('m') }}</div>
+                        <div class="day">{{ event.evt.dateFin|date('d') }}</div>
+                        <div class="hour">{{ event.evt.dateFin|date('H') }}</div>
+                        <div class="minute">{{ event.evt.dateFin|date('i') }}</div>
+                    </div>
+                    <div class="discId">{{ event.disc }}</div>
+                    <div class="nom">{{ event.evt.nom }}</div>
+                    <div class="description">{{ event.evt.description | raw }}</div>
+                    {% if event.type == "discEvt" %}
+                        <div class="lien">myCourses/{{ event.evt.discipline.id }}</div>
+                    {% else %}
+                        <div class="lien">myCourses/test</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+        <div id='calendar'></div>
+        {% if total %}
+    </div>
+</div>
+{% endif %}

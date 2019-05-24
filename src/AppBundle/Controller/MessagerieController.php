@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\AssocUserMsg;
 use AppBundle\Entity\Message;
+use AppBundle\Entity\User;
 use DateTime;
 use Proxies\__CG__\AppBundle\Entity\Inscription;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -315,14 +316,17 @@ class MessagerieController extends Controller
             $contenu = $request->request->get('contenu');
             $users = $request->request->get('users');
 
-            if (!in_array($this->getUser()->getId(), $users)) {
-                array_push($users, $this->getUser()->getId());
+            /* @var $expediteur User */
+            $expediteur = $this->getUser();
+
+            if (!in_array($expediteur->getId(), $users)) {
+                array_push($users, $expediteur->getId());
             }
 
             $message = new Message();
 
             $message->setObjet($objet);
-            $message->setExpediteur($this->getUser());
+            $message->setExpediteur($expediteur);
             $message->setDateCreation(new DateTime());
             $message->setContenu($contenu);
 
@@ -336,10 +340,40 @@ class MessagerieController extends Controller
                     $assoc->setUser($user);
                     $assoc->setMessage($message);
 
-                    if($user->getId() == $this->getUser()->getId()){
+                    if($user->getId() == $expediteur->getId()){
                         $assoc->setDateLecture(new DateTime());
                     }
                     $em->persist($assoc);
+
+                    $mail = \Swift_Message::newInstance()
+                        ->setSubject('[AFADEC] Message de '.$expediteur->getFirstname().' '.$expediteur->getLastname())
+                        ->setFrom('noreply@afadec.fr')
+                        ->setTo($user->getEmail())
+                        ->setBody(
+                            $this->renderView(
+                                'user/messagerieMail.html.twig',
+                                array(
+                                    'prenom' => $user->getFirstname(),
+                                    'nom' => $user->getLastname(),
+                                    'expediteur' => $expediteur,
+                                    'objet' => $objet,
+                                    'contenu' => $contenu
+                                )
+                            ),
+                            'text/html'
+                        )
+                        /*
+                         * If you also want to include a plaintext version of the message
+                        ->addPart(
+                            $this->renderView(
+                                'Emails/registration.txt.twig',
+                                array('name' => $name)
+                            ),
+                            'text/plain'
+                        )
+                        */
+                    ;
+                    $this->get('mailer')->send($mail);
                 }
             }
 
