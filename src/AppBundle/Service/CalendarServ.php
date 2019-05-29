@@ -18,6 +18,7 @@ use AppBundle\Entity\Inscription_d;
 use AppBundle\Entity\Log;
 use AppBundle\Entity\Session;
 use AppBundle\Entity\User;
+use AppBundle\Entity\ZoneRessource;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
@@ -139,7 +140,19 @@ class CalendarServ
             $repositoryDevoir = $this->em->getRepository('AppBundle:Devoir')->findBy(array('cours'=> $courses[$j]["courses"]));
             /* @var $evtDevoir Devoir */
             foreach($repositoryDevoir as $evtDevoir){
-                array_push($myEvents, array('evt' => $evtDevoir, 'type' => 'devoirEvt', 'disc' => $evtDevoir->getCours()->getDiscipline()->getId()));
+                // on vérifie que la ressource est bien contenue par une zone active, dans une section visible
+                $zones = $this->em->getRepository('AppBundle:ZoneRessource')->findBy(array('ressource'=> $evtDevoir, 'isVisible' => true));
+                $toShow = false;
+                /* @var $zone ZoneRessource */
+                foreach($zones as $zone){
+                    if($zone->getSection()->getIsVisible()){
+                        $toShow = true;
+                        break;
+                    }
+                }
+                if($toShow){
+                    array_push($myEvents, array('evt' => $evtDevoir, 'type' => 'devoirEvt', 'disc' => $evtDevoir->getCours()->getDiscipline()->getId()));
+                }
             }
         }
 
