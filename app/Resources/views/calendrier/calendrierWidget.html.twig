@@ -100,7 +100,7 @@
                 description: $(this).find('.description').html(),
                 lien: $(this).find('.lien').html(),
                 start: new Date(dateDarray.year, dateDarray.month, dateDarray.day, dateDarray.hour, dateDarray.minute),
-                classNames: ['discId-' + $(this).find('.discId').text()],
+                classNames: ['discId-' + $(this).find('.discId').text(), type],
                 type: type,
                 discId: $(this).find('.discId').text()
             };
@@ -135,7 +135,6 @@
 
             events.push(myNewEvent);
         });
-        console.log(events)
 
         var calendarEl = document.getElementById('calendar');
         var _currentEvent;
@@ -150,11 +149,6 @@
                 center: 'title',
                 right: 'dayGridMonth,timeGridWeek,timeGridDay'
             },
-            dateClick: function (info) {
-                $('.modal').modal('toggle');
-                checkFormValid();
-                //alert('clicked ' + info.dateStr);
-            },
             select: function (info) {
                 $('.modal').modal('toggle');
                 dateD.data("DateTimePicker").date(toJSDate(info.startStr));
@@ -168,21 +162,37 @@
             },
             eventClick: function (info) {
                 _currentEvent = info.event;
-                $('.modal').modal('toggle');
-                $('#nomEvt').val(info.event.title);
-                dateD.data("DateTimePicker").date(info.event.start);
-                dateF.data("DateTimePicker").date(info.event.end);
-                $('.validateEvent').attr('data-evtId', info.event.id);
-                $('.deleteEvent').show();
-                if (info.event.extendedProps.discId) {
-                    $('.btnTypeDiscipline').click();
-                    $('.discChoice[data-idDisc="' + info.event.extendedProps.discId + '"]').click();
-                } else {
-                    $('.btnTypeUser').click();
+                let rights = $('.modal-body').attr('data-rights');
+                let userEvt = _currentEvent.classNames.indexOf('userEvt') !== -1;
+                let discEvt = _currentEvent.classNames.indexOf('discEvt') !== -1;
+                if((discEvt && rights === "true") || userEvt){
+                    $('.modal').modal('toggle');
+                    $('.yesRights').show();
+                    $('.noRights').hide();
+                    $('#nomEvt').val(info.event.title);
+                    dateD.data("DateTimePicker").date(info.event.start);
+                    dateF.data("DateTimePicker").date(info.event.end);
+                    $('.validateEvent').attr('data-evtId', info.event.id);
+                    $('.deleteEvent').show();
+                    if (info.event.extendedProps.discId) {
+                        $('.btnTypeDiscipline').click();
+                        $('.discChoice[data-idDisc="' + info.event.extendedProps.discId + '"]').click();
+                    } else {
+                        $('.btnTypeUser').click();
+                    }
+                    $('.eventTypeRow, .disciplineSelectorRow').hide();
+                    checkFormValid();
+                }else{
+                    $('.modal').modal('toggle');
+                    $('.yesRights').hide();
+                    $('.noRights').show();
                 }
-                $('.eventTypeRow, .disciplineSelectorRow').hide();
-                checkFormValid();
+
             }
+        });
+
+        $('.cancelEdit').click(function(){
+            $('.modal').modal('toggle');
         });
 
         calendar.render();
@@ -273,7 +283,7 @@
         });
 
         function checkFormValid() {
-            var valid = true;
+            let valid = true;
             if (
                 $('#nomEvt').val() === "" ||
                 ($('.btnTypeDiscipline').hasClass('selected') && $('#dropdownMenuDisc').attr('data-idDisc') === "") ||
@@ -290,6 +300,10 @@
         }
 
         $('.validateEvent').click(function () {
+            let discId = $('#dropdownMenuDisc').attr('data-idDisc');
+            if ($('.btnTypeUser').addClass('selected')) {
+                discId = "";
+            }
             $.ajax({
                 type: "POST",
                 url: "{{ path('createCalendarEvent_ajax') }}",
@@ -298,7 +312,7 @@
                     titre: $('#nomEvt').val(),
                     dateD: $('.evtDateD input').val(),
                     dateF: $('.evtDateF input').val(),
-                    discId: $('#dropdownMenuDisc').attr('data-idDisc')
+                    discId: discId
                 },
                 dataType: "json",
                 success: function (response) {
@@ -307,12 +321,16 @@
             });
         });
         $('.deleteEvent').click(function () {
+            let discId = $('#dropdownMenuDisc').attr('data-idDisc');
+            if ($('.btnTypeUser').addClass('selected')) {
+                discId = "";
+            }
             $.ajax({
                 type: "POST",
                 url: "{{ path('deleteCalendarEvent_ajax') }}",
                 data: {
                     id: $('.validateEvent').attr('data-evtId'),
-                    discId: $('#dropdownMenuDisc').attr('data-idDisc')
+                    discId: discId
                 },
                 dataType: "json",
                 success: function (response) {
@@ -323,7 +341,8 @@
             });
         });
 
-    });
+    })
+    ;
 </script>
 {% if total %}
 <div class="container mt-20 mb-40">

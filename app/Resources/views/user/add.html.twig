@@ -88,7 +88,7 @@
         }
         .myCaptcha{
             background: #fff;
-            display: inline-block;
+            display: none;
             padding: 10px;
             border-radius: 3px;
         }
@@ -294,7 +294,7 @@
                     <div class="formRow">
                         {{ form_label(form.matiereProfStag) }}{{ form_widget(form.matiereProfStag) }}
                     </div>
-                    <div class="myCaptcha">
+                    {#<div class="myCaptcha">
                         <div>Afin de vérifier que vous n'êtes pas un robot, nous vous demandons de déplacer les carrés dans la cible, dans l'ordre suivant :</div>
                         <div class="colorsList"></div>
                         <div>Vous avez trois essais pour confirmer que vous n'êtes pas un robot.</div>
@@ -307,7 +307,7 @@
                             <div class="etiq" data-color="etiq_bl"><img src="{{ asset('images/captcha/bl.png') }}" /></div>
                             <div class="etiq" data-color="etiq_gr"><img src="{{ asset('images/captcha/gr.png') }}" /></div>
                         </div>
-                    </div>
+                    </div>#}
                     <div class="formRow center btnSubmitZone">
                         {{ form_widget(form.submit) }}
                     </div>

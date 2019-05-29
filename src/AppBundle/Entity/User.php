@@ -81,6 +81,7 @@ class User extends BaseUser
     const STATUT_ETUDIANT = 'Etudiant';
     const STATUT_FORMATEUR = 'Formateur';
     const STATUT_PROFSTAGIAIRE = 'Prof_stagiaire';
+    const STATUT_REFERENT = 'Referent';
     const STATUT_RESPONSABLE = 'Responsable';
 
     /** @ORM\Column(name="statut", type="string") */
@@ -349,6 +350,7 @@ class User extends BaseUser
             "Étudiant" => self::STATUT_ETUDIANT,
             "Formateur" => self::STATUT_FORMATEUR,
             "Professeur Stagiaire" => self::STATUT_PROFSTAGIAIRE,
+            "Référent" => self::STATUT_REFERENT,
             "Responsable" => self::STATUT_RESPONSABLE
         ];
     }

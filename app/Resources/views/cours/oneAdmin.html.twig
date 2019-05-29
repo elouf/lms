@@ -10,7 +10,7 @@
 {% block sousTitrePage %}Association pour la Formation A Distance de l'Enseignement Catholique{% endblock %}
 
 {% block vueAdmin %}
-    {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+    {% if app.user.hasRole('ROLE_SUPER_ADMIN') or ((app.user.statut == 'Responsable' or app.user.statut == 'Formateur' or app.user.statut == 'Referent') and app.user.confirmedByAdmin) %}
         <li><a href="{{ path('oneCours', {id: cours.id, mode: 'etu'}) }}">Vue étudiant</a></li>
         <li><a href="{{ path('oneCours', {id: cours.id, mode: 'ens'}) }}">Vue enseignant correcteur</a></li>
     {% endif %}

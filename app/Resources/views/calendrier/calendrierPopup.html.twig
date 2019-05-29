@@ -12,14 +12,23 @@
                 ((app.user.statut == 'Responsable' or app.user.statut == 'Formateur' or app.user.statut == 'Referent') and app.user.confirmedByAdmin)
             %}
             <div class="modal-body" data-contentModal="devoirDisplay"
-                 style="background:#aaa; background-size:cover">
+                 style="background:#aaa; background-size:cover" data-rights="{% if canCreateDiscEvents %}true{% else %}false{% endif %}">
                 <div class="row">
                     <div class="bginverse">
-                        <div class="row">
+                        <div class="row noRights">
+                            <div class="alert alert-danger mb-10">
+                                <strong>Attention!</strong> Vous n'avez pas les droits de modification de cet évènement.
+                            </div>
+
+                            <div class="row mb-10" style="text-align: center">
+                                <div class="btn btn-sm btn-info mb-3 cancelEdit">Annuler</div>
+                            </div>
+                        </div>
+                        <div class="row yesRights">
                             <label for="nomEvt" class="col-sm-3">Nom de l'évènement</label>
                             <input id="nomEvt" class="col-sm-9 col-xs-12"/>
                         </div>
-                        <div class="row eventTypeRow{% if not canCreateDiscEvents %} hidden{% endif %}">
+                        <div class="row yesRights eventTypeRow{% if not canCreateDiscEvents %} hidden{% endif %}">
                             <label for="typeEvt" class="col-sm-3">Type de l'évènement</label>
                             <div class="col-sm-9 col-xs-12" style="padding-left: 0">
                                 <div class="btn-group" role="group">
@@ -29,7 +38,7 @@
                             </div>
 
                         </div>
-                        <div class="row disciplineSelectorRow">
+                        <div class="row yesRights disciplineSelectorRow">
                             <label for="choixDisc" class="col-sm-3">Choix de la discipline</label>
                             <div class="dropdown col-sm-3 dropdownMenuDisc" style="padding-left: 0">
                                 <button class="btn dropdown-toggle" type="button" id="dropdownMenuDisc"
@@ -45,7 +54,7 @@
                                 </ul>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row yesRights">
                             <div class="datePickerEvtGroup">
                                 <div class="LabelAdmin col-sm-3">Date de début</div>
                                 <div class='col-sm-9 noPadding mb-10' data-champName="dateDebut">
@@ -75,7 +84,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row mb-10 rowBtnValidateEventCreate">
+                        <div class="row yesRights mb-10 rowBtnValidateEventCreate">
                             <div class="btn btn-sm btn-info mb-3 validateEvent" data-evtId="">Valider</div>
                             <div class="btn btn-sm btn-info mb-3 deleteEvent">Supprimer</div>
                         </div>
