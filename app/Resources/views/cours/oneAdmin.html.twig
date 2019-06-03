@@ -215,22 +215,23 @@
                 $('.modal .modal-body[data-contentModal=ajoutRessExist]').attr('data-idSection', $(this).closest('.section').attr('data-idSection')).show();
             });
             // Ajout de nouvelles ressources
-            $('.addNewItem').click(function () {
+            $("#ressCreaSelectPicker").on("changed.bs.select", function(e, clickedIndex, newValue, oldValue) {
+                var selectedD = $(this).find('option').eq(clickedIndex)
                 var idItem = 0;
                 var idSection = $(this).closest('.section').attr('data-idSection');
 
                 var typeItem;
-                if ($(this).hasClass('addNewTypeDevoir')) {
+                if (selectedD.hasClass('addNewTypeDevoir')) {
                     typeItem = "devoir";
-                } else if ($(this).hasClass('addNewTypeLien')) {
+                } else if (selectedD.hasClass('addNewTypeLien')) {
                     typeItem = "lien";
-                } else if ($(this).hasClass('addNewTypeLibre')) {
+                } else if (selectedD.hasClass('addNewTypeLibre')) {
                     typeItem = "libre";
-                } else if ($(this).hasClass('addNewTypeGroupe')) {
+                } else if (selectedD.hasClass('addNewTypeGroupe')) {
                     typeItem = "groupe";
-                } else if ($(this).hasClass('addNewTypeForum')) {
+                } else if (selectedD.hasClass('addNewTypeForum')) {
                     typeItem = "forum";
-                } else if ($(this).hasClass('addNewTypeChat')) {
+                } else if (selectedD.hasClass('addNewTypeChat')) {
                     typeItem = "chat";
                 }
                 console.log(typeItem);
@@ -1628,31 +1629,19 @@
                              id="t1body{{ val.section.id }}" data-idSection="{{ val.section.id }}">
                             <div class="editor">
                                 <div class="row">
-                                    <select class="selectpicker col-xs-6" data-style="MyBtnSelectPickeer"
+                                    <select id="ressCreaSelectPicker" class="selectpicker col-xs-6" data-style="MyBtnSelectPickeer"
                                             title="Ajouter une ressource">
                                         {% if app.user.statut == 'Referent' or app.user.hasRole('ROLE_SUPER_ADMIN') %}
-                                            <option title="Nouvelle ressource" class="addNewItem addNewTypeDevoir">
-                                                Devoir
-                                            </option>
-                                            <option title="Nouvelle ressource" class="addNewItem addNewTypeLien">Lien
-                                            </option>
-                                            <option title="Nouvelle ressource" class="addNewItem addNewTypeGroupe">
-                                                Groupe de
-                                                liens
-                                            </option>
-                                            <option title="Nouvelle ressource" class="addNewItem addNewTypeLibre">Zone
-                                                libre
-                                            </option>
+                                            <option title="Nouvelle ressource" class="addNewItem addNewTypeDevoir">Devoir</option>
+                                            <option title="Nouvelle ressource" class="addNewItem addNewTypeLien">Lien</option>
+                                            <option title="Nouvelle ressource" class="addNewItem addNewTypeGroupe">Groupe de liens</option>
+                                            <option title="Nouvelle ressource" class="addNewItem addNewTypeLibre">Zone libre</option>
                                         {% endif %}
-                                        <option title="Nouvelle ressource" class="addNewItem addNewTypeForum">Forum
-                                        </option>
-                                        <option title="Nouvelle ressource" class="addNewItem addNewTypeChat">Chat
-                                        </option>
+                                        <option title="Nouvelle ressource" class="addNewItem addNewTypeForum">Forum</option>
+                                        <option title="Nouvelle ressource" class="addNewItem addNewTypeChat">Chat</option>
                                         {% if app.user.statut == 'Referent' or app.user.hasRole('ROLE_SUPER_ADMIN') %}
                                             <option data-divider="true"></option>
-                                            <option title="Nouvelle ressource" class="addExistingRessource">Ressource
-                                                existante
-                                            </option>
+                                            <option title="Nouvelle ressource" class="addExistingRessource">Ressource existante</option>
                                         {% endif %}
                                     </select>
                                 </div>
