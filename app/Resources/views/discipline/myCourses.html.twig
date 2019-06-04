@@ -110,7 +110,7 @@
                 {% if active > 0 %}
                     {% set idActive = active %}
                 {% endif %}
-                <ul class="nav nav-pills nav-stacked pull-left" role="tablist"
+                <ul class="nav nav-pills nav-stacked pull-left col-md-4 col-sm-3" role="tablist"
                     style="padding-bottom: 5px;padding-top: 5px">
                     {% for key,val in courses %}
                         <li role="presentation"
@@ -131,7 +131,7 @@
                              id="p1body{{ val.discipline.id }}" {% if loop.index == 1 %} style="padding-top: 0;" {% endif %}>
                             <div class="container mt-0 mb-60">
                                 <div class="row">
-                                    <div class="col-sm-8">
+                                    <div class="col-sm-7 col-md-8">
                                         {% if hasResponsableMinRights %}
                                             <div class="course-list" style="margin-top: 0;">
                                                 <div class="course-media text-center mt-10">
