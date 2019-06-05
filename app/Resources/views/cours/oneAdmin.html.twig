@@ -216,6 +216,7 @@
             });
             // Ajout de nouvelles ressources
             $("#ressCreaSelectPicker").on("changed.bs.select", function(e, clickedIndex, newValue, oldValue) {
+                console.log('click');
                 var selectedD = $(this).find('option').eq(clickedIndex)
                 var idItem = 0;
                 var idSection = $(this).closest('.section').attr('data-idSection');
