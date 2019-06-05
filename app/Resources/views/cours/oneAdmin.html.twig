@@ -214,6 +214,31 @@
                 $('.modal .modal-body').hide();
                 $('.modal .modal-body[data-contentModal=ajoutRessExist]').attr('data-idSection', $(this).closest('.section').attr('data-idSection')).show();
             });
+
+
+            $('.addNewItem').click(function() {
+                console.log('click2');
+                var idItem = 0;
+                var idSection = $(this).closest('.section').attr('data-idSection');
+
+                var typeItem;
+                if ($(this).hasClass('addNewTypeDevoir')) {
+                    typeItem = "devoir";
+                } else if ($(this).hasClass('addNewTypeLien')) {
+                    typeItem = "lien";
+                } else if ($(this).hasClass('addNewTypeLibre')) {
+                    typeItem = "libre";
+                } else if ($(this).hasClass('addNewTypeGroupe')) {
+                    typeItem = "groupe";
+                } else if ($(this).hasClass('addNewTypeForum')) {
+                    typeItem = "forum";
+                } else if ($(this).hasClass('addNewTypeChat')) {
+                    typeItem = "chat";
+                }
+                console.log(typeItem+"2");
+            });
+
+
             // Ajout de nouvelles ressources
             $("#ressCreaSelectPicker").on("changed.bs.select", function(e, clickedIndex, newValue, oldValue) {
                 console.log('click');
