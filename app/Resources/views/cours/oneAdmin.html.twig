@@ -216,6 +216,7 @@
             });
 
 
+            // Ajout de nouvelles ressources
             $('.addNewItem').click(function() {
                 console.log('click2');
                 var idItem = 0;
@@ -236,10 +237,7 @@
                     typeItem = "chat";
                 }
                 console.log(typeItem+"2");
-            });
-
-
-            // Ajout de nouvelles ressources
+           /* });
             $("#ressCreaSelectPicker").on("changed.bs.select", function(e, clickedIndex, newValue, oldValue) {
                 console.log('click');
                 var selectedD = $(this).find('option').eq(clickedIndex)
@@ -261,7 +259,7 @@
                     typeItem = "chat";
                 }
                 console.log(typeItem);
-
+*/
                 $.ajax({
                     type: "POST",
                     url: "{{ path('addZone_ajax') }}",
