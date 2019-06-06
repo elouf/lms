@@ -156,7 +156,7 @@
             $('#form_typeUser').on('change', function () {
                 if ($(this).val() === 'Etudiant') {
                     loadEtudiant();
-                } else if ($(this).val() === 'Formateur' || $(this).val() === 'Responsable') {
+                } else if ($(this).val() === 'Formateur' || $(this).val() === 'Responsable' || $(this).val() === 'Referent') {
                     loadFormateur();
                 } else {
                     loadProfStagiaire();
@@ -272,7 +272,7 @@
                         {{ form_label(form.institut) }}{{ form_widget(form.institut) }}
                     </div>
                     <div class="alertTypeUserValidation">
-                        Attention, les statuts "Formateur" et "Administrateur" permettent des fonctionnalités additionnelles dans la plateforme.
+                        Attention, les statuts "Référent", "Formateur" et "Administrateur" permettent des fonctionnalités additionnelles dans la plateforme.
                         De ce fait, votre compte devra être confirmé par les administrateurs de l'Afadec. L'activation de votre compte ne sera pas instantannée mais pourra prendre jusqu'à 24h.
                         Merci pour votre compréhension.
                     </div>

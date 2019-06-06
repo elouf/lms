@@ -552,9 +552,7 @@ class UsersController extends Controller
     {
         /* @var $user User */
         $user = $this->getUser();
-        if ((($user->getStatut() !== 'Responsable' && $user->getStatut() !== 'Formateur') || !$user->getConfirmedByAdmin()) && !$this->getUser()->hasRole('ROLE_SUPER_ADMIN')) {
-            return $this->redirectToRoute('homepage');
-        }
+        $statut = $user->getStatut();
 
         $roles = $this->getDoctrine()->getRepository('AppBundle:Role')->findAll();
 
@@ -581,130 +579,218 @@ class UsersController extends Controller
         $usersNoAccessTab = array();
         $usersAccessTab = array();
 
-        foreach ($users as $user) {
-            $myCohs = $inscrCohRepo->findBy(array('user' => $user));
-            $inscrs = null;
-            if($type == "cohorte"){
-                /* @var $inscr Inscription_coh */
-                $inscr = $inscrCohRepo->findOneBy(array('cohorte' => $item, 'user' => $user));
-                if ($inscr) {
-                    array_push($usersAccessTab, [
-                        "user" => $user,
-                        "isInscrit" => true,
-                        "myCohs" => $myCohs,
-                        "role" => $inscr->getRole()
-                    ]);
-                } else {
-                    array_push($usersNoAccessTab, [
-                        'user' => $user,
-                        "myCohs" => $myCohs
-                    ]);
-                }
-            }else if ($type == "discipline") {
-                $checkAccess = false;
-                $inscrCohs = $inscrCohRepo->findBy(array('user' => $user));
-                $inscr = null;
-                if($inscrCohs){
-                    foreach($inscrCohs as $inscrCoh){
-                        $coh = $inscrCoh->getCohorte();
-                        if($coh->getDisciplines()->contains($item)){
-                            $checkAccess = true;
-                            $inscr = $inscrDRepo->findOneBy(array('discipline' => $item, 'user' => $user));
-                            break;
-                        }
+        if ((($statut !== 'Responsable' && $statut !== 'Formateur' && $statut !== 'Referent') || !$user->getConfirmedByAdmin()) && !$this->getUser()->hasRole('ROLE_SUPER_ADMIN')) {
+            return $this->redirectToRoute('homepage');
+        }elseif ($statut === 'Referent' && $type !== 'cours' ){
+            return $this->redirectToRoute('homepage');
+        }elseif($statut === 'Referent' && $type === 'cours' ){
+            /* @var $cours Cours */
+            $cours = $item;
+            if($cours->getAuteur() !== $user){
+                return $this->redirectToRoute('homepage');
+            }
+        }
+
+        if($statut !== 'Referent'){
+            foreach ($users as $user) {
+                $myCohs = $inscrCohRepo->findBy(array('user' => $user));
+                $inscrs = null;
+                if($type == "cohorte"){
+                    /* @var $inscr Inscription_coh */
+                    $inscr = $inscrCohRepo->findOneBy(array('cohorte' => $item, 'user' => $user));
+                    if ($inscr) {
+                        array_push($usersAccessTab, [
+                            "user" => $user,
+                            "isInscrit" => true,
+                            "myCohs" => $myCohs,
+                            "role" => $inscr->getRole()
+                        ]);
+                    } else {
+                        array_push($usersNoAccessTab, [
+                            'user' => $user,
+                            "myCohs" => $myCohs
+                        ]);
                     }
-                }
-                if(!$checkAccess){
-                    /* @var $inscr Inscription_d */
-                    $inscr = $inscrDRepo->findOneBy(array('discipline' => $item, 'user' => $user));
-                    if($inscr){
-                        $checkAccess = true;
-                    }
-                }
-                if ($checkAccess) {
-                    $role = null;
-                    if($inscr){
-                        $role = $inscr->getRole();
-                    }else{
-                        $inscrCohs = $inscrCohRepo->findBy(array('user' => $user));
-                        if($inscrCohs){
-                            foreach($inscrCohs as $inscrCoh){
-                                $coh = $inscrCoh->getCohorte();
-                                if($coh->getDisciplines()->contains($item)){
-                                    $role = $inscrCoh->getRole();
-                                }
+                }else if ($type == "discipline") {
+                    $checkAccess = false;
+                    $inscrCohs = $inscrCohRepo->findBy(array('user' => $user));
+                    $inscr = null;
+                    if($inscrCohs){
+                        foreach($inscrCohs as $inscrCoh){
+                            $coh = $inscrCoh->getCohorte();
+                            if($coh->getDisciplines()->contains($item)){
+                                $checkAccess = true;
+                                $inscr = $inscrDRepo->findOneBy(array('discipline' => $item, 'user' => $user));
+                                break;
                             }
                         }
                     }
-                    array_push($usersAccessTab, [
-                        "user" => $user,
-                        "isInscrit" => $inscr != null,
-                        "myCohs" => $myCohs,
-                        "role" => $role
-                    ]);
-                } else {
-                    array_push($usersNoAccessTab, [
-                        'user' => $user,
-                        "myCohs" => $myCohs
-                    ]);
+                    if(!$checkAccess){
+                        /* @var $inscr Inscription_d */
+                        $inscr = $inscrDRepo->findOneBy(array('discipline' => $item, 'user' => $user));
+                        if($inscr){
+                            $checkAccess = true;
+                        }
+                    }
+                    if ($checkAccess) {
+                        $role = null;
+                        if($inscr){
+                            $role = $inscr->getRole();
+                        }else{
+                            $inscrCohs = $inscrCohRepo->findBy(array('user' => $user));
+                            if($inscrCohs){
+                                foreach($inscrCohs as $inscrCoh){
+                                    $coh = $inscrCoh->getCohorte();
+                                    if($coh->getDisciplines()->contains($item)){
+                                        $role = $inscrCoh->getRole();
+                                    }
+                                }
+                            }
+                        }
+                        array_push($usersAccessTab, [
+                            "user" => $user,
+                            "isInscrit" => $inscr != null,
+                            "myCohs" => $myCohs,
+                            "role" => $role
+                        ]);
+                    } else {
+                        array_push($usersNoAccessTab, [
+                            'user' => $user,
+                            "myCohs" => $myCohs
+                        ]);
+                    }
+                }else {
+                    if ($itemRepo->userHasAccessOrIsInscrit($user->getId(), $id)) {
+                        array_push($usersAccessTab, [
+                            "user" => $user,
+                            "isInscrit" => $itemRepo->userIsInscrit($user->getId(), $id),
+                            "myCohs" => $inscrCohRepo->allForUser($user->getId()),
+                            "role" => $itemRepo->getRole($user->getId(), $id)
+                        ]);
+                    } else {
+                        array_push($usersNoAccessTab, [
+                            'user' => $user,
+                            "myCohs" => $inscrCohRepo->allForUser($user->getId())
+                        ]);
+                    }
                 }
-            }else {
-                if ($itemRepo->userHasAccessOrIsInscrit($user->getId(), $id)) {
-                    array_push($usersAccessTab, [
-                        "user" => $user,
-                        "isInscrit" => $itemRepo->userIsInscrit($user->getId(), $id),
-                        "myCohs" => $inscrCohRepo->allForUser($user->getId()),
-                        "role" => $itemRepo->getRole($user->getId(), $id)
-                    ]);
-                } else {
-                    array_push($usersNoAccessTab, [
-                        'user' => $user,
-                        "myCohs" => $inscrCohRepo->allForUser($user->getId())
-                    ]);
+
+            }
+            $repoUserStatRessource = $this->getDoctrine()->getRepository('AppBundle:UserStatRessource');
+            $ressources = new ArrayCollection();
+            $linkedCourses = new ArrayCollection();
+            if ($type == "cohorte") {
+                $form = $this->createFormBuilder($item)
+                    ->add('nom', TextType::class, array(
+                        'label' => 'Nom',
+                        'label_attr' => array('class' => 'col-sm-4'),
+                        'attr' => array('class' => 'col-sm-8')
+                    ))
+                    ->add('description', CKEditorType::class, array(
+                        'label' => 'Description'
+                    ))
+                    ->add('save', SubmitType::class, array('label' => 'Enregistrer'))
+                    ->getForm();
+
+                /* @var $cohs CohorteRepository */
+                $cohs = $this->getDoctrine()->getRepository('AppBundle:Cohorte');
+                $linkedCourses = $cohs->getLinkedCourses($item);
+
+            } else if ($type == "discipline") {
+                $form = $this->createFormBuilder($item)
+                    ->add('nom', TextType::class, array(
+                        'label' => 'Nom',
+                        'label_attr' => array('class' => 'col-sm-4'),
+                        'attr' => array('class' => 'col-sm-8')
+                    ))
+                    ->add('description', CKEditorType::class, array(
+                        'label' => 'Description'
+                    ))
+                    ->add('save', SubmitType::class, array('label' => 'Enregistrer'))
+                    ->getForm();
+
+                $linkedCourses_arr = $this->getDoctrine()->getRepository('AppBundle:Cours')->findBy(array('discipline' => $item));
+                if ($linkedCourses_arr) {
+                    foreach ($linkedCourses_arr as $linkedCourses_arrOne) {
+                        $linkedCourses->add($linkedCourses_arrOne);
+                    }
+                }
+            } else if ($type == "cours") {
+                $form = $this->createFormBuilder($item)
+                    ->add('nom', TextType::class, array(
+                        'label' => 'Nom',
+                        'label_attr' => array('class' => 'col-sm-4')
+                    ))
+                    ->add('position', TextType::class, array(
+                        'label' => 'Position',
+                        'label_attr' => array('class' => 'col-sm-4')
+                    ))
+                    ->add('discipline', EntityType::class, array(
+                        'class' => 'AppBundle:Discipline',
+                        'choice_label' => 'Nom',
+                        'multiple' => false,
+                        'label_attr' => array('class' => 'col-sm-4')
+                    ))
+                    ->add('description', CKEditorType::class, array(
+                        'label' => 'Description'
+                    ))
+                    ->add('accueil', CKEditorType::class, array(
+                        'label' => 'Accueil'
+                    ))
+                    ->add('save', SubmitType::class, array('label' => 'Enregistrer'))
+                    ->getForm();
+
+                $c_ressources = $this->getDoctrine()->getRepository('AppBundle:Ressource')->findBy(array('cours' => $item));
+                if ($c_ressources) {
+                    foreach ($c_ressources as $c_ressource) {
+                        $ressStats = $repoUserStatRessource->findBy(array('ressource' => $c_ressource));
+
+                        $ressources->add(["ressource" => $c_ressource, "stats" => $ressStats]);
+                    }
+                }
+            } else if ($type == "session") {
+                $form = $this->createFormBuilder($item)
+                    ->add('nom', TextType::class, array(
+                        'label' => 'Nom',
+                        'label_attr' => array('class' => 'col-sm-4'),
+                        'attr' => array('class' => 'col-sm-8')
+                    ))
+                    ->add('description', CKEditorType::class, array(
+                        'label' => 'Description'
+                    ))
+                    ->add('save', SubmitType::class, array('label' => 'Enregistrer'))
+                    ->getForm();
+                $c_ressources = $this->getDoctrine()->getRepository('AppBundle:Ressource')->findBy(array('cours' => $item));
+                if ($c_ressources) {
+                    foreach ($c_ressources as $c_ressource) {
+                        $ressStats = $repoUserStatRessource->findBy(array('ressource' => $c_ressource));
+
+                        $ressources->add(["ressource" => $c_ressource, "stats" => $ressStats]);
+                    }
                 }
             }
 
-        }
-        $repoUserStatRessource = $this->getDoctrine()->getRepository('AppBundle:UserStatRessource');
-        $ressources = new ArrayCollection();
-        $linkedCourses = new ArrayCollection();
-        if ($type == "cohorte") {
-            $form = $this->createFormBuilder($item)
-                ->add('nom', TextType::class, array(
-                    'label' => 'Nom',
-                    'label_attr' => array('class' => 'col-sm-4'),
-                    'attr' => array('class' => 'col-sm-8')
-                ))
-                ->add('description', CKEditorType::class, array(
-                    'label' => 'Description'
-                ))
-                ->add('save', SubmitType::class, array('label' => 'Enregistrer'))
-                ->getForm();
+            $form->handleRequest($request);
 
-            /* @var $cohs CohorteRepository */
-            $cohs = $this->getDoctrine()->getRepository('AppBundle:Cohorte');
-            $linkedCourses = $cohs->getLinkedCourses($item);
-
-        } else if ($type == "discipline") {
-            $form = $this->createFormBuilder($item)
-                ->add('nom', TextType::class, array(
-                    'label' => 'Nom',
-                    'label_attr' => array('class' => 'col-sm-4'),
-                    'attr' => array('class' => 'col-sm-8')
-                ))
-                ->add('description', CKEditorType::class, array(
-                    'label' => 'Description'
-                ))
-                ->add('save', SubmitType::class, array('label' => 'Enregistrer'))
-                ->getForm();
-
-            $linkedCourses_arr = $this->getDoctrine()->getRepository('AppBundle:Cours')->findBy(array('discipline' => $item));
-            if ($linkedCourses_arr) {
-                foreach ($linkedCourses_arr as $linkedCourses_arrOne) {
-                    $linkedCourses->add($linkedCourses_arrOne);
-                }
+            if ($form->isSubmitted() && $form->isValid()) {
+                // $form->getData() holds the submitted values
+                // but, the original `$task` variable has also been updated
+                $user = $form->getData();
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($user);
+                $em->flush();
             }
-        } else if ($type == "cours") {
+            return $this->render('user/itemUsers.html.twig', [
+                'item' => $item,
+                'ressources' => $ressources,
+                'linkedCourses' => $linkedCourses,
+                'roles' => $roles,
+                'entityName' => $entityName,
+                'usersNoHavingAccess' => $usersNoAccessTab,
+                'usersHavingAccess' => $usersAccessTab,
+                'form' => $form->createView()
+            ]);
+        }else{
             $form = $this->createFormBuilder($item)
                 ->add('nom', TextType::class, array(
                     'label' => 'Nom',
@@ -712,12 +798,6 @@ class UsersController extends Controller
                 ))
                 ->add('position', TextType::class, array(
                     'label' => 'Position',
-                    'label_attr' => array('class' => 'col-sm-4')
-                ))
-                ->add('discipline', EntityType::class, array(
-                    'class' => 'AppBundle:Discipline',
-                    'choice_label' => 'Nom',
-                    'multiple' => false,
                     'label_attr' => array('class' => 'col-sm-4')
                 ))
                 ->add('description', CKEditorType::class, array(
@@ -728,58 +808,29 @@ class UsersController extends Controller
                 ))
                 ->add('save', SubmitType::class, array('label' => 'Enregistrer'))
                 ->getForm();
+            $form->handleRequest($request);
 
-            $c_ressources = $this->getDoctrine()->getRepository('AppBundle:Ressource')->findBy(array('cours' => $item));
-            if ($c_ressources) {
-                foreach ($c_ressources as $c_ressource) {
-                    $ressStats = $repoUserStatRessource->findBy(array('ressource' => $c_ressource));
-
-                    $ressources->add(["ressource" => $c_ressource, "stats" => $ressStats]);
-                }
+            if ($form->isSubmitted() && $form->isValid()) {
+                // $form->getData() holds the submitted values
+                // but, the original `$task` variable has also been updated
+                $user = $form->getData();
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($user);
+                $em->flush();
+                return $this->redirectToRoute('myCourses');
             }
-        } else if ($type == "session") {
-            $form = $this->createFormBuilder($item)
-                ->add('nom', TextType::class, array(
-                    'label' => 'Nom',
-                    'label_attr' => array('class' => 'col-sm-4'),
-                    'attr' => array('class' => 'col-sm-8')
-                ))
-                ->add('description', CKEditorType::class, array(
-                    'label' => 'Description'
-                ))
-                ->add('save', SubmitType::class, array('label' => 'Enregistrer'))
-                ->getForm();
-            $c_ressources = $this->getDoctrine()->getRepository('AppBundle:Ressource')->findBy(array('cours' => $item));
-            if ($c_ressources) {
-                foreach ($c_ressources as $c_ressource) {
-                    $ressStats = $repoUserStatRessource->findBy(array('ressource' => $c_ressource));
-
-                    $ressources->add(["ressource" => $c_ressource, "stats" => $ressStats]);
-                }
-            }
+            return $this->render('user/itemUsers.html.twig', [
+                'item' => $item,
+                'roles' => $roles,
+                'entityName' => $entityName,
+                'usersNoHavingAccess' => $usersNoAccessTab,
+                'usersHavingAccess' => $usersAccessTab,
+                'form' => $form->createView()
+            ]);
         }
 
-        $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            // $form->getData() holds the submitted values
-            // but, the original `$task` variable has also been updated
-            $user = $form->getData();
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($user);
-            $em->flush();
-        }
 
-        return $this->render('user/itemUsers.html.twig', [
-            'item' => $item,
-            'ressources' => $ressources,
-            'linkedCourses' => $linkedCourses,
-            'roles' => $roles,
-            'entityName' => $entityName,
-            'usersNoHavingAccess' => $usersNoAccessTab,
-            'usersHavingAccess' => $usersAccessTab,
-            'form' => $form->createView()
-        ]);
     }
 
     /**
@@ -1180,7 +1231,7 @@ class UsersController extends Controller
         $usersToSend = [];
         /* @var User $user */
         foreach ($users as $user) {
-            if ($user->getCreatedAt() > $dateLimit && ($user->getStatut() == 'Responsable' || $user->getStatut() == 'Formateur')) {
+            if ($user->getCreatedAt() > $dateLimit && ($user->getStatut() == 'Responsable' || $user->getStatut() == 'Formateur' || $user->getStatut() == 'Referent')) {
                 array_push($usersToSend, $user);
             }
         }

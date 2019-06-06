@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Cours;
 use AppBundle\Entity\Discipline;
 use AppBundle\Entity\Inscription_sess;
+use AppBundle\Entity\User;
 use Ivory\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -81,12 +82,16 @@ class DisciplineController extends Controller
         $cohLiees = array();
 
         $coursesIndiv = array();
+        /* @var $user User */
+        $user = $this->getUser();
+        $statutUser = $user->getStatut();
+        $userIsAdmin = $user->hasRole('ROLE_SUPER_ADMIN');
 
         // si ce n'est pas l'admin, on fait le tri
-        if (!($this->getUser()->hasRole('ROLE_SUPER_ADMIN'))) {
+        if (!$userIsAdmin) {
             // on créé un tableau qui contient les disciplines auxquelles l' user est inscrit par cohorte
             $repositoryInscrCoh = $em->getRepository('AppBundle:Inscription_coh');
-            $inscrsCoh = $repositoryInscrCoh->findBy(array('user' => $this->getUser()));
+            $inscrsCoh = $repositoryInscrCoh->findBy(array('user' => $user));
             $discInscrCoh = array();
             foreach ($inscrsCoh as $inscrCoh) {
                 $cohorte = $repositoryCoh->find($inscrCoh->getCohorte());
@@ -101,7 +106,7 @@ class DisciplineController extends Controller
 
             // on ajoute les disciplines auxquelles le user est inscrit directement
             $repositoryInscrD = $em->getRepository('AppBundle:Inscription_d');
-            $inscrsD = $repositoryInscrD->findBy(array('user' => $this->getUser()));
+            $inscrsD = $repositoryInscrD->findBy(array('user' => $user));
             foreach ($inscrsD as $inscrD) {
                 if (!in_array($inscrD->getDiscipline(), $disciplinesArray2Consider)) {
                     array_push($disciplinesArray2Consider, $inscrD->getDiscipline());
@@ -110,14 +115,14 @@ class DisciplineController extends Controller
 
             // enfin, on ajoute les cours auxquels l'utilisateur est inscrit individuellement (du coup une portion de discipline)
             $repositoryInscrC = $em->getRepository('AppBundle:Inscription_c');
-            $inscrsC = $repositoryInscrC->findBy(array('user' => $this->getUser()));
+            $inscrsC = $repositoryInscrC->findBy(array('user' => $user));
             foreach ($inscrsC as $inscrC) {
                 if (!in_array($inscrC->getCours()->getDiscipline(), $disciplinesArray2Consider)) {
                     array_push($coursesIndiv, $inscrC->getCours());
                 }
             }
         }
-        if ($this->getUser()->hasRole('ROLE_SUPER_ADMIN') || $this->getUser()->getStatut() == 'Responsable' || $this->getUser()->getStatut() == 'Formateur') {
+        if ($userIsAdmin || $statutUser == 'Responsable' || $statutUser == 'Formateur') {
             // on ajoute les cohortes liées pour l'admin pour qu'il puisse accéder aux pages d'inscriptions à ces cohortes
             for ($i = 0; $i < count($disciplinesArray2Consider); $i++) {
                 $cohLiees[$i] = $repositoryDis->getCohortes($disciplinesArray2Consider[$i]->getId());
@@ -135,7 +140,7 @@ class DisciplineController extends Controller
             $courses[$i]["sessionsFinSession"] = array();
             $courses[$i]["discipline"] = $disciplinesArray2Consider[$i];
             $courses[$i]["cohortesLiees"] = array();
-            if ($this->getUser()->hasRole('ROLE_SUPER_ADMIN') || $this->getUser()->getStatut() == 'Responsable' || $this->getUser()->getStatut() == 'Formateur') {
+            if ($userIsAdmin || $statutUser == 'Responsable' || $statutUser == 'Formateur') {
                 $courses[$i]["cohortesLiees"] = $cohLiees[$i];
             }
             $coursesT = $repositoryCours->findBy(array('discipline' => $disciplinesArray2Consider[$i]), array('position' => 'ASC'));
@@ -145,7 +150,7 @@ class DisciplineController extends Controller
                 } else {
                     $session = $coursesT[$j]->getSession();
                     $currentDate = new DateTime();
-                    $inscrSess = $repositoryInscrSess->findOneBy(array('user' => $this->getUser(), 'session' => $session));
+                    $inscrSess = $repositoryInscrSess->findOneBy(array('user' => $user, 'session' => $session));
                     // on est inscrit et les dates sont bonnes (ou on est admin ou enseignant)
                     $isEns = false;
                     if ($inscrSess) {
@@ -156,7 +161,7 @@ class DisciplineController extends Controller
 
                     if ($currentDate >= $session->getDateDebut() &&
                         $currentDate <= $session->getDateFin() &&
-                        ($inscrSess || $this->getUser()->hasRole('ROLE_SUPER_ADMIN') || (($this->getUser()->getStatut() == 'Responsable' || $this->getUser()->getStatut() == 'Formateur') && $this->getUser()->getConfirmedByAdmin()) || $isEns)
+                        ($inscrSess || $userIsAdmin || (($statutUser == 'Responsable' || $statutUser == 'Formateur') && $user->getConfirmedByAdmin()) || $isEns)
                     ) {
                         // on peut rentrer dans la session et on est dans les dates
                         array_push($courses[$i]["sessions"], $coursesT[$j]);
@@ -167,7 +172,7 @@ class DisciplineController extends Controller
                     } elseif ($currentDate >= $session->getDateFinAlerte() && $currentDate < $session->getDateFin()) {
                         // on affiche le message de fin de session
                         array_push($courses[$i]["sessionsFinSession"], $coursesT[$j]);
-                    } elseif ($this->getUser()->hasRole('ROLE_SUPER_ADMIN') || $isEns || (($this->getUser()->getStatut() == 'Responsable' || $this->getUser()->getStatut() == 'Formateur') && $this->getUser()->getConfirmedByAdmin())) {
+                    } elseif ($userIsAdmin || $isEns || (($statutUser == 'Responsable' || $statutUser == 'Formateur') && $this->getUser()->getConfirmedByAdmin())) {
                         // on peut rentrer dans la session hors des dates
                         array_push($courses[$i]["sessionsAdmin"], $coursesT[$j]);
                     }
@@ -193,12 +198,12 @@ class DisciplineController extends Controller
         // on recherche les infos liées aux documents
         // Comme un accès aux documents de la discipline existe, on doit afficher l'info-bulle si certains n'ont pas été visités
         for ($j = 0; $j < count($courses); $j++) {
-            $docs = $repositoryDocuments->findByDisc($courses[$j]["discipline"], $this->getUser());
+            $docs = $repositoryDocuments->findByDisc($courses[$j]["discipline"], $user);
             $documents = array_merge($docs[0], $docs[1]);
 
             $nbNewDocs = 0;
             foreach ($documents as $doc) {
-                $stat = $repositoryStatsUsersDocs->findBy(array('user' => $this->getUser(), 'document' => $doc));
+                $stat = $repositoryStatsUsersDocs->findBy(array('user' =>$user, 'document' => $doc));
                 if (!$stat) {
                     $nbNewDocs++;
                 }
@@ -248,6 +253,7 @@ class DisciplineController extends Controller
             $cours->setDiscipline($dis);
             $cours->setAccueil($form['accueil']->getData());
             $cours->setDescription($form['description']->getData());
+            $cours->setAuteur($user);
 
             $cours->setImageFile($form['imageFile']->getData());
             $cours->upload();

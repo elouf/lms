@@ -376,6 +376,10 @@
                                                         <a href="{{ path('itemUsers', {id: valC.id, type:"cours"}) }}"
                                                            class="btn btn-warning btn-sm">Inscrits</a>
                                                     {% endif %}
+                                                    {% if hasReferentMinRights and valC.auteur == app.user %}
+                                                        <a href="{{ path('itemUsers', {id: valC.id, type:"cours"}) }}"
+                                                           class="btn btn-warning btn-sm">Modifier</a>
+                                                    {% endif %}
                                                 </div>
                                             </div>
                                         {% endfor %}

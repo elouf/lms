@@ -111,6 +111,13 @@ class Cours extends DocContainer
     private $updated;
 
     /**
+     * @var User
+     * @ORM\JoinColumn(onDelete="SET NULL")
+     * @ORM\ManyToOne(targetEntity="User")
+     */
+    protected $auteur;
+
+    /**
      * Constructor
      */
     public function __construct() {
@@ -452,5 +459,29 @@ class Cours extends DocContainer
         $this->updated = $updated;
 
         return $this;
+    }
+
+    /**
+     * Set auteur
+     *
+     * @param User $auteur
+     *
+     * @return Cours
+     */
+    public function setAuteur($auteur)
+    {
+        $this->auteur = $auteur;
+
+        return $this;
+    }
+
+    /**
+     * Get auteur
+     *
+     * @return User
+     */
+    public function getAuteur()
+    {
+        return $this->auteur;
     }
 }
