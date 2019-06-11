@@ -12,11 +12,7 @@ class RoleAdmin extends AbstractAdmin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->add('nom', 'text',
-                array(
-                    'label' => 'Some post',
-                    'disabled'  => true
-                ))
+            ->add('nom')
             ->add('description')
         ;
 
