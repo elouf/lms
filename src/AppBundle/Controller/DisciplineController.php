@@ -69,6 +69,10 @@ class DisciplineController extends Controller
 
         $repositoryDis = $em->getRepository('AppBundle:Discipline');
 
+        $repoInscription_coh = $em->getRepository('AppBundle:Inscription_coh');
+
+        $repoInscription_d = $em->getRepository('AppBundle:Inscription_d');
+
         $repositoryInscrSess = $em->getRepository('AppBundle:Inscription_sess');
 
         $repositoryStatsUsersDocs = $em->getRepository('AppBundle:StatsUsersDocs');
@@ -76,6 +80,8 @@ class DisciplineController extends Controller
         $repositoryDocuments = $em->getRepository('AppBundle:Document');
 
         $disciplines = $repositoryDis->findBy(array(), array('nom' => 'ASC'));
+
+        $cohortes = $repositoryCoh->findAll();
 
         // Par défaut, admin : toutes les disciplines
         $disciplinesArray2Consider = $disciplines;
@@ -132,6 +138,26 @@ class DisciplineController extends Controller
         $courses = array();
         // on construit le tableau des disciplines/cours complètes
         for ($i = 0; $i < count($disciplinesArray2Consider); $i++) {
+
+            $courses[$i]["role"] = "";
+            if($cohortes){
+                foreach($cohortes as $cohorte){
+                    if($cohorte->getDisciplines()->contains($disciplinesArray2Consider[$i])){
+                        $inscrCoh = $repoInscription_coh->findOneBy(array('user' => $user, 'cohorte' => $cohorte));
+                        if($inscrCoh){
+                            $courses[$i]["role"] = $inscrCoh->getRole()->getNom();
+                            break;
+                        }
+                    }
+                }
+            }
+            if($courses[$i]["role"] == ""){
+                $inscrDis = $repoInscription_d->findOneBy(array('user' => $user, 'discipline' => $disciplinesArray2Consider[$i]));
+                if($inscrDis) {
+                    $courses[$i]["role"] = $inscrDis->getRole()->getNom();
+                }
+            }
+
             $courses[$i]["courses"] = array();
             $courses[$i]["sessions"] = array();
             $courses[$i]["sessionsAdmin"] = array();
@@ -192,6 +218,7 @@ class DisciplineController extends Controller
                 $idx = count($courses);
                 $courses[$idx]["discipline"] = $coursesIndiv[$j]->getDiscipline();
                 $courses[$idx]["courses"] = array($coursesIndiv[$j]);
+                $courses[$idx]["role"] = "Etudiant";
             }
         }
 

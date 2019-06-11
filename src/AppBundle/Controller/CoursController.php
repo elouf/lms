@@ -49,6 +49,11 @@ class CoursController extends Controller
         date_default_timezone_set('Europe/Paris');
         ini_set('session.gc_maxlifetime', 21600);
 
+        $isReferent = false;
+        $user = $this->getUser();
+        $statut = $user->getStatut();
+        $isAdmin = $user->hasRole('ROLE_SUPER_ADMIN');
+
         $cours = $this->getDoctrine()->getRepository('AppBundle:Cours')->find($id);
         $discipline = $cours->getDiscipline();
         $repositoryC = $this->getDoctrine()->getRepository('AppBundle:Cours');
@@ -60,12 +65,12 @@ class CoursController extends Controller
         $allcourses = $repositoryC->findBy(array('discipline' => $discipline));
         $courses = array();
         foreach($allcourses as $coursFiltre){
-            if($coursFiltre->getSession() == null || $this->getUser()->hasRole('ROLE_SUPER_ADMIN')){
+            if($coursFiltre->getSession() == null || $isAdmin){
                 array_push($courses, $coursFiltre);
             }else{
                 $currentDate = new DateTime();
                 $sess = $coursFiltre->getSession();
-                if($repoSess->userIsInscrit($this->getUser()->getId(), $sess->getId()) &&
+                if($repoSess->userIsInscrit($user->getId(), $sess->getId()) &&
                     $currentDate >= $sess->getDateDebut() &&
                     $currentDate <= $sess->getDateFin()){
                     array_push($courses, $coursFiltre);
@@ -73,42 +78,46 @@ class CoursController extends Controller
             }
         }
 
-        // on corrige le statut du user. Si c'est un enseignant, il ne doit pas être en etu. Si ce n'est pas un admin, il ne doit pas être admin
-        //if(! ($this->getUser()->hasRole('ROLE_SUPER_ADMIN') || $this->getUser()->getStatut() === 'Responsable' || $this->getUser()->getStatut() === 'Formateur')){
-        if(! ($this->getUser()->hasRole('ROLE_SUPER_ADMIN') || (($this->getUser()->getStatut() == 'Responsable' || $this->getUser()->getStatut() == 'Formateur' || $this->getUser()->getStatut() == 'Referent') && $this->getUser()->getConfirmedByAdmin()))){
-            $role = "";
-            $cohortes = $this->getDoctrine()->getRepository('AppBundle:Cohorte')->findAll();
-            $repoInscription_coh = $this->getDoctrine()->getRepository('AppBundle:Inscription_coh');
-            $repoInscription_d = $this->getDoctrine()->getRepository('AppBundle:Inscription_d');
-            $repoInscription_c = $this->getDoctrine()->getRepository('AppBundle:Inscription_c');
-            if($cohortes){
-                foreach($cohortes as $cohorte){
-                    if($cohorte->getDisciplines()->contains($discipline) || $cohorte->getCours()->contains($cours)){
-                        $inscrCoh = $repoInscription_coh->findOneBy(array('user' => $this->getUser(), 'cohorte' => $cohorte));
-                        if($inscrCoh){
-                            $role = $inscrCoh->getRole()->getNom();
-                            break;
-                        }
+        $role = "";
+        $cohortes = $this->getDoctrine()->getRepository('AppBundle:Cohorte')->findAll();
+        $repoInscription_coh = $this->getDoctrine()->getRepository('AppBundle:Inscription_coh');
+        $repoInscription_d = $this->getDoctrine()->getRepository('AppBundle:Inscription_d');
+        $repoInscription_c = $this->getDoctrine()->getRepository('AppBundle:Inscription_c');
+        if($cohortes){
+            foreach($cohortes as $cohorte){
+                if($cohorte->getDisciplines()->contains($discipline) || $cohorte->getCours()->contains($cours)){
+                    $inscrCoh = $repoInscription_coh->findOneBy(array('user' => $user, 'cohorte' => $cohorte));
+                    if($inscrCoh){
+                        $role = $inscrCoh->getRole()->getNom();
+                        break;
                     }
                 }
             }
-            if($role == ""){
-                $inscrDis = $repoInscription_d->findOneBy(array('user' => $this->getUser(), 'discipline' => $discipline));
-                if($inscrDis) {
-                    $role = $inscrDis->getRole()->getNom();
-                }
+        }
+        if($role == ""){
+            $inscrDis = $repoInscription_d->findOneBy(array('user' => $user, 'discipline' => $discipline));
+            if($inscrDis) {
+                $role = $inscrDis->getRole()->getNom();
             }
-            if($role == ""){
-                $inscrC = $repoInscription_c->findOneBy(array('user' => $this->getUser(), 'cours' => $cours));
-                if($inscrC) {
-                    $role = $inscrC->getRole()->getNom();
-                }
+        }
+        if($role == ""){
+            $inscrC = $repoInscription_c->findOneBy(array('user' => $user, 'cours' => $cours));
+            if($inscrC) {
+                $role = $inscrC->getRole()->getNom();
             }
-            if($role == "Enseignant" || $role == "Formateur"){
+        }
+
+
+        // on corrige le statut du user. Si c'est un enseignant, il ne doit pas être en etu. Si ce n'est pas un admin, il ne doit pas être admin
+        if( !($isAdmin || (($statut == 'Responsable' || $statut == 'Formateur') && $user->getConfirmedByAdmin())) ){
+            if($role == "Enseignant"){
                 $mode = 'ens';
             }else{
                 $mode = 'etu';
             }
+        }
+        if($role == "Referent"){
+            $isReferent = true;
         }
 
         $typeLiens = $this->getDoctrine()->getRepository('AppBundle:TypeLien')->findAll();
@@ -192,7 +201,7 @@ class CoursController extends Controller
                             $datas[$i]["zones"]["copieFichier"][$j] = "undefined";
                             $datas[$i]["zones"]["corrigeFichier"][$j] = "undefined";
 
-                            $copie = $repoCopie->findOneBy(array('devoir' => $ressource, 'auteur' => $this->getUser()));
+                            $copie = $repoCopie->findOneBy(array('devoir' => $ressource, 'auteur' => $user));
                             if($copie){
                                 $datas[$i]["zones"]["copie"][$j] = $copie;
 
@@ -256,13 +265,13 @@ class CoursController extends Controller
         }
 
         //Comme un accès aux documents du cours existe, on doit afficher l'info-bulle si certains n'ont pas été visités
-        $docs = $this->getDoctrine()->getRepository('AppBundle:Document')->findByCours($cours, $this->getUser());
+        $docs = $this->getDoctrine()->getRepository('AppBundle:Document')->findByCours($cours, $user);
         $documents = array_merge($docs[0], $docs[1]);
 
         $nbNewDocs = 0;
         $repoStatsUsersDocs = $this->getDoctrine()->getRepository('AppBundle:StatsUsersDocs');
         foreach($documents as $doc){
-            $stat = $repoStatsUsersDocs->findBy(array('user' => $this->getUser(), 'document' => $doc));
+            $stat = $repoStatsUsersDocs->findBy(array('user' => $user, 'document' => $doc));
             if(!$stat){
                 $nbNewDocs++;
             }
@@ -287,7 +296,8 @@ class CoursController extends Controller
                     'uploadCourse' => $this->getParameter('upload_course'),
                     'nbNewDocs' => $nbNewDocs,
                     'courses' => $courses,
-                    'users' => $users
+                    'users' => $users,
+                    'isReferent' => $isReferent
                 ]);
         }elseif($mode == "ens") {
             return $this->render('cours/one.html.twig', [
@@ -299,7 +309,8 @@ class CoursController extends Controller
                 'uploadSrcSteps' => $this->getParameter('upload_srcSteps'),
                 'uploadCourse' => $this->getParameter('upload_course'),
                 'nbNewDocs' => $nbNewDocs,
-                'courses' => $courses
+                'courses' => $courses,
+                'isReferent' => $isReferent
             ]);
         }else{
             return $this->render('cours/one.html.twig', [
@@ -311,7 +322,8 @@ class CoursController extends Controller
                 'uploadSrcSteps' => $this->getParameter('upload_srcSteps'),
                 'uploadCourse' => $this->getParameter('upload_course'),
                 'nbNewDocs' => $nbNewDocs,
-                'courses' => $courses
+                'courses' => $courses,
+                'isReferent' => $isReferent
             ]);
         }
     }

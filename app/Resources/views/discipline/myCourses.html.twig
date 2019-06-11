@@ -115,12 +115,28 @@
             $('.btnCreateCourse').click(function(){
                $('.formCreateCourse').toggle();
             });
+
+            $('.colDiscNames>li').click(function(){
+                let roleDis = $(this).attr('data-role');
+                if(roleDis === "admin" || roleDis === "Referent"){
+                    $('.createCourseForm').show();
+                }else{
+                    $('.createCourseForm').hide();
+                }
+            });
+            $('.colDiscNames .active').click();
+
+            $('.btnIncrsForReferents').each(function(){
+                let role = $(this).closest('[data-discid]').attr('data-role');
+                if(role === "admin" || role === "Referent"){
+                    $(this).show();
+                }
+            });
         });
     </script>
 
     {% set hasResponsableMinRights = app.user.hasRole('ROLE_SUPER_ADMIN') or (app.user.statut == 'Responsable' and app.user.confirmedByAdmin) %}
-    {% set hasInscritsRights = app.user.hasRole('ROLE_SUPER_ADMIN') or ((app.user.statut == 'Responsable' or app.user.statut == 'Referent' or app.user.statut == 'Formateur') and app.user.confirmedByAdmin) %}
-    {% set hasReferentMinRights = app.user.hasRole('ROLE_SUPER_ADMIN') or (app.user.statut == 'Referent' and app.user.confirmedByAdmin) %}
+    {% set hasInscritsRights = app.user.hasRole('ROLE_SUPER_ADMIN') or ((app.user.statut == 'Responsable' or app.user.statut == 'Formateur') and app.user.confirmedByAdmin) %}
 
     <div class="container mt-120">
         <div class="row mt-20 mb-100">
@@ -131,16 +147,14 @@
                     </a>
                 </div>
             {% endif %}
-            {% if hasReferentMinRights %}
-                <div class="course-list" style="margin-top: 0;">
-                    <div class="createCourse mt-20 mb-20 col-xs-12">
-                        <a href="#" class="btn btnCreateCourse btn-warning btn-sm">Créer un nouveau cours</a>
-                    </div>
-                    <div class="formCreateCourse">
-                        {{ form(form) }}
-                    </div>
+            <div class="course-list createCourseForm" style="margin-top: 0; display: none">
+                <div class="createCourse mt-20 mb-20 col-xs-12">
+                    <a href="#" class="btn btnCreateCourse btn-warning btn-sm">Créer un nouveau cours</a>
                 </div>
-            {% endif %}
+                <div class="formCreateCourse">
+                    {{ form(form) }}
+                </div>
+            </div>
             <div class="col-sm-12">
                 {% set idActive = 0 %}
                 {% if active > 0 %}
@@ -149,7 +163,7 @@
                 <ul class="colDiscNames col-sm-4 nav nav-pills nav-stacked pull-left" role="tablist"
                     style="padding-bottom: 5px;padding-top: 5px">
                     {% for key,val in courses %}
-                        <li role="presentation"
+                        <li role="presentation" data-role="{% if app.user.hasRole('ROLE_SUPER_ADMIN') %}admin{% else %}{{ val.role }}{% endif %}"
                                 {% if idActive != 0 and val.discipline.id == active or idActive == 0 and loop.index == 1 %}
                             class="active"
                                 {% endif %}>
@@ -162,7 +176,7 @@
 
                 <div class="tab-content">
                     {% for key,val in courses %}
-                        <div data-discId="{{ val.discipline.id }}" role="tabpanel"
+                        <div data-discId="{{ val.discipline.id }}" role="tabpanel" data-role="{% if app.user.hasRole('ROLE_SUPER_ADMIN') %}admin{% else %}{{ val.role }}{% endif %}"
                              class="tab-pane fade{% if idActive != 0 and val.discipline.id == active or idActive == 0 and loop.index == 1 %} in active{% endif %}"
                              id="p1body{{ val.discipline.id }}" {% if loop.index == 1 %} style="padding-top: 0;" {% endif %}>
                             <div class="container mt-0 mb-60">
@@ -377,9 +391,9 @@
                                                         <a href="{{ path('itemUsers', {id: valC.id, type:"cours"}) }}"
                                                            class="btn btn-warning btn-sm">Inscrits</a>
                                                     {% endif %}
-                                                    {% if hasReferentMinRights and valC.auteur == app.user %}
+                                                    {% if valC.auteur == app.user or app.user.hasRole('ROLE_SUPER_ADMIN') %}
                                                         <a href="{{ path('itemUsers', {id: valC.id, type:"cours"}) }}"
-                                                           class="btn btn-warning btn-sm">Modifier</a>
+                                                           class="btnIncrsForReferents btn btn-warning btn-sm">Modifier</a>
                                                     {% endif %}
                                                 </div>
                                             </div>

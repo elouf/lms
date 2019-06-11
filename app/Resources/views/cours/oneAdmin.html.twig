@@ -10,7 +10,7 @@
 {% block sousTitrePage %}Association pour la Formation A Distance de l'Enseignement Catholique{% endblock %}
 
 {% block vueAdmin %}
-    {% if app.user.hasRole('ROLE_SUPER_ADMIN') or ((app.user.statut == 'Responsable' or app.user.statut == 'Formateur' or app.user.statut == 'Referent') and app.user.confirmedByAdmin) %}
+    {% if app.user.hasRole('ROLE_SUPER_ADMIN') or ((app.user.statut == 'Responsable' or app.user.statut == 'Formateur') and app.user.confirmedByAdmin) %}
         <li><a href="{{ path('oneCours', {id: cours.id, mode: 'etu'}) }}">Vue étudiant</a></li>
         <li><a href="{{ path('oneCours', {id: cours.id, mode: 'ens'}) }}">Vue enseignant correcteur</a></li>
     {% endif %}
@@ -1476,7 +1476,6 @@
         </div>
 
         <div class="clearfix"></div>
-
         <div class="row mt-40 mb-100">
 
             <!--- Menu des sections sur la gauche -->
@@ -1491,7 +1490,7 @@
                             Gestion des sections
                         </a>
                     </li>
-                    {% if app.user.statut == 'Referent' or app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                    {% if isReferent or app.user.hasRole('ROLE_SUPER_ADMIN') %}
                         <li role="presentation" class="ongletAdmin stockRessource" id="ressourcesAdmin">
                             <a href="#t1body_1" aria-controls="t1body_1" role="tab"
                                data-toggle="tab" aria-expanded="true"><i class="fa fa-cogs fa-fw"
@@ -1514,7 +1513,7 @@
                     {% endfor %}
 
                     <!-- Documents -->
-                    {% if app.user.statut == 'Referent' or app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                    {% if isReferent or app.user.hasRole('ROLE_SUPER_ADMIN') %}
                         <li role="presentation" class="ongletAdmin">
                             <a href="#sectionDocs" aria-controls="sectionDocs" role="tab" data-toggle="tab"
                                aria-expanded="true"><i class="fa fa-pencil fa-fw" aria-hidden="true"> </i>Documents</a>
@@ -1544,7 +1543,7 @@
                                            value="{{ val.section.nom }}"/>
                                     <input data-champName="faIcon" class="faIconSectionInput col-sm-2 col-xs-2"
                                            value="{{ val.section.faIcon }}"/>
-                                    {% if app.user.statut == 'Referent' or app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                    {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
                                         <div class="myBtn btnRight btnAdmin btnSupprElem btnDeleteSection col-sm-1 col-xs-1">
                                             <i class="fa fa-trash"></i></div>
                                     {% endif %}
@@ -1655,7 +1654,7 @@
                                 <div class="row">
                                     <select id="ressCreaSelectPicker" class="selectpicker col-xs-6" data-style="MyBtnSelectPickeer"
                                             title="Ajouter une ressource">
-                                        {% if app.user.statut == 'Referent' or app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                        {% if isReferent or app.user.hasRole('ROLE_SUPER_ADMIN') %}
                                             <option title="Nouvelle ressource" class="addNewItem addNewTypeDevoir">Devoir</option>
                                             <option title="Nouvelle ressource" class="addNewItem addNewTypeLien">Lien</option>
                                             <option title="Nouvelle ressource" class="addNewItem addNewTypeGroupe">Groupe de liens</option>
@@ -1663,7 +1662,7 @@
                                         {% endif %}
                                         <option title="Nouvelle ressource" class="addNewItem addNewTypeForum">Forum</option>
                                         <option title="Nouvelle ressource" class="addNewItem addNewTypeChat">Chat</option>
-                                        {% if app.user.statut == 'Referent' or app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                        {% if isReferent or app.user.hasRole('ROLE_SUPER_ADMIN') %}
                                             <option data-divider="true"></option>
                                             <option title="Nouvelle ressource" class="addExistingRessource">Ressource existante</option>
                                         {% endif %}

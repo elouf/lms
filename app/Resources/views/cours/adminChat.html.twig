@@ -13,7 +13,7 @@
     <div class="titleBar">Chat</div>
 
     {% if inSection == 'true' %}
-        {% include "cours/adminBtns.html.twig" with {visible: visible} %}
+        {% include "cours/adminBtns.html.twig" with {visible: visible, isReferent: isReferent} %}
     {% else %}
         <div class="btnActionCol col-md-1">
             <ul>

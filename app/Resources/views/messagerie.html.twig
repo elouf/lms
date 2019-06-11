@@ -255,7 +255,7 @@
         });
     </script>
     <div class="container pt-40 pb-40">
-        {% if app.user.hasRole('ROLE_SUPER_ADMIN') or ((app.user.statut == 'Responsable' or app.user.statut == 'Formateur' or app.user.statut == 'Referent') and app.user.confirmedByAdmin) %}
+        {% if app.user.hasRole('ROLE_SUPER_ADMIN') or ((app.user.statut == 'Responsable' or app.user.statut == 'Formateur') and app.user.confirmedByAdmin) %}
             <a class="openPopupSendMsg btn btn-primary btn-sm"><i class="btnSendMsg fa fa-paper-plane-o" aria-hidden="true"></i></a>
         {% endif %}
         <h3 class="heading text-center">Messages reçus</h3>
