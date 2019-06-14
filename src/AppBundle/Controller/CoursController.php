@@ -496,4 +496,29 @@ class CoursController extends Controller
         return new JsonResponse('This is not ajax!', 400);
     }
 
+    /**
+     * @Route("/updateIntituleSharedDocsCours_ajax", name="updateIntituleSharedDocsCours_ajax")
+     */
+    public function updateIntituleSharedDocsCoursAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+
+            date_default_timezone_set('Europe/Paris');
+
+            $intitule = $request->request->get('input');
+            $coursId = $request->request->get('id');
+            /* @var $cours Cours */
+            $cours = $em->getRepository('AppBundle:Cours')->findOneBy(array('id' => $coursId));
+
+            $cours->setIntituleSharedDocs($intitule);
+
+            $em->flush();
+
+            return new JsonResponse(array('action' =>'update IntituleSharedDocs', '$coursId' => $cours->getId()));
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
 }

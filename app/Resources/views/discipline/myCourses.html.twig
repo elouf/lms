@@ -6,54 +6,71 @@
 
 {% block main %}
     <style>
-        .createCourse{
+        .createCourse {
             text-align: center;
         }
-        .formCreateCourse{
+
+        .formCreateCourse {
             display: none;
         }
+
         .formCreateCourse input[type=file] {
             display: inline-block;
         }
-        .formCreateCourse label{
+
+        .formCreateCourse label {
             width: 200px;
         }
-        .formCreateCourse form{
+
+        .formCreateCourse form {
             max-width: 600px;
             margin: auto;
         }
-        .colCoursContent{
+
+        .colCoursContent {
             display: inline-block;
         }
-        @media screen and (max-width: 1600px){
-            .colCoursContent{
+
+        .course-list:not([data-enabled="1"]){
+            opacity: .6;
+        }
+
+        @media screen and (max-width: 1600px) {
+            .colCoursContent {
                 width: 800px;
             }
-            .colDiscNames{
+
+            .colDiscNames {
                 width: 300px;
             }
         }
-        @media screen and (max-width: 1200px){
-            .colCoursContent{
+
+        @media screen and (max-width: 1200px) {
+            .colCoursContent {
                 width: 700px;
             }
-            .colDiscNames{
+
+            .colDiscNames {
                 width: 240px;
             }
         }
-        @media screen and (max-width: 1000px){
-            .colCoursContent{
+
+        @media screen and (max-width: 1000px) {
+            .colCoursContent {
                 width: 560px;
             }
-            .colDiscNames{
+
+            .colDiscNames {
                 width: 180px;
             }
         }
-        @media screen and (max-width: 1000px){
-            .colCoursContent{
+
+        @media screen and (max-width: 1000px) {
+            .colCoursContent {
                 width: auto;
             }
-            .colDiscNames{
+
+            .colDiscNames {
                 width: auto;
             }
         }
@@ -112,23 +129,23 @@
                 }
             });
 
-            $('.btnCreateCourse').click(function(){
-               $('.formCreateCourse').toggle();
+            $('.btnCreateCourse').click(function () {
+                $('.formCreateCourse').toggle();
             });
 
-            $('.colDiscNames>li').click(function(){
+            $('.colDiscNames>li').click(function () {
                 let roleDis = $(this).attr('data-role');
-                if(roleDis === "admin" || roleDis === "Referent"){
+                if (roleDis === "admin" || roleDis === "Referent") {
                     $('.createCourseForm').show();
-                }else{
+                } else {
                     $('.createCourseForm').hide();
                 }
             });
             $('.colDiscNames .active').click();
 
-            $('.btnIncrsForReferents').each(function(){
+            $('.btnIncrsForReferents').each(function () {
                 let role = $(this).closest('[data-discid]').attr('data-role');
-                if(role === "admin" || role === "Referent"){
+                if (role === "admin" || role === "Referent") {
                     $(this).show();
                 }
             });
@@ -163,7 +180,8 @@
                 <ul class="colDiscNames col-sm-4 nav nav-pills nav-stacked pull-left" role="tablist"
                     style="padding-bottom: 5px;padding-top: 5px">
                     {% for key,val in courses %}
-                        <li role="presentation" data-role="{% if app.user.hasRole('ROLE_SUPER_ADMIN') %}admin{% else %}{{ val.role }}{% endif %}"
+                        <li role="presentation"
+                            data-role="{% if app.user.hasRole('ROLE_SUPER_ADMIN') %}admin{% else %}{{ val.role }}{% endif %}"
                                 {% if idActive != 0 and val.discipline.id == active or idActive == 0 and loop.index == 1 %}
                             class="active"
                                 {% endif %}>
@@ -176,7 +194,8 @@
 
                 <div class="tab-content">
                     {% for key,val in courses %}
-                        <div data-discId="{{ val.discipline.id }}" role="tabpanel" data-role="{% if app.user.hasRole('ROLE_SUPER_ADMIN') %}admin{% else %}{{ val.role }}{% endif %}"
+                        <div data-discId="{{ val.discipline.id }}" role="tabpanel"
+                             data-role="{% if app.user.hasRole('ROLE_SUPER_ADMIN') %}admin{% else %}{{ val.role }}{% endif %}"
                              class="tab-pane fade{% if idActive != 0 and val.discipline.id == active or idActive == 0 and loop.index == 1 %} in active{% endif %}"
                              id="p1body{{ val.discipline.id }}" {% if loop.index == 1 %} style="padding-top: 0;" {% endif %}>
                             <div class="container mt-0 mb-60">
@@ -245,113 +264,150 @@
                                         {% endif %}
                                         {% if val.sessions is defined %}
                                             {% for keyC,valC in val.sessions %}
-                                                <div class="course-list course-session" data-idCours="{{ valC.id }}"
-                                                     style="margin-top: 0;">
-                                                    <div class="course-media">
-                                                        <img src="{{ asset('images/cours/') }}{{ valC.imageFilename }}"
-                                                             class="img-responsive course-img" alt="">
-                                                    </div>
-                                                    <div class="course-detail">
-                                                        <h4 class="heading">{{ valC.nom }}</h4>
-                                                        <ul class="course-features">
-                                                            <li><i class="fa fa-map-marker"></i> À distance</li>
-                                                            <br/>
-                                                            {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
-                                                                <li>
-                                                                    <i class="fa fa-hourglass-start"></i> {{ valC.session.dateDebut|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}
-                                                                </li>
-                                                            {% endif %}
-                                                            <li>
-                                                                <i class="fa fa-hourglass-end"></i> {{ valC.session.dateFin|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}
-                                                            </li>
-                                                            {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                                {% if hasInscritsRights or valC.enabled %}
+                                                    <div data-enabled="{{ valC.enabled }}"
+                                                         class="course-list course-session" data-idCours="{{ valC.id }}"
+                                                         style="margin-top: 0;">
+                                                        <div class="course-media">
+                                                            <img src="{{ asset('images/cours/') }}{{ valC.imageFilename }}"
+                                                                 class="img-responsive course-img" alt="">
+                                                        </div>
+                                                        <div class="course-detail">
+                                                            <h4 class="heading">{{ valC.nom }}</h4>
+                                                            <ul class="course-features">
+                                                                <li><i class="fa fa-map-marker"></i> À distance</li>
                                                                 <br/>
-                                                                <li><i class="fa fa-bell-o"
-                                                                       aria-hidden="true"></i> {{ valC.session.dateDebutAlerte|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}
+                                                                {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                                                    <li>
+                                                                        <i class="fa fa-hourglass-start"></i> {{ valC.session.dateDebut|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}
+                                                                    </li>
+                                                                {% endif %}
+                                                                <li>
+                                                                    <i class="fa fa-hourglass-end"></i> {{ valC.session.dateFin|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}
                                                                 </li>
-                                                                <li><i class="fa fa-bell-slash-o"
-                                                                       aria-hidden="true"></i> {{ valC.session.dateFinAlerte|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}
-                                                                </li>
-                                                            {% endif %}
-                                                        </ul>
-                                                        <p class="brief">{{ valC.description|raw }}</p>
-                                                        <a href="{{ path('oneCours', {id: valC.id, mode: 'etu'}) }}"
-                                                           class="btn btn-primary btn-sm">Entrer</a>
+                                                                {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                                                    <br/>
+                                                                    <li><i class="fa fa-bell-o"
+                                                                           aria-hidden="true"></i> {{ valC.session.dateDebutAlerte|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}
+                                                                    </li>
+                                                                    <li><i class="fa fa-bell-slash-o"
+                                                                           aria-hidden="true"></i> {{ valC.session.dateFinAlerte|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}
+                                                                    </li>
+                                                                {% endif %}
+                                                            </ul>
+                                                            <p class="brief">{{ valC.description|raw }}</p>
+                                                            <a href="{{ path('oneCours', {id: valC.id, mode: 'etu'}) }}"
+                                                               class="btn btn-primary btn-sm">Entrer</a>
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                {% endif %}
                                             {% endfor %}
                                         {% endif %}
                                         {% if val.sessionsAdmin is defined %}
                                             {% for keyC,valC in val.sessionsAdmin %}
-                                                <div class="course-list course-session" data-idCours="{{ valC.id }}"
-                                                     style="margin-top: 0; opacity: .6;">
-                                                    <div class="course-media">
-                                                        <img src="{{ asset('images/cours/') }}{{ valC.imageFilename }}"
-                                                             class="img-responsive course-img" alt="">
-                                                    </div>
-                                                    <div class="course-detail">
-                                                        <h4 class="heading">{{ valC.nom }}</h4>
-                                                        <ul class="course-features">
-                                                            <li><i class="fa fa-map-marker"></i> À distance</li>
-                                                            <br/>
-                                                            {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
-                                                                <li>
-                                                                    <i class="fa fa-hourglass-start"></i> {{ valC.session.dateDebut|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}
-                                                                </li>
-                                                            {% endif %}
-                                                            <li>
-                                                                <i class="fa fa-hourglass-end"></i> {{ valC.session.dateFin|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}
-                                                            </li>
-                                                            {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                                {% if hasInscritsRights or valC.enabled %}
+                                                    <div data-enabled="{{ valC.enabled }}"
+                                                         class="course-list course-session" data-idCours="{{ valC.id }}"
+                                                         style="margin-top: 0; opacity: .6;">
+                                                        <div class="course-media">
+                                                            <img src="{{ asset('images/cours/') }}{{ valC.imageFilename }}"
+                                                                 class="img-responsive course-img" alt="">
+                                                        </div>
+                                                        <div class="course-detail">
+                                                            <h4 class="heading">{{ valC.nom }}</h4>
+                                                            <ul class="course-features">
+                                                                <li><i class="fa fa-map-marker"></i> À distance</li>
                                                                 <br/>
-                                                                <li><i class="fa fa-bell-o"
-                                                                       aria-hidden="true"></i> {{ valC.session.dateDebutAlerte|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}
+                                                                {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                                                    <li>
+                                                                        <i class="fa fa-hourglass-start"></i> {{ valC.session.dateDebut|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}
+                                                                    </li>
+                                                                {% endif %}
+                                                                <li>
+                                                                    <i class="fa fa-hourglass-end"></i> {{ valC.session.dateFin|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}
                                                                 </li>
-                                                                <li><i class="fa fa-bell-slash-o"
-                                                                       aria-hidden="true"></i> {{ valC.session.dateFinAlerte|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}
-                                                                </li>
-                                                            {% endif %}
-                                                        </ul>
-                                                        <p class="brief">{{ valC.description|raw }}</p>
-                                                        <a href="{{ path('oneCours', {id: valC.id, mode: 'etu'}) }}"
-                                                           class="btn btn-primary btn-sm">Entrer</a>
+                                                                {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                                                    <br/>
+                                                                    <li><i class="fa fa-bell-o"
+                                                                           aria-hidden="true"></i> {{ valC.session.dateDebutAlerte|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}
+                                                                    </li>
+                                                                    <li><i class="fa fa-bell-slash-o"
+                                                                           aria-hidden="true"></i> {{ valC.session.dateFinAlerte|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}
+                                                                    </li>
+                                                                {% endif %}
+                                                            </ul>
+                                                            <p class="brief">{{ valC.description|raw }}</p>
+                                                            <a href="{{ path('oneCours', {id: valC.id, mode: 'etu'}) }}"
+                                                               class="btn btn-primary btn-sm">Entrer</a>
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                {% endif %}
                                             {% endfor %}
                                         {% endif %}
                                         {% if val.sessionsAlerte is defined %}
                                             {% for keyC,valC in val.sessionsAlerte %}
-                                                <div class="course-list course-sessionAlerte"
-                                                     data-idCours="{{ valC.id }}" data-idSession="{{ valC.session.id }}"
-                                                     style="margin-top: 0;">
-                                                    <div class="course-media">
-                                                        <img src="{{ asset('images/cours/') }}{{ valC.imageFilename }}"
-                                                             class="img-responsive course-img" alt="">
-                                                    </div>
-                                                    <div class="course-detail">
-                                                        <h4 class="heading">{{ valC.nom }}</h4>
-                                                        <ul class="course-features">
-                                                            <li><i class="fa fa-map-marker"></i> À distance</li>
-                                                            <br/>
-                                                            <li>
-                                                                <i class="fa fa-hourglass-start"></i> {{ valC.session.dateDebut|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}
-                                                            </li>
-                                                        </ul>
-                                                        <p class="brief">{{ valC.session.messageAlerte|raw }}</p>
-                                                        <p class="brief fdbackInscUserSess{% if not val.sessionsAlerteIsInscrit[keyC] %} hidden{% endif %}">
-                                                            Vous êtes inscrit à cette future session.</p>
+                                                {% if hasInscritsRights or valC.enabled %}
+                                                    <div data-enabled="{{ valC.enabled }}"
+                                                         class="course-list course-sessionAlerte"
+                                                         data-idCours="{{ valC.id }}"
+                                                         data-idSession="{{ valC.session.id }}"
+                                                         style="margin-top: 0;">
+                                                        <div class="course-media">
+                                                            <img src="{{ asset('images/cours/') }}{{ valC.imageFilename }}"
+                                                                 class="img-responsive course-img" alt="">
+                                                        </div>
+                                                        <div class="course-detail">
+                                                            <h4 class="heading">{{ valC.nom }}</h4>
+                                                            <ul class="course-features">
+                                                                <li><i class="fa fa-map-marker"></i> À distance</li>
+                                                                <br/>
+                                                                <li>
+                                                                    <i class="fa fa-hourglass-start"></i> {{ valC.session.dateDebut|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}
+                                                                </li>
+                                                            </ul>
+                                                            <p class="brief">{{ valC.session.messageAlerte|raw }}</p>
+                                                            <p class="brief fdbackInscUserSess{% if not val.sessionsAlerteIsInscrit[keyC] %} hidden{% endif %}">
+                                                                Vous êtes inscrit à cette future session.</p>
 
-                                                        {% if not val.sessionsAlerteIsInscrit[keyC] %}
-                                                            <a class="btn btn-warning btn-sm btnInscrSess">S'inscrire</a>
-                                                        {% endif %}
+                                                            {% if not val.sessionsAlerteIsInscrit[keyC] %}
+                                                                <a class="btn btn-warning btn-sm btnInscrSess">S'inscrire</a>
+                                                            {% endif %}
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                {% endif %}
                                             {% endfor %}
                                         {% endif %}
                                         {% if val.sessionsFinSession is defined %}
                                             {% for keyC,valC in val.sessionsFinSession %}
-                                                <div class="course-list course-sessionAlerte"
-                                                     data-idCours="{{ valC.id }}" data-idSession="{{ valC.session.id }}"
+                                                {% if hasInscritsRights or valC.enabled %}
+                                                    <div data-enabled="{{ valC.enabled }}"
+                                                         class="course-list course-sessionAlerte"
+                                                         data-idCours="{{ valC.id }}"
+                                                         data-idSession="{{ valC.session.id }}"
+                                                         style="margin-top: 0;">
+                                                        <div class="course-media">
+                                                            <img src="{{ asset('images/cours/') }}{{ valC.imageFilename }}"
+                                                                 class="img-responsive course-img" alt="">
+                                                        </div>
+                                                        <div class="course-detail">
+                                                            <h4 class="heading">{{ valC.nom }}</h4>
+                                                            <ul class="course-features">
+                                                                <li><i class="fa fa-map-marker"></i> À distance</li>
+                                                                <br/>
+                                                                <li>
+                                                                    <i class="fa fa-hourglass-start"></i> {{ valC.session.dateDebut|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}
+                                                                </li>
+                                                            </ul>
+                                                            <p class="brief">{{ valC.session.messageFinSession|raw }}</p>
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endif %}
+                                        {% for keyC,valC in val.courses %}
+                                            {% if hasInscritsRights or valC.enabled %}
+                                                <div data-enabled="{{ valC.enabled }}" class="course-list"
+                                                     data-idCours="{{ valC.id }}"
                                                      style="margin-top: 0;">
                                                     <div class="course-media">
                                                         <img src="{{ asset('images/cours/') }}{{ valC.imageFilename }}"
@@ -361,42 +417,22 @@
                                                         <h4 class="heading">{{ valC.nom }}</h4>
                                                         <ul class="course-features">
                                                             <li><i class="fa fa-map-marker"></i> À distance</li>
-                                                            <br/>
-                                                            <li>
-                                                                <i class="fa fa-hourglass-start"></i> {{ valC.session.dateDebut|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}
-                                                            </li>
+                                                            <!--<li><i class="fa fa-clock-o"></i> 2 mois</li>-->
                                                         </ul>
-                                                        <p class="brief">{{ valC.session.messageFinSession|raw }}</p>
+                                                        <p class="brief">{{ valC.description|raw }}</p>
+                                                        <a href="{{ path('oneCours', {id: valC.id, mode: 'etu'}) }}"
+                                                           class="btn btn-primary btn-sm">Entrer</a>
+                                                        {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                                            <a href="{{ path('itemUsers', {id: valC.id, type:"cours"}) }}"
+                                                               class="btn btn-warning btn-sm">Inscrits</a>
+                                                        {% endif %}
+                                                        {% if valC.auteur == app.user or app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                                            <a href="{{ path('itemUsers', {id: valC.id, type:"cours"}) }}"
+                                                               class="btnIncrsForReferents btn btn-warning btn-sm">Modifier</a>
+                                                        {% endif %}
                                                     </div>
                                                 </div>
-                                            {% endfor %}
-                                        {% endif %}
-                                        {% for keyC,valC in val.courses %}
-                                            <div class="course-list" data-idCours="{{ valC.id }}"
-                                                 style="margin-top: 0;">
-                                                <div class="course-media">
-                                                    <img src="{{ asset('images/cours/') }}{{ valC.imageFilename }}"
-                                                         class="img-responsive course-img" alt="">
-                                                </div>
-                                                <div class="course-detail">
-                                                    <h4 class="heading">{{ valC.nom }}</h4>
-                                                    <ul class="course-features">
-                                                        <li><i class="fa fa-map-marker"></i> À distance</li>
-                                                        <!--<li><i class="fa fa-clock-o"></i> 2 mois</li>-->
-                                                    </ul>
-                                                    <p class="brief">{{ valC.description|raw }}</p>
-                                                    <a href="{{ path('oneCours', {id: valC.id, mode: 'etu'}) }}"
-                                                       class="btn btn-primary btn-sm">Entrer</a>
-                                                    {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
-                                                        <a href="{{ path('itemUsers', {id: valC.id, type:"cours"}) }}"
-                                                           class="btn btn-warning btn-sm">Inscrits</a>
-                                                    {% endif %}
-                                                    {% if valC.auteur == app.user or app.user.hasRole('ROLE_SUPER_ADMIN') %}
-                                                        <a href="{{ path('itemUsers', {id: valC.id, type:"cours"}) }}"
-                                                           class="btnIncrsForReferents btn btn-warning btn-sm">Modifier</a>
-                                                    {% endif %}
-                                                </div>
-                                            </div>
+                                            {% endif %}
                                         {% endfor %}
                                     </div>
                                 </div>

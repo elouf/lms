@@ -32,6 +32,23 @@
     <link rel="stylesheet"
           href="{{ asset('vendors/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css') }}"/>
 
+    <style>
+        .btnValidateSharedDocsIntitule{
+            height: 27px;
+            line-height: 27px;
+        }
+        .btnDesactivated{
+            background: #aaa !important;
+            cursor: default;
+        }
+        .btnDesactivated:hover{
+            color: #fff !important;
+        }
+        .unvalidated{
+            color: red;
+        }
+    </style>
+
     <script>
 
         jQuery(document).ready(function () {
@@ -1441,6 +1458,33 @@
                     }
                 });
             });
+
+            $('#intituleSharedDocs').on('input', function(){
+                var input = $(this).val();
+                var id = $(this).closest('[data-coursId]').attr('data-coursId');
+                if(input === ""){
+                    $('.headingSharedDocs').text('Mes documents partagés');
+                }else{
+                    $('.headingSharedDocs').text(input);
+                }
+                $('.headingSharedDocs').addClass('unvalidated');
+                $('.btnValidateSharedDocsIntitule').removeClass('btnDesactivated').unbind('click').click(function(){
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ path('updateIntituleSharedDocsCours_ajax') }}",
+                        data: {
+                            id: id,
+                            input: input
+                        },
+                        dataType: "json",
+                        success: function (response) {
+                            $('.btnValidateSharedDocsIntitule').addClass('btnDesactivated');
+                            $('.headingSharedDocs').removeClass('unvalidated');
+                        }
+                    });
+                });
+
+            });
         });
 
     </script>
@@ -1516,7 +1560,11 @@
                     {% if isReferent or app.user.hasRole('ROLE_SUPER_ADMIN') %}
                         <li role="presentation" class="ongletAdmin">
                             <a href="#sectionDocs" aria-controls="sectionDocs" role="tab" data-toggle="tab"
-                               aria-expanded="true"><i class="fa fa-pencil fa-fw" aria-hidden="true"> </i>Documents</a>
+                               aria-expanded="true"><i class="fa fa-pencil fa-fw" aria-hidden="true"> </i>{% if cours.intituleSharedDocs != "" %}
+                                {{ cours.intituleSharedDocs }}
+                            {% else %}
+                                Documents partagés
+                                {% endif %}</a>
                         </li>
                     {% endif %}
                 </ul>
@@ -1630,15 +1678,32 @@
                                 <i class="fa fa-file-o fa-3" aria-hidden="true"></i>
                             </div>
                             <div class="course-detail">
-                                <h4 class="heading">Mes documents partagés</h4>
-                                <label class="ml-10"> Activer le partage</label>
-                                <div class="myBtn btnAlone btnAdmin col-xs-1">
-                                    {% if cours.docsActivated %}
-                                        <i class="activationDocBtn fa fa-check-square-o"></i>
+                                <h4 class="heading headingSharedDocs">
+                                    {% if cours.intituleSharedDocs != "" %}
+                                        {{ cours.intituleSharedDocs }}
                                     {% else %}
-                                        <i class="activationDocBtn fa fa-square-o"></i>
+                                        Mes documents partagés
                                     {% endif %}
+                                </h4>
+                                <div class="row">
+                                    <label for="intituleSharedDocs" class=" col-xs-2">Intitulé</label>
+                                    <input  class=" col-xs-9" id="intituleSharedDocs" type="text" value="{{ cours.intituleSharedDocs }}" />
+                                    <a class="myBtn btnAlone btnAdmin col-xs-1 btnDesactivated btnValidateSharedDocsIntitule">
+                                        <i class="fa fa-check" aria-hidden="true"></i>
+                                    </a>
                                 </div>
+                                <div class="row">
+                                    <label class="ml-10"> Activer le partage</label>
+                                    <div class="myBtn btnAlone btnAdmin col-xs-1">
+                                        {% if cours.docsActivated %}
+                                            <i class="activationDocBtn fa fa-check-square-o"></i>
+                                        {% else %}
+                                            <i class="activationDocBtn fa fa-square-o"></i>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+
                                 <div class="resumeDocs mt-20 col-xs-12">
                                     <a href="{{ path('courseDocs', {id: cours.id}) }}" class="btn btn-primary btn-sm">Accéder</a>
                                 </div>

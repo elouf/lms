@@ -394,8 +394,11 @@
                     {% if cours.docsActivated==1 %}
                         <li role="presentation" class="ongletSection">
                             <a href="#sectionDocs" aria-controls="sectionDocs" role="tab" data-toggle="tab"
-                               aria-expanded="true"><i class="fa fa-pencil fa-fw" aria-hidden="true"> </i>Documents
-                                partagés</a>
+                               aria-expanded="true"><i class="fa fa-pencil fa-fw" aria-hidden="true"> </i>{% if cours.intituleSharedDocs != "" %}
+                                {{ cours.intituleSharedDocs }}
+                            {% else %}
+                                Documents partagés
+                                {% endif %}</a>
                         </li>
                     {% endif %}
                     {% if hasVisibilityRights %}
@@ -759,7 +762,11 @@
                                     <i class="fa fa-file-o fa-3" aria-hidden="true"></i>
                                 </div>
                                 <div class="course-detail">
-                                    <h4 class="heading">Mes documents partagés</h4>
+                                    <h4 class="heading">{% if cours.intituleSharedDocs != "" %}
+                                            {{ cours.intituleSharedDocs }}
+                                        {% else %}
+                                            Mes documents partagés
+                                        {% endif %}</h4>
                                     {% if nbNewDocs != 0 %}
                                         <p class="newDocsP"><span class="newDocsPuce">{{ nbNewDocs }}</span> nouveaux
                                             documents</p>

@@ -118,11 +118,25 @@ class Cours extends DocContainer
     protected $auteur;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="enabled", type="boolean", options={"default":true})
+     */
+    private $enabled = true;
+
+    /**
      * Constructor
      */
     public function __construct() {
         $this->cohortes = new ArrayCollection();
     }
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="intituleSharedDocs", type="string", length=1024, unique=false, nullable=true)
+     */
+    private $intituleSharedDocs;
 
     /**
      * __toString method
@@ -483,5 +497,53 @@ class Cours extends DocContainer
     public function getAuteur()
     {
         return $this->auteur;
+    }
+
+    /**
+     * Set enabled
+     *
+     * @param boolean $enabled
+     *
+     * @return Cours
+     */
+    public function setEnabled($enabled)
+    {
+        $this->enabled = $enabled;
+
+        return $this;
+    }
+
+    /**
+     * Get enabled
+     *
+     * @return bool
+     */
+    public function getEnabled()
+    {
+        return $this->enabled;
+    }
+
+    /**
+     * Set intituleSharedDocs
+     *
+     * @param string $intituleSharedDocs
+     *
+     * @return Cours
+     */
+    public function setIntituleSharedDocs($intituleSharedDocs)
+    {
+        $this->intituleSharedDocs = $intituleSharedDocs;
+
+        return $this;
+    }
+
+    /**
+     * Get intituleSharedDocs
+     *
+     * @return string
+     */
+    public function getIntituleSharedDocs()
+    {
+        return $this->intituleSharedDocs;
     }
 }

@@ -69,7 +69,10 @@
             var monthNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
                 "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
             ];
-            jQuery(document).ready(function () {
+            jQuery(
+
+
+                document).ready(function () {
                 $.ajax({
                     type: 'POST',
                     url: "{{path('getNbMsg_ajax')}}",

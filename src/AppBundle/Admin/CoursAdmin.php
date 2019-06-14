@@ -48,6 +48,9 @@ class CoursAdmin extends AbstractAdmin
                 ->add('session', 'sonata_type_model', array(
                     'required' => false))
                 ->add('position', 'text')
+                ->add('enabled', null, array(
+                    'label' => 'Visible'
+                ))
                 ->add('imageFile', 'file', $fileFieldOptions)
             ->end();
     }
@@ -57,6 +60,9 @@ class CoursAdmin extends AbstractAdmin
     {
         $datagridMapper
             ->add('nom')
+            ->add('enabled', null, array(
+                'label' => 'Visible'
+            ))
             ->add('discipline', null, array(), 'entity', array(
                 'class'    => 'AppBundle\Entity\Discipline',
                 'choice_label' => 'nom',
@@ -77,6 +83,9 @@ class CoursAdmin extends AbstractAdmin
     {
         $listMapper
             ->addIdentifier('nom')
+            ->add('enabled', null, array(
+                'label' => 'Visible'
+            ))
             ->add('description')
             ->add('discipline', null, array(
                 'label' => 'Discipline'
