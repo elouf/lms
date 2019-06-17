@@ -69,8 +69,9 @@
 
             $('.selectAll').click(function (e) {
                 e.preventDefault();
-                let select = $('.selectUser:checked').length == 0;
-                $('.selectUser').prop('checked', select);
+                $('tr:not(:visible) .selectUser').prop('checked', false);
+                let select = $('tr:visible .selectUser:checked').length === 0;
+                $('tr:visible .selectUser').prop('checked', select);
             });
             $('.actionEnLot').on('change', function() {
                 let userIds = [];
@@ -79,7 +80,6 @@
                     let idUser = $(this).closest('.userLine').attr('data-userId');
                     userIds.push(idUser);
                 });
-
                 $('.modal').modal('toggle');
                 $('.alertModal').hide();
                 if(mode === 'delete'){
@@ -156,6 +156,7 @@
                             $('thead tr [data-column="6"] .loader-backdrop').remove();
                             $('thead tr [data-column="6"] input').show();
                             $('.download').show();
+                            $(".tablesorter").trigger('update');
                         }
                     }
                 });
