@@ -150,6 +150,7 @@
                 right: 'dayGridMonth,timeGridWeek,timeGridDay'
             },
             select: function (info) {
+                $('.noRights').hide();
                 $('.modal').modal('toggle');
                 dateD.data("DateTimePicker").date(toJSDate(info.startStr));
                 dateF.data("DateTimePicker").date(toJSDate(info.endStr));
@@ -301,7 +302,7 @@
 
         $('.validateEvent').click(function () {
             let discId = $('#dropdownMenuDisc').attr('data-idDisc');
-            if ($('.btnTypeUser').addClass('selected')) {
+            if ($('.btnTypeUser').hasClass('selected')) {
                 discId = "";
             }
             $.ajax({

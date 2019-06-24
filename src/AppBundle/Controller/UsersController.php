@@ -573,6 +573,11 @@ class UsersController extends Controller
         $itemRepo = $this->getDoctrine()->getRepository('AppBundle:' . $entityName);
         $item = $this->getDoctrine()->getRepository('AppBundle:' . $entityName)->findOneBy(array('id' => $id));
 
+        $roleUser = 'admin';
+        if(!$this->getUser()->hasRole('ROLE_SUPER_ADMIN')){
+            $roleUser = $itemRepo->getRole($user->getId(), $id)->getNom();
+        }
+
         $userRepo = $this->getDoctrine()->getRepository('AppBundle:User');
         $users = $userRepo->findBy(array('enabled' => true));
 
@@ -779,7 +784,8 @@ class UsersController extends Controller
             'entityName' => $entityName,
             'usersNoHavingAccess' => $usersNoAccessTab,
             'usersHavingAccess' => $usersAccessTab,
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'roleUser' => $roleUser
         ]);
     }
 

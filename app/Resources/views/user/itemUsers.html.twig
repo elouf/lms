@@ -271,7 +271,7 @@
         <div class="row">
 
             <ul class="nav nav-tabs" role="tablist">
-                <li role="presentation" class="active">
+                <li role="presentation" class="{% if roleUser != 'admin' and roleUser != "Referent" %}active{% endif %}">
                     <a href="#InscrDesinscr" aria-controls="InscrDesinscr" role="tab" data-toggle="tab">
                         <i class="fa fa-external-link  fa-fw"></i>
                         Inscrits</a>
@@ -289,15 +289,15 @@
                             Cours contenus</a>
                     </li>
                 {% endif %}
-                {% if hasAdminRights %}
+                {% if roleUser == 'admin' or roleUser == "Referent" %}
                     <li role="presentation" class="active">
                         <a href="#InfosGen" aria-controls="InfosGen" role="tab" data-toggle="tab">
-                            <i class="fa fa-university fa-fw"></i> Informations générales</a>
+                            <i class="fa fa-university fa-fw"></i> Informations générales ({{ roleUser }})</a>
                     </li>
                 {% endif %}
             </ul>
             <div class="tab-content">
-                {% if hasAdminRights %}
+                {% if roleUser == 'admin' or roleUser == "Referent" %}
                     <div role="tabpanel" class="tab-pane fade in active" id="InfosGen">
                         <div class="containerItemForm">
                             {{ form_start(form) }}

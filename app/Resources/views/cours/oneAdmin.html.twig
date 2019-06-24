@@ -1591,7 +1591,7 @@
                                            value="{{ val.section.nom }}"/>
                                     <input data-champName="faIcon" class="faIconSectionInput col-sm-2 col-xs-2"
                                            value="{{ val.section.faIcon }}"/>
-                                    {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                    {% if app.user.hasRole('ROLE_SUPER_ADMIN') or isReferent %}
                                         <div class="myBtn btnRight btnAdmin btnSupprElem btnDeleteSection col-sm-1 col-xs-1">
                                             <i class="fa fa-trash"></i></div>
                                     {% endif %}
