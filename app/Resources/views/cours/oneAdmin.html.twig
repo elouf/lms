@@ -577,7 +577,11 @@
             function detectInput(elem) {
                 if (!elem.hasClass('inEdition')) {
                     elem.addClass('inEdition');
-                    elem.find('.btnActionCol .btnDelete:first').before('<div class="myBtn btnSaveInputChange btnAdmin btnLeft"><i class="fa fa-floppy-o"></i></div>');
+                    if(elem.find('.btnActionCol .btnDelete').length){
+                        elem.find('.btnActionCol .btnDelete:first').before('<div class="myBtn btnSaveInputChange btnAdmin btnLeft"><i class="fa fa-floppy-o"></i></div>');
+                    }else{
+                        elem.find('.btnActionCol').append('<div class="myBtn btnSaveInputChange btnAdmin btnLeft"><i class="fa fa-floppy-o"></i></div>');
+                    }
                     if (elem.attr('data-typeItem') == 'lien') {
                         changeLien(elem);
                     } else if (elem.attr('data-typeItem') == 'groupe') {
