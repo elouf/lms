@@ -191,7 +191,7 @@ class DisciplineController extends Controller
                     ) {
                         // on peut rentrer dans la session et on est dans les dates
                         array_push($courses[$i]["sessions"], $coursesT[$j]);
-                    } elseif ($currentDate >= $session->getDateDebutAlerte() && $currentDate < $session->getDateFinAlerte()) {
+                    } elseif ($currentDate >= $session->getDateDebutAlerte() && $currentDate < $session->getDateFinAlerte() && !$userIsAdmin) {
                         // on affiche l'alerte et on permet de s'inscrire
                         array_push($courses[$i]["sessionsAlerte"], $coursesT[$j]);
                         array_push($courses[$i]["sessionsAlerteIsInscrit"], $inscrSess != null);
