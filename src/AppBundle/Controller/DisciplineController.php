@@ -185,20 +185,22 @@ class DisciplineController extends Controller
                         }
                     }
 
+                    $isAdminOrForm = $userIsAdmin || (($statutUser == 'Responsable' || $statutUser == 'Formateur') && $user->getConfirmedByAdmin());
+
                     if ($currentDate >= $session->getDateDebut() &&
                         $currentDate <= $session->getDateFin() &&
-                        ($inscrSess || $userIsAdmin || (($statutUser == 'Responsable' || $statutUser == 'Formateur') && $user->getConfirmedByAdmin()) || $isEns)
+                        ($inscrSess || $isAdminOrForm || $isEns)
                     ) {
                         // on peut rentrer dans la session et on est dans les dates
                         array_push($courses[$i]["sessions"], $coursesT[$j]);
-                    } elseif ($currentDate >= $session->getDateDebutAlerte() && $currentDate < $session->getDateFinAlerte() && !$userIsAdmin) {
+                    } elseif ($currentDate >= $session->getDateDebutAlerte() && $currentDate < $session->getDateFinAlerte() && !$isAdminOrForm) {
                         // on affiche l'alerte et on permet de s'inscrire
                         array_push($courses[$i]["sessionsAlerte"], $coursesT[$j]);
                         array_push($courses[$i]["sessionsAlerteIsInscrit"], $inscrSess != null);
                     } elseif ($currentDate >= $session->getDateFinAlerte() && $currentDate < $session->getDateFin()) {
                         // on affiche le message de fin de session
                         array_push($courses[$i]["sessionsFinSession"], $coursesT[$j]);
-                    } elseif ($userIsAdmin || $isEns || (($statutUser == 'Responsable' || $statutUser == 'Formateur') && $this->getUser()->getConfirmedByAdmin())) {
+                    } elseif ($isEns || $isAdminOrForm) {
                         // on peut rentrer dans la session hors des dates
                         array_push($courses[$i]["sessionsAdmin"], $coursesT[$j]);
                     }
