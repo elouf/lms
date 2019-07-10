@@ -35,6 +35,7 @@ abstract class Ressource extends Evenement
     /**
      * @var Cours
      *
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @ORM\ManyToOne(targetEntity="Cours")
      */
     private $cours;
