@@ -16,7 +16,7 @@ class AssocDocCours extends AssocDocEntity
     /**
      * @var Cours
      * @ORM\ManyToOne(targetEntity="Cours")
-     * @ORM\JoinColumn(name="cours_id", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="cours_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $cours;
 
