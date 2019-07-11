@@ -53,7 +53,7 @@
                                     textFrom: 'Du : ',
                                     textTo: 'Au : '
                                 });
-                            }*/
+                            }
                             '.inscrCol' : function($cell, indx) {
                                 return $.tablesorter.filterFormatter.uiDateCompare( $cell, indx, {
                                     cellText : 'Date 1', // text added before the input
@@ -73,7 +73,7 @@
                                     changeYear : true,
                                     dateFormat : 'yy/mm/dd'
                                 });
-                            }
+                            }*/
                         }
                     }
                 })
@@ -234,7 +234,7 @@
                         <th class="filter-select">Institut</th>
                         <th class="filter-select">Activé</th>
                         <th class="inscrCol">inscription</th>
-                        <th class="inscrCol2">inscription</th>
+                        <!--<th class="inscrCol2">inscription</th>-->
                     </tr>
                     </thead>
                     <tbody>
@@ -258,7 +258,7 @@
                                 {% endif %}
                             </td>
                             <td>{{ myUser.createdAt|localizeddate('none', 'none', null, null, 'Y/LL/dd' ) }}</td>
-                            <td>{{ myUser.createdAt|localizeddate('none', 'none', null, null, 'Y/LL/dd' ) }}</td>
+                            <!--<td>{{ myUser.createdAt|localizeddate('none', 'none', null, null, 'Y/LL/dd' ) }}</td>-->
                         </tr>
                     {% endfor %}
                     </tbody>
