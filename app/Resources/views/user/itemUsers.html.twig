@@ -300,9 +300,30 @@
                 {% if roleUser == 'admin' or roleUser == "Referent" %}
                     <div role="tabpanel" class="tab-pane fade in active" id="InfosGen">
                         <div class="containerItemForm">
-                            {{ form_start(form) }}
-                            {{ form_widget(form) }}
-                            {{ form_end(form) }}
+                            {% if entityName == "Cours" or entityName == "Session" %}
+                                {{ form_start(form) }}
+                                <div class="errorsPart">
+                                    {{ form_errors(form) }}
+                                </div>
+                                {{ form_row(form.nom) }}
+                                <div>
+                                    {{ form_label(form.imageFile) }}
+                                    {{ form_widget(form.imageFile) }}
+                                </div>
+
+                                <div>
+                                    <div class="col-sm-4"></div>
+                                    <div class="col-sm-8">
+                                        <img style="width:300px;" alt="" class="" src="{{ asset('images') }}/cours/{{ item.imageFilename }}"/>
+                                    </div>
+                                </div>
+
+                                {{ form_end(form) }}
+                            {% else %}
+                                {{ form_start(form) }}
+                                {{ form_widget(form) }}
+                                {{ form_end(form) }}
+                            {% endif %}
                         </div>
                     </div>
                 {% endif %}

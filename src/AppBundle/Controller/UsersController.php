@@ -33,6 +33,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
@@ -584,7 +585,7 @@ class UsersController extends Controller
         $usersNoAccessTab = array();
         $usersAccessTab = array();
 
-        if ((($statut !== 'Responsable' && $statut !== 'Formateur') || !$user->getConfirmedByAdmin()) && !$this->getUser()->hasRole('ROLE_SUPER_ADMIN')) {
+        if ((($statut !== 'Responsable' && $statut !== 'Formateur') || !$user->getConfirmedByAdmin()) && !$this->getUser()->hasRole('ROLE_SUPER_ADMIN') && $roleUser!='Referent') {
             return $this->redirectToRoute('homepage');
         }
 
@@ -717,6 +718,13 @@ class UsersController extends Controller
                     'label' => 'Nom',
                     'label_attr' => array('class' => 'col-sm-4')
                 ))
+                ->add('imageFile', FileType::class, [
+                    'label' => 'Image',
+                    'attr' => ['class' => 'col-sm-8', 'accept' => 'image/*'],
+                    'label_attr' => ['class' => 'col-sm-4'],
+                    'required' => false,
+                    'multiple' => false,
+                ])
                 ->add('position', TextType::class, array(
                     'label' => 'Position',
                     'label_attr' => array('class' => 'col-sm-4')
@@ -769,12 +777,21 @@ class UsersController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // $form->getData() holds the submitted values
-            // but, the original `$task` variable has also been updated
-            $user = $form->getData();
+            $itemForm = $form->getData();
             $em = $this->getDoctrine()->getManager();
-            $em->persist($user);
+            if ($type == "cours") {
+                if ($form['imageFile']->getData()) {
+                    $itemForm->setImageFile($form['imageFile']->getData());
+                    $itemForm->upload();
+                }
+            }else{
+
+            }
+
+            $em->persist($itemForm);
             $em->flush();
+
+
         }
         return $this->render('user/itemUsers.html.twig', [
             'item' => $item,

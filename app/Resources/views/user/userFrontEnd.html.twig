@@ -45,10 +45,39 @@
                         output_saveFileName: 'mytable.csv',
                         filter_reset: 'button.reset',
                         filter_formatter: {
-                            '.inscrCol' : function($cell, indx) {
+                            /*'.inscrCol' : function($cell, indx) {
                                 return $.tablesorter.filterFormatter.uiDatepicker( $cell, indx, {
                                     changeMonth : true,
-                                    changeYear : true
+                                    changeYear : true,
+                                    dateFormat : 'yy/mm/dd',
+                                    textFrom: 'Du : ',
+                                    textTo: 'Au : '
+                                });
+                            }*/
+                            '.inscrCol' : function($cell, indx) {
+                                return $.tablesorter.filterFormatter.uiDateCompare( $cell, indx, {
+                                    cellText : 'Date 1', // text added before the input
+                                    compare : ['>=', '='], // search values greater/less than selected value; overrides exactMatch
+                                    selected : 3,       // zero-based index of compare starting selected value
+
+                                    // add any of the jQuery UI Datepicker options here (http://api.jqueryui.com/datepicker/)
+                                    // defaultDate : '1/1/2014', // default date
+                                    changeMonth : true,
+                                    changeYear : true,
+                                    dateFormat : 'yy/mm/dd'
+                                });
+                            },
+                            '.inscrCol2' : function($cell, indx) {
+                                return $.tablesorter.filterFormatter.uiDateCompare( $cell, indx, {
+                                    cellText : 'Date 2', // text added before the input
+                                    compare : ['<=', '='], // search values greater/less than selected value; overrides exactMatch
+                                    selected : 3,       // zero-based index of compare starting selected value
+
+                                    // add any of the jQuery UI Datepicker options here (http://api.jqueryui.com/datepicker/)
+                                    // defaultDate : '1/1/2014', // default date
+                                    changeMonth : true,
+                                    changeYear : true,
+                                    dateFormat : 'yy/mm/dd'
                                 });
                             }
                         },
@@ -63,9 +92,6 @@
                     output: 'de {startRow} à {endRow} sur {totalRows} lignes',
                     size: 50
                 });
-
-            $('.dateFrom').width('90px').prev('label').text('Du : ');
-            $('.dateTo').width('90px').prev('label').text('Au : ');
 
             $('.selectAll').click(function (e) {
                 e.preventDefault();
@@ -218,6 +244,7 @@
                         <th class="filter-select">Institut</th>
                         <th class="filter-select">Activé</th>
                         <th class="inscrCol">inscription</th>
+                        <th class="inscrCol2">inscription</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -240,6 +267,7 @@
                                     non
                                 {% endif %}
                             </td>
+                            <td>{{ myUser.createdAt|localizeddate('none', 'none', null, null, 'Y/LL/dd' ) }}</td>
                             <td>{{ myUser.createdAt|localizeddate('none', 'none', null, null, 'Y/LL/dd' ) }}</td>
                         </tr>
                     {% endfor %}
