@@ -300,7 +300,7 @@
                 {% if roleUser == 'admin' or roleUser == "Referent" %}
                     <div role="tabpanel" class="tab-pane fade in active" id="InfosGen">
                         <div class="containerItemForm">
-                            {% if entityName == "Cours" or entityName == "Session" %}
+                            {% if entityName == "Cours" %}
                                 {{ form_start(form) }}
                                 <div class="errorsPart">
                                     {{ form_errors(form) }}
