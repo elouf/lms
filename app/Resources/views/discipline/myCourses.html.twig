@@ -34,6 +34,12 @@
         .course-list:not([data-enabled="1"]){
             opacity: .6;
         }
+        .discDescriptionMyCourses{
+            margin-top: 0 !important;
+        }
+        .discDescriptionMyCourses:not([data-enabled="1"]){
+            display: none;
+        }
 
         @media screen and (max-width: 1600px) {
             .colCoursContent {
@@ -201,6 +207,12 @@
                             <div class="container mt-0 mb-60">
                                 <div class="row">
                                     <div class="colCoursContent col-sm-8">
+                                        <div class="course-list discDescriptionMyCourses" data-enabled="{% if val.discipline.description is not null and val.discipline.description is not empty %}1{% else %}0{% endif %}">
+                                            <div class="course-detail">
+                                                <h4 class="heading"><i class="fa fa-info-circle" aria-hidden="true"></i> {{ val.discipline.nom }}</h4>
+                                                {{ val.discipline.description }}
+                                            </div>
+                                        </div>
                                         {% if hasInscritsRights %}
                                             <div class="course-list" style="margin-top: 0;">
                                                 <div class="course-media text-center mt-10">

@@ -744,6 +744,10 @@ td.celluleAssocCorCopie{
     opacity: .7;
 }
 
+/* MyCourses */
+.discDescriptionMyCourses{
+
+}
 
 /* documents */
 .documentsDisc:not([data-activated="1"]) .course-media,
