@@ -210,7 +210,7 @@
                                         <div class="course-list discDescriptionMyCourses" data-enabled="{% if val.discipline.description is not null and val.discipline.description is not empty %}1{% else %}0{% endif %}">
                                             <div class="course-detail">
                                                 <h4 class="heading"><i class="fa fa-info-circle" aria-hidden="true"></i> {{ val.discipline.nom }}</h4>
-                                                {{ val.discipline.description }}
+                                                {{ val.discipline.description|raw }}
                                             </div>
                                         </div>
                                         {% if hasInscritsRights %}
