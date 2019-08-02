@@ -112,6 +112,7 @@ class InscriptionController extends Controller
                     'Histoire-Géographie' => 'HG',
                     'Histoire-Géographie M2' => 'HGM2',
                     'Hôtellerie Restauration' => 'HOTEL',
+                    'Interlangues' => 'Interlangues',
                     'Lettres' => 'Lettres',
                     'Lettres Histoire-Géographie' => 'LHG',
                     'Lettres Langues' => 'LL',
