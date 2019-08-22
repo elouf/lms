@@ -381,7 +381,7 @@
             <div class="col-sm-3">
                 <ul class="nav nav-pills nav-stacked pull-left" role="tablist"
                     style="padding-bottom: 5px;padding-top: 5px">
-                    {% for key,val in zonesSections if val.section.isVisible == 1 or hasVisibilityRights %}
+                    {% for key,val in zonesSections if ((not val.section.isAccesConditionne or (val.section.isAccesConditionne and app.user in val.section.autorizedUsers)) and val.section.isVisible == 1) or hasVisibilityRights %}
                         <li role="presentation" class="ongletSection{% if loop.index == 1 %} active{% endif %} {% if val.section.isVisible == 0 %} visibility_{% endif %}"
                             data-idsection="{{ val.section.id }}">
                             <a href="#t1body{{ val.section.id }}" aria-controls="t1body{{ val.section.id }}" role="tab"

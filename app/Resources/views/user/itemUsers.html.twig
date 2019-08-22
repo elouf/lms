@@ -27,6 +27,7 @@
 {% endblock %}
 
 {% block main %}
+    <script src="{{ asset('vendors/jquery-ui/jquery-ui.min.js') }}" type=text/javascript></script>
     <link rel="stylesheet" href="{{ asset('vendors/tablesorter/dist/css/theme.default.min.css') }}"/>
     <link rel="stylesheet" href="{{ asset('vendors/tablesorter/dist/css/jquery.tablesorter.pager.min.css') }}"/>
 
@@ -38,6 +39,89 @@
     <script type="text/javascript"
             src="{{ asset('vendors/tablesorter/dist/js/widgets/widget-output.min.js') }}"></script>
     <style>
+        .sectionManager{
+            border: 1px solid #ccc;
+            padding: 5px 10px;
+            margin-bottom: 10px;
+        }
+        .sectionUsersManager{
+            display: flex;
+            display: -webkit-flex;
+            display: -ms-flexbox;
+            flex-direction: row;
+            -webkit-flex-direction: row;
+            -webkit-box-orient: horizontal;
+            justify-content: center;
+            -webkit-justify-content: center;
+            position: relative;
+        }
+        .sortableList{
+            flex: 1;
+            -ms-flex: 1;
+            -webkit-flex: 1;
+            -moz-box-flex: 1;
+            background: #ddd;
+            border: 1px solid #bbb;
+            padding: 10px;
+            overflow: auto;
+            height: 400px;
+        }
+        .sectionInscrits{
+            background: #eaffe7;
+        }
+        .sectionNonInscrits{
+            background: #ffe9e6;
+        }
+        .userSectionLi{
+            user-select: none;
+            cursor: pointer;
+            background: #eee;
+            width: max-content;
+            padding: 5px;
+            margin: 3px;
+            list-style-type: none;
+            border-radius: 3px;
+            border: #999 solid 1px;
+        }
+        .userSectionLi:hover{
+            background: #ddd;
+        }
+        .tab-content>.tab-pane{
+            transform: translateY(0%);
+        }
+        .ui-state-highlight {
+            height: 25px;
+            background: #eeea43;
+            border:#000 solid 1px;
+        }
+        .sectioncontrols{
+            display: flex;
+            display: -webkit-flex;
+            display: -ms-flexbox;
+            flex-direction: column;
+            -webkit-flex-direction: column;
+            -webkit-box-orient: vertical;
+            justify-content: space-around;
+            -webkit-justify-content: space-around;
+            align-items: center;
+            -webkit-align-items: center;
+            width: 90px;
+        }
+        .sectioncontrols .btn{
+            font-size: 22px;
+        }
+        .controlAllUsers{
+            display: flex;
+            display: -webkit-flex;
+            display: -ms-flexbox;
+            flex-direction: row;
+            -webkit-flex-direction: row;
+            -webkit-box-orient: horizontal;
+            justify-content: space-between;
+            -webkit-justify-content: space-between;
+            align-items: center;
+            -webkit-align-items: center;
+        }
     </style>
     <script>
         jQuery(document).ready(function () {
@@ -173,6 +257,131 @@
                 }
             });
 
+            $(".sortableList").each(function(){
+                const sectionId = $(this).attr('data-sectionId');
+                $(this).sortable({
+                    placeholder: "ui-state-highlight",
+                    connectWith: ".sortableList[data-sectionId="+sectionId+"]",
+                    receive: function( event, ui ) {
+                        var sectionId = $(this).closest('.sectionManager').attr('data-sectionId');
+                        if($(this).hasClass('sectionInscrits')){
+                            $.ajax({
+                                type: "POST",
+                                url: "{{ path('sectionAutorizeUsers_ajax') }}",
+                                data: {
+                                    id: sectionId,
+                                    users: [ui.item.attr('data-userid')]
+                                },
+                                dataType: "json",
+                                success: function (response) {
+                                }
+                            });
+                        }else{
+                            $.ajax({
+                                type: "POST",
+                                url: "{{ path('sectionUnAutorizeUsers_ajax') }}",
+                                data: {
+                                    id: sectionId,
+                                    users: [ui.item.attr('data-userid')]
+                                },
+                                dataType: "json",
+                                success: function (response) {
+                                }
+                            });
+                        }
+                    }
+                }).disableSelection();
+            });
+
+            //cache les utilisateurs des sections dont l'accès n'est pas filtré
+            $('.sectionManagerChecker').each(function(){
+                if(!$(this).is(":checked")){
+                    $(this).closest('.sectionManager').find('.sectionUsersHighManager').hide();
+                }
+                $(this).click(function(){
+                    const isChecked = $(this).is(":checked");
+                    const sectionId = $(this).closest('.sectionManager').attr('data-sectionId');
+                    if(isChecked){
+                        $(this).closest('.sectionManager').find('.sectionUsersHighManager').show();
+                    }else{
+                        $(this).closest('.sectionManager').find('.sectionUsersHighManager').hide();
+                    }
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ path('updateSectionAccesCondition_ajax') }}",
+                        data: {
+                            id: sectionId,
+                            isAccesConditionne: isChecked
+                        },
+                        dataType: "json",
+                        success: function (response) {
+
+                        }
+                    });
+                });
+            });
+
+            $('.btnSelectedInSection').click(function(){
+                const sectionManager = $(this).closest('.sectionManager');
+                let usersToChange = [];
+                sectionManager.find('.sectionNonInscrits .sectionUserSelector:checked').each(function(){
+                    usersToChange.push($(this).closest('.userSectionLi').attr('data-userId'));
+                });
+                $.ajax({
+                    type: "POST",
+                    url: "{{ path('sectionAutorizeUsers_ajax') }}",
+                    data: {
+                        id: sectionManager.attr('data-sectionId'),
+                        users: usersToChange
+                    },
+                    dataType: "json",
+                    success: function (response) {
+                        sectionManager.find('.sectionNonInscrits .sectionUserSelector:checked').each(function(){
+                            $(this).closest('.userSectionLi').appendTo(sectionManager.find('.sectionInscrits'));
+                            $(this).prop( "checked", false );
+                        });
+                        $(".sortableList").sortable( "refresh" );
+                    }
+                });
+            });
+
+            $('.btnSelectedOutSection').click(function(){
+                const sectionManager = $(this).closest('.sectionManager');
+                let usersToChange = [];
+                sectionManager.find('.sectionInscrits .sectionUserSelector:checked').each(function(){
+                    usersToChange.push($(this).closest('.userSectionLi').attr('data-userId'));
+                });
+                $.ajax({
+                    type: "POST",
+                    url: "{{ path('sectionUnAutorizeUsers_ajax') }}",
+                    data: {
+                        id: sectionManager.attr('data-sectionId'),
+                        users: usersToChange
+                    },
+                    dataType: "json",
+                    success: function (response) {
+                        sectionManager.find('.sectionInscrits .sectionUserSelector:checked').each(function(){
+                            $(this).closest('.userSectionLi').appendTo(sectionManager.find('.sectionNonInscrits'));
+                            $(this).prop( "checked", false );
+                        });
+                        $(".sortableList").sortable( "refresh" );
+                    }
+                });
+            });
+
+            $('.btnSelectAllIn').click(function(){
+                var nbTotal = $(this).closest('.sectionUsersHighManager').find('.sectionInscrits .sectionUserSelector').length;
+                var nbChecked = $(this).closest('.sectionUsersHighManager').find('.sectionInscrits .sectionUserSelector:checked').length;
+                var todo = nbTotal !== nbChecked;
+                $(this).closest('.sectionUsersHighManager').find('.sectionInscrits .sectionUserSelector').prop('checked', todo);
+            });
+            $('.btnSelectAllOut').click(function(){
+                var nbTotal = $(this).closest('.sectionUsersHighManager').find('.sectionNonInscrits .sectionUserSelector').length;
+                var nbChecked = $(this).closest('.sectionUsersHighManager').find('.sectionNonInscrits .sectionUserSelector:checked').length;
+                var todo = nbTotal !== nbChecked;
+                $(this).closest('.sectionUsersHighManager').find('.sectionNonInscrits .sectionUserSelector').prop('checked', todo);
+            });
+
             function changeRoleUsers(typeItem, idUsers, itemId, roleId) {
                 $.ajax({
                     type: "POST",
@@ -295,6 +504,13 @@
                             <i class="fa fa-university fa-fw"></i> Informations générales ({{ roleUser }})</a>
                     </li>
                 {% endif %}
+                {% if (entityName == "Cours") and ressources is defined %}
+                <li role="presentation">
+                    <a href="#Sections" aria-controls="Sections" role="tab" data-toggle="tab">
+                        <i class="fa fa-th-list" aria-hidden="true"></i>
+                        Sections</a>
+                </li>
+                {% endif %}
             </ul>
             <div class="tab-content">
                 {% if roleUser == 'admin' or roleUser == "Referent" %}
@@ -327,6 +543,46 @@
                         </div>
                     </div>
                 {% endif %}
+                {% if (entityName == "Cours") and ressources is defined %}
+                <div role="tabpanel" class="tab-pane" id="Sections">
+                    {% for section in item.sections %}
+                        {% set sectionId = section.id %}
+                        {% set autorizedIds = [] %}
+                        <div class="sectionManager" data-isAccesConditionne="{{ section.isAccesConditionne }}" data-sectionId="{{ sectionId }}">
+                            <label for="section{{ sectionId }}">Accès conditionné</label><input id="section{{ sectionId }}" class="sectionManagerChecker" type="checkbox" {% if section.isAccesConditionne %}checked{% endif %} />
+                            <div class="sectionManagerInfos">
+                                <h3>{{ section.nom }}</h3>
+                                <div class="sectionUsersHighManager">
+                                    <div class="controlAllUsers">
+                                        <div class="btn btn-sm btn-info btnSelectAllIn">Tous</div>
+                                        <div class="btn btn-sm btn-info btnSelectAllOut">Tous</div>
+                                    </div>
+                                    <div class="sectionUsersManager">
+                                        <ul class="sortableList sectionInscrits" data-sectionId="{{ sectionId }}">
+                                            {% for autorizedUser in section.autorizedUsers %}
+                                                <li class="userSectionLi" data-userId="{{ autorizedUser.id }}"><input class="sectionUserSelector" type="checkbox" /> {{ autorizedUser.firstname }} {{ autorizedUser.lastname }} ({{ autorizedUser.email }})</li>
+                                                {% set autorizedIds = autorizedIds|merge([autorizedUser.id]) %}
+                                            {% endfor %}
+                                        </ul>
+                                        <div class="sectioncontrols">
+                                            <div class="btn btn-sm btn-info btnSelectedInSection"><i class="fa fa-arrow-left" aria-hidden="true"></i></div>
+                                            <div class="btn btn-sm btn-info btnSelectedOutSection"><i class="fa fa-arrow-right" aria-hidden="true"></i></div>
+                                        </div>
+                                        <ul class="sortableList sectionNonInscrits" data-sectionId="{{ sectionId }}">
+                                            {% for user in usersHavingAccess if user.user.id not in autorizedIds %}
+                                                <li class="userSectionLi" data-userId="{{ user.user.id }}"><input class="sectionUserSelector" type="checkbox" /> {{ user.user.firstname }} {{ user.user.lastname }} ({{ user.user.email }})</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                    {% endfor %}
+                </div>
+                {% endif %}
                 <div role="tabpanel" class="tab-pane fade in active" id="InscrDesinscr">
                     <div class="coloneTable col-xl-6">
                         <p>Utilisateurs qui sont :</p>
@@ -353,14 +609,15 @@
                             </thead>
                             <tbody>
                             {% for user in usersHavingAccess %}
-                                <tr class="userLine" data-userId="{{ user.user.id }}">
+                                {% set userId = user.user.id %}
+                                <tr class="userLine" data-userId="{{ userId }}">
                                     <td>
                                         {% if user.isInscrit %}
                                             <input class="selectUser" type="checkbox">
                                         {% endif %}
                                     </td>
-                                    <td><a href="{{ path('user', {id:user.user.id }) }}">{{ user.user.id }}</a></td>
-                                    <td><a href="{{ path('user', {id:user.user.id }) }}">{{ user.user.email }}</a>
+                                    <td><a href="{{ path('user', {id:userId }) }}">{{ userId }}</a></td>
+                                    <td><a href="{{ path('user', {id:userId }) }}">{{ user.user.email }}</a>
                                     </td>
                                     <td>{{ user.user.firstname }}</td>
                                     <td>{{ user.user.lastname }}</td>
@@ -434,12 +691,13 @@
                                 </thead>
                                 <tbody>
                                 {% for user in usersNoHavingAccess %}
-                                    <tr class="userLine" data-userId="{{ user.user.id }}">
+                                    {% set userId = user.user.id %}
+                                    <tr class="userLine" data-userId="{{ userId }}">
                                         <td><input class="selectUser" type="checkbox"></td>
-                                        <td><a href="{{ path('user', {id:user.user.id }) }}">{{ user.user.id }}</a>
+                                        <td><a href="{{ path('user', {id:userId }) }}">{{ userId }}</a>
                                         </td>
                                         <td>
-                                            <a href="{{ path('user', {id:user.user.id }) }}">{{ user.user.email }}</a>
+                                            <a href="{{ path('user', {id:userId }) }}">{{ user.user.email }}</a>
                                         </td>
                                         <td>{{ user.user.firstname }}</td>
                                         <td>{{ user.user.lastname }}</td>
@@ -473,6 +731,7 @@
                                         <option value="20">20</option>
                                         <option value="30">30</option>
                                         <option value="40">40</option>
+                                        <option value="all">Toutes les lignes</option>
                                         <option value="all">Toutes les lignes</option>
                                     </select>
                                     <button class="download">Télécharger le CSV</button>

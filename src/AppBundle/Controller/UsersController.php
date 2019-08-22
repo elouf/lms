@@ -13,6 +13,7 @@ use AppBundle\Entity\Cours;
 use AppBundle\Entity\Discipline;
 use AppBundle\Entity\Inscription_sess;
 use AppBundle\Entity\Role;
+use AppBundle\Entity\Section;
 use AppBundle\Entity\User;
 use AppBundle\Repository\CohorteRepository;
 use AppBundle\Repository\CopieRepository;
@@ -271,7 +272,7 @@ class UsersController extends Controller
                 if ($cohortes) {
                     /* @var $cohorte Cohorte */
                     foreach ($cohortes as $cohorte) {
-                        if ($cohRepo->userHasAccessOrIsInscrit($user->getId(), $cohorte->getId())) {
+                        if ($cohRepo->userHasAccessOrIsInscrit($user, $cohorte)) {
                             array_push($myCohortes, $cohorte);
                         }
                     }
@@ -417,12 +418,12 @@ class UsersController extends Controller
         $sessions_tabTest = array();
         $repoSession = $this->getDoctrine()->getRepository('AppBundle:Session');
         foreach ($allcourses as $coursFiltre) {
-            if ($coursFiltre->getSession() != null && $cours_repo->userHasAccess($user->getId(), $coursFiltre->getId())) {
+            if ($coursFiltre->getSession() != null && $cours_repo->userHasAccess($user, $coursFiltre)) {
                 $sess = $coursFiltre->getSession();
                 $cours_tabTest = array();
                 if (!in_array($sess, $sessions_tabTest)) {
                     foreach ($allcourses as $coursCheckDisc) {
-                        if ($coursCheckDisc->getSession() == $sess && $cours_repo->userHasAccess($user->getId(), $coursCheckDisc->getId())) {
+                        if ($coursCheckDisc->getSession() == $sess && $cours_repo->userHasAccess($user, $coursCheckDisc)) {
                             if (!in_array($coursCheckDisc, $cours_tabTest)) {
                                 array_push($cours_tabTest, $coursCheckDisc);
                             }
@@ -431,7 +432,7 @@ class UsersController extends Controller
                     }
 
                     array_push($sessions_tabTest, $sess);
-                    $isInscrit = $repoSession->userIsInscrit($user->getId(), $sess->getId());
+                    $isInscrit = $repoSession->userIsInscrit($user, $sess);
                     array_push($sessions_tab, array(
                         'session' => $sess,
                         'isInscrit' => $isInscrit,
@@ -446,8 +447,8 @@ class UsersController extends Controller
             foreach ($cohortes as $cohorte) {
                 array_push($cohortes_inscr, [
                     'cohorte' => $cohorte,
-                    'isInscrit' => $coh_repo->userIsInscrit($user->getId(), $cohorte->getId()),
-                    'inscription' => $coh_repo->getUserInscr($user->getId(), $cohorte->getId())
+                    'isInscrit' => $coh_repo->userIsInscrit($user, $cohorte),
+                    'inscription' => $coh_repo->getUserInscr($user, $cohorte)
                 ]);
             }
         }
@@ -456,10 +457,10 @@ class UsersController extends Controller
             foreach ($discs as $disc) {
                 array_push($discs_inscr, [
                     'discipline' => $disc,
-                    'isInscrit' => $disc_repo->userIsInscrit($user->getId(), $disc->getId()),
-                    'hasAccess' => $disc_repo->userHasAccess($user->getId(), $disc->getId()),
+                    'isInscrit' => $disc_repo->userIsInscrit($user, $disc),
+                    'hasAccess' => $disc_repo->userHasAccess($user, $disc),
                     'cohortes' => $disc->getCohortes(),
-                    'inscription' => $disc_repo->getUserInscr($user->getId(), $cohorte->getId())
+                    'inscription' => $disc_repo->getUserInscr($user, $cohorte)
                 ]);
             }
         }
@@ -470,10 +471,10 @@ class UsersController extends Controller
 
                 array_push($cours_inscr, [
                     'cours' => $cour,
-                    'isInscrit' => $cours_repo->userIsInscrit($user->getId(), $cour->getId()),
-                    'hasAccess' => $cours_repo->userHasAccess($user->getId(), $cour->getId()),
+                    'isInscrit' => $cours_repo->userIsInscrit($user, $cour),
+                    'hasAccess' => $cours_repo->userHasAccess($user, $cour),
                     'cohortes' => $cour->getCohortes(),
-                    'inscription' => $cours_repo->getUserInscr($user->getId(), $cohorte->getId())
+                    'inscription' => $cours_repo->getUserInscr($user, $cohorte)
                 ]);
             }
         }
@@ -551,11 +552,13 @@ class UsersController extends Controller
      */
     public function itemUsersAction(Request $request, $id, $type)
     {
-        /* @var $user User */
-        $user = $this->getUser();
-        $statut = $user->getStatut();
+        /* @var $currentUser User */
+        $currentUser = $this->getUser();
+        $statut = $currentUser->getStatut();
 
-        $roles = $this->getDoctrine()->getRepository('AppBundle:Role')->findAll();
+        $doctrine = $this->getDoctrine();
+
+        $roles = $doctrine->getRepository('AppBundle:Role')->findAll();
 
         $entityName = "";
         if ($type == "cohorte") {
@@ -568,31 +571,31 @@ class UsersController extends Controller
             $entityName = "Session";
         }
 
-        $inscrCohRepo = $this->getDoctrine()->getRepository('AppBundle:Inscription_coh');
-        $inscrDRepo = $this->getDoctrine()->getRepository('AppBundle:Inscription_d');
+        $inscrCohRepo = $doctrine->getRepository('AppBundle:Inscription_coh');
+        $inscrDRepo = $doctrine->getRepository('AppBundle:Inscription_d');
 
-        $itemRepo = $this->getDoctrine()->getRepository('AppBundle:' . $entityName);
-        $item = $this->getDoctrine()->getRepository('AppBundle:' . $entityName)->findOneBy(array('id' => $id));
+        $itemRepo = $doctrine->getRepository('AppBundle:' . $entityName);
+        $item = $doctrine->getRepository('AppBundle:' . $entityName)->findOneBy(array('id' => $id));
 
         $roleUser = 'admin';
-        if(!$this->getUser()->hasRole('ROLE_SUPER_ADMIN')){
-            $roleUser = $itemRepo->getRole($user->getId(), $id)->getNom();
+        if(!$currentUser->hasRole('ROLE_SUPER_ADMIN')){
+            $roleUser = $itemRepo->getRole($currentUser, $item)->getNom();
         }
 
-        $userRepo = $this->getDoctrine()->getRepository('AppBundle:User');
+        $userRepo = $doctrine->getRepository('AppBundle:User');
         $users = $userRepo->findBy(array('enabled' => true));
 
         $usersNoAccessTab = array();
         $usersAccessTab = array();
 
-        if ((($statut !== 'Responsable' && $statut !== 'Formateur') || !$user->getConfirmedByAdmin()) && !$this->getUser()->hasRole('ROLE_SUPER_ADMIN') && $roleUser!='Referent') {
+        if ((($statut !== 'Responsable' && $statut !== 'Formateur') || !$currentUser->getConfirmedByAdmin()) && !$currentUser->hasRole('ROLE_SUPER_ADMIN') && $roleUser!='Referent') {
             return $this->redirectToRoute('homepage');
         }
 
         foreach ($users as $user) {
-            $myCohs = $inscrCohRepo->findBy(array('user' => $user));
-            $inscrs = null;
             if($type == "cohorte"){
+                $myCohs = $inscrCohRepo->findBy(array('user' => $user));
+
                 /* @var $inscr Inscription_coh */
                 $inscr = $inscrCohRepo->findOneBy(array('cohorte' => $item, 'user' => $user));
                 if ($inscr) {
@@ -609,6 +612,8 @@ class UsersController extends Controller
                     ]);
                 }
             }else if ($type == "discipline") {
+                $myCohs = $inscrCohRepo->findBy(array('user' => $user));
+
                 $checkAccess = false;
                 $inscrCohs = $inscrCohRepo->findBy(array('user' => $user));
                 $inscr = null;
@@ -657,23 +662,22 @@ class UsersController extends Controller
                     ]);
                 }
             }else {
-                if ($itemRepo->userHasAccessOrIsInscrit($user->getId(), $id)) {
+                if ($itemRepo->userHasAccessOrIsInscrit($user, $item)) {
                     array_push($usersAccessTab, [
                         "user" => $user,
-                        "isInscrit" => $itemRepo->userIsInscrit($user->getId(), $id),
-                        "myCohs" => $inscrCohRepo->allForUser($user->getId()),
-                        "role" => $itemRepo->getRole($user->getId(), $id)
+                        "isInscrit" => $itemRepo->userIsInscrit($user, $item),
+                        "myCohs" => $inscrCohRepo->allForUser($user),
+                        "role" => $itemRepo->getRole($user, $item)
                     ]);
                 } else {
                     array_push($usersNoAccessTab, [
                         'user' => $user,
-                        "myCohs" => $inscrCohRepo->allForUser($user->getId())
+                        "myCohs" => $inscrCohRepo->allForUser($user)
                     ]);
                 }
             }
-
         }
-        $repoUserStatRessource = $this->getDoctrine()->getRepository('AppBundle:UserStatRessource');
+        $repoUserStatRessource = $doctrine->getRepository('AppBundle:UserStatRessource');
         $ressources = new ArrayCollection();
         $linkedCourses = new ArrayCollection();
         if ($type == "cohorte") {
@@ -690,7 +694,7 @@ class UsersController extends Controller
                 ->getForm();
 
             /* @var $cohs CohorteRepository */
-            $cohs = $this->getDoctrine()->getRepository('AppBundle:Cohorte');
+            $cohs = $doctrine->getRepository('AppBundle:Cohorte');
             $linkedCourses = $cohs->getLinkedCourses($item);
 
         } else if ($type == "discipline") {
@@ -706,7 +710,7 @@ class UsersController extends Controller
                 ->add('save', SubmitType::class, array('label' => 'Enregistrer'))
                 ->getForm();
 
-            $linkedCourses_arr = $this->getDoctrine()->getRepository('AppBundle:Cours')->findBy(array('discipline' => $item));
+            $linkedCourses_arr = $doctrine->getRepository('AppBundle:Cours')->findBy(array('discipline' => $item));
             if ($linkedCourses_arr) {
                 foreach ($linkedCourses_arr as $linkedCourses_arrOne) {
                     $linkedCourses->add($linkedCourses_arrOne);
@@ -744,7 +748,7 @@ class UsersController extends Controller
                 ->add('save', SubmitType::class, array('label' => 'Enregistrer'))
                 ->getForm();
 
-            $c_ressources = $this->getDoctrine()->getRepository('AppBundle:Ressource')->findBy(array('cours' => $item));
+            $c_ressources = $doctrine->getRepository('AppBundle:Ressource')->findBy(array('cours' => $item));
             if ($c_ressources) {
                 foreach ($c_ressources as $c_ressource) {
                     $ressStats = $repoUserStatRessource->findBy(array('ressource' => $c_ressource));
@@ -764,7 +768,7 @@ class UsersController extends Controller
                 ))
                 ->add('save', SubmitType::class, array('label' => 'Enregistrer'))
                 ->getForm();
-            $c_ressources = $this->getDoctrine()->getRepository('AppBundle:Ressource')->findBy(array('cours' => $item));
+            $c_ressources = $doctrine->getRepository('AppBundle:Ressource')->findBy(array('cours' => $item));
             if ($c_ressources) {
                 foreach ($c_ressources as $c_ressource) {
                     $ressStats = $repoUserStatRessource->findBy(array('ressource' => $c_ressource));
@@ -778,7 +782,7 @@ class UsersController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $itemForm = $form->getData();
-            $em = $this->getDoctrine()->getManager();
+            $em = $doctrine->getManager();
             if ($type == "cours") {
                 if ($form['imageFile']->getData()) {
                     $itemForm->setImageFile($form['imageFile']->getData());
@@ -787,7 +791,6 @@ class UsersController extends Controller
             }else{
 
             }
-
             $em->persist($itemForm);
             $em->flush();
 
@@ -804,6 +807,85 @@ class UsersController extends Controller
             'form' => $form->createView(),
             'roleUser' => $roleUser
         ]);
+    }
+
+    /**
+     * @Route("/updateSectionAccesCondition_ajax", name="updateSectionAccesCondition_ajax")
+     */
+    public function updateSectionAccesConditionAjaxAction(Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+
+            $id = $request->request->get('id');
+            $isAccesConditionne = $request->request->get('isAccesConditionne') == "true";
+            /* @var Section $section */
+            $section = $em->getRepository('AppBundle:Section')->findOneBy(array('id' => $id));
+            $section->setIsAccesConditionne($isAccesConditionne);
+
+            $em->flush();
+
+            return new JsonResponse(array(
+                'action' => 'change isAccesConditionne of section'
+            ));
+        }
+    }
+
+    /**
+     * @Route("/sectionAutorizeUsers_ajax", name="sectionAutorizeUsers_ajax")
+     */
+    public function sectionAutorizeUsersAjaxAction(Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+
+            $id = $request->request->get('id');
+            $userIds = $request->request->get('users');
+            /* @var Section $section */
+            $section = $em->getRepository('AppBundle:Section')->findOneBy(array('id' => $id));
+            if(count($userIds) > 0){
+                foreach ($userIds as $userId) {
+                    /* @var User $user */
+                    $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
+                    $section->addautorizedUser($user);
+                }
+            }
+
+
+            $em->flush();
+
+            return new JsonResponse(array(
+                'action' => 'change isAccesConditionne of section'
+            ));
+        }
+    }
+
+    /**
+     * @Route("/sectionUnAutorizeUsers_ajax", name="sectionUnAutorizeUsers_ajax")
+     */
+    public function sectionUnAutorizeUsersAjaxAction(Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+
+            $id = $request->request->get('id');
+            $userIds = $request->request->get('users');
+            /* @var Section $section */
+            $section = $em->getRepository('AppBundle:Section')->findOneBy(array('id' => $id));
+            if(count($userIds) > 0){
+                foreach ($userIds as $userId) {
+                    /* @var User $user */
+                    $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
+                    $section->removeAutorizedUser($user);
+                }
+            }
+
+            $em->flush();
+
+            return new JsonResponse(array(
+                'action' => 'change isAccesConditionne of section'
+            ));
+        }
     }
 
     /**

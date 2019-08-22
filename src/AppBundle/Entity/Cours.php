@@ -118,6 +118,13 @@ class Cours extends DocContainer
     protected $auteur;
 
     /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="Section", mappedBy="cours")
+     */
+    private $sections;
+
+    /**
      * @var bool
      *
      * @ORM\Column(name="enabled", type="boolean", options={"default":true})
@@ -129,6 +136,7 @@ class Cours extends DocContainer
      */
     public function __construct() {
         $this->cohortes = new ArrayCollection();
+        $this->sections = new ArrayCollection();
     }
 
     /**
@@ -545,5 +553,59 @@ class Cours extends DocContainer
     public function getIntituleSharedDocs()
     {
         return $this->intituleSharedDocs;
+    }
+
+    /**
+     * Set sections
+     *
+     * @param array $sections
+     *
+     * @return Cours
+     */
+    public function setSections($sections)
+    {
+        $this->sections = $sections;
+
+        return $this;
+    }
+
+    /**
+     * Get sections
+     *
+     * @return ArrayCollection
+     */
+    public function getSections()
+    {
+        return $this->sections;
+    }
+
+    /**
+     * Add section
+     *
+     * @param Section $section
+     *
+     * @return Cours
+     */
+    public function addMessage($section)
+    {
+        if(!$this->sections->contains($section)){
+            $this->sections[] = $section;
+            $section->setCours($this);
+        }
+        return $this;
+    }
+
+    /**
+     * Remove section
+     *
+     * @param Section $section
+     *
+     * @return Cours
+     */
+    public function removeSection($section)
+    {
+        $this->sections->removeElement($section);
+
+        return $this;
     }
 }

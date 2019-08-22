@@ -27,7 +27,7 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
             true);
         $this->addReference('user_admin', $user);
 
-        $this->boucleTypeUser($manager, "etudiant", 2000, $tabInst);
+        $this->boucleTypeUser($manager, "etudiant", 50, $tabInst);
         $this->boucleTypeUser($manager, "stagiaire", 4, $tabInst);
         $this->boucleTypeUser($manager, "enseignant", 4, $tabInst);
 

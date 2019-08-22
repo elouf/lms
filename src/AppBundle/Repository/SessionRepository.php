@@ -10,31 +10,27 @@ namespace AppBundle\Repository;
  */
 class SessionRepository extends \Doctrine\ORM\EntityRepository
 {
-    public function userIsInscrit($userId, $sessId)
+    public function userIsInscrit($user, $session)
     {
         $em = $this->getEntityManager();
-        $session = $this->findOneBy(array('id'=> $sessId));
-        $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
 
         $inscSess = $em->getRepository('AppBundle:Inscription_sess')->findBy(array('session' => $session, 'user' => $user));
 
         return $inscSess;
     }
 
-    public function userHasAccess($userId, $sessId)
+    public function userHasAccess($user, $sess)
     {
-        return $this->userIsInscrit($userId, $sessId);
+        return $this->userIsInscrit($user, $sess);
     }
 
-    public function userHasAccessOrIsInscrit($userId, $sessId)
+    public function userHasAccessOrIsInscrit($user, $sess)
     {
-        return $this->userHasAccess($userId, $sessId) || $this->userIsInscrit($userId, $sessId);
+        return $this->userHasAccess($user, $sess) || $this->userIsInscrit($user, $sess);
     }
-    public function getRole($userId, $id)
+    public function getRole($user, $item)
     {
         $em = $this->getEntityManager();
-        $item = $this->findOneBy(array('id'=> $id));
-        $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
 
         $inscr = $em->getRepository('AppBundle:Inscription_sess')->findOneBy(array('session' => $item, 'user' => $user));
         if($inscr){

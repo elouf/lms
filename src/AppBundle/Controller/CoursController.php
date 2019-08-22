@@ -3,10 +3,22 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Cours;
+use AppBundle\Entity\Section;
 use AppBundle\Entity\UserStatCours;
 use AppBundle\Entity\UserStatRessource;
+use AppBundle\Repository\SectionRepository;
+use Doctrine\ORM\EntityRepository;
+use Ivory\CKEditorBundle\Form\Type\CKEditorType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sonata\Form\Type\BooleanType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -70,7 +82,7 @@ class CoursController extends Controller
             }else{
                 $currentDate = new DateTime();
                 $sess = $coursFiltre->getSession();
-                if($repoSess->userIsInscrit($user->getId(), $sess->getId()) &&
+                if($repoSess->userIsInscrit($user, $sess) &&
                     $currentDate >= $sess->getDateDebut() &&
                     $currentDate <= $sess->getDateFin()){
                     array_push($courses, $coursFiltre);
@@ -326,6 +338,105 @@ class CoursController extends Controller
                 'isReferent' => $isReferent
             ]);
         }
+    }
+
+    /**
+     * @Route("/dupliqCours/{id}", name="dupliqCours")
+     */
+    public function dupliqCoursAction (Request $request, $id)
+    {
+        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
+        $repositoryC = $this->getDoctrine()->getRepository('AppBundle:Cours');
+        /* @var Cours $coursOrig */
+        $coursOrig = $repositoryC->find($id);
+
+        $form = $this->createFormBuilder()
+            ->add('nom', TextType::class, array(
+                'data' => $coursOrig->getNom()
+            ))
+            ->add('description', CKEditorType::class, [
+                'config_name' => 'my_simple_config',
+                "attr" => ['class' => 'form-control'],
+                'data' => $coursOrig->getDescription(),
+                "required" => false
+            ])
+            ->add('accueil', CKEditorType::class, [
+                'config_name' => 'my_simple_config',
+                "attr" => ['class' => 'form-control'],
+                'data' => $coursOrig->getAccueil(),
+                "required" => false
+            ])
+            ->add('imageFile', FileType::class, [
+                'label' => 'Image',
+                'required' => false,
+                'multiple' => false
+            ])
+            ->add('imageOrig', HiddenType::class, [
+                'data' => $coursOrig->getImageFilename()
+            ])
+            ->add('discipline', EntityType::class, array(
+                'class' => 'AppBundle:Discipline',
+                'choice_label' => 'nom',
+                'multiple' => false,
+                'data' => $coursOrig->getDiscipline()
+            ))
+            ->add('sections', EntityType::class, array(
+                'class' => 'AppBundle:Section',
+                'choices' => $coursOrig->getSections(),
+                'multiple' => true,
+                "choice_label" => "nom",
+                'data' => $coursOrig->getSections()
+            ))
+            ->add('visible', CheckboxType::class, array(
+                'data' => false,
+                "required" => false
+            ))
+            ->add('submit', SubmitType::class, array(
+                'label' => 'Générer le nouveau cours',
+                'attr' => array('class' => 'btn btn-primary')
+            ))
+            ->getForm()
+        ;
+
+
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+
+            $cours = new Cours();
+            $cours->setNom($form['nom']->getData());
+            $cours->setDescription($form['description']->getData());
+            $cours->setAccueil($form['accueil']->getData());
+            $cours->setDiscipline($form['discipline']->getData());
+            $cours->setEnabled($form['visible']->getData());
+
+            if($form['imageFile']->getData()){
+                $cours->setImageFile($form['imageFile']->getData());
+            }else{
+                $cours->setImageFilename($form['imageOrig']->getData());
+            }
+            $cours->upload();
+
+            $em->persist($cours);
+
+            /* @var $sectionCopy Section */
+            foreach ($form['sections']->getData() as $sectionCopy){
+                $section = new Section();
+                $section->setNom($sectionCopy->getNom());
+                $section->setPosition($sectionCopy->getPosition());
+                $section->setFaIcon($sectionCopy->getFaIcon());
+                $section->setIsVisible($sectionCopy->getIsVisible());
+                $section->setIsAccesConditionne($sectionCopy->getIsAccesConditionne());
+                $section->setCours($cours);
+                $em->persist($section);
+            }
+
+            $em->flush();
+
+            return $this->redirectToRoute('oneCours', array('id' => $cours->getId(), 'mode' => 'admin'));
+        }
+        return $this->render('cours/dupliq.html.twig', ['form' => $form->createView(), 'coursModel' => $coursOrig]);
     }
 
     /**

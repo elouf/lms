@@ -217,7 +217,7 @@ class DocumentController extends Controller
                 $assocDisc->setIsImportant($isImportant);
                 $em->persist($assocDisc);
 
-                $inscrits = $repoDiscipline->findInscrits($discipline->getId());
+                $inscrits = $repoDiscipline->findInscrits($discipline);
                 if($inscrits){
                     foreach($inscrits as $inscrit){
                         //$this->sendMailDoc($inscrit, $proprietaire, 'la discipline '.$discipline->getNom());
@@ -344,7 +344,7 @@ class DocumentController extends Controller
                 $em->flush();
 
 
-                $inscrits = $repoCours->findInscrits($cours->getId());
+                $inscrits = $repoCours->findInscrits($cours);
                 if($inscrits){
                     foreach($inscrits as $inscrit){
                         //$this->sendMailDoc($inscrit, $proprietaire, 'le cours '.$cours->getNom());

@@ -86,10 +86,18 @@ class User extends BaseUser
     /** @ORM\Column(name="statut", type="string") */
     private $statut = 'Etudiant';
 
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\ManyToMany(targetEntity="Section", inversedBy="autorizedUsers")
+     * @ORM\JoinTable(name="users_sections")
+     */
+    private $autorizedSections;
+
     public function __construct()
     {
         parent::__construct();
-        $this->chats = new ArrayCollection();
+        $this->autorizedSections = new ArrayCollection();
     }
 
     /**
@@ -351,5 +359,59 @@ class User extends BaseUser
             "Professeur Stagiaire" => self::STATUT_PROFSTAGIAIRE,
             "Responsable" => self::STATUT_RESPONSABLE
         ];
+    }
+
+    /**
+     * Set autorizedSections
+     *
+     * @param array $autorizedSections
+     *
+     * @return User
+     */
+    public function setAutorizedSections($autorizedSections)
+    {
+        $this->autorizedSections = $autorizedSections;
+
+        return $this;
+    }
+
+    /**
+     * Get autorizedSections
+     *
+     * @return ArrayCollection
+     */
+    public function getAutorizedSections()
+    {
+        return $this->autorizedSections;
+    }
+
+    /**
+     * Add autorizedSection
+     *
+     * @param Section $autorizedSection
+     *
+     * @return User
+     */
+    public function addAutorizedSection($autorizedSection)
+    {
+        if(!$this->autorizedSections->contains($autorizedSection)){
+            $this->autorizedSections[] = $autorizedSection;
+            $autorizedSection->addautorizedUser($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove autorizedSection
+     *
+     * @param Section $autorizedSection
+     */
+    public function removeAutorizedSection($autorizedSection)
+    {
+        if ($this->autorizedSections->contains($autorizedSection)) {
+            $this->autorizedSections->removeElement($autorizedSection);
+            $autorizedSection->removeAutorizedUser($this);
+        }
     }
 }

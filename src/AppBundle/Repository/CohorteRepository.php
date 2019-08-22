@@ -11,55 +11,53 @@ use AppBundle\Entity\Cohorte;
  */
 class CohorteRepository extends \Doctrine\ORM\EntityRepository
 {
-    public function findInscrits($id)
+    public function findInscrits($cohorte)
     {
         $em = $this->getEntityManager();
-        $cohorte = $this->findOneBy(array('id'=> $id));
 
         $users = array();
 
         $inscrCohs = $em->getRepository('AppBundle:Inscription_coh')->findBy(array('cohorte' => $cohorte));
         if($inscrCohs){
             foreach($inscrCohs as $inscrCoh){
-                if(!in_array($inscrCoh->getUser(), $users) && $inscrCoh->getUser()->isEnabled()){
-                    array_push($users, $inscrCoh->getUser());
+                $inscrUser = $inscrCoh->getUser();
+                if(!in_array($inscrUser, $users) && $inscrUser->isEnabled()){
+                    array_push($users, $inscrUser);
                 }
             }
         }
         return $inscrCohs;
     }
 
-    public function userIsInscrit($userId, $cohId)
+    public function userIsInscrit($user, $coh)
     {
-        return $this->getUserInscr($userId, $cohId)!=null;
+        return $this->getUserInscr($user, $coh)!=null;
     }
 
-    public function getUserInscr($userId, $cohId){
+    public function getUserInscr($user, $coh){
         $em = $this->getEntityManager();
-        $coh = $this->findOneBy(array('id'=> $cohId));
-        $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
 
         $insc = $em->getRepository('AppBundle:Inscription_coh')->findBy(array('cohorte' => $coh, 'user' => $user));
         return $insc;
     }
 
-    public function userHasAccessOrIsInscrit($userId, $cohId)
+    public function userHasAccessOrIsInscrit($user, $coh)
     {
-        return $this->userIsInscrit($userId, $cohId);
+        return $this->userIsInscrit($user, $coh);
     }
 
-    public function allForUser($userId)
+    public function allForUser($user)
     {
         $em = $this->getEntityManager();
-        $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
 
         $inscs = $em->getRepository('AppBundle:Inscription_coh')->findBy(array('user' => $user));
 
         $cohs = array();
         if($inscs){
             foreach($inscs as $insc){
-                if(!in_array($insc->getCohorte(), $cohs)){
-                    array_push($cohs, $insc->getCohorte());
+                $coh = $insc->getCohorte();
+                if(!in_array($coh, $cohs)){
+                    array_push($cohs, $coh);
                 }
             }
         }
@@ -67,11 +65,9 @@ class CohorteRepository extends \Doctrine\ORM\EntityRepository
         return $cohs;
     }
 
-    public function getRole($userId, $id)
+    public function getRole($user, $item)
     {
         $em = $this->getEntityManager();
-        $item = $this->findOneBy(array('id'=> $id));
-        $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
 
         $inscr = $em->getRepository('AppBundle:Inscription_coh')->findOneBy(array('cohorte' => $item, 'user' => $user));
         if($inscr){

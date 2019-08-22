@@ -10,10 +10,9 @@ namespace AppBundle\Repository;
  */
 class Inscription_cohRepository extends \Doctrine\ORM\EntityRepository
 {
-    public function allForUser($userId)
+    public function allForUser($user)
     {
         $em = $this->getEntityManager();
-        $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
 
         $inscs = $em->getRepository('AppBundle:Inscription_coh')->findBy(array('user' => $user));
 

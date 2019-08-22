@@ -24,7 +24,7 @@ class StatistiquesController extends Controller
 
         for($i=0; $i<count($cohortes); $i++) {
             $cohortesArr[$i]["cohorte"] = $cohortes[$i];
-            $inscrits = $repoCohorte->findInscrits($cohortes[$i]->getId());
+            $inscrits = $repoCohorte->findInscrits($cohortes[$i]);
             $cohortesArr[$i]["inscrits"] = $inscrits;
         }
 

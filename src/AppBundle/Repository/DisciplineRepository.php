@@ -13,10 +13,9 @@ use AppBundle\Entity\User;
 class DisciplineRepository extends \Doctrine\ORM\EntityRepository
 {
 
-    public function findInscrits($id)
+    public function findInscrits($discipline)
     {
         $em = $this->getEntityManager();
-        $discipline = $this->findOneBy(array('id'=> $id));
 
         $users = array();
 
@@ -24,8 +23,9 @@ class DisciplineRepository extends \Doctrine\ORM\EntityRepository
         if($inscrDs){
             /* @var $inscrD Inscription_d */
             foreach($inscrDs as $inscrD){
-                if(!in_array($inscrD->getUser(), $users) && $inscrD->getUser()->isEnabled()){
-                    array_push($users, $inscrD->getUser());
+                $inscrUser = $inscrD->getUser();
+                if(!in_array($inscrUser, $users) && $inscrUser->isEnabled()){
+                    array_push($users, $inscrUser);
                 }
             }
         }
@@ -36,8 +36,9 @@ class DisciplineRepository extends \Doctrine\ORM\EntityRepository
                 $coh = $inscrCoh->getCohorte();
 
                 if($coh->getDisciplines()->contains($discipline)){
-                    if(!in_array($inscrCoh->getUser(), $users) && $inscrCoh->getUser()->isEnabled()){
-                        array_push($users, $inscrCoh->getUser());
+                    $inscrUser = $inscrCoh->getUser();
+                    if(!in_array($inscrUser, $users) && $inscrUser->isEnabled()){
+                        array_push($users, $inscrUser);
                     }
                 }
 
@@ -47,10 +48,9 @@ class DisciplineRepository extends \Doctrine\ORM\EntityRepository
         return $users;
     }
 
-    public function getCohortes($disId)
+    public function getCohortes($dis)
     {
         $em = $this->getEntityManager();
-        $dis = $this->findOneBy(array('id'=> $disId));
         $cohortes = array();
 
         $cohs = $em->getRepository('AppBundle:Cohorte')->findAll();
@@ -69,26 +69,22 @@ class DisciplineRepository extends \Doctrine\ORM\EntityRepository
         return $cohortes;
     }
 
-    public function userIsInscrit($userId, $disId)
+    public function userIsInscrit($user, $dis)
     {
-        return $this->getUserInscr($userId, $disId)!=null;
+        return $this->getUserInscr($user, $dis)!=null;
     }
 
-    public function getUserInscr($userId, $disId){
+    public function getUserInscr($user, $dis){
         $em = $this->getEntityManager();
-        $dis = $this->findOneBy(array('id'=> $disId));
-        $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
 
         $insc = $em->getRepository('AppBundle:Inscription_d')->findBy(array('discipline' => $dis, 'user' => $user));
         return $insc;
     }
 
-    public function userHasAccess($userId, $discId)
+    public function userHasAccess($user, $discipline)
     {
         $em = $this->getEntityManager();
 
-        $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
-        $discipline = $em->getRepository('AppBundle:Discipline')->findOneBy(array('id' => $discId));
 
         $inscrCohs = $em->getRepository('AppBundle:Inscription_coh')->findBy(array(
             'user' => $user
@@ -106,22 +102,20 @@ class DisciplineRepository extends \Doctrine\ORM\EntityRepository
         return false;
     }
 
-    public function userHasAccessOrIsInscrit($userId, $discId)
+    public function userHasAccessOrIsInscrit($user, $disc)
     {
-        return $this->userHasAccess($userId, $discId) || $this->userIsInscrit($userId, $discId);
+        return $this->userHasAccess($user, $disc) || $this->userIsInscrit($user, $disc);
     }
 
-    public function getRole($userId, $id)
+    public function getRole($user, $item)
     {
         $em = $this->getEntityManager();
-        $item = $this->findOneBy(array('id'=> $id));
-        $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
 
         $inscr = $em->getRepository('AppBundle:Inscription_d')->findOneBy(array('discipline' => $item, 'user' => $user));
         if($inscr){
             return $inscr->getRole();
         }else{
-            $inscrCohs = $em->getRepository('AppBundle:Inscription_coh')->findBy(array('user' => $userId));
+            $inscrCohs = $em->getRepository('AppBundle:Inscription_coh')->findBy(array('user' => $user));
             if($inscrCohs){
                 foreach($inscrCohs as $inscrCoh){
                     $coh = $inscrCoh->getCohorte();

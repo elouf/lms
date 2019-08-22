@@ -87,7 +87,7 @@ class NotifsSender
                         $discipline = $assocsDocsDisc->getDiscipline();
                         $discId = $discipline->getId();
                         $discIdStr = strval($discId);
-                        $inscrits = $this->em->getRepository('AppBundle:Discipline')->findInscrits($discId);
+                        $inscrits = $this->em->getRepository('AppBundle:Discipline')->findInscrits($discipline);
                         if ($inscrits) {
                             /* @var User $inscrit */
                             foreach ($inscrits as $inscrit) {
@@ -102,7 +102,7 @@ class NotifsSender
                         $cours = $assocsDocsCours->getCours();
                         $coursId = $cours->getId();
                         $coursIdStr = strval($coursId);
-                        $inscrits = $this->em->getRepository('AppBundle:Cours')->findInscrits($coursId);
+                        $inscrits = $this->em->getRepository('AppBundle:Cours')->findInscrits($cours);
                         if ($inscrits) {
                             /* @var User $inscrit */
                             foreach ($inscrits as $inscrit) {

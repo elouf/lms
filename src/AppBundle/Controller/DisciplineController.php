@@ -131,7 +131,7 @@ class DisciplineController extends Controller
         if ($userIsAdmin || $statutUser == 'Responsable' || $statutUser == 'Formateur') {
             // on ajoute les cohortes liées pour l'admin pour qu'il puisse accéder aux pages d'inscriptions à ces cohortes
             for ($i = 0; $i < count($disciplinesArray2Consider); $i++) {
-                $cohLiees[$i] = $repositoryDis->getCohortes($disciplinesArray2Consider[$i]->getId());
+                $cohLiees[$i] = $repositoryDis->getCohortes($disciplinesArray2Consider[$i]);
             }
         }
 

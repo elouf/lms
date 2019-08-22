@@ -16,65 +16,73 @@ class LoadSectionData extends AbstractFixture implements OrderedFixtureInterface
         $section = $this->createItem($manager,
             'Exercices',
             $this->getReference('cours_alg'),
-            0);
+            0, true,
+            [$this->getReference('user_etudiant_0'), $this->getReference('user_etudiant_1')]
+        );
         $this->addReference('sect_cours_alg_1', $section);
         $section = $this->createItem($manager,
             'Concours blancs',
             $this->getReference('cours_alg'),
-            1);
+            1, true,
+            [$this->getReference('user_etudiant_0'), $this->getReference('user_etudiant_1')]);
         $this->addReference('sect_cours_alg_2', $section);
         $section = $this->createItem($manager,
             'Annales',
             $this->getReference('cours_alg'),
-            2);
+            2, false);
         $this->addReference('sect_cours_alg_3', $section);
         $section = $this->createItem($manager,
             'Bibliographie',
             $this->getReference('cours_alg'),
-            3);
+            3, false);
         $this->addReference('sect_cours_alg_4', $section);
         $section = $this->createItem($manager,
             'Rapport de jury',
             $this->getReference('cours_alg'),
-            4);
+            4, true,
+            [$this->getReference('user_etudiant_0'), $this->getReference('user_etudiant_1')]);
         $this->addReference('sect_cours_alg_5', $section);
 
         $section = $this->createItem($manager,
             'Section1',
             $this->getReference('cours_analyse'),
-            0);
+            0, true);
         $this->addReference('sect_cours_analyse_1', $section);
         $section = $this->createItem($manager,
             'Section2',
             $this->getReference('cours_analyse'),
-            1);
+            1, false);
         $this->addReference('sect_cours_analyse_2', $section);
         $section = $this->createItem($manager,
             'Section3',
             $this->getReference('cours_analyse'),
-            2);
+            2, false);
         $this->addReference('sect_cours_analyse_3', $section);
         $section = $this->createItem($manager,
             'Section4',
             $this->getReference('cours_analyse'),
-            3);
+            3, false);
         $this->addReference('sect_cours_analyse_4', $section);
         $section = $this->createItem($manager,
             'Section5',
             $this->getReference('cours_analyse'),
-            4);
+            4, false);
         $this->addReference('sect_cours_analyse_5', $section);
 
         $manager->flush();
     }
 
-    public function createItem(ObjectManager $manager, $nom, $cours, $position){
+    public function createItem(ObjectManager $manager, $nom, $cours, $position, $isAccesConditionne, $users = []){
         $item = new Section();
         $item->setNom($nom);
         $item->setCours($cours);
         $item->setIsVisible(true);
         $item->setFaIcon('fa-pencil');
         $item->setPosition($position);
+        $item->setIsAccesConditionne($isAccesConditionne);
+        foreach ($users as $user){
+            $item->addAutorizedUser($user);
+        }
         $manager->persist($item);
         return $item;
     }

@@ -320,7 +320,7 @@ class InscriptionController extends Controller
         if($disciplines){
             /* @var $discipline Discipline */
             foreach ($disciplines as $discipline){
-                if($discRepo->userHasAccessOrIsInscrit($user->getId(), $discipline->getId())){
+                if($discRepo->userHasAccessOrIsInscrit($user, $discipline)){
                     array_push($discAccess, $discipline);
                 }else{
                     array_push($discNoAccess, $discipline);

@@ -54,7 +54,8 @@ class EmailingController extends Controller
 
 
             for($i=0; $i<count($coursSubscribed); $i++){
-                $inscritIds = $repoCours->findInscrits($coursSubscribed[$i]);
+                $cours = $repoCours->findBy(array('id' => $coursSubscribed[$i]));
+                $inscritIds = $repoCours->findInscrits($cours);
                 if($inscritIds){
                     foreach($inscritIds as $inscr){
                         array_push($users, $inscr->getId());

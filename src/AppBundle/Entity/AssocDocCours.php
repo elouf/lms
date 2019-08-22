@@ -12,7 +12,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class AssocDocCours extends AssocDocEntity
 {
-
     /**
      * @var Cours
      * @ORM\ManyToOne(targetEntity="Cours")

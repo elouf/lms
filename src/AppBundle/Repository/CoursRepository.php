@@ -19,11 +19,9 @@ class CoursRepository extends \Doctrine\ORM\EntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function findRole($userId, $coursId)
+    public function findRole($user, $cours)
     {
         $em = $this->getEntityManager();
-        $cours = $this->findOneBy(array('id' => $coursId));
-        $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
         $discipline = $cours->getDiscipline();
 
         $inscrCs = $em->getRepository('AppBundle:Inscription_c')->findBy(array('cours' => $cours, 'user' => $user));
@@ -55,10 +53,9 @@ class CoursRepository extends \Doctrine\ORM\EntityRepository
         return $role;
     }
 
-    public function findInscrits($id)
+    public function findInscrits($cours)
     {
         $em = $this->getEntityManager();
-        $cours = $this->findOneBy(array('id'=> $id));
         $session = $cours->getSession();
         $discipline = $cours->getDiscipline();
 
@@ -67,8 +64,9 @@ class CoursRepository extends \Doctrine\ORM\EntityRepository
         $inscrCs = $em->getRepository('AppBundle:Inscription_c')->findBy(array('cours' => $cours));
         if($inscrCs){
             foreach($inscrCs as $inscrC){
-                if(!in_array($inscrC->getUser(), $users) && $inscrC->getUser()->isEnabled()){
-                    array_push($users, $inscrC->getUser());
+                $inscrUser = $inscrC->getUser();
+                if(!in_array($inscrUser, $users) && $inscrUser->isEnabled()){
+                    array_push($users, $inscrUser);
                 }
             }
         }
@@ -76,8 +74,9 @@ class CoursRepository extends \Doctrine\ORM\EntityRepository
         $inscrDs = $em->getRepository('AppBundle:Inscription_d')->findBy(array('discipline' => $discipline));
         if($inscrDs){
             foreach($inscrDs as $inscrD){
-                if(!in_array($inscrD->getUser(), $users) && $inscrD->getUser()->isEnabled()){
-                    array_push($users, $inscrD->getUser());
+                $inscrUser = $inscrD->getUser();
+                if(!in_array($inscrUser, $users) && $inscrUser->isEnabled()){
+                    array_push($users, $inscrUser);
                 }
             }
         }
@@ -88,8 +87,9 @@ class CoursRepository extends \Doctrine\ORM\EntityRepository
                 $coh = $inscrCoh->getCohorte();
 
                 if($coh->getDisciplines()->contains($discipline) || $coh->getCours()->contains($cours)){
-                    if(!in_array($inscrCoh->getUser(), $users) && $inscrCoh->getUser()->isEnabled()){
-                        array_push($users, $inscrCoh->getUser());
+                    $cohUser = $inscrCoh->getUser();
+                    if(!in_array($cohUser, $users) && $cohUser->isEnabled()){
+                        array_push($users, $cohUser);
                     }
                 }
 
@@ -112,28 +112,26 @@ class CoursRepository extends \Doctrine\ORM\EntityRepository
         return $userToSend;
     }
 
-    public function userIsInscrit($userId, $coursId)
+    public function userIsInscrit($user, $cours)
     {
-        return $this->getUserInscr($userId, $coursId)!=null;
+        return $this->getUserInscr($user, $cours)!=null;
     }
 
-    public function getUserInscr($userId, $coursId){
+    public function getUserInscr($user, $cours){
         $em = $this->getEntityManager();
-        $cours = $this->findOneBy(array('id'=> $coursId));
-        $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
 
         $insc = $em->getRepository('AppBundle:Inscription_c')->findBy(array('cours' => $cours, 'user' => $user));
         return $insc;
     }
 
-    public function userHasAccess($userId, $coursId)
+    public function userHasAccess($user, $cours)
     {
         $em = $this->getEntityManager();
-        $cours = $em->getRepository('AppBundle:Cours')->findOneBy(array('id' => $coursId));
+        $repositoryDiscipline = $em->getRepository('AppBundle:Discipline');
         $disc = $cours->getDiscipline();
 
-        if($em->getRepository('AppBundle:Discipline')->userHasAccess($userId, $disc->getId()) ||
-            $em->getRepository('AppBundle:Discipline')->userIsInscrit($userId, $disc->getId())
+        if($repositoryDiscipline->userHasAccess($user, $disc) ||
+            $repositoryDiscipline->userIsInscrit($user, $disc)
         ){
             return true;
         }else{
@@ -141,22 +139,21 @@ class CoursRepository extends \Doctrine\ORM\EntityRepository
         }
     }
 
-    public function userHasAccessOrIsInscrit($userId, $coursId)
+    public function userHasAccessOrIsInscrit($user, $cours)
     {
-        return $this->userHasAccess($userId, $coursId) || $this->userIsInscrit($userId, $coursId);
+        return $this->userHasAccess($user, $cours) || $this->userIsInscrit($user, $cours);
     }
 
-    public function getRole($userId, $id)
+    public function getRole($user, $item)
     {
         $em = $this->getEntityManager();
-        $item = $this->findOneBy(array('id'=> $id));
-        $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
+        $discipline = $item->getDiscipline();
 
         $inscr = $em->getRepository('AppBundle:Inscription_c')->findOneBy(array('cours' => $item, 'user' => $user));
         if($inscr){
             return $inscr->getRole();
         }else{
-            $inscrD = $em->getRepository('AppBundle:Inscription_d')->findOneBy(array('discipline' => $item->getDiscipline(), 'user' => $user));
+            $inscrD = $em->getRepository('AppBundle:Inscription_d')->findOneBy(array('discipline' => $discipline, 'user' => $user));
             if($inscrD){
                 return $inscrD->getRole();
             }else{
@@ -164,7 +161,7 @@ class CoursRepository extends \Doctrine\ORM\EntityRepository
                 if($inscrCohs){
                     foreach($inscrCohs as $inscrCoh){
                         $coh = $inscrCoh->getCohorte();
-                        if($coh->getDisciplines()->contains($item->getDiscipline()) || $coh->getCours()->contains($item)){
+                        if($coh->getDisciplines()->contains($discipline) || $coh->getCours()->contains($item)){
                             return $inscrCoh->getRole();
                         }
                     }

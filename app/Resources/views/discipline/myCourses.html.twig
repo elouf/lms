@@ -442,6 +442,10 @@
                                                             <a href="{{ path('itemUsers', {id: valC.id, type:"cours"}) }}"
                                                                class="btnIncrsForReferents btn btn-warning btn-sm">Modifier</a>
                                                         {% endif %}
+                                                        {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                                            <a href="{{ path('dupliqCours', {id: valC.id}) }}"
+                                                               class="btn btn-warning btn-sm">Dupliquer</a>
+                                                        {% endif %}
                                                     </div>
                                                 </div>
                                             {% endif %}

@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+
+{% block pageHeader %}
+    <div>{{ template }}</div>
+    <div class="page-header littleScroll">
+        <div class="container">
+            <h2 class="color3">Dupliquer un cours</h2>
+            <ul class="breadcrumb">
+                <li class="color3">
+                    Modèle : <a href="{{ path('oneCours', {id: coursModel.id, mode: "admin" }) }}"
+                                class="label label-info">{{ coursModel.discipline.nom }} / {{ coursModel.nom }}</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+
+{% block main %}
+    <script>
+        jQuery(document).ready(function () {
+            $('#form_imageFile').change(function(){
+                if (this.files && this.files[0]) {
+                    var reader = new FileReader();
+
+                    reader.onload = function(e) {
+                        $('#imgPreview').attr('src', e.target.result);
+                    }
+
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+        });
+    </script>
+    <style>
+        form label {
+            width: 115px;
+            vertical-align: top;
+            display: inline-block;
+        }
+
+        form input, form select {
+            min-width: 300px;
+        }
+
+        .cke {
+            display: inline-block;
+        }
+
+        input[type=file] {
+            display: inline-block;
+        }
+
+        form > div {
+            padding: 10px;
+            border-bottom: dashed 1px #aaa;
+        }
+
+        form > div:last-of-type {
+            border-bottom: none;
+        }
+    </style>
+    <div class="container mt-220 mb-40">
+        <div class="row">
+            {{ form_start(form) }}
+            {{ form_row(form.nom) }}
+            {{ form_row(form.description) }}
+            {{ form_row(form.accueil) }}
+            <div>
+                {{ form_label(form.imageFile) }}
+                {{ form_widget(form.imageFile) }}
+                <img id="imgPreview" alt="" class=""
+                     src="{{ asset('images') }}/cours/{{ coursModel.imageFilename }}"/>
+            </div>
+
+            {{ form_end(form) }}
+        </div>
+
+    </div>
+{% endblock %}
