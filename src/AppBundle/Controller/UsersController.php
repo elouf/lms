@@ -579,11 +579,15 @@ class UsersController extends Controller
             $roleUser = $itemRepo->getRole($currentUser, $item)->getNom();
         }
 
+        $itemRepo = $doctrine->getRepository('AppBundle:' . $entityName);
+        $item = $doctrine->getRepository('AppBundle:' . $entityName)->findOneBy(array('id' => $id));
+
         $inscrCohRepo = $doctrine->getRepository('AppBundle:Inscription_coh');
         $inscrDRepo = $doctrine->getRepository('AppBundle:Inscription_d');
         $userRepo = $doctrine->getRepository('AppBundle:User');
         $users = $userRepo->findBy(array('enabled' => true));
 
+        $usersNoAccessTab = array();
         $usersAccessTab = array();
 
         if ((($statut !== 'Responsable' && $statut !== 'Formateur') || !$currentUser->getConfirmedByAdmin()) && !$currentUser->hasRole('ROLE_SUPER_ADMIN') && $roleUser!='Referent') {
@@ -602,6 +606,11 @@ class UsersController extends Controller
                         "isInscrit" => true,
                         "myCohs" => $myCohs,
                         "role" => $inscr->getRole()
+                    ]);
+                } else {
+                    array_push($usersNoAccessTab, [
+                        'user' => $user,
+                        "myCohs" => $myCohs
                     ]);
                 }
             }else if ($type == "discipline") {
@@ -648,6 +657,11 @@ class UsersController extends Controller
                         "myCohs" => $myCohs,
                         "role" => $role
                     ]);
+                } else {
+                    array_push($usersNoAccessTab, [
+                        'user' => $user,
+                        "myCohs" => $myCohs
+                    ]);
                 }
             }else {
                 $isInscrit = $itemRepo->userIsInscrit($user, $item);
@@ -666,12 +680,16 @@ class UsersController extends Controller
                             "myCohs" => $inscrCohRepo->allForUser($user),
                             "role" => $itemRepo->getRole($user, $item)
                         ]);
+                    } else {
+                        array_push($usersNoAccessTab, [
+                            'user' => $user,
+                            "myCohs" => $inscrCohRepo->allForUser($user)
+                        ]);
                     }
                 }
 
             }
         }
-
 
         $repoUserStatRessource = $doctrine->getRepository('AppBundle:UserStatRessource');
         $ressources = new ArrayCollection();
@@ -789,6 +807,8 @@ class UsersController extends Controller
             }
             $em->persist($itemForm);
             $em->flush();
+
+
         }
         return $this->render('user/itemUsers.html.twig', [
             'item' => $item,
@@ -796,7 +816,7 @@ class UsersController extends Controller
             'linkedCourses' => $linkedCourses,
             'roles' => $roles,
             'entityName' => $entityName,
-            'usersNoHavingAccess' => null,
+            'usersNoHavingAccess' => $usersNoAccessTab,
             'usersHavingAccess' => $usersAccessTab,
             'form' => $form->createView(),
             'roleUser' => $roleUser
@@ -840,7 +860,12 @@ class UsersController extends Controller
                     /* @var $inscr Inscription_coh */
                     $inscr = $inscrCohRepo->findOneBy(array('cohorte' => $item, 'user' => $user));
                     if ($inscr) {
-
+                        array_push($usersAccessTab, [
+                            "user" => $user,
+                            "isInscrit" => true,
+                            "myCohs" => $myCohs,
+                            "role" => $inscr->getRole()
+                        ]);
                     } else {
                         array_push($usersNoAccessTab, [
                             'user' => $user,
@@ -871,7 +896,26 @@ class UsersController extends Controller
                         }
                     }
                     if ($checkAccess) {
-
+                        $role = null;
+                        if($inscr){
+                            $role = $inscr->getRole();
+                        }else{
+                            $inscrCohs = $inscrCohRepo->findBy(array('user' => $user));
+                            if($inscrCohs){
+                                foreach($inscrCohs as $inscrCoh){
+                                    $coh = $inscrCoh->getCohorte();
+                                    if($coh->getDisciplines()->contains($item)){
+                                        $role = $inscrCoh->getRole();
+                                    }
+                                }
+                            }
+                        }
+                        array_push($usersAccessTab, [
+                            "user" => $user,
+                            "isInscrit" => $inscr != null,
+                            "myCohs" => $myCohs,
+                            "role" => $role
+                        ]);
                     } else {
                         array_push($usersNoAccessTab, [
                             'user' => $user,
@@ -879,11 +923,22 @@ class UsersController extends Controller
                         ]);
                     }
                 }else {
-                    if ($itemRepo->userIsInscrit($user, $item)) {
-
+                    $isInscrit = $itemRepo->userIsInscrit($user, $item);
+                    if ($isInscrit) {
+                        array_push($usersAccessTab, [
+                            "user" => $user,
+                            "isInscrit" => $isInscrit,
+                            "myCohs" => $inscrCohRepo->allForUser($user),
+                            "role" => $itemRepo->getRole($user, $item)
+                        ]);
                     } else {
                         if ($itemRepo->userHasAccess($user, $item)) {
-
+                            array_push($usersAccessTab, [
+                                "user" => $user,
+                                "isInscrit" => $isInscrit,
+                                "myCohs" => $inscrCohRepo->allForUser($user),
+                                "role" => $itemRepo->getRole($user, $item)
+                            ]);
                         } else {
                             array_push($usersNoAccessTab, [
                                 'user' => $user,
@@ -898,8 +953,8 @@ class UsersController extends Controller
             $em->flush();
 
             return new JsonResponse(array(
-                'action' => 'load non inscrits à un item',
-                'usersNoHavingAccess' => $usersNoAccessTab
+                'action' => 'load inscrits à un item',
+                'usersHavingAccess' => $usersAccessTab
             ));
         }
     }
