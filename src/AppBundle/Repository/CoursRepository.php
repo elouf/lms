@@ -130,18 +130,24 @@ class CoursRepository extends \Doctrine\ORM\EntityRepository
         $repositoryDiscipline = $em->getRepository('AppBundle:Discipline');
         $disc = $cours->getDiscipline();
 
-        if($repositoryDiscipline->userHasAccess($user, $disc) ||
-            $repositoryDiscipline->userIsInscrit($user, $disc)
-        ){
+        if($repositoryDiscipline->userIsInscrit($user, $disc)){
             return true;
-        }else{
-            return false;
         }
+        if($repositoryDiscipline->userHasAccess($user, $disc)){
+            return true;
+        }
+        return false;
     }
 
     public function userHasAccessOrIsInscrit($user, $cours)
     {
-        return $this->userHasAccess($user, $cours) || $this->userIsInscrit($user, $cours);
+        if($this->userIsInscrit($user, $cours)){
+            return true;
+        }
+        if($this->userHasAccess($user, $cours)){
+            return true;
+        }
+        return false;
     }
 
     public function getRole($user, $item)

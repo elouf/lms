@@ -122,6 +122,12 @@
             align-items: center;
             -webkit-align-items: center;
         }
+        .formChamp label{
+            width: 160px;
+        }
+        .formChamp{
+            margin-bottom: 15px;
+        }
     </style>
     <script>
         jQuery(document).ready(function () {
@@ -521,19 +527,33 @@
                                 <div class="errorsPart">
                                     {{ form_errors(form) }}
                                 </div>
-                                {{ form_row(form.nom) }}
-                                <div>
+                                <div class="formChamp">
+                                    {{ form_label(form.nom) }}
+                                    {{ form_widget(form.nom) }}
+                                </div>
+                                <div class="formChamp">
                                     {{ form_label(form.imageFile) }}
                                     {{ form_widget(form.imageFile) }}
                                 </div>
 
-                                <div>
+                                <div style="display: inline-block" class="formChamp">
                                     <div class="col-sm-4"></div>
                                     <div class="col-sm-8">
                                         <img style="width:300px;" alt="" class="" src="{{ asset('images') }}/cours/{{ item.imageFilename }}"/>
                                     </div>
                                 </div>
-
+                                <div class="formChamp">
+                                    {{ form_label(form.position) }}
+                                    {{ form_widget(form.position) }}
+                                </div>
+                                <div class="formChamp">
+                                    {{ form_label(form.enabled) }}
+                                    {{ form_widget(form.enabled) }}
+                                </div>
+                                <div class="formChamp">
+                                    {{ form_label(form.discipline) }}
+                                    {{ form_widget(form.discipline) }}
+                                </div>
                                 {{ form_end(form) }}
                             {% else %}
                                 {{ form_start(form) }}

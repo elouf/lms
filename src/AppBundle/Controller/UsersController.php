@@ -662,19 +662,30 @@ class UsersController extends Controller
                     ]);
                 }
             }else {
-                if ($itemRepo->userHasAccessOrIsInscrit($user, $item)) {
+                $isInscrit = $itemRepo->userIsInscrit($user, $item);
+                if ($isInscrit) {
                     array_push($usersAccessTab, [
                         "user" => $user,
-                        "isInscrit" => $itemRepo->userIsInscrit($user, $item),
+                        "isInscrit" => $isInscrit,
                         "myCohs" => $inscrCohRepo->allForUser($user),
                         "role" => $itemRepo->getRole($user, $item)
                     ]);
                 } else {
-                    array_push($usersNoAccessTab, [
-                        'user' => $user,
-                        "myCohs" => $inscrCohRepo->allForUser($user)
-                    ]);
+                    if ($itemRepo->userHasAccess($user, $item)) {
+                        array_push($usersAccessTab, [
+                            "user" => $user,
+                            "isInscrit" => $isInscrit,
+                            "myCohs" => $inscrCohRepo->allForUser($user),
+                            "role" => $itemRepo->getRole($user, $item)
+                        ]);
+                    } else {
+                        array_push($usersNoAccessTab, [
+                            'user' => $user,
+                            "myCohs" => $inscrCohRepo->allForUser($user)
+                        ]);
+                    }
                 }
+
             }
         }
         $repoUserStatRessource = $doctrine->getRepository('AppBundle:UserStatRessource');
@@ -719,25 +730,25 @@ class UsersController extends Controller
         } else if ($type == "cours") {
             $form = $this->createFormBuilder($item)
                 ->add('nom', TextType::class, array(
-                    'label' => 'Nom',
-                    'label_attr' => array('class' => 'col-sm-4')
+                    'label' => 'Nom'
                 ))
                 ->add('imageFile', FileType::class, [
                     'label' => 'Image',
-                    'attr' => ['class' => 'col-sm-8', 'accept' => 'image/*'],
-                    'label_attr' => ['class' => 'col-sm-4'],
+                    'attr' => ['accept' => 'image/*'],
                     'required' => false,
                     'multiple' => false,
                 ])
                 ->add('position', TextType::class, array(
-                    'label' => 'Position',
-                    'label_attr' => array('class' => 'col-sm-4')
+                    'label' => 'Position'
+                ))
+                ->add('enabled', CheckboxType::class, array(
+                    'label' => 'Visible',
+                    'required' => false
                 ))
                 ->add('discipline', EntityType::class, array(
                     'class' => 'AppBundle:Discipline',
                     'choice_label' => 'Nom',
                     'multiple' => false,
-                    'label_attr' => array('class' => 'col-sm-4')
                 ))
                 ->add('description', CKEditorType::class, array(
                     'label' => 'Description'

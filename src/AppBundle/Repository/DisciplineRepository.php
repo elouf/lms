@@ -104,7 +104,13 @@ class DisciplineRepository extends \Doctrine\ORM\EntityRepository
 
     public function userHasAccessOrIsInscrit($user, $disc)
     {
-        return $this->userHasAccess($user, $disc) || $this->userIsInscrit($user, $disc);
+        if($this->userHasAccess($user, $disc)){
+            return true;
+        }
+        if($this->userIsInscrit($user, $disc)){
+            return true;
+        }
+        return false;
     }
 
     public function getRole($user, $item)
