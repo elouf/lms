@@ -479,6 +479,23 @@
                     });
                 }
             }
+
+            $('.loadNonInscrits').click(function(e){
+                e.preventDefault();
+                $('.loadNonInscrits').remove();
+                $.ajax({
+                    type: "POST",
+                    url: "{{ path('loadNonInscritsItem_ajax') }}",
+                    data: {
+                        idItem: id,
+                        typeItem: typeItem
+                    },
+                    dataType: "json",
+                    success: function (response) {
+
+                    }
+                });
+            });
         });
     </script>
 
@@ -754,6 +771,7 @@
                                         <option value="all">Toutes les lignes</option>
                                         <option value="all">Toutes les lignes</option>
                                     </select>
+                                    <button class="loadNonInscrits">Charger les non inscrits</button>
                                     <button class="download">Télécharger le CSV</button>
                                     <button class="inscrSelected">Inscrire les sélectionnés</button>
                                     <button class="selectAll">Sélectionner tous</button>

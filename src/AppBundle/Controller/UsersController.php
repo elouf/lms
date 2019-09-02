@@ -571,9 +571,6 @@ class UsersController extends Controller
             $entityName = "Session";
         }
 
-        $inscrCohRepo = $doctrine->getRepository('AppBundle:Inscription_coh');
-        $inscrDRepo = $doctrine->getRepository('AppBundle:Inscription_d');
-
         $itemRepo = $doctrine->getRepository('AppBundle:' . $entityName);
         $item = $doctrine->getRepository('AppBundle:' . $entityName)->findOneBy(array('id' => $id));
 
@@ -582,10 +579,11 @@ class UsersController extends Controller
             $roleUser = $itemRepo->getRole($currentUser, $item)->getNom();
         }
 
+        $inscrCohRepo = $doctrine->getRepository('AppBundle:Inscription_coh');
+        $inscrDRepo = $doctrine->getRepository('AppBundle:Inscription_d');
         $userRepo = $doctrine->getRepository('AppBundle:User');
         $users = $userRepo->findBy(array('enabled' => true));
 
-        $usersNoAccessTab = array();
         $usersAccessTab = array();
 
         if ((($statut !== 'Responsable' && $statut !== 'Formateur') || !$currentUser->getConfirmedByAdmin()) && !$currentUser->hasRole('ROLE_SUPER_ADMIN') && $roleUser!='Referent') {
@@ -604,11 +602,6 @@ class UsersController extends Controller
                         "isInscrit" => true,
                         "myCohs" => $myCohs,
                         "role" => $inscr->getRole()
-                    ]);
-                } else {
-                    array_push($usersNoAccessTab, [
-                        'user' => $user,
-                        "myCohs" => $myCohs
                     ]);
                 }
             }else if ($type == "discipline") {
@@ -655,11 +648,6 @@ class UsersController extends Controller
                         "myCohs" => $myCohs,
                         "role" => $role
                     ]);
-                } else {
-                    array_push($usersNoAccessTab, [
-                        'user' => $user,
-                        "myCohs" => $myCohs
-                    ]);
                 }
             }else {
                 $isInscrit = $itemRepo->userIsInscrit($user, $item);
@@ -678,16 +666,13 @@ class UsersController extends Controller
                             "myCohs" => $inscrCohRepo->allForUser($user),
                             "role" => $itemRepo->getRole($user, $item)
                         ]);
-                    } else {
-                        array_push($usersNoAccessTab, [
-                            'user' => $user,
-                            "myCohs" => $inscrCohRepo->allForUser($user)
-                        ]);
                     }
                 }
 
             }
         }
+
+
         $repoUserStatRessource = $doctrine->getRepository('AppBundle:UserStatRessource');
         $ressources = new ArrayCollection();
         $linkedCourses = new ArrayCollection();
@@ -804,8 +789,6 @@ class UsersController extends Controller
             }
             $em->persist($itemForm);
             $em->flush();
-
-
         }
         return $this->render('user/itemUsers.html.twig', [
             'item' => $item,
@@ -813,11 +796,112 @@ class UsersController extends Controller
             'linkedCourses' => $linkedCourses,
             'roles' => $roles,
             'entityName' => $entityName,
-            'usersNoHavingAccess' => $usersNoAccessTab,
+            'usersNoHavingAccess' => null,
             'usersHavingAccess' => $usersAccessTab,
             'form' => $form->createView(),
             'roleUser' => $roleUser
         ]);
+    }
+
+    /**
+     * @Route("/loadNonInscritsItem_ajax", name="loadNonInscritsItem_ajax")
+     */
+    public function loadNonInscritsItemAjaxAction(Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+
+            $type = $request->request->get('type');
+            $id = $request->request->get('id');
+
+            $entityName = "";
+            if ($type == "cohorte") {
+                $entityName = "Cohorte";
+            } else if ($type == "discipline") {
+                $entityName = "Discipline";
+            } else if ($type == "cours") {
+                $entityName = "Cours";
+            } else if ($type == "session") {
+                $entityName = "Session";
+            }
+
+            $itemRepo = $em->getRepository('AppBundle:' . $entityName);
+            $item = $em->getRepository('AppBundle:' . $entityName)->findOneBy(array('id' => $id));
+
+            $inscrCohRepo = $em->getRepository('AppBundle:Inscription_coh');
+            $inscrDRepo = $em->getRepository('AppBundle:Inscription_d');
+            $userRepo = $em->getRepository('AppBundle:User');
+            $users = $userRepo->findBy(array('enabled' => true));
+
+            foreach ($users as $user) {
+                if($type == "cohorte"){
+                    $myCohs = $inscrCohRepo->findBy(array('user' => $user));
+
+                    /* @var $inscr Inscription_coh */
+                    $inscr = $inscrCohRepo->findOneBy(array('cohorte' => $item, 'user' => $user));
+                    if ($inscr) {
+
+                    } else {
+                        array_push($usersNoAccessTab, [
+                            'user' => $user,
+                            "myCohs" => $myCohs
+                        ]);
+                    }
+                }else if ($type == "discipline") {
+                    $myCohs = $inscrCohRepo->findBy(array('user' => $user));
+
+                    $checkAccess = false;
+                    $inscrCohs = $inscrCohRepo->findBy(array('user' => $user));
+                    $inscr = null;
+                    if($inscrCohs){
+                        foreach($inscrCohs as $inscrCoh){
+                            $coh = $inscrCoh->getCohorte();
+                            if($coh->getDisciplines()->contains($item)){
+                                $checkAccess = true;
+                                $inscr = $inscrDRepo->findOneBy(array('discipline' => $item, 'user' => $user));
+                                break;
+                            }
+                        }
+                    }
+                    if(!$checkAccess){
+                        /* @var $inscr Inscription_d */
+                        $inscr = $inscrDRepo->findOneBy(array('discipline' => $item, 'user' => $user));
+                        if($inscr){
+                            $checkAccess = true;
+                        }
+                    }
+                    if ($checkAccess) {
+
+                    } else {
+                        array_push($usersNoAccessTab, [
+                            'user' => $user,
+                            "myCohs" => $myCohs
+                        ]);
+                    }
+                }else {
+                    if ($itemRepo->userIsInscrit($user, $item)) {
+
+                    } else {
+                        if ($itemRepo->userHasAccess($user, $item)) {
+
+                        } else {
+                            array_push($usersNoAccessTab, [
+                                'user' => $user,
+                                "myCohs" => $inscrCohRepo->allForUser($user)
+                            ]);
+                        }
+                    }
+
+                }
+            }
+
+            $em->flush();
+
+            return new JsonResponse(array(
+                'action' => 'load non inscrits à un item',
+                'usersNoHavingAccess' => $usersNoAccessTab
+            ));
+        }
     }
 
     /**
