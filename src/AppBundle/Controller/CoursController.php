@@ -385,7 +385,8 @@ class CoursController extends Controller
                 'choices' => $coursOrig->getSections(),
                 'multiple' => true,
                 "choice_label" => "nom",
-                'data' => $coursOrig->getSections()
+                'data' => $coursOrig->getSections(),
+                "required" => false
             ))
             ->add('visible', CheckboxType::class, array(
                 'data' => false,
