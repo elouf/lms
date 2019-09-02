@@ -664,21 +664,21 @@ class UsersController extends Controller
                     ]);
                 }
             }else {
-                $isInscrit = $itemRepo->userIsInscrit($user, $item);
-                if ($isInscrit) {
+                $inscr = $itemRepo->getUserInscr($user, $item);
+                if ($inscr != null) {
                     array_push($usersAccessTab, [
                         "user" => $user,
-                        "isInscrit" => $isInscrit,
+                        "isInscrit" => $inscr != null,
                         "myCohs" => $inscrCohRepo->allForUser($user),
-                        "role" => $itemRepo->getRole($user, $item)
+                        "role" => $inscr->getRole()
                     ]);
                 } else {
                     if ($itemRepo->userHasAccess($user, $item)) {
                         array_push($usersAccessTab, [
                             "user" => $user,
-                            "isInscrit" => $isInscrit,
+                            "isInscrit" => $inscr != null,
                             "myCohs" => $inscrCohRepo->allForUser($user),
-                            "role" => $itemRepo->getRole($user, $item)
+                            "role" => $itemRepo->getRoleNoInscr($user, $item)
                         ]);
                     } else {
                         array_push($usersNoAccessTab, [
