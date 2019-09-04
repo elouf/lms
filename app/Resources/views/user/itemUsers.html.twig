@@ -196,28 +196,25 @@
                     size: 10
                 });
 
-            updatebtnbehaviors();
-            function updatebtnbehaviors(){
-                $('.btndesinscr').unbind('click').click(function () {
-                    var idUser = $(this).closest('.userLine').attr('data-userId');
-                    $('.modal').modal('toggle');
-                    $('.mode').hide();
-                    $('.modeDesinscr').show();
-                    $('.valideDesinscr').unbind('click').click(function () {
-                        desinscrireUsers(typeItem, [idUser], "{{ item.id }}");
-                    });
-                });
-                $('.btninscr').unbind('click').click(function () {
-                    var idUser = $(this).closest('.userLine').attr('data-userId');
-                    $('.modal').modal('toggle');
-                    $('.mode').hide();
-                    $('.modeInscr').show();
-                    $('.valideInscr').unbind('click').click(function () {
-                        inscrireUsers(typeItem, [idUser], "{{ item.id }}", $('.selectRole').val());
-                    });
-                });
-            }
+            $('.btndesinscr').click(function () {
+                var idUser = $(this).closest('.userLine').attr('data-userId');
 
+                $('.modal').modal('toggle');
+                $('.mode').hide();
+                $('.modeDesinscr').show();
+                $('.valideDesinscr').unbind('click').click(function () {
+                    desinscrireUsers(typeItem, [idUser], "{{ item.id }}");
+                });
+            });
+            $('.btninscr').click(function () {
+                var idUser = $(this).closest('.userLine').attr('data-userId');
+                $('.modal').modal('toggle');
+                $('.mode').hide();
+                $('.modeInscr').show();
+                $('.valideInscr').unbind('click').click(function () {
+                    inscrireUsers(typeItem, [idUser], "{{ item.id }}", $('.selectRole').val());
+                });
+            });
             $('.selectAll').click(function (e) {
                 e.preventDefault();
                 var col = $(this).closest('.coloneTable');
@@ -482,57 +479,6 @@
                     });
                 }
             }
-
-            $('.loadNonInscrits').remove();
-            let step = 100;
-            loadUsersSequence(step+1);
-            function loadUsersSequence(min){
-                $.ajax({
-                    type: "POST",
-                    url: "{{ path('loadNonInscritsItem_ajax') }}",
-                    data: {
-                        idItem: "{{ item.id }}",
-                        typeItem: typeItem,
-                        min: min
-                    },
-                    dataType: "json",
-                    success: function (response) {
-                        for(let i=0; i<response['usersNoHavingAccess'].length; i++){
-                            let user = jQuery.parseJSON(response['usersNoHavingAccess'][i]['user']);
-                            let userLink = '{{ path("user", {'id':'user_id' }) }}';
-                            userLink = userLink.replace("user_id", user.id);
-                            let row = '<tr class="userLine even" data-userid="'+user.id+'" role="row"><td><input class="selectUser" type="checkbox"></td><td><a href="'+userLink+'">'+user.id+'</a></td><td><a href="'+userLink+'">'+user.email+'</a></td><td>'+user.firstname+'</td><td>'+user.lastname+'</td><td>'+user.institut.nom+'</td><td>'+user.statut+'</td><td></td><td class="btnCellFilter"><i class="btninscr fa fa-sign-in" aria-hidden="true"></i></td></tr>';
-                            let $row = $(row);
-                            $('.tableNo').find('tbody').append($row)
-                                .trigger('addRows', [$row, true]);
-                        }
-                        for(let i=0; i<response['usersHavingAccess'].length; i++){
-                            let datas = response['usersHavingAccess'][i];
-                            let user = jQuery.parseJSON(datas['user']);
-                            let role = jQuery.parseJSON(datas['role']);
-                            let checkbox = '';
-                            let btnDesinscr = '';
-                            if(datas.isInscrit){
-                                checkbox = '<input class="selectUser" type="checkbox" />';
-                                btnDesinscr = '<i class="btndesinscr fa fa-sign-out" aria-hidden="true"></i>';
-                            }
-                            let userLink = '{{ path("user", {'id':'user_id' }) }}';
-                            userLink = userLink.replace("user_id", user.id);
-
-                            let row = '<tr class="userLine even" data-userid="'+user.id+'" role="row"><td>'+checkbox+'</td><td><a href="'+userLink+'">'+user.id+'</a></td><td><a href="'+userLink+'">'+user.email+'</a></td><td>'+user.firstname+'</td><td>'+user.lastname+'</td><td>'+user.institut.nom+'</td><td>'+user.statut+'</td><td>'+role.nom+'</td><td></td><td class="btnCellFilter">'+btnDesinscr+'</td></tr>';
-                            let $row = $(row);
-                            $('.tableYes').find('tbody').append($row)
-                                .trigger('addRows', [$row, true]);
-                        }
-                        updatebtnbehaviors();
-                        console.log(response['usersHavingAccess'].length+' ; '+response['usersNoHavingAccess'].length)
-                        if(response['usersHavingAccess'].length !== 0 || response['usersNoHavingAccess'].length !== 0){
-                            loadUsersSequence(min + step + 1);
-                        }
-                    }
-                });
-            }
-
         });
     </script>
 
@@ -687,7 +633,7 @@
                                 <tr class="userLine" data-userId="{{ userId }}">
                                     <td>
                                         {% if user.isInscrit %}
-                                            <input class="selectUser" type="checkbox" />
+                                            <input class="selectUser" type="checkbox">
                                         {% endif %}
                                     </td>
                                     <td><a href="{{ path('user', {id:userId }) }}">{{ userId }}</a></td>
@@ -697,7 +643,11 @@
                                     <td>{{ user.user.lastname }}</td>
                                     <td>{{ user.user.institut }}</td>
                                     <td>{{ user.user.statut }}</td>
-                                    <td>{{ user.role.nom|replace({ 'Enseignant': 'Enseignant correcteur' }) }}</td>
+                                    <td>
+                                        {% if user.role %}
+                                            {{ user.role.nom|replace({ 'Enseignant': 'Enseignant correcteur' }) }}
+                                        {% endif %}
+                                    </td>
                                     <td>
                                         {% for key, inscr in user.myCohs %}
                                             <a href="{{ path('itemUsers', {id: inscr.cohorte.id, type: "cohorte"}) }}">{{ inscr.cohorte.nom }}
@@ -808,7 +758,6 @@
                                         <option value="all">Toutes les lignes</option>
                                         <option value="all">Toutes les lignes</option>
                                     </select>
-                                    <button class="loadNonInscrits">Charger les non inscrits</button>
                                     <button class="download">Télécharger le CSV</button>
                                     <button class="inscrSelected">Inscrire les sélectionnés</button>
                                     <button class="selectAll">Sélectionner tous</button>

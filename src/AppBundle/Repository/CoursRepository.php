@@ -1,6 +1,7 @@
 <?php
 
 namespace AppBundle\Repository;
+use AppBundle\Entity\Inscription_c;
 
 /**
  * CoursRepository
@@ -129,6 +130,23 @@ class CoursRepository extends \Doctrine\ORM\EntityRepository
 
         $insc = $em->getRepository('AppBundle:Inscription_c')->findOneBy(array('cours' => $cours, 'user' => $user));
         return $insc;
+    }
+
+    public function getUsersInscr($cours){
+        $em = $this->getEntityManager();
+        $inscs = $em->getRepository('AppBundle:Inscription_c')->findBy(array('cours' => $cours));
+        $users = [];
+        if($inscs){
+            /* @var $insc Inscription_c */
+            foreach ($inscs as $insc){
+                $user = $insc->getUser();
+                if(!in_array($insc, $users) && $user->isEnabled()) {
+                    array_push($users, $user);
+                }
+            }
+        }
+        dump($users);
+        return $users;
     }
 
     public function userHasAccess($user, $cours)

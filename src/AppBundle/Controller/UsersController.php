@@ -572,6 +572,10 @@ class UsersController extends Controller
             $entityName = "Session";
         }
 
+
+        $inscrCohRepo = $doctrine->getRepository('AppBundle:Inscription_coh');
+        $inscrDRepo = $doctrine->getRepository('AppBundle:Inscription_d');
+
         $itemRepo = $doctrine->getRepository('AppBundle:' . $entityName);
         $item = $doctrine->getRepository('AppBundle:' . $entityName)->findOneBy(array('id' => $id));
 
@@ -580,14 +584,123 @@ class UsersController extends Controller
             $roleUser = $itemRepo->getRole($currentUser, $item)->getNom();
         }
 
-        $item = $doctrine->getRepository('AppBundle:' . $entityName)->findOneBy(array('id' => $id));
+        $userRepo = $doctrine->getRepository('AppBundle:User');
+        $users = $userRepo->findBy(array('enabled' => true));
+        $inscritsItem = [];
+        if ($type == "cours") {
+           $inscritsItem = $itemRepo->getUsersInscr($id);
+        }
+
+
+        $usersNoAccessTab = array();
+        $usersAccessTab = array();
 
         if ((($statut !== 'Responsable' && $statut !== 'Formateur') || !$currentUser->getConfirmedByAdmin()) && !$currentUser->hasRole('ROLE_SUPER_ADMIN') && $roleUser!='Referent') {
             return $this->redirectToRoute('homepage');
         }
 
-        $usersAccessTab = $this->getUsersForItem(0, $item, $type, $itemRepo, false);
+        foreach ($users as $user) {
+            //$myCohs = $inscrCohRepo->findBy(array('user' => $user));
+            $myCohs = [];
+            if($type == "cohorte"){
+                /* @var $inscr Inscription_coh */
+                $inscr = $inscrCohRepo->findOneBy(array('cohorte' => $item, 'user' => $user));
+                if ($inscr) {
+                    array_push($usersAccessTab, [
+                        "user" => $user,
+                        "isInscrit" => true,
+                        "myCohs" => $myCohs,
+                        "role" => $inscr->getRole()
+                    ]);
+                } else {
+                    array_push($usersNoAccessTab, [
+                        'user' => $user,
+                        "myCohs" => $myCohs
+                    ]);
+                }
+            }else if ($type == "discipline") {
+                $checkAccess = false;
+                $inscrCohs = $inscrCohRepo->findBy(array('user' => $user));
+                $inscr = null;
+                if($inscrCohs){
+                    foreach($inscrCohs as $inscrCoh){
+                        $coh = $inscrCoh->getCohorte();
+                        if($coh->getDisciplines()->contains($item)){
+                            $checkAccess = true;
+                            $inscr = $inscrDRepo->findOneBy(array('discipline' => $item, 'user' => $user));
+                            break;
+                        }
+                    }
+                }
+                if(!$checkAccess){
+                    /* @var $inscr Inscription_d */
+                    $inscr = $inscrDRepo->findOneBy(array('discipline' => $item, 'user' => $user));
+                    if($inscr){
+                        $checkAccess = true;
+                    }
+                }
+                if ($checkAccess) {
+                    $role = null;
+                    if($inscr){
+                        $role = $inscr->getRole();
+                    }else{
+                        $inscrCohs = $inscrCohRepo->findBy(array('user' => $user));
+                        if($inscrCohs){
+                            foreach($inscrCohs as $inscrCoh){
+                                $coh = $inscrCoh->getCohorte();
+                                if($coh->getDisciplines()->contains($item)){
+                                    $role = $inscrCoh->getRole();
+                                }
+                            }
+                        }
+                    }
+                    array_push($usersAccessTab, [
+                        "user" => $user,
+                        "isInscrit" => $inscr != null,
+                        "myCohs" => $myCohs,
+                        "role" => $role
+                    ]);
+                } else {
+                    array_push($usersNoAccessTab, [
+                        'user' => $user,
+                        "myCohs" => $myCohs
+                    ]);
+                }
+            }else {
+                $isInscrit = true;
+                if(!in_array($user, $inscritsItem)) {
+                    $isInscrit = false;
+                }
 
+                if ($isInscrit) {
+                    //$role = $itemRepo->getRole($user, $item);
+                    $role = null;
+                    array_push($usersAccessTab, [
+                        "user" => $user,
+                        "isInscrit" => $isInscrit,
+                        "myCohs" => $myCohs,
+                        "role" => $role
+                    ]);
+                } else {
+                    if ($itemRepo->userHasAccess($user, $item)) {
+                        //$role = $itemRepo->getRoleNoInscr($user, $item);
+                        $role = null;
+                        array_push($usersAccessTab, [
+                            "user" => $user,
+                            "isInscrit" => $isInscrit,
+                            "myCohs" => $myCohs,
+                            "role" => $role
+                        ]);
+                    } else {
+                        array_push($usersNoAccessTab, [
+                            'user' => $user,
+                            "myCohs" => $myCohs
+                        ]);
+                    }
+                }
+
+            }
+        }
         $repoUserStatRessource = $doctrine->getRepository('AppBundle:UserStatRessource');
         $ressources = new ArrayCollection();
         $linkedCourses = new ArrayCollection();
@@ -713,213 +826,11 @@ class UsersController extends Controller
             'linkedCourses' => $linkedCourses,
             'roles' => $roles,
             'entityName' => $entityName,
-            'usersNoHavingAccess' => $usersAccessTab[0],
-            'usersHavingAccess' => $usersAccessTab[1],
+            'usersNoHavingAccess' => $usersNoAccessTab,
+            'usersHavingAccess' => $usersAccessTab,
             'form' => $form->createView(),
             'roleUser' => $roleUser
         ]);
-    }
-
-    public function getUsersForItem($min, $item, $type, $itemRepo, $serialized){
-        $usersNoAccessTab = [];
-        $usersAccessTab = [];
-        $doctrine = $this->getDoctrine();
-        $inscrCohRepo = $doctrine->getRepository('AppBundle:Inscription_coh');
-        $inscrDRepo = $doctrine->getRepository('AppBundle:Inscription_d');
-        $userRepo = $doctrine->getRepository('AppBundle:User');
-        $users = $userRepo->findBy(array('enabled' => true));
-
-        $nbUsers = 0;
-        $minStart = 0;
-        foreach ($users as $user) {
-            if($minStart >= $min){
-                $nbUsers++;
-                $user_s = $user;
-                if($serialized){
-                    $user_s = $this->get('jms_serializer')->serialize($user, 'json', SerializationContext::create()->setGroups(array('oneUser')));
-                }
-                if($type == "cohorte"){
-                    $myCohs = $inscrCohRepo->findBy(array('user' => $user));
-                    $myCohs_s = $myCohs;
-                    if($serialized){
-                        $myCohs_s = [];
-                        foreach ($myCohs as $myCoh){
-                            array_push($myCohs_s, $this->get('jms_serializer')->serialize($myCoh, 'json', SerializationContext::create()->setGroups(array('oneUser'))));
-                        }
-                    }
-
-                    /* @var $inscr Inscription_coh */
-                    $inscr = $inscrCohRepo->findOneBy(array('cohorte' => $item, 'user' => $user));
-                    $role = $inscr->getRole();
-                    $role_s = $role;
-                    if($serialized){
-                        $role_s = $this->get('jms_serializer')->serialize($role, 'json', SerializationContext::create()->setGroups(array('oneUser')));
-                    }
-
-
-                    if ($inscr) {
-                        array_push($usersAccessTab, [
-                            "user" => $user_s,
-                            "isInscrit" => true,
-                            "myCohs" => $myCohs_s,
-                            "role" => $role_s
-                        ]);
-                    } else {
-                        array_push($usersNoAccessTab, [
-                            'user' => $user_s,
-                            "myCohs" => $myCohs_s
-                        ]);
-                    }
-                }else if ($type == "discipline") {
-                    $myCohs = $inscrCohRepo->findBy(array('user' => $user));
-                    $myCohs_s = $myCohs;
-                    if($serialized){
-                        $myCohs_s = [];
-                        foreach ($myCohs as $myCoh){
-                            array_push($myCohs_s, $this->get('jms_serializer')->serialize($myCoh, 'json', SerializationContext::create()->setGroups(array('oneUser'))));
-                        }
-                    }
-
-                    $checkAccess = false;
-                    $inscrCohs = $inscrCohRepo->findBy(array('user' => $user));
-                    $inscr = null;
-                    if($inscrCohs){
-                        foreach($inscrCohs as $inscrCoh){
-                            $coh = $inscrCoh->getCohorte();
-                            if($coh->getDisciplines()->contains($item)){
-                                $checkAccess = true;
-                                $inscr = $inscrDRepo->findOneBy(array('discipline' => $item, 'user' => $user));
-                                break;
-                            }
-                        }
-                    }
-                    if(!$checkAccess){
-                        /* @var $inscr Inscription_d */
-                        $inscr = $inscrDRepo->findOneBy(array('discipline' => $item, 'user' => $user));
-                        if($inscr){
-                            $checkAccess = true;
-                        }
-                    }
-                    if ($checkAccess) {
-                        $role = null;
-                        if($inscr){
-                            $role = $inscr->getRole();
-                        }else{
-                            $inscrCohs = $inscrCohRepo->findBy(array('user' => $user));
-                            if($inscrCohs){
-                                foreach($inscrCohs as $inscrCoh){
-                                    $coh = $inscrCoh->getCohorte();
-                                    if($coh->getDisciplines()->contains($item)){
-                                        $role = $inscrCoh->getRole();
-                                    }
-                                }
-                            }
-                        }
-                        $role_s = $role;
-                        if($serialized){
-                            $role_s = $this->get('jms_serializer')->serialize($role, 'json', SerializationContext::create()->setGroups(array('oneUser')));
-                        }
-                        array_push($usersAccessTab, [
-                            "user" => $user_s,
-                            "isInscrit" => $inscr != null,
-                            "myCohs" => $myCohs_s,
-                            "role" => $role_s
-                        ]);
-                    } else {
-                        array_push($usersNoAccessTab, [
-                            'user' => $user_s,
-                            "myCohs" => $myCohs_s
-                        ]);
-                    }
-                }else {
-                    $inscr = $itemRepo->getUserInscr($user, $item);
-                    $myCohs = $inscrCohRepo->allForUser($user);
-                    $myCohs_s = $myCohs;
-                    if($serialized){
-                        $myCohs_s = [];
-                        foreach ($myCohs as $myCoh){
-                            array_push($myCohs_s, $this->get('jms_serializer')->serialize($myCoh, 'json', SerializationContext::create()->setGroups(array('oneUser'))));
-                        }
-                    }
-                    if ($inscr != null) {
-                        $role = $inscr->getRole();
-                        $role_s = $role;
-                        if($serialized){
-                            $role_s = $this->get('jms_serializer')->serialize($role, 'json', SerializationContext::create()->setGroups(array('oneUser')));
-                        }
-                        array_push($usersAccessTab, [
-                            "user" => $user_s,
-                            "isInscrit" => $inscr != null,
-                            "myCohs" => $myCohs_s,
-                            "role" => $role_s
-                        ]);
-                    } else {
-                        $role = $itemRepo->getRoleNoInscr($user, $item);
-                        $role_s = $role;
-                        if($serialized){
-                            $role_s = $this->get('jms_serializer')->serialize($role, 'json', SerializationContext::create()->setGroups(array('oneUser')));
-                        }
-                        if ($itemRepo->userHasAccess($user, $item)) {
-                            array_push($usersAccessTab, [
-                                "user" => $user_s,
-                                "isInscrit" => $inscr != null,
-                                "myCohs" => $myCohs_s,
-                                "role" => $role_s
-                            ]);
-                        } else {
-                            array_push($usersNoAccessTab, [
-                                'user' => $user_s,
-                                "myCohs" => $myCohs_s
-                            ]);
-                        }
-                    }
-                }
-            }
-
-            $minStart++;
-            if($nbUsers>100){
-                break;
-            }
-        }
-        return [$usersNoAccessTab, $usersAccessTab];
-    }
-
-    /**
-     * @Route("/loadNonInscritsItem_ajax", name="loadNonInscritsItem_ajax")
-     */
-    public function loadNonInscritsItemAjaxAction(Request $request)
-    {
-        if ($request->isXMLHttpRequest()) {
-            $em = $this->getDoctrine()->getEntityManager();
-
-            $type = $request->request->get('typeItem');
-            $id = $request->request->get('idItem');
-            $min = $request->request->get('min');
-
-            $entityName = "";
-            if ($type == "cohorte") {
-                $entityName = "Cohorte";
-            } else if ($type == "discipline") {
-                $entityName = "Discipline";
-            } else if ($type == "cours") {
-                $entityName = "Cours";
-            } else if ($type == "session") {
-                $entityName = "Session";
-            }
-
-            $itemRepo = $em->getRepository('AppBundle:' . $entityName);
-            $item = $em->getRepository('AppBundle:' . $entityName)->findOneBy(array('id' => $id));
-
-            $usersAccessTab = $this->getUsersForItem($min, $item, $type, $itemRepo, true);
-
-            $em->flush();
-
-            return new JsonResponse(array(
-                'action' => 'load inscrits à un item',
-                'usersNoHavingAccess' => $usersAccessTab[0],
-                'usersHavingAccess' => $usersAccessTab[1]
-            ));
-        }
     }
 
     /**
