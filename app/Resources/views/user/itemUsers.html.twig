@@ -198,7 +198,6 @@
 
             updatebtnbehaviors();
             function updatebtnbehaviors(){
-                console.log('test')
                 $('.btndesinscr').unbind('click').click(function () {
                     var idUser = $(this).closest('.userLine').attr('data-userId');
                     $('.modal').modal('toggle');
@@ -485,49 +484,56 @@
             }
 
             $('.loadNonInscrits').remove();
-            $.ajax({
-                type: "POST",
-                url: "{{ path('loadNonInscritsItem_ajax') }}",
-                data: {
-                    idItem: "{{ item.id }}",
-                    typeItem: typeItem,
-                    min: 10
-                },
-                dataType: "json",
-                success: function (response) {
-                    for(let i=0; i<response['usersNoHavingAccess'].length; i++){
-                        let user = jQuery.parseJSON(response['usersNoHavingAccess'][i]['user']);
-                        let userLink = '{{ path("user", {'id':'user_id' }) }}';
-                        userLink = userLink.replace("user_id", user.id);
-                        let row = '<tr class="userLine even" data-userid="'+user.id+'" role="row"><td><input class="selectUser" type="checkbox"></td><td><a href="'+userLink+'">'+user.id+'</a></td><td><a href="'+userLink+'">'+user.email+'</a></td><td>'+user.firstname+'</td><td>'+user.lastname+'</td><td>'+user.institut.nom+'</td><td>'+user.statut+'</td><td></td><td class="btnCellFilter"><i class="btninscr fa fa-sign-in" aria-hidden="true"></i></td></tr>';
-                        let $row = $(row);
-                        $('.tableNo').find('tbody').append($row)
-                            .trigger('addRows', [$row, true]);
-                    }
-                    for(let i=0; i<response['usersHavingAccess'].length; i++){
-                        let datas = response['usersHavingAccess'][i];
-                        console.log(datas)
-                        let user = jQuery.parseJSON(datas['user']);
-                        let role = jQuery.parseJSON(datas['role']);
-                        let checkbox = '';
-                        let btnDesinscr = '';
-                        if(datas.isInscrit){
-                            checkbox = '<input class="selectUser" type="checkbox" />';
-                            btnDesinscr = '<i class="btndesinscr fa fa-sign-out" aria-hidden="true"></i>';
+            let step = 300;
+            loadUsersSequence(step+1);
+            function loadUsersSequence(min){
+                $.ajax({
+                    type: "POST",
+                    url: "{{ path('loadNonInscritsItem_ajax') }}",
+                    data: {
+                        idItem: "{{ item.id }}",
+                        typeItem: typeItem,
+                        min: min
+                    },
+                    dataType: "json",
+                    success: function (response) {
+                        for(let i=0; i<response['usersNoHavingAccess'].length; i++){
+                            let user = jQuery.parseJSON(response['usersNoHavingAccess'][i]['user']);
+                            let userLink = '{{ path("user", {'id':'user_id' }) }}';
+                            userLink = userLink.replace("user_id", user.id);
+                            let row = '<tr class="userLine even" data-userid="'+user.id+'" role="row"><td><input class="selectUser" type="checkbox"></td><td><a href="'+userLink+'">'+user.id+'</a></td><td><a href="'+userLink+'">'+user.email+'</a></td><td>'+user.firstname+'</td><td>'+user.lastname+'</td><td>'+user.institut.nom+'</td><td>'+user.statut+'</td><td></td><td class="btnCellFilter"><i class="btninscr fa fa-sign-in" aria-hidden="true"></i></td></tr>';
+                            let $row = $(row);
+                            $('.tableNo').find('tbody').append($row)
+                                .trigger('addRows', [$row, true]);
                         }
-                        let userLink = '{{ path("user", {'id':'user_id' }) }}';
-                        userLink = userLink.replace("user_id", user.id);
+                        for(let i=0; i<response['usersHavingAccess'].length; i++){
+                            let datas = response['usersHavingAccess'][i];
+                            let user = jQuery.parseJSON(datas['user']);
+                            let role = jQuery.parseJSON(datas['role']);
+                            let checkbox = '';
+                            let btnDesinscr = '';
+                            if(datas.isInscrit){
+                                checkbox = '<input class="selectUser" type="checkbox" />';
+                                btnDesinscr = '<i class="btndesinscr fa fa-sign-out" aria-hidden="true"></i>';
+                            }
+                            let userLink = '{{ path("user", {'id':'user_id' }) }}';
+                            userLink = userLink.replace("user_id", user.id);
 
-
-
-                        let row = '<tr class="userLine even" data-userid="'+user.id+'" role="row"><td>'+checkbox+'</td><td><a href="'+userLink+'">'+user.id+'</a></td><td><a href="'+userLink+'">'+user.email+'</a></td><td>'+user.firstname+'</td><td>'+user.lastname+'</td><td>'+user.institut.nom+'</td><td>'+user.statut+'</td><td>'+role.nom+'</td><td></td><td class="btnCellFilter">'+btnDesinscr+'</td></tr>';
-                        let $row = $(row);
-                        $('.tableYes').find('tbody').append($row)
-                            .trigger('addRows', [$row, true]);
+                            let row = '<tr class="userLine even" data-userid="'+user.id+'" role="row"><td>'+checkbox+'</td><td><a href="'+userLink+'">'+user.id+'</a></td><td><a href="'+userLink+'">'+user.email+'</a></td><td>'+user.firstname+'</td><td>'+user.lastname+'</td><td>'+user.institut.nom+'</td><td>'+user.statut+'</td><td>'+role.nom+'</td><td></td><td class="btnCellFilter">'+btnDesinscr+'</td></tr>';
+                            let $row = $(row);
+                            $('.tableYes').find('tbody').append($row)
+                                .trigger('addRows', [$row, true]);
+                        }
+                        updatebtnbehaviors();
+                        console.log(response)
+                        if(response['usersHavingAccess'].length !== 0 || response['usersNoHavingAccess'].length !== 0){
+                            console.log(response['usersHavingAccess'].length+ " ; "+ response['usersNoHavingAccess'].length)
+                            loadUsersSequence(min + step + 1);
+                        }
                     }
-                    updatebtnbehaviors();
-                }
-            });
+                });
+            }
+
         });
     </script>
 
