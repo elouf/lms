@@ -105,8 +105,8 @@ class CoursRepository extends \Doctrine\ORM\EntityRepository
         }
 
         $userToSend = array();
-        $repositoryInscrSess = $em->getRepository('AppBundle:Inscription_sess');
         if($session){
+            $repositoryInscrSess = $em->getRepository('AppBundle:Inscription_sess');
             foreach($users as $user){
                 $inscSess = $repositoryInscrSess->findBy(array('session' => $session, 'user' => $user));
                 if($inscSess){

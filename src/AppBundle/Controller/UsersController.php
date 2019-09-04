@@ -587,8 +587,10 @@ class UsersController extends Controller
         $userRepo = $doctrine->getRepository('AppBundle:User');
         $users = $userRepo->findBy(array('enabled' => true));
         $inscritsItem = [];
+        $havingAccessItem =[];
         if ($type == "cours") {
-           $inscritsItem = $itemRepo->getUsersInscr($id);
+           $inscritsItem = $itemRepo->getUsersInscr($item);
+           $havingAccessItem = $itemRepo->findInscrits($item);
         }
 
 
@@ -600,8 +602,8 @@ class UsersController extends Controller
         }
 
         foreach ($users as $user) {
-            //$myCohs = $inscrCohRepo->findBy(array('user' => $user));
-            $myCohs = [];
+            $myCohs = $inscrCohRepo->findBy(array('user' => $user));
+            //$myCohs = [];
             if($type == "cohorte"){
                 /* @var $inscr Inscription_coh */
                 $inscr = $inscrCohRepo->findOneBy(array('cohorte' => $item, 'user' => $user));
@@ -668,13 +670,17 @@ class UsersController extends Controller
                 }
             }else {
                 $isInscrit = true;
+                $hasAccessItem = true;
                 if(!in_array($user, $inscritsItem)) {
                     $isInscrit = false;
+                    if(!in_array($user, $havingAccessItem)) {
+                        $hasAccessItem = false;
+                    }
                 }
 
                 if ($isInscrit) {
-                    //$role = $itemRepo->getRole($user, $item);
-                    $role = null;
+                    $role = $itemRepo->getRole($user, $item);
+                    //$role = null;
                     array_push($usersAccessTab, [
                         "user" => $user,
                         "isInscrit" => $isInscrit,
@@ -682,7 +688,7 @@ class UsersController extends Controller
                         "role" => $role
                     ]);
                 } else {
-                    if ($itemRepo->userHasAccess($user, $item)) {
+                    if ($hasAccessItem) {
                         //$role = $itemRepo->getRoleNoInscr($user, $item);
                         $role = null;
                         array_push($usersAccessTab, [
