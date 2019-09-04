@@ -588,9 +588,11 @@ class UsersController extends Controller
         $users = $userRepo->findBy(array('enabled' => true));
         $inscritsItem = [];
         $havingAccessItem =[];
-        $inscritsItem = $itemRepo->getUsersInscr($item);
         if ($type == "cours") {
            $havingAccessItem = $itemRepo->findInscrits($item);
+        }
+        if ($type == "cours" || $type == 'discipline') {
+            $inscritsItem = $itemRepo->getUsersInscr($item);
         }
 
 
