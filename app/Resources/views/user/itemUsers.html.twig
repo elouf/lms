@@ -218,9 +218,11 @@
             });
             $('.selectAll').click(function (e) {
                 e.preventDefault();
+
                 var col = $(this).closest('.coloneTable');
-                var select = col.find('.selectUser:checked').length == 0;
-                col.find('.selectUser').prop('checked', select);
+                col.find('.selectUser:not(:visible)').prop('checked', false)
+                var select = col.find('.selectUser:visible:checked').length == 0;
+                col.find('.selectUser:visible').prop('checked', select);
             });
             $('.inscrSelected').click(function (e) {
                 e.preventDefault();
