@@ -740,24 +740,45 @@ class UsersController extends Controller
                 }
                 if($type == "cohorte"){
                     $myCohs = $inscrCohRepo->findBy(array('user' => $user));
+                    $myCohs_s = $myCohs;
+                    if($serialized){
+                        $myCohs_s = [];
+                        foreach ($myCohs as $myCoh){
+                            array_push($myCohs_s, $this->get('jms_serializer')->serialize($myCoh, 'json', SerializationContext::create()->setGroups(array('oneUser'))));
+                        }
+                    }
 
                     /* @var $inscr Inscription_coh */
                     $inscr = $inscrCohRepo->findOneBy(array('cohorte' => $item, 'user' => $user));
+                    $role = $inscr->getRole();
+                    $role_s = $role;
+                    if($serialized){
+                        $role_s = $this->get('jms_serializer')->serialize($role, 'json', SerializationContext::create()->setGroups(array('oneUser')));
+                    }
+
+
                     if ($inscr) {
                         array_push($usersAccessTab, [
-                            "user" => $user,
+                            "user" => $user_s,
                             "isInscrit" => true,
-                            "myCohs" => $myCohs,
-                            "role" => $inscr->getRole()
+                            "myCohs" => $myCohs_s,
+                            "role" => $role_s
                         ]);
                     } else {
                         array_push($usersNoAccessTab, [
-                            'user' => $user,
-                            "myCohs" => $myCohs
+                            'user' => $user_s,
+                            "myCohs" => $myCohs_s
                         ]);
                     }
                 }else if ($type == "discipline") {
                     $myCohs = $inscrCohRepo->findBy(array('user' => $user));
+                    $myCohs_s = $myCohs;
+                    if($serialized){
+                        $myCohs_s = [];
+                        foreach ($myCohs as $myCoh){
+                            array_push($myCohs_s, $this->get('jms_serializer')->serialize($myCoh, 'json', SerializationContext::create()->setGroups(array('oneUser'))));
+                        }
+                    }
 
                     $checkAccess = false;
                     $inscrCohs = $inscrCohRepo->findBy(array('user' => $user));
@@ -794,16 +815,20 @@ class UsersController extends Controller
                                 }
                             }
                         }
+                        $role_s = $role;
+                        if($serialized){
+                            $role_s = $this->get('jms_serializer')->serialize($role, 'json', SerializationContext::create()->setGroups(array('oneUser')));
+                        }
                         array_push($usersAccessTab, [
-                            "user" => $user,
+                            "user" => $user_s,
                             "isInscrit" => $inscr != null,
-                            "myCohs" => $myCohs,
-                            "role" => $role
+                            "myCohs" => $myCohs_s,
+                            "role" => $role_s
                         ]);
                     } else {
                         array_push($usersNoAccessTab, [
-                            'user' => $user,
-                            "myCohs" => $myCohs
+                            'user' => $user_s,
+                            "myCohs" => $myCohs_s
                         ]);
                     }
                 }else {
