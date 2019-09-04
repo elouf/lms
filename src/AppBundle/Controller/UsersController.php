@@ -679,8 +679,8 @@ class UsersController extends Controller
                 }
 
                 if ($isInscrit) {
-                    $role = $itemRepo->getRole($user, $item);
-                    //$role = null;
+                    //$role = $itemRepo->getRole($user, $item);
+                    $role = null;
                     array_push($usersAccessTab, [
                         "user" => $user,
                         "isInscrit" => $isInscrit,
