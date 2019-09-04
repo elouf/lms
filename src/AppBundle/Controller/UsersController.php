@@ -588,8 +588,8 @@ class UsersController extends Controller
         $users = $userRepo->findBy(array('enabled' => true));
         $inscritsItem = [];
         $havingAccessItem =[];
+        $inscritsItem = $itemRepo->getUsersInscr($item);
         if ($type == "cours") {
-           $inscritsItem = $itemRepo->getUsersInscr($item);
            $havingAccessItem = $itemRepo->findInscrits($item);
         }
 
@@ -622,22 +622,19 @@ class UsersController extends Controller
                 }
             }else if ($type == "discipline") {
                 $checkAccess = false;
-                $inscrCohs = $inscrCohRepo->findBy(array('user' => $user));
                 $inscr = null;
-                if($inscrCohs){
-                    foreach($inscrCohs as $inscrCoh){
+                if($myCohs){
+                    foreach($myCohs as $inscrCoh){
                         $coh = $inscrCoh->getCohorte();
                         if($coh->getDisciplines()->contains($item)){
                             $checkAccess = true;
-                            $inscr = $inscrDRepo->findOneBy(array('discipline' => $item, 'user' => $user));
+                            $inscr = $inscrCoh;
                             break;
                         }
                     }
                 }
                 if(!$checkAccess){
-                    /* @var $inscr Inscription_d */
-                    $inscr = $inscrDRepo->findOneBy(array('discipline' => $item, 'user' => $user));
-                    if($inscr){
+                    if(in_array($user, $inscritsItem)){
                         $checkAccess = true;
                     }
                 }
@@ -646,9 +643,8 @@ class UsersController extends Controller
                     if($inscr){
                         $role = $inscr->getRole();
                     }else{
-                        $inscrCohs = $inscrCohRepo->findBy(array('user' => $user));
-                        if($inscrCohs){
-                            foreach($inscrCohs as $inscrCoh){
+                        if($myCohs){
+                            foreach($myCohs as $inscrCoh){
                                 $coh = $inscrCoh->getCohorte();
                                 if($coh->getDisciplines()->contains($item)){
                                     $role = $inscrCoh->getRole();

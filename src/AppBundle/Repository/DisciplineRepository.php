@@ -102,6 +102,22 @@ class DisciplineRepository extends \Doctrine\ORM\EntityRepository
         return false;
     }
 
+    public function getUsersInscr($dis){
+        $em = $this->getEntityManager();
+        $inscs = $em->getRepository('AppBundle:Inscription_d')->findBy(array('discipline' => $dis));
+        $users = [];
+        if($inscs){
+            /* @var $insc Inscription_d */
+            foreach ($inscs as $insc){
+                $user = $insc->getUser();
+                if(!in_array($insc, $users) && $user->isEnabled()) {
+                    array_push($users, $user);
+                }
+            }
+        }
+        return $users;
+    }
+
     public function userHasAccessOrIsInscrit($user, $disc)
     {
         if($this->userHasAccess($user, $disc)){
