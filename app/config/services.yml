@@ -91,6 +91,16 @@ services:
         arguments: [~, AppBundle\Entity\Chat, ~]
         tags:
             - { name: sonata.admin,manager_type: orm, label: Chats, group: "Ressources" }
+    admin.liens:
+        class: AppBundle\Admin\LienAdmin
+        arguments: [~, AppBundle\Entity\Lien, ~]
+        tags:
+            - { name: sonata.admin,manager_type: orm, label: Liens, group: "Ressources" }
+    admin.groupeliens:
+        class: AppBundle\Admin\GroupeLiensAdmin
+        arguments: [~, AppBundle\Entity\GroupeLiens, ~]
+        tags:
+            - { name: sonata.admin,manager_type: orm, label: Groupes de Liens, group: "Ressources" }
     admin.forum:
         class: AppBundle\Admin\ForumAdmin
         arguments: [~, AppBundle\Entity\Forum, ~]
