@@ -145,7 +145,6 @@ class CoursRepository extends \Doctrine\ORM\EntityRepository
                 }
             }
         }
-        dump($users);
         return $users;
     }
 
