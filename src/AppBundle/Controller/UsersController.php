@@ -602,8 +602,8 @@ class UsersController extends Controller
         }
 
         foreach ($users as $user) {
-            $myCohs = $inscrCohRepo->findBy(array('user' => $user));
-            //$myCohs = [];
+            //$myCohs = $inscrCohRepo->findBy(array('user' => $user));
+            $myCohs = [];
             if($type == "cohorte"){
                 /* @var $inscr Inscription_coh */
                 $inscr = $inscrCohRepo->findOneBy(array('cohorte' => $item, 'user' => $user));
