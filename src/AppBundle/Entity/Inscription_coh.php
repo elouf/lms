@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * Inscription_coh
@@ -18,6 +19,7 @@ class Inscription_coh extends Inscription
      *
      * @ORM\ManyToOne(targetEntity="Cohorte")
      * @ORM\JoinColumn(name="cohorte_id", referencedColumnName="id")
+     * @Serializer\Groups({"oneUser"})
      */
     protected $cohorte;
 

@@ -435,7 +435,7 @@
                                     <td>{{ val['cohorte'].id }}</td>
                                     <td>
                                         <a href="{{ path('itemUsers', {id: val['cohorte'].id, type: "cohorte"}) }}">{{ val['cohorte'].nom }}
-                                            {% if val['inscription']|length %} ({{ val['inscription'][0].role.nom|replace({ 'Enseignant': 'Enseignant correcteur' }) }}){% endif %}</a>
+                                            {% if val['inscription'] %} ({{ val['inscription'].role.nom|replace({ 'Enseignant': 'Enseignant correcteur' }) }}){% endif %}</a>
                                     </td>
                                     {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
                                         <td class="btnCellFilter">
@@ -944,7 +944,7 @@
                             {% for key,val in cohortesInsc %}
                                 {% if val['isInscrit'] == 1 %}
                                     <li>
-                                        <a href="{{ path('itemUsers', {id: val['cohorte'].id, type: "cohorte"}) }}">{{ val['cohorte'].nom }}{% if val['inscription']|length %} ({{ val['inscription'][0].role.nom|replace({ 'Enseignant': 'Enseignant correcteur' }) }}){% endif %}</a>
+                                        <a href="{{ path('itemUsers', {id: val['cohorte'].id, type: "cohorte"}) }}">{{ val['cohorte'].nom }}{% if val['inscription'] %} ({{ val['inscription'].role.nom|replace({ 'Enseignant': 'Enseignant correcteur' }) }}){% endif %}</a>
                                     </li>
                                 {% endif %}
                             {% endfor %}

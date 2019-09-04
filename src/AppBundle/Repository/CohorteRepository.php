@@ -37,7 +37,7 @@ class CohorteRepository extends \Doctrine\ORM\EntityRepository
     public function getUserInscr($user, $coh){
         $em = $this->getEntityManager();
 
-        $insc = $em->getRepository('AppBundle:Inscription_coh')->findBy(array('cohorte' => $coh, 'user' => $user));
+        $insc = $em->getRepository('AppBundle:Inscription_coh')->findOneBy(array('cohorte' => $coh, 'user' => $user));
         return $insc;
     }
 

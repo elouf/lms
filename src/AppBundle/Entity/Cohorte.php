@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * Cohorte
@@ -26,6 +27,7 @@ class Cohorte
      * @var string
      *
      * @ORM\Column(name="nom", type="string", length=255, unique=true)
+     * @Serializer\Groups({"oneUser"})
      */
     private $nom;
 

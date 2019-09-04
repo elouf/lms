@@ -35,6 +35,7 @@
         "sendinblue/sendinblue-api-bundle": "2.0.*",
         "sonata-project/formatter-bundle": "^3.1",
         "sonata-project/media-bundle": "^3.3",
+        "jms/serializer-bundle": "^2.4",
         "twig/extensions": "^1.4",
         "twig/twig": "^1.0||^2.0",
         "egeloen/ckeditor-bundle": "^4.0",

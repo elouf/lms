@@ -77,7 +77,7 @@ class DisciplineRepository extends \Doctrine\ORM\EntityRepository
     public function getUserInscr($user, $dis){
         $em = $this->getEntityManager();
 
-        $insc = $em->getRepository('AppBundle:Inscription_d')->findBy(array('discipline' => $dis, 'user' => $user));
+        $insc = $em->getRepository('AppBundle:Inscription_d')->findOneBy(array('discipline' => $dis, 'user' => $user));
         return $insc;
     }
 

@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * Inscription
@@ -17,6 +18,7 @@ class Inscription
      * @ORM\Column(name="id", type="integer", unique=true)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @Serializer\Groups({"oneUser"})
      */
     private $id;
 
@@ -24,6 +26,7 @@ class Inscription
      * @var Role
      *
      * @ORM\ManyToOne(targetEntity="Role")
+     * @Serializer\Groups({"oneUser"})
      */
     protected $role;
 

@@ -127,7 +127,7 @@ class CoursRepository extends \Doctrine\ORM\EntityRepository
     public function getUserInscr($user, $cours){
         $em = $this->getEntityManager();
 
-        $insc = $em->getRepository('AppBundle:Inscription_c')->findBy(array('cours' => $cours, 'user' => $user));
+        $insc = $em->getRepository('AppBundle:Inscription_c')->findOneBy(array('cours' => $cours, 'user' => $user));
         return $insc;
     }
 

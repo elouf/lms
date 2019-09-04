@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * Institut
@@ -25,6 +26,7 @@ class Institut
      * @var string
      *
      * @ORM\Column(name="nom", type="string", length=255, unique=true)
+     * @Serializer\Groups({"oneUser"})
      */
     private $nom;
 

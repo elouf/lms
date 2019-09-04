@@ -5,6 +5,7 @@ namespace AppBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Entity(repositoryClass="AppBundle\Repository\UserRepository")
@@ -17,6 +18,7 @@ class User extends BaseUser
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @Serializer\Groups({"oneUser"})
      */
     protected $id;
 
@@ -25,13 +27,22 @@ class User extends BaseUser
      * @var string
      *
      * @ORM\Column(name="$firstname", type="string", length=255)
+     * @Serializer\Groups({"oneUser"})
      */
     protected $firstname;
 
     /**
      * @var string
      *
+     * @Serializer\Groups({"oneUser"})
+     */
+    protected $email;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="lastname", type="string", length=255)
+     * @Serializer\Groups({"oneUser"})
      */
     protected $lastname;
 
@@ -40,6 +51,7 @@ class User extends BaseUser
      *
      * @ORM\ManyToOne(targetEntity="Institut")
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
+     * @Serializer\Groups({"oneUser"})
      */
     protected $institut;
 
@@ -83,7 +95,11 @@ class User extends BaseUser
     const STATUT_PROFSTAGIAIRE = 'Prof_stagiaire';
     const STATUT_RESPONSABLE = 'Responsable';
 
-    /** @ORM\Column(name="statut", type="string") */
+    /**
+     * @ORM\Column(name="statut", type="string")
+     * @Serializer\Groups({"oneUser"})
+     */
+
     private $statut = 'Etudiant';
 
     /**
