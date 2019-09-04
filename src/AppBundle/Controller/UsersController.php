@@ -625,6 +625,7 @@ class UsersController extends Controller
             }else if ($type == "discipline") {
                 $checkAccess = false;
                 $inscr = null;
+                $inscrD = null;
                 if($myCohs){
                     foreach($myCohs as $inscrCoh){
                         $coh = $inscrCoh->getCohorte();
@@ -638,12 +639,15 @@ class UsersController extends Controller
                 if(!$checkAccess){
                     if(in_array($user, $inscritsItem)){
                         $checkAccess = true;
+                        $inscrD = true;
                     }
                 }
                 if ($checkAccess) {
                     $role = null;
                     if($inscr){
                         $role = $inscr->getRole();
+                    }elseif($inscrD) {
+                        $role = $itemRepo->getRole($user, $item);
                     }else{
                         if($myCohs){
                             foreach($myCohs as $inscrCoh){
@@ -656,7 +660,7 @@ class UsersController extends Controller
                     }
                     array_push($usersAccessTab, [
                         "user" => $user,
-                        "isInscrit" => $inscr != null,
+                        "isInscrit" => $inscrD != null,
                         "myCohs" => $myCohs,
                         "role" => $role
                     ]);
