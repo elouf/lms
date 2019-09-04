@@ -852,7 +852,7 @@ class UsersController extends Controller
             }
 
             $minStart++;
-            if($nbUsers>50){
+            if($nbUsers>100){
                 break;
             }
         }
