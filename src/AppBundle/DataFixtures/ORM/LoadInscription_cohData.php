@@ -40,8 +40,8 @@ class LoadInscription_cohData extends AbstractFixture implements OrderedFixtureI
             $this->getReference('user_enseignant_1'),
             $this->getReference('coh_maths'));
 
-        for ($i = 10; $i < 30; $i++) {
-            $cohNames = array('coh_phy', 'coh_maths', 'coh_esp');
+        for ($i = 10; $i < 2400; $i++) {
+            $cohNames = array('coh_phy', 'coh_maths', 'coh_esp', 'coh_educMusChantChoral', 'coh_philo', 'coh_stms');
             $randCoh = $this->getReference($cohNames[mt_rand(0, count($cohNames)-1)]);
             $inscr = $this->createItem($manager,
                 $this->getReference('role_etu'),
