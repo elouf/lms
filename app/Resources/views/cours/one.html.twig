@@ -24,6 +24,11 @@
 {% endblock %}
 
 {% block main %}
+    <style>
+        .minHcontentDevoirRess{
+            min-height: 130px;
+        }
+    </style>
     <script>
         var chrono;
         jQuery(document).ready(function () {
@@ -73,76 +78,88 @@
                         $('.modal .modal-body').hide();
                         var popup = $('.modal .modal-body[data-contentModal=devoirDisplay]');
                         popup.attr('data-idItem', $(this).closest('.courseElem').attr('data-idItem')).show();
-
-                        var dureeH = parseInt(data['duree'] / 3600);
-                        var dureeM = parseInt((data['duree'] % 3600) / 60);
-                        if (dureeM < 10) {
-                            dureeM = "0" + dureeM;
-                        }
-
-                        popup.find('.popupDevoirDuree').text(dureeH + 'h' + dureeM);
                         popup.find('.popupDevoirNom').text(data['nom']);
                         popup.find('.popupDevoirDescription').html(data['description']);
 
-                        var dateD = toJSDate(data['dateDebut']['date']);
-                        var dateF = toJSDate(data['dateFin']['date']);
-                        var limitDate = toJSDate(data['dateFin']['date']);
-                        limitDate.setHours(parseInt(limitDate.getHours() + parseInt(dureeH)));
-                        limitDate.setMinutes(parseInt(limitDate.getMinutes() + parseInt(dureeM)));
+                        if(data['duree'] == 0){
+                            // si pas de durée, alors pas de durée
+                            $('.beginDevoir, .masqueDevoir, .alert_duringDevoir, .alert_beforeDownload, .alert_afterTimeExpire, .chronometre').hide();
+                            $('.alert_notime').show();
+                            // On ajoute les liens vers les fichiers de sujets
+                            $('.listeDevoirSujets').append(myBtn.closest('.conteneurLiensSujets').find('.listeSujets'));
+                            $('.listeDevoirSujets .listeSujets *').removeClass('hidden');
+                            $('.contentDevoirRess').addClass('minHcontentDevoirRess');
+                        }else{
+                            $('.alert_notime').hide();
+                            $('.contentDevoirRess').removeClass('minHcontentDevoirRess');
+                            var dureeH = parseInt(data['duree'] / 3600);
+                            var dureeM = parseInt((data['duree'] % 3600) / 60);
+                            if (dureeM < 10) {
+                                dureeM = "0" + dureeM;
+                            }
 
-                        // On ajoute les liens vers les fichiers de sujets
-                        $('.listeDevoirSujets').append(myBtn.closest('.conteneurLiensSujets').find('.listeSujets'));
-                        $('.listeDevoirSujets .listeSujets *').removeClass('hidden')
+                            popup.find('.popupDevoirDuree').text(dureeH + 'h' + dureeM);
 
-                        popup.find('.alert').hide();
-                        if (data['copieStart'] == null) {
-                            $('.beginDevoir, .masqueDevoir').show();
-                            $('.alert_beforeDownload').show();
-                            $('.chrono_h').text(dureeH);
-                            $('.chrono_m').text(dureeM);
-                            $('.chrono_s').text("00");
+                            var dateD = toJSDate(data['dateDebut']['date']);
+                            var dateF = toJSDate(data['dateFin']['date']);
+                            var limitDate = toJSDate(data['dateFin']['date']);
+                            limitDate.setHours(parseInt(limitDate.getHours() + parseInt(dureeH)));
+                            limitDate.setMinutes(parseInt(limitDate.getMinutes() + parseInt(dureeM)));
 
-                            $('.beginDevoir').unbind('click').click(function () {
-                                var btn = $(this);
-                                if (!btn.hasClass('inactivate')) {
-                                    btn.addClass('inactivate');
-                                    // creation de l'objet Copie
-                                    $.ajax({
-                                        type: 'POST',
-                                        url: "{{ path('startDevoir_ajax') }}",
-                                        async: false,
-                                        dataType: "json",
-                                        data: {
-                                            id: idItem,
-                                            userId: $('[data-userId]').attr('data-userId')
-                                        },
-                                        success: function (data) {
-                                            $('.masqueDevoir').hide();
-                                            launchChrono();
-                                        }
-                                    });
-                                }
-                            });
-                        } else {
-                            // le devoir avait déjà été commencé
-                            $('.beginDevoir, .masqueDevoir').hide();
-                            $('.alert_duringDevoir').show();
-                            var timeLimit = toJSDate(data['copieStart']['date']);
-                            timeLimit.setHours(timeLimit.getHours() + parseInt(dureeH));
-                            timeLimit.setMinutes(timeLimit.getMinutes() + parseInt(dureeM));
-                            var now_ = new Date();
-                            var now = new Date(now_.getTime() - now_.getTimezoneOffset() * 60000);
-                            if (now_ > timeLimit) {
-                                window.location.href = window.location.href.replace(/[\?#].*|$/, "?idSection=" + idSection);
-                            } else {
-                                var diff = timeLimit.getTime() - now_.getTime();
-                                var diffSeconds = diff / 1000;
-                                var HH = parseInt(Math.floor(diffSeconds / 3600));
-                                var MM = parseInt(Math.floor(diffSeconds % 3600) / 60);
-                                $('.chrono_h').text(HH);
-                                $('.chrono_m').text(MM);
+                            // On ajoute les liens vers les fichiers de sujets
+                            $('.listeDevoirSujets').append(myBtn.closest('.conteneurLiensSujets').find('.listeSujets'));
+                            $('.listeDevoirSujets .listeSujets *').removeClass('hidden')
+
+                            popup.find('.alert').hide();
+                            if (data['copieStart'] == null) {
+                                $('.beginDevoir, .masqueDevoir').show();
+                                $('.alert_beforeDownload').show();
+                                $('.chrono_h').text(dureeH);
+                                $('.chrono_m').text(dureeM);
                                 $('.chrono_s').text("00");
-                                launchChrono();
+
+                                $('.beginDevoir').unbind('click').click(function () {
+                                    var btn = $(this);
+                                    if (!btn.hasClass('inactivate')) {
+                                        btn.addClass('inactivate');
+                                        // creation de l'objet Copie
+                                        $.ajax({
+                                            type: 'POST',
+                                            url: "{{ path('startDevoir_ajax') }}",
+                                            async: false,
+                                            dataType: "json",
+                                            data: {
+                                                id: idItem,
+                                                userId: $('[data-userId]').attr('data-userId')
+                                            },
+                                            success: function (data) {
+                                                $('.masqueDevoir').hide();
+                                                launchChrono();
+                                            }
+                                        });
+                                    }
+                                });
+                            } else {
+                                // le devoir avait déjà été commencé
+                                $('.beginDevoir, .masqueDevoir').hide();
+                                $('.alert_duringDevoir').show();
+                                var timeLimit = toJSDate(data['copieStart']['date']);
+                                timeLimit.setHours(timeLimit.getHours() + parseInt(dureeH));
+                                timeLimit.setMinutes(timeLimit.getMinutes() + parseInt(dureeM));
+                                var now_ = new Date();
+                                var now = new Date(now_.getTime() - now_.getTimezoneOffset() * 60000);
+                                if (now_ > timeLimit) {
+                                    window.location.href = window.location.href.replace(/[\?#].*|$/, "?idSection=" + idSection);
+                                } else {
+                                    var diff = timeLimit.getTime() - now_.getTime();
+                                    var diffSeconds = diff / 1000;
+                                    var HH = parseInt(Math.floor(diffSeconds / 3600));
+                                    var MM = parseInt(Math.floor(diffSeconds % 3600) / 60);
+                                    $('.chrono_h').text(HH);
+                                    $('.chrono_m').text(MM);
+                                    $('.chrono_s').text("00");
+                                    launchChrono();
+                                }
                             }
                         }
 
@@ -799,6 +816,10 @@
                                 <div class="popupDevoirNom"></div>
                                 <div class="popupDevoirDescription mb-10"></div>
 
+                                <div class="alert alert-info mb-10 alert_notime">
+                                    Ce devoir n'est pas chronométré.
+                                    <p>Vous disposerez alors de tout le temps que vous estimez nécessaire pour déposer votre copie.</p>
+                                </div>
                                 <div class="alert alert-danger mb-10 alert_beforeDownload">
                                     <strong>Attention!</strong> Lors du click sur "commencer", le chronomètre du devoir
                                     sera lancé.
