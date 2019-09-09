@@ -109,7 +109,7 @@
                             // On ajoute les liens vers les fichiers de sujets
                             $('.listeDevoirSujets').append(myBtn.closest('.conteneurLiensSujets').find('.listeSujets'));
                             $('.listeDevoirSujets .listeSujets *').removeClass('hidden')
-                            if(!$('.listeDevoirSujets .listeSujets').length){
+                            if(!$('.listeDevoirSujets .listeSujets *').length){
                                 $('.listeDevoirSujets').hide();
                             }
 
