@@ -88,7 +88,8 @@
                             // On ajoute les liens vers les fichiers de sujets
                             $('.listeDevoirSujets').append(myBtn.closest('.conteneurLiensSujets').find('.listeSujets'));
                             $('.listeDevoirSujets .listeSujets *').removeClass('hidden');
-                            if($('.listeDevoirSujets .listeSujets').is(':empty')){
+                            console.log($('.listeDevoirSujets .listeSujets .btn').length)
+                            if(!$('.listeDevoirSujets .listeSujets .btn').length){
                                 $('.listeDevoirSujets').hide();
                             }else{
                                 $('.listeDevoirSujets').show();
@@ -114,7 +115,8 @@
                             // On ajoute les liens vers les fichiers de sujets
                             $('.listeDevoirSujets').append(myBtn.closest('.conteneurLiensSujets').find('.listeSujets'));
                             $('.listeDevoirSujets .listeSujets *').removeClass('hidden');
-                            if($('.listeDevoirSujets .listeSujets').is(':empty')){
+                            console.log($('.listeDevoirSujets .listeSujets .btn').length)
+                            if(!$('.listeDevoirSujets .listeSujets .btn').length){
                                 $('.listeDevoirSujets').hide();
                             }else{
                                 $('.listeDevoirSujets').show();
