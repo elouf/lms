@@ -146,6 +146,10 @@ class DevoirController extends Controller
             $repositorySujet = $this->getDoctrine()
                 ->getRepository('AppBundle:DevoirSujet')
                 ->findOneBy(array('devoir' => $devoir));
+            $sujetUrl = null;
+            if($repositorySujet){
+                $sujetUrl = $repositorySujet->getUrl();
+            }
 
             $copieStart = null;
             $copieFichier = "";
@@ -172,7 +176,7 @@ class DevoirController extends Controller
                     'nom' => $devoir->getNom(),
                     'description' => $devoir->getDescription(),
                     'commentaireCopieRendue' => $devoir->getCommentaireCopieRendue(),
-                    'sujet' => $repositorySujet->getUrl(),
+                    'sujet' => $sujetUrl,
                     'copieStart' => $copieStart,
                     'copieFichier' => $copieFichier,
                     'corrige' => $corrige,
