@@ -440,9 +440,9 @@ class DevoirController extends Controller
             $urlTab = explode('/web', $currentUrl);
             $urlDestTab = explode('var', $urlDest);
 
-            /*$copieFichier = new CopieFichier();
+            $copieFichier = new CopieFichier();
             $copieFichier->setCopie($copie);
-            $copieFichier->setDateRendu(new DateTime());
+            /*$copieFichier->setDateRendu(new DateTime());
             $copie->setDateCreation(new DateTime());
             $copieFichier->setNom($nomDevoir);
 
