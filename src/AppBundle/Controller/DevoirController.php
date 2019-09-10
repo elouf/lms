@@ -416,6 +416,7 @@ class DevoirController extends Controller
             $url = utf8_encode($request->request->get('url'));
             $urlDest = $request->request->get('urlDest');
             $currentUrl = $request->request->get('currentUrl');
+            $ext = pathinfo($url, PATHINFO_EXTENSION);
 
             /* @var $devoir Devoir */
             $devoir = $em->getRepository('AppBundle:Devoir')->findOneBy(array('id' => $itemId));
@@ -424,8 +425,10 @@ class DevoirController extends Controller
             /* @var $copie Copie */
             $copie = $em->getRepository('AppBundle:Copie')->findOneBy(array('auteur' => $user, 'devoir' => $devoir));
 
+            $nomDevoir = "[Devoir ".$devoir->getNom()."] Copie de ".$user->getFirstName()." ".$user->getLastName();
+
             // on vérifie s'il y a déjà un fichier et on le supprime
-            $copieF = $em->getRepository('AppBundle:CopieFichier')->findOneBy(array('copie' => $copie));
+            /*$copieF = $em->getRepository('AppBundle:CopieFichier')->findOneBy(array('copie' => $copie));
             if($copieF){
                 $urlTabOld = explode('/var', $copieF->getUrl());
 
@@ -441,11 +444,8 @@ class DevoirController extends Controller
             $copieFichier->setCopie($copie);
             $copieFichier->setDateRendu(new DateTime());
             $copie->setDateCreation(new DateTime());
-            $copieFichier->setNom("[Devoir ".$devoir->getNom()."] Copie de ".$user->getFirstName()." ".$user->getLastName());
+            $copieFichier->setNom($nomDevoir);
 
-            $ext = pathinfo($url, PATHINFO_EXTENSION);
-            $rand = rand(1, 999999);
-            //rename($url, $urlDest.'file'.$rand.'.'.$ext);
             $unwanted_array = array(    'Š'=>'S', 'š'=>'s', 'Ž'=>'Z', 'ž'=>'z', 'À'=>'A', 'Á'=>'A', 'Â'=>'A', 'Ã'=>'A', 'Ä'=>'A', 'Å'=>'A', 'Æ'=>'A', 'Ç'=>'C', 'È'=>'E', 'É'=>'E',
                 'Ê'=>'E', 'Ë'=>'E', 'Ì'=>'I', 'Í'=>'I', 'Î'=>'I', 'Ï'=>'I', 'Ñ'=>'N', 'Ò'=>'O', 'Ó'=>'O', 'Ô'=>'O', 'Õ'=>'O', 'Ö'=>'O', 'Ø'=>'O', 'Ù'=>'U',
                 'Ú'=>'U', 'Û'=>'U', 'Ü'=>'U', 'Ý'=>'Y', 'Þ'=>'B', 'ß'=>'Ss', 'à'=>'a', 'á'=>'a', 'â'=>'a', 'ã'=>'a', 'ä'=>'a', 'å'=>'a', 'æ'=>'a', 'ç'=>'c',
@@ -458,10 +458,11 @@ class DevoirController extends Controller
             $copieFichier->setUrl($urlTab[0].'/var'.$urlDestTab[1].$filename);
 
             $em->persist($copieFichier);
-            $em->persist($copie);
+            $em->persist($copie);*/
             $em->flush();
 
-            return new JsonResponse(array('action' =>'upload File', 'id' => $itemId, 'ext' => $ext, 'nouvelle copie ' => $copieFichier->getUrl()));
+            return new JsonResponse(array('action' =>'upload File', 'id' => $itemId, 'ext' => $ext, 'nom' => $nomDevoir));
+            //return new JsonResponse(array('action' =>'upload File', 'id' => $itemId, 'ext' => $ext, 'nom' => $nomDevoir, 'nouvelle copie ' => $copieFichier->getUrl()));
         }
 
         return new JsonResponse('This is not ajax!', 400);
