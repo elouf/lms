@@ -105,7 +105,7 @@
                                     userId: $('[data-userId]').attr('data-userId')
                                 },
                                 success: function (data) {
-                                    
+
                                 }
                             });
                         }else{
@@ -236,7 +236,7 @@
                                         },
                                         success: function (data) {
                                             $('.modal').modal('toggle');
-                                            //window.location.href = window.location.href.replace(/[\?#].*|$/, "?idSection=" + idSection);
+                                            window.location.href = window.location.href.replace(/[\?#].*|$/, "?idSection=" + idSection);
                                         },
                                         error: function (xhr, status, error) {
                                             $('.modal').modal('toggle');
@@ -597,7 +597,7 @@
                                                                                        target="_blank"
                                                                                        href="{{ val.zones.copieFichier[keyR].url }}">Ma
                                                                                         copie</a>
-                                                                                    {% if "now"|date('Ymd H:i:s') < val.zones.copie[keyR].dateCreation|date_modify(duree)|date('Ymd H:i:s') %}
+                                                                                    {% if duree == 0 or "now"|date('Ymd H:i:s') < val.zones.copie[keyR].dateCreation|date_modify(duree)|date('Ymd H:i:s') %}
                                                                                         <div class="btn btn-sm btn-danger btnDeleteCopieEtu">
                                                                                             Effacer ma copie
                                                                                         </div>
