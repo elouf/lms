@@ -455,17 +455,17 @@ class DevoirController extends Controller
                 'ö'=>'o', 'ø'=>'o', 'ù'=>'u', 'ú'=>'u', 'û'=>'u', 'ý'=>'y', 'þ'=>'b', 'ÿ'=>'y', ' '=>'_' );
             $strUser = strtr($devoir->getCours()->getDiscipline()->getAccronyme().'_'.$user->getFirstname().'_'.$user->getLastname(), $unwanted_array );
             //$strUser = strtr($devoir->getCours()->getDiscipline()->getAccronyme().'_'.$user->getFirstname().'_'.$user->getLastname(), $unwanted_array );
-            $filename = 'Copie_'.$strUser.$copie->getId().'.'.$ext;
+            /*$filename = 'Copie_'.$strUser.$copie->getId().'.'.$ext;
             rename($url, $urlDest.$filename);
 
             $copieFichier->setUrl($urlTab[0].'/var'.$urlDestTab[1].$filename);
 
             $em->persist($copieFichier);
             $em->persist($copie);
-            $em->flush();
+            $em->flush();*/
 
             //return new JsonResponse(array('action' =>'upload File', 'id' => $itemId, 'ext' => $ext, 'nom' => $nomDevoir, 'urlTab' => $urlTab, 'urlDestTab' => $urlDestTab));
-            return new JsonResponse(array('action' =>'upload File', 'id' => $itemId, 'ext' => $ext, 'nom' => $nomDevoir, 'nouvelle copie ' => $copieFichier->getUrl()));
+            return new JsonResponse(array('action' =>'upload File', 'id' => $itemId, 'ext' => $ext, 'nom' => $nomDevoir, 'nouvelle copie ' => $copieFichier->getUrl(), '1' => $devoir->getCours()->getDiscipline()->getAccronyme(), 'user' => $user->getFirstname(), 'user2' => $user->getLastname()));
         }
 
         return new JsonResponse('This is not ajax!', 400);
