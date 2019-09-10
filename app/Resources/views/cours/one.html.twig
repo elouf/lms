@@ -95,6 +95,19 @@
                                 $('.listeDevoirSujets').show();
                             }
                             $('.contentDevoirRess').addClass('minHcontentDevoirRess');
+                            $.ajax({
+                                type: 'POST',
+                                url: "{{ path('startDevoir_ajax') }}",
+                                async: false,
+                                dataType: "json",
+                                data: {
+                                    id: idItem,
+                                    userId: $('[data-userId]').attr('data-userId')
+                                },
+                                success: function (data) {
+                                    
+                                }
+                            });
                         }else{
                             $('.alert_notime').hide();
                             $('.contentDevoirRess').removeClass('minHcontentDevoirRess');
