@@ -453,9 +453,9 @@ class DevoirController extends Controller
                 'Ú'=>'U', 'Û'=>'U', 'Ü'=>'U', 'Ý'=>'Y', 'Þ'=>'B', 'ß'=>'Ss', 'à'=>'a', 'á'=>'a', 'â'=>'a', 'ã'=>'a', 'ä'=>'a', 'å'=>'a', 'æ'=>'a', 'ç'=>'c',
                 'è'=>'e', 'é'=>'e', 'ê'=>'e', 'ë'=>'e', 'ì'=>'i', 'í'=>'i', 'î'=>'i', 'ï'=>'i', 'ð'=>'o', 'ñ'=>'n', 'ò'=>'o', 'ó'=>'o', 'ô'=>'o', 'õ'=>'o',
                 'ö'=>'o', 'ø'=>'o', 'ù'=>'u', 'ú'=>'u', 'û'=>'u', 'ý'=>'y', 'þ'=>'b', 'ÿ'=>'y', ' '=>'_' );
-            $strUser = strtr($devoir->getCours()->getDiscipline()->getAccronyme().'_'.$user->getFirstname().'_'.$user->getLastname(), $unwanted_array );
+            /*$strUser = strtr($devoir->getCours()->getDiscipline()->getAccronyme().'_'.$user->getFirstname().'_'.$user->getLastname(), $unwanted_array );
             $filename = 'Copie_'.$strUser.$copie->getId().'.'.$ext;
-            /*rename($url, $urlDest.$filename);
+            rename($url, $urlDest.$filename);
 
             $copieFichier->setUrl($urlTab[0].'/var'.$urlDestTab[1].$filename);
 
