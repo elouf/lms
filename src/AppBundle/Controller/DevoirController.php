@@ -455,8 +455,8 @@ class DevoirController extends Controller
                 'ö'=>'o', 'ø'=>'o', 'ù'=>'u', 'ú'=>'u', 'û'=>'u', 'ý'=>'y', 'þ'=>'b', 'ÿ'=>'y', ' '=>'_' );
             $strUser = strtr($devoir->getCours()->getDiscipline()->getAccronyme().'_'.$user->getFirstname().'_'.$user->getLastname(), $unwanted_array );
             $filename = 'Copie_'.$strUser.$copie->getId().'.'.$ext;
-            rename($url, $urlDest.$filename);
-/*
+            /*rename($url, $urlDest.$filename);
+
             $copieFichier->setUrl($urlTab[0].'/var'.$urlDestTab[1].$filename);
 
             $em->persist($copieFichier);
