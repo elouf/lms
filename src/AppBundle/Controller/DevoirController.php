@@ -428,7 +428,7 @@ class DevoirController extends Controller
             $nomDevoir = "[Devoir ".$devoir->getNom()."] Copie de ".$user->getFirstName()." ".$user->getLastName();
 
             // on vérifie s'il y a déjà un fichier et on le supprime
-            /*$copieF = $em->getRepository('AppBundle:CopieFichier')->findOneBy(array('copie' => $copie));
+            $copieF = $em->getRepository('AppBundle:CopieFichier')->findOneBy(array('copie' => $copie));
             if($copieF){
                 $urlTabOld = explode('/var', $copieF->getUrl());
 
@@ -436,7 +436,7 @@ class DevoirController extends Controller
 
                 unlink('../var'.$urlTabOld[1]);
             }
-
+            /*
             $urlTab = explode('/web', $currentUrl);
             $urlDestTab = explode('var', $urlDest);
 
