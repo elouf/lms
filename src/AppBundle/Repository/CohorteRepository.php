@@ -2,6 +2,7 @@
 
 namespace AppBundle\Repository;
 use AppBundle\Entity\Cohorte;
+use AppBundle\Entity\Inscription_coh;
 
 /**
  * CohorteRepository
@@ -27,6 +28,22 @@ class CohorteRepository extends \Doctrine\ORM\EntityRepository
             }
         }
         return $inscrCohs;
+    }
+
+    public function getUsersInscr($cohorte){
+        $em = $this->getEntityManager();
+        $inscs = $em->getRepository('AppBundle:Inscription_coh')->findBy(array('cohorte' => $cohorte));
+        $users = [];
+        if($inscs){
+            /* @var $insc Inscription_coh */
+            foreach ($inscs as $insc){
+                $user = $insc->getUser();
+                if(!in_array($insc, $users) && $user->isEnabled()) {
+                    array_push($users, $user);
+                }
+            }
+        }
+        return $users;
     }
 
     public function userIsInscrit($user, $coh)

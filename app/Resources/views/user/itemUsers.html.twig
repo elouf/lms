@@ -39,12 +39,17 @@
     <script type="text/javascript"
             src="{{ asset('vendors/tablesorter/dist/js/widgets/widget-output.min.js') }}"></script>
     <style>
-        .sectionManager{
+        .hiddenTabs {
+            display: none;
+        }
+
+        .sectionManager {
             border: 1px solid #ccc;
             padding: 5px 10px;
             margin-bottom: 10px;
         }
-        .sectionUsersManager{
+
+        .sectionUsersManager {
             display: flex;
             display: -webkit-flex;
             display: -ms-flexbox;
@@ -55,7 +60,8 @@
             -webkit-justify-content: center;
             position: relative;
         }
-        .sortableList{
+
+        .sortableList {
             flex: 1;
             -ms-flex: 1;
             -webkit-flex: 1;
@@ -66,13 +72,16 @@
             overflow: auto;
             height: 400px;
         }
-        .sectionInscrits{
+
+        .sectionInscrits {
             background: #eaffe7;
         }
-        .sectionNonInscrits{
+
+        .sectionNonInscrits {
             background: #ffe9e6;
         }
-        .userSectionLi{
+
+        .userSectionLi {
             user-select: none;
             cursor: pointer;
             background: #eee;
@@ -83,18 +92,22 @@
             border-radius: 3px;
             border: #999 solid 1px;
         }
-        .userSectionLi:hover{
+
+        .userSectionLi:hover {
             background: #ddd;
         }
-        .tab-content>.tab-pane{
+
+        .tab-content > .tab-pane {
             transform: translateY(0%);
         }
+
         .ui-state-highlight {
             height: 25px;
             background: #eeea43;
-            border:#000 solid 1px;
+            border: #000 solid 1px;
         }
-        .sectioncontrols{
+
+        .sectioncontrols {
             display: flex;
             display: -webkit-flex;
             display: -ms-flexbox;
@@ -107,10 +120,12 @@
             -webkit-align-items: center;
             width: 90px;
         }
-        .sectioncontrols .btn{
+
+        .sectioncontrols .btn {
             font-size: 22px;
         }
-        .controlAllUsers{
+
+        .controlAllUsers {
             display: flex;
             display: -webkit-flex;
             display: -ms-flexbox;
@@ -122,11 +137,27 @@
             align-items: center;
             -webkit-align-items: center;
         }
-        .formChamp label{
+
+        .formChamp label {
             width: 160px;
         }
-        .formChamp{
+
+        .formChamp {
             margin-bottom: 15px;
+        }
+
+        .coloneTable .loader-backdrop {
+            position: absolute;
+            height: auto;
+            width: auto;
+            top: 40px;
+            left: calc(50% - 15px);
+            display: block !important;
+        }
+
+        .coloneTable .loader {
+            width: 50px;
+            height: 50px;
         }
     </style>
     <script>
@@ -146,7 +177,7 @@
                     widgetOptions: {
                         output_delivery: 'd',
                         output_saveFileName: 'mytable.csv',
-                        zebra : [ "even", "odd" ]
+                        zebra: ["even", "odd"]
                     }
                 })
                 .tablesorterPager({
@@ -197,25 +228,9 @@
                     size: 10
                 });
 
-            $('.btndesinscr').click(function () {
-                var idUser = $(this).closest('.userLine').attr('data-userId');
+            loadBtnDesinscrEvent();
+            loadBtnInscrEvent();
 
-                $('.modal').modal('toggle');
-                $('.mode').hide();
-                $('.modeDesinscr').show();
-                $('.valideDesinscr').unbind('click').click(function () {
-                    desinscrireUsers(typeItem, [idUser], "{{ item.id }}");
-                });
-            });
-            $('.btninscr').click(function () {
-                var idUser = $(this).closest('.userLine').attr('data-userId');
-                $('.modal').modal('toggle');
-                $('.mode').hide();
-                $('.modeInscr').show();
-                $('.valideInscr').unbind('click').click(function () {
-                    inscrireUsers(typeItem, [idUser], "{{ item.id }}", $('.selectRole').val());
-                });
-            });
             $('.selectAll').click(function (e) {
                 e.preventDefault();
 
@@ -266,14 +281,14 @@
                 }
             });
 
-            $(".sortableList").each(function(){
+            $(".sortableList").each(function () {
                 const sectionId = $(this).attr('data-sectionId');
                 $(this).sortable({
                     placeholder: "ui-state-highlight",
-                    connectWith: ".sortableList[data-sectionId="+sectionId+"]",
-                    receive: function( event, ui ) {
+                    connectWith: ".sortableList[data-sectionId=" + sectionId + "]",
+                    receive: function (event, ui) {
                         var sectionId = $(this).closest('.sectionManager').attr('data-sectionId');
-                        if($(this).hasClass('sectionInscrits')){
+                        if ($(this).hasClass('sectionInscrits')) {
                             $.ajax({
                                 type: "POST",
                                 url: "{{ path('sectionAutorizeUsers_ajax') }}",
@@ -285,7 +300,7 @@
                                 success: function (response) {
                                 }
                             });
-                        }else{
+                        } else {
                             $.ajax({
                                 type: "POST",
                                 url: "{{ path('sectionUnAutorizeUsers_ajax') }}",
@@ -303,16 +318,16 @@
             });
 
             //cache les utilisateurs des sections dont l'accès n'est pas filtré
-            $('.sectionManagerChecker').each(function(){
-                if(!$(this).is(":checked")){
+            $('.sectionManagerChecker').each(function () {
+                if (!$(this).is(":checked")) {
                     $(this).closest('.sectionManager').find('.sectionUsersHighManager').hide();
                 }
-                $(this).click(function(){
+                $(this).click(function () {
                     const isChecked = $(this).is(":checked");
                     const sectionId = $(this).closest('.sectionManager').attr('data-sectionId');
-                    if(isChecked){
+                    if (isChecked) {
                         $(this).closest('.sectionManager').find('.sectionUsersHighManager').show();
-                    }else{
+                    } else {
                         $(this).closest('.sectionManager').find('.sectionUsersHighManager').hide();
                     }
                     $.ajax({
@@ -330,10 +345,10 @@
                 });
             });
 
-            $('.btnSelectedInSection').click(function(){
+            $('.btnSelectedInSection').click(function () {
                 const sectionManager = $(this).closest('.sectionManager');
                 let usersToChange = [];
-                sectionManager.find('.sectionNonInscrits .sectionUserSelector:checked').each(function(){
+                sectionManager.find('.sectionNonInscrits .sectionUserSelector:checked').each(function () {
                     usersToChange.push($(this).closest('.userSectionLi').attr('data-userId'));
                 });
                 $.ajax({
@@ -345,19 +360,19 @@
                     },
                     dataType: "json",
                     success: function (response) {
-                        sectionManager.find('.sectionNonInscrits .sectionUserSelector:checked').each(function(){
+                        sectionManager.find('.sectionNonInscrits .sectionUserSelector:checked').each(function () {
                             $(this).closest('.userSectionLi').appendTo(sectionManager.find('.sectionInscrits'));
-                            $(this).prop( "checked", false );
+                            $(this).prop("checked", false);
                         });
-                        $(".sortableList").sortable( "refresh" );
+                        $(".sortableList").sortable("refresh");
                     }
                 });
             });
 
-            $('.btnSelectedOutSection').click(function(){
+            $('.btnSelectedOutSection').click(function () {
                 const sectionManager = $(this).closest('.sectionManager');
                 let usersToChange = [];
-                sectionManager.find('.sectionInscrits .sectionUserSelector:checked').each(function(){
+                sectionManager.find('.sectionInscrits .sectionUserSelector:checked').each(function () {
                     usersToChange.push($(this).closest('.userSectionLi').attr('data-userId'));
                 });
                 $.ajax({
@@ -369,27 +384,109 @@
                     },
                     dataType: "json",
                     success: function (response) {
-                        sectionManager.find('.sectionInscrits .sectionUserSelector:checked').each(function(){
+                        sectionManager.find('.sectionInscrits .sectionUserSelector:checked').each(function () {
                             $(this).closest('.userSectionLi').appendTo(sectionManager.find('.sectionNonInscrits'));
-                            $(this).prop( "checked", false );
+                            $(this).prop("checked", false);
                         });
-                        $(".sortableList").sortable( "refresh" );
+                        $(".sortableList").sortable("refresh");
                     }
                 });
             });
 
-            $('.btnSelectAllIn').click(function(){
+            $('.btnSelectAllIn').click(function () {
                 var nbTotal = $(this).closest('.sectionUsersHighManager').find('.sectionInscrits .sectionUserSelector').length;
                 var nbChecked = $(this).closest('.sectionUsersHighManager').find('.sectionInscrits .sectionUserSelector:checked').length;
                 var todo = nbTotal !== nbChecked;
                 $(this).closest('.sectionUsersHighManager').find('.sectionInscrits .sectionUserSelector').prop('checked', todo);
             });
-            $('.btnSelectAllOut').click(function(){
+            $('.btnSelectAllOut').click(function () {
                 var nbTotal = $(this).closest('.sectionUsersHighManager').find('.sectionNonInscrits .sectionUserSelector').length;
                 var nbChecked = $(this).closest('.sectionUsersHighManager').find('.sectionNonInscrits .sectionUserSelector:checked').length;
                 var todo = nbTotal !== nbChecked;
                 $(this).closest('.sectionUsersHighManager').find('.sectionNonInscrits .sectionUserSelector').prop('checked', todo);
             });
+
+            $('#pagerYes, #pagerNo').hide();
+            $('.loadNonIncrits').click(function () {
+                let loader = '<div class="loader-backdrop loaderNonIncrits">\n' +
+                    '    <div class="loader">\n' +
+                    '        <div class="ball-1"></div>\n' +
+                    '        <div class="ball-2"></div>\n' +
+                    '    </div>\n' +
+                    '</div>';
+                $('.loadNonIncrits').after(loader);
+                setTimeout(function () {
+                    $('.hiddenNo .userLine').each(function () {
+                        let userId = $(this).attr('data-userId');
+                        let line = $('.tableNo tbody tr[data-userid=' + userId + ']');
+                        line.find('.userIdCell').html($(this).find('.userIdCell').html());
+                        line.find('.userEmailCell').html($(this).find('.userEmailCell').html());
+                        line.find('.userFNCell').html($(this).find('.userFNCell').html());
+                        line.find('.userLNCell').html($(this).find('.userLNCell').html());
+                        line.find('.userInstitutCell').html($(this).find('.userInstitutCell').html());
+                        line.find('.userStatutCell').html($(this).find('.userStatutCell').html());
+                        line.find('.userCohCell').html($(this).find('.userCohCell').html());
+                        line.find('.btnCellFilter').html($(this).find('.btnCellFilter').html());
+                    });
+                    $('.loaderNonIncrits').remove();
+                    $('.loadNonIncrits').remove();
+                    loadBtnInscrEvent();
+                    $('#pagerNo').show();
+                }, 600);
+            });
+            $('.loadIncrits').click(function () {
+                let loader = '<div class="loader-backdrop loaderIncrits">\n' +
+                    '    <div class="loader">\n' +
+                    '        <div class="ball-1"></div>\n' +
+                    '        <div class="ball-2"></div>\n' +
+                    '    </div>\n' +
+                    '</div>';
+                $('.loadIncrits').after(loader);
+                setTimeout(function () {
+                    $('.hiddenYes .userLine').each(function () {
+                        let userId = $(this).attr('data-userId');
+                        let line = $('.tableYes tbody tr[data-userid=' + userId + ']');
+                        line.find('.userIdCell').html($(this).find('.userIdCell').html());
+                        line.find('.userEmailCell').html($(this).find('.userEmailCell').html());
+                        line.find('.userFNCell').html($(this).find('.userFNCell').html());
+                        line.find('.userLNCell').html($(this).find('.userLNCell').html());
+                        line.find('.userInstitutCell').html($(this).find('.userInstitutCell').html());
+                        line.find('.userRoleCell').html($(this).find('.userRoleCell').html());
+                        line.find('.userStatutCell').html($(this).find('.userStatutCell').html());
+                        line.find('.userCohCell').html($(this).find('.userCohCell').html());
+                        line.find('.btnCellFilter').html($(this).find('.btnCellFilter').html());
+                    });
+                    $('.loaderIncrits').remove();
+                    $('.loadIncrits').remove();
+                    loadBtnDesinscrEvent();
+                    $('#pagerYes').show();
+                }, 600);
+            });
+
+            function loadBtnDesinscrEvent(){
+                $('.btndesinscr').unbind('click').click(function () {
+                    let idUser = $(this).closest('.userLine').attr('data-userId');
+
+                    $('.modal').modal('toggle');
+                    $('.mode').hide();
+                    $('.modeDesinscr').show();
+                    $('.valideDesinscr').unbind('click').click(function () {
+                        desinscrireUsers(typeItem, [idUser], "{{ item.id }}");
+                    });
+                });
+            }
+            function loadBtnInscrEvent(){
+                $('.btninscr').unbind('click').click(function () {
+                    let idUser = $(this).closest('.userLine').attr('data-userId');
+
+                    $('.modal').modal('toggle');
+                    $('.mode').hide();
+                    $('.modeInscr').show();
+                    $('.valideInscr').unbind('click').click(function () {
+                        inscrireUsers(typeItem, [idUser], "{{ item.id }}", $('.selectRole').val());
+                    });
+                });
+            }
 
             function changeRoleUsers(typeItem, idUsers, itemId, roleId) {
                 $.ajax({
@@ -482,6 +579,10 @@
                     });
                 }
             }
+
+            $('.tableNo').trigger('pageAndSize', [1, 10]);
+            $('.tableYes').trigger('pageAndSize', [1, 10]);
+
         });
     </script>
 
@@ -489,7 +590,8 @@
         <div class="row">
 
             <ul class="nav nav-tabs" role="tablist">
-                <li role="presentation" class="{% if roleUser != 'admin' and roleUser != "Referent" %}active{% endif %}">
+                <li role="presentation"
+                    class="{% if roleUser != 'admin' and roleUser != "Referent" %}active{% endif %}">
                     <a href="#InscrDesinscr" aria-controls="InscrDesinscr" role="tab" data-toggle="tab">
                         <i class="fa fa-external-link  fa-fw"></i>
                         Inscrits</a>
@@ -514,11 +616,11 @@
                     </li>
                 {% endif %}
                 {% if (entityName == "Cours") and ressources is defined %}
-                <li role="presentation">
-                    <a href="#Sections" aria-controls="Sections" role="tab" data-toggle="tab">
-                        <i class="fa fa-th-list" aria-hidden="true"></i>
-                        Sections</a>
-                </li>
+                    <li role="presentation">
+                        <a href="#Sections" aria-controls="Sections" role="tab" data-toggle="tab">
+                            <i class="fa fa-th-list" aria-hidden="true"></i>
+                            Sections</a>
+                    </li>
                 {% endif %}
             </ul>
             <div class="tab-content">
@@ -542,7 +644,8 @@
                                 <div style="display: inline-block" class="formChamp">
                                     <div class="col-sm-4"></div>
                                     <div class="col-sm-8">
-                                        <img style="width:300px;" alt="" class="" src="{{ asset('images') }}/cours/{{ item.imageFilename }}"/>
+                                        <img style="width:300px;" alt="" class=""
+                                             src="{{ asset('images') }}/cours/{{ item.imageFilename }}"/>
                                     </div>
                                 </div>
                                 <div class="formChamp">
@@ -567,44 +670,58 @@
                     </div>
                 {% endif %}
                 {% if (entityName == "Cours") and ressources is defined %}
-                <div role="tabpanel" class="tab-pane" id="Sections">
-                    {% for section in item.sections %}
-                        {% set sectionId = section.id %}
-                        {% set autorizedIds = [] %}
-                        <div class="sectionManager" data-isAccesConditionne="{{ section.isAccesConditionne }}" data-sectionId="{{ sectionId }}">
-                            <label for="section{{ sectionId }}">Accès conditionné</label><input id="section{{ sectionId }}" class="sectionManagerChecker" type="checkbox" {% if section.isAccesConditionne %}checked{% endif %} />
-                            <div class="sectionManagerInfos">
-                                <h3>{{ section.nom }}</h3>
-                                <div class="sectionUsersHighManager">
-                                    <div class="controlAllUsers">
-                                        <div class="btn btn-sm btn-info btnSelectAllIn">Tous</div>
-                                        <div class="btn btn-sm btn-info btnSelectAllOut">Tous</div>
-                                    </div>
-                                    <div class="sectionUsersManager">
-                                        <ul class="sortableList sectionInscrits" data-sectionId="{{ sectionId }}">
-                                            {% for autorizedUser in section.autorizedUsers %}
-                                                <li class="userSectionLi" data-userId="{{ autorizedUser.id }}"><input class="sectionUserSelector" type="checkbox" /> {{ autorizedUser.firstname }} {{ autorizedUser.lastname }} ({{ autorizedUser.email }})</li>
-                                                {% set autorizedIds = autorizedIds|merge([autorizedUser.id]) %}
-                                            {% endfor %}
-                                        </ul>
-                                        <div class="sectioncontrols">
-                                            <div class="btn btn-sm btn-info btnSelectedInSection"><i class="fa fa-arrow-left" aria-hidden="true"></i></div>
-                                            <div class="btn btn-sm btn-info btnSelectedOutSection"><i class="fa fa-arrow-right" aria-hidden="true"></i></div>
+                    <div role="tabpanel" class="tab-pane" id="Sections">
+                        {% for section in item.sections %}
+                            {% set sectionId = section.id %}
+                            {% set autorizedIds = [] %}
+                            <div class="sectionManager" data-isAccesConditionne="{{ section.isAccesConditionne }}"
+                                 data-sectionId="{{ sectionId }}">
+                                <label for="section{{ sectionId }}">Accès conditionné</label><input
+                                        id="section{{ sectionId }}" class="sectionManagerChecker" type="checkbox"
+                                        {% if section.isAccesConditionne %}checked{% endif %} />
+                                <div class="sectionManagerInfos">
+                                    <h3>{{ section.nom }}</h3>
+                                    <div class="sectionUsersHighManager">
+                                        <div class="controlAllUsers">
+                                            <div class="btn btn-sm btn-info btnSelectAllIn">Tous</div>
+                                            <div class="btn btn-sm btn-info btnSelectAllOut">Tous</div>
                                         </div>
-                                        <ul class="sortableList sectionNonInscrits" data-sectionId="{{ sectionId }}">
-                                            {% for user in usersHavingAccess if user.user.id not in autorizedIds %}
-                                                <li class="userSectionLi" data-userId="{{ user.user.id }}"><input class="sectionUserSelector" type="checkbox" /> {{ user.user.firstname }} {{ user.user.lastname }} ({{ user.user.email }})</li>
-                                            {% endfor %}
-                                        </ul>
+                                        <div class="sectionUsersManager">
+                                            <ul class="sortableList sectionInscrits" data-sectionId="{{ sectionId }}">
+                                                {% for autorizedUser in section.autorizedUsers %}
+                                                    <li class="userSectionLi" data-userId="{{ autorizedUser.id }}">
+                                                        <input class="sectionUserSelector"
+                                                               type="checkbox"/> {{ autorizedUser.firstname }} {{ autorizedUser.lastname }}
+                                                        ({{ autorizedUser.email }})
+                                                    </li>
+                                                    {% set autorizedIds = autorizedIds|merge([autorizedUser.id]) %}
+                                                {% endfor %}
+                                            </ul>
+                                            <div class="sectioncontrols">
+                                                <div class="btn btn-sm btn-info btnSelectedInSection"><i
+                                                            class="fa fa-arrow-left" aria-hidden="true"></i></div>
+                                                <div class="btn btn-sm btn-info btnSelectedOutSection"><i
+                                                            class="fa fa-arrow-right" aria-hidden="true"></i></div>
+                                            </div>
+                                            <ul class="sortableList sectionNonInscrits"
+                                                data-sectionId="{{ sectionId }}">
+                                                {% for user in usersHavingAccess if user.user.id not in autorizedIds %}
+                                                    <li class="userSectionLi" data-userId="{{ user.user.id }}"><input
+                                                                class="sectionUserSelector"
+                                                                type="checkbox"/> {{ user.user.firstname }} {{ user.user.lastname }}
+                                                        ({{ user.user.email }})
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
                                     </div>
+
                                 </div>
-
                             </div>
-                        </div>
 
 
-                    {% endfor %}
-                </div>
+                        {% endfor %}
+                    </div>
                 {% endif %}
                 <div role="tabpanel" class="tab-pane fade in active" id="InscrDesinscr">
                     <div class="coloneTable col-xl-6">
@@ -613,6 +730,7 @@
                             <li>Inscrits</li>
                             <li>ou inscrits à un niveau supérieur (cohorte ou discipline)</li>
                         </ul>
+                        <div class="btn btn-sm btn-info mb-3 loadIncrits">Charger les inscrits</div>
                         <table class="tablesorter tableYes">
                             <thead>
                             <tr>
@@ -640,13 +758,12 @@
                                         {% endif %}
                                     </td>
                                     <td><a href="{{ path('user', {id:userId }) }}">{{ userId }}</a></td>
-                                    <td><a href="{{ path('user', {id:userId }) }}">{{ user.user.email }}</a>
-                                    </td>
+                                    <td><a href="{{ path('user', {id:userId }) }}">{{ user.user.email }}</a></td>
                                     <td>{{ user.user.firstname }}</td>
                                     <td>{{ user.user.lastname }}</td>
                                     <td>{{ user.user.institut }}</td>
                                     <td>{{ user.user.statut }}</td>
-                                    <td>
+                                    <td class="roleCell">
                                         {% if user.role %}
                                             {{ user.role.nom|replace({ 'Enseignant': 'Enseignant correcteur' }) }}
                                         {% endif %}
@@ -667,6 +784,21 @@
                                     {% endif %}
                                 </tr>
                             {% endfor %}
+                            {% for user in usersHavingAccessTampon %}
+                                {% set userId = user.user.id %}
+                                <tr class="userLine" data-userId="{{ userId }}">
+                                    <td><input class="selectUser" type="checkbox"></td>
+                                    <td class="userIdCell"></td>
+                                    <td class="userEmailCell"></td>
+                                    <td class="userFNCell"></td>
+                                    <td class="userLNCell"></td>
+                                    <td class="userInstitutCell"></td>
+                                    <td class="userStatutCell"></td>
+                                    <td class="userRoleCell"></td>
+                                    <td class="userCohCell"></td>
+                                    <td class="btnCellFilter"></td>
+                                </tr>
+                            {% endfor %}
                             </tbody>
                         </table>
                         <div id="pagerYes" class="pager">
@@ -681,7 +813,7 @@
                                 <img src="{{ asset('vendors/tablesorter/dist/css/images/last.png') }}"
                                      class="last"/>
                                 <select class="pagesize">
-                                    <option value="10">10</option>
+                                    <option value="10" data-toSelect="true">10</option>
                                     <option value="20">20</option>
                                     <option value="30">30</option>
                                     <option value="40">40</option>
@@ -702,6 +834,7 @@
                     {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
                         <div class="coloneTable col-xl-6">
                             <p>Utilisateurs qui n'ont aucun accès</p>
+                            <div class="btn btn-sm btn-info mb-3 loadNonIncrits">Charger les non inscrits</div>
                             <table class="tablesorter tableNo">
                                 <thead>
                                 <tr>
@@ -740,6 +873,20 @@
                                         </td>
                                     </tr>
                                 {% endfor %}
+                                {% for user in usersNoHavingAccessTampon %}
+                                    {% set userId = user.user.id %}
+                                    <tr class="userLine" data-userId="{{ userId }}">
+                                        <td><input class="selectUser" type="checkbox"></td>
+                                        <td class="userIdCell"></td>
+                                        <td class="userEmailCell"></td>
+                                        <td class="userFNCell"></td>
+                                        <td class="userLNCell"></td>
+                                        <td class="userInstitutCell"></td>
+                                        <td class="userStatutCell"></td>
+                                        <td class="userCohCell"></td>
+                                        <td class="btnCellFilter"></td>
+                                    </tr>
+                                {% endfor %}
                                 </tbody>
                             </table>
                             <div id="pagerNo" class="pager">
@@ -754,7 +901,7 @@
                                     <img src="{{ asset('vendors/tablesorter/dist/css/images/last.png') }}"
                                          class="last"/>
                                     <select class="pagesize">
-                                        <option value="10">10</option>
+                                        <option value="10" data-toSelect="true">10</option>
                                         <option value="20">20</option>
                                         <option value="30">30</option>
                                         <option value="40">40</option>
@@ -927,5 +1074,95 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div class="hiddenTabs">
+        <table class="hiddenNo">
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Email</th>
+                <th>Prénom</th>
+                <th>Nom</th>
+                <th>Institut</th>
+                <th>Statut</th>
+                <th>Cohortes</th>
+                <th>Inscrire</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for user in usersNoHavingAccessTampon %}
+                {% set userId = user.user.id %}
+                <tr class="userLine" data-userId="{{ userId }}">
+                    <td class="userIdCell"><a href="{{ path('user', {id:userId }) }}">{{ userId }}</a></td>
+                    <td class="userEmailCell">
+                        <a href="{{ path('user', {id:userId }) }}">{{ user.user.email }}</a>
+                    </td>
+                    <td class="userFNCell">{{ user.user.firstname }}</td>
+                    <td class="userLNCell">{{ user.user.lastname }}</td>
+                    <td class="userInstitutCell">{{ user.user.institut }}</td>
+                    <td class="userStatutCell">{{ user.user.statut }}</td>
+                    <td class="userCohCell">
+                        {% for key, inscr in user.myCohs %}
+                            <a href="{{ path('itemUsers', {id: inscr.cohorte.id, type: "cohorte"}) }}">{{ inscr.cohorte.nom }}
+                                ({{ inscr.role.nom|replace({ 'Enseignant': 'Enseignant correcteur' }) }}
+                                ){% if key < user.myCohs|length-1 %}, {% endif %}</a>
+                        {% endfor %}
+                    </td>
+                    <td class="btnCellFilter"><i class="btninscr fa fa-sign-in"
+                                                 aria-hidden="true"></i>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <table class="hiddenYes">
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Email</th>
+                <th>Prénom</th>
+                <th>Nom</th>
+                <th>Institut</th>
+                <th>Statut</th>
+                <th>Role</th>
+                <th>Cohortes</th>
+                <th>isInscrit</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for user in usersHavingAccessTampon %}
+                {% set userId = user.user.id %}
+                <tr class="userLine" data-userId="{{ userId }}">
+
+                    <td class="userIdCell"><a href="{{ path('user', {id:userId }) }}">{{ userId }}</a></td>
+                    <td class="userEmailCell"><a href="{{ path('user', {id:userId }) }}">{{ user.user.email }}</a>
+                    </td>
+                    <td class="userFNCell">{{ user.user.firstname }}</td>
+                    <td class="userLNCell">{{ user.user.lastname }}</td>
+                    <td class="userInstitutCell">{{ user.user.institut }}</td>
+                    <td class="userStatutCell">{{ user.user.statut }}</td>
+                    <td class="userRoleCell">
+                        {% if user.role %}
+                            {{ user.role.nom|replace({ 'Enseignant': 'Enseignant correcteur' }) }}
+                        {% endif %}
+                    </td>
+                    <td class="userCohCell">
+                        {% for key, inscr in user.myCohs %}
+                            <a href="{{ path('itemUsers', {id: inscr.cohorte.id, type: "cohorte"}) }}">{{ inscr.cohorte.nom }}
+                                ({{ inscr.role.nom|replace({ 'Enseignant': 'Enseignant correcteur' }) }}
+                                ){% if key < user.myCohs|length-1 %}, {% endif %}</a>
+                        {% endfor %}
+                    </td>
+                    <td class="btnCellFilter">
+                        {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                            {% if user.isInscrit %}
+                                <i class="btndesinscr fa fa-sign-out" aria-hidden="true"></i>
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
 {% endblock %}
