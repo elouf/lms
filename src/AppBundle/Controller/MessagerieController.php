@@ -362,21 +362,10 @@ class MessagerieController extends Controller
                             ),
                             'text/html'
                         )
-                        /*
-                         * If you also want to include a plaintext version of the message
-                        ->addPart(
-                            $this->renderView(
-                                'Emails/registration.txt.twig',
-                                array('name' => $name)
-                            ),
-                            'text/plain'
-                        )
-                        */
                     ;
                     $this->get('mailer')->send($mail);
                 }
             }
-
 
             $em->flush();
 
