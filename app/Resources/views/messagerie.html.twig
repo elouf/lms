@@ -224,12 +224,14 @@
 
             function gereAllSelected(){
                 $('.allSelected').unbind('click').click(function(){
+                    var ul = $(this).closest('ul');
                     setTimeout(function(){
-                        if($('.allSelected').closest('li').hasClass('selected')){
-                            $('.selectpicker').selectpicker('selectAll');
-                        }else{
-                            $('.selectpicker').selectpicker('deselectAll');
-                        }
+                        $('.selectpicker').selectpicker('deselectAll');
+                        ul.find('.addMsgDest').each(function(){
+                            if($(this).attr('aria-selected') === 'false'){
+                                $(this).click();
+                            }
+                        });
                     }, 100)
 
                 });
