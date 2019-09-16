@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Cours;
 use AppBundle\Entity\Discipline;
+use AppBundle\Entity\Inscription_c;
 use AppBundle\Entity\Inscription_sess;
 use AppBundle\Entity\User;
 use Ivory\CKEditorBundle\Form\Type\CKEditorType;
@@ -73,6 +74,8 @@ class DisciplineController extends Controller
 
         $repoInscription_d = $em->getRepository('AppBundle:Inscription_d');
 
+        $repoInscription_c = $em->getRepository('AppBundle:Inscription_c');
+
         $repositoryInscrSess = $em->getRepository('AppBundle:Inscription_sess');
 
         $repositoryStatsUsersDocs = $em->getRepository('AppBundle:StatsUsersDocs');
@@ -136,9 +139,22 @@ class DisciplineController extends Controller
         }
 
         $courses = array();
+
+        // on récupère en avance les cours pour lesquels l'utilisateur a été inscrit comme référent (même s'il est étudiant dans la discipline
+        // car il faudra lui afficher des infos supplémentaires sur la page "mes cours"
+        $coursReferent = array();
+        $inscrsCoursReferent = $repoInscription_c->findBy(array('user' => $user));
+        if($inscrsCoursReferent){
+            /* @var $inscrCoursReferent Inscription_c */
+            foreach ($inscrsCoursReferent as $inscrCoursReferent){
+                if($inscrCoursReferent->getRole()->getNom() === "Referent"){
+                    array_push($coursReferent, $inscrCoursReferent->getCours()->getId());
+                }
+            }
+        }
+
         // on construit le tableau des disciplines/cours complètes
         for ($i = 0; $i < count($disciplinesArray2Consider); $i++) {
-
             $courses[$i]["role"] = "";
             if($cohortes){
                 foreach($cohortes as $cohorte){
@@ -295,6 +311,7 @@ class DisciplineController extends Controller
         }
 
         return $this->render('discipline/myCourses.html.twig', [
+            'coursReferent' => $coursReferent,
             'courses' => $courses,
             'active' => $id,
             'form' => $form->createView()

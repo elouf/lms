@@ -112,14 +112,13 @@ class CoursController extends Controller
                 $role = $inscrDis->getRole()->getNom();
             }
         }
-        if($role == ""){
-            $inscrC = $repoInscription_c->findOneBy(array('user' => $user, 'cours' => $cours));
-            if($inscrC) {
+
+        $inscrC = $repoInscription_c->findOneBy(array('user' => $user, 'cours' => $cours));
+        if($inscrC) {
+            if($role == "" || $inscrC->getRole()->getNom() == "Referent") {
                 $role = $inscrC->getRole()->getNom();
             }
         }
-
-
         // on corrige le statut du user. Si c'est un enseignant, il ne doit pas être en etu. Si ce n'est pas un admin, il ne doit pas être admin
         if( !($isAdmin || (($statut == 'Responsable' || $statut == 'Formateur') && $user->getConfirmedByAdmin())) ){
             if($role == "Enseignant"){
@@ -288,7 +287,6 @@ class CoursController extends Controller
                 $nbNewDocs++;
             }
         }
-
         if($mode == "admin"){
             return $this->render('cours/oneAdmin.html.twig',
                 [

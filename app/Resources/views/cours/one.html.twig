@@ -423,7 +423,7 @@
             <div class="col-sm-3">
                 <ul class="nav nav-pills nav-stacked pull-left" role="tablist"
                     style="padding-bottom: 5px;padding-top: 5px">
-                    {% for key,val in zonesSections if ((not val.section.isAccesConditionne or (val.section.isAccesConditionne and app.user in val.section.autorizedUsers)) and val.section.isVisible == 1) or hasVisibilityRights %}
+                    {% for key,val in zonesSections if ((not val.section.isAccesConditionne or (val.section.isAccesConditionne and app.user in val.section.autorizedUsers)) and val.section.isVisible == 1) or hasVisibilityRights or isReferent %}
                         <li role="presentation" class="ongletSection{% if loop.index == 1 %} active{% endif %} {% if val.section.isVisible == 0 %} visibility_{% endif %}"
                             data-idsection="{{ val.section.id }}">
                             <a href="#t1body{{ val.section.id }}" aria-controls="t1body{{ val.section.id }}" role="tab"
@@ -442,7 +442,7 @@
                                 {% endif %}</a>
                         </li>
                     {% endif %}
-                    {% if hasVisibilityRights %}
+                    {% if hasVisibilityRights or isReferent %}
                         <li role="presentation" class="ongletAdmin">
                             <a href="{{ path('itemUsers', {id:cours.id, type: "cours" }) }}" aria-expanded="true">
                                 <i class="fa fa-users fa-fw" aria-hidden="true"> </i>Les inscrits
@@ -453,14 +453,14 @@
             </div>
             <div class="col-sm-9">
                 <div class="tab-content">
-                    {% for key,val in zonesSections if val.section.isVisible or hasVisibilityRights %}
+                    {% for key,val in zonesSections if val.section.isVisible or hasVisibilityRights or isReferent %}
                         <div role="tabpanel" data-idSection="{{ val.section.id }}"
                              class="section tab-pane fade{% if loop.index == 1 %} in active {% endif %} {% if val.section.isVisible == 0 %} visibility_{% endif %}"
                              id="t1body{{ val.section.id }}">
                             <div class="editor">
                                 <ul class="list-default">
                                     {% for keyR,valR in val.zones.content %}
-                                        {% if val.zones.containers[keyR].isVisible or hasVisibilityRights %}
+                                        {% if val.zones.containers[keyR].isVisible or hasVisibilityRights or isReferent %}
                                             {% if val.zones.type[keyR] == "lien" %}
                                                 <!--
                                                         LIEN

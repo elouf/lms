@@ -23,6 +23,12 @@ class LoadRoleData extends AbstractFixture implements OrderedFixtureInterface
         $role = $this->createItem($manager, 'Etudiant');
         $this->addReference('role_etu', $role);
 
+        $role = $this->createItem($manager, 'Stagiaire');
+        $this->addReference('role_etu', $role);
+
+        $role = $this->createItem($manager, 'Referent');
+        $this->addReference('role_etu', $role);
+
         $manager->flush();
     }
 

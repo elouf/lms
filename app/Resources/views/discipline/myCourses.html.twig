@@ -438,7 +438,7 @@
                                                             <a href="{{ path('itemUsers', {id: valC.id, type:"cours"}) }}"
                                                                class="btn btn-warning btn-sm">Inscrits</a>
                                                         {% endif %}
-                                                        {% if val.role == 'Referent' or app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                                        {% if val.role == 'Referent' or app.user.hasRole('ROLE_SUPER_ADMIN') or valC.id in coursReferent %}
                                                             <a href="{{ path('itemUsers', {id: valC.id, type:"cours"}) }}"
                                                                class="btnIncrsForReferents btn btn-warning btn-sm">Modifier</a>
                                                         {% endif %}
