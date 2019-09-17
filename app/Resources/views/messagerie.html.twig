@@ -81,11 +81,12 @@
                 var ligne = $(this).closest('tr');
                 var msgId = ligne.attr('data-msgId');
                 var myBtn = ligne.find('.infoDocument');
-
+                console.log('click')
                 if (myBtn.hasClass('infoDocActived')) {
                     $('.infoDocActived').removeClass('infoDocActived');
                     $('.contenuMsg').remove();
                 } else {
+                    console.log('getMsg')
                     $.ajax({
                         type: 'POST',
                         url: "{{path('getMsg_ajax')}}",
