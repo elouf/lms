@@ -88,26 +88,31 @@
                             // On ajoute les liens vers les fichiers de sujets
                             $('.listeDevoirSujets').append(myBtn.closest('.conteneurLiensSujets').find('.listeSujets'));
                             $('.listeDevoirSujets .listeSujets *').removeClass('hidden');
-                            console.log($('.listeDevoirSujets .listeSujets .btn').length)
                             if(!$('.listeDevoirSujets .listeSujets .btn').length){
                                 $('.listeDevoirSujets').hide();
                             }else{
                                 $('.listeDevoirSujets').show();
                             }
                             $('.contentDevoirRess').addClass('minHcontentDevoirRess');
-                            $.ajax({
-                                type: 'POST',
-                                url: "{{ path('startDevoir_ajax') }}",
-                                async: false,
-                                dataType: "json",
-                                data: {
-                                    id: idItem,
-                                    userId: $('[data-userId]').attr('data-userId')
-                                },
-                                success: function (data) {
+                            if (data['copieStart'] == null) {
+                                $.ajax({
+                                    type: 'POST',
+                                    url: "{{ path('startDevoir_ajax') }}",
+                                    async: false,
+                                    dataType: "json",
+                                    data: {
+                                        id: idItem,
+                                        userId: $('[data-userId]').attr('data-userId')
+                                    },
+                                    success: function (data) {
 
-                                }
-                            });
+                                    }
+                                });
+                            }else{
+                                // le devoir avait déjà été commencé
+
+                            }
+
                         }else{
                             $('.alert_notime').hide();
                             $('.contentDevoirRess').removeClass('minHcontentDevoirRess');
@@ -128,7 +133,6 @@
                             // On ajoute les liens vers les fichiers de sujets
                             $('.listeDevoirSujets').append(myBtn.closest('.conteneurLiensSujets').find('.listeSujets'));
                             $('.listeDevoirSujets .listeSujets *').removeClass('hidden');
-                            console.log($('.listeDevoirSujets .listeSujets .btn').length)
                             if(!$('.listeDevoirSujets .listeSujets .btn').length){
                                 $('.listeDevoirSujets').hide();
                             }else{
