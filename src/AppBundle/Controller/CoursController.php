@@ -66,11 +66,13 @@ class CoursController extends Controller
         $statut = $user->getStatut();
         $isAdmin = $user->hasRole('ROLE_SUPER_ADMIN');
 
-        $cours = $this->getDoctrine()->getRepository('AppBundle:Cours')->find($id);
-        $discipline = $cours->getDiscipline();
         $repositoryC = $this->getDoctrine()->getRepository('AppBundle:Cours');
+        $cours = $repositoryC->find($id);
+        $discipline = $cours->getDiscipline();
 
-        $users = $this->getDoctrine()->getRepository('AppBundle:User')->findBy(array('enabled' => true));
+        $repoUsers = $this->getDoctrine()->getRepository('AppBundle:User');
+        $users = $repoUsers->findBy(array('enabled' => true));
+        $usersInscrits = $repositoryC->findInscrits($cours);
 
         $repoSess = $this->getDoctrine()->getRepository('AppBundle:Session');
 
@@ -307,6 +309,7 @@ class CoursController extends Controller
                     'nbNewDocs' => $nbNewDocs,
                     'courses' => $courses,
                     'users' => $users,
+                    'usersInscrits' => $usersInscrits,
                     'isReferent' => $isReferent
                 ]);
         }elseif($mode == "ens") {

@@ -36,7 +36,7 @@
             </div>
             <select id="MyBtnSelectPicker{{ chat.id }}" class="selectpicker col-sm-9 col-xs-12"
                     data-style="MyBtnSelectPicker" title="Ajouter un responsable" data-live-search="true" multiple>
-                {% for key,user in users %}
+                {% for key,user in usersInscrits %}
                     <option value="{{ user.id }}" title="{{ user.firstname }} {{ user.lastname }}"
                             class="addNewResponsable"
                             data-content="<span data-idUser='{{ user.id }}'>{{ user.firstname }} {{ user.lastname }}</span>">{{ user.firstname }} {{ user.lastname }}</option>

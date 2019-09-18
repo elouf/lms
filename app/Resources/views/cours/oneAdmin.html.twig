@@ -543,13 +543,11 @@
 
 
             });
-            console.log("7")
             // modification d'un champ d'une ressource
             $('.champAdmin').on('input', function () {
                 var elem = $(this).closest('.courseElemAdmin');
                 detectInput(elem);
             });
-            console.log("7.1")
             $('[data-champName=typeLien]').on('change', function () {
                 var elem = $(this).closest('.courseElemAdmin');
                 detectInput(elem);
@@ -557,12 +555,10 @@
                 elem.find('.detailIconTypeLien i').remove();
                 elem.find('.detailIconTypeLien').append('<i class="fa ' + $(this).find("option:selected").attr('data-icon') + '"></i>');
             });
-            console.log("7.2")
             $('.addNewResponsable').click(function () {
                 var elem = $(this).closest('.courseElemAdmin');
                 detectInput(elem);
             });
-            console.log("7.3")
             $('[data-champName=enabled]').click(function () {
                 var elem = $(this).closest('.courseElemAdmin');
                 detectInput(elem);
@@ -576,7 +572,6 @@
                     detectInput(elem);
                 });
             }*/
-            console.log("8")
 
             function detectInput(elem) {
                 if (!elem.hasClass('inEdition')) {
@@ -796,7 +791,6 @@
                     });
                 });
             }
-            console.log("9")
 
             // Gestion particilière de l'édition des groupes de liens
             // tri de ces liens
@@ -840,7 +834,6 @@
                 }
                 detectInput(groupe);
             });
-            console.log("10")
 
             // ajout d'un lien dans un groupe
             $('.selectLienToAddToGroupe').click(function () {
@@ -1024,7 +1017,6 @@
                     });
                 });
             });
-            console.log("11")
 
             // met à jour les noms de responsables des chats
             $('.chatAdminSelectPicker').each(function () {
@@ -1050,7 +1042,6 @@
             $('select').each(function () {
                 $(this).val($(this).find("[selected=selected]").attr('value'));
             });
-            console.log("12")
 
             function updateCheckedState(btn, isVisible) {
                 if (isVisible) {
@@ -1082,7 +1073,6 @@
             } else if (getUrlParameter("ressourcesAdmin")) {
                 $('#ressourcesAdmin a').click();
             }
-            console.log("13")
 
             // upload d'un fichier pour un lien
             function uploadLinkFile(lienId, refresh, idSection) {
@@ -1190,7 +1180,6 @@
                 uploadLinkFile($(this).attr('data-idItem'), false, null);
             });
 
-            console.log("14")
 
             // upload d'un fichier pour un sujet de devoir ou pour un corrige type
             $('.selectSujetAddToDevoir, .selectCorrigeTypeAddToDevoir').click(function () {
@@ -1432,7 +1421,6 @@
                     detectInput(elem);
                 });
             });
-            console.log("16")
 
             function toJSDate(phpDateTime) {
                 var dateTime = phpDateTime.split(" ");//dateTime[0] = date, dateTime[1] = time
@@ -1501,7 +1489,6 @@
                 });
 
             });
-            console.log("17")
 
         });
 
