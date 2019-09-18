@@ -51,7 +51,6 @@
 
     <script>
         jQuery(document).ready(function () {
-            console.log("0")
             var steps = $('[data-uploadSteps]').attr('data-uploadSteps');
             var upload_srcSteps = $('[data-uploadSrcSteps]').attr('data-uploadSrcSteps');
             var folderLocation = $('[data-folderUpload]').attr('data-folderUpload');
@@ -110,7 +109,6 @@
                 height: 200,
                 allowedContent: true
             };
-            console.log("1")
 
             var uncheckedClass = 'fa-square-o';
             var checkedClass = 'fa-check-square-o';
@@ -175,7 +173,6 @@
                     }
                 });
             });
-            console.log("2")
 
             // déplacement des zones
             $('.btnMoveDown').click(function () {
@@ -223,7 +220,6 @@
                     }
                 });
             }
-            console.log("3")
 
             /*
              AJOUTS DE ZONES
@@ -299,7 +295,6 @@
                     }
                 });
             });
-            console.log("4")
 
             // click sur le check : affichage ou non de la section
             $('.activationSectionBtn').click(function () {
@@ -377,7 +372,6 @@
                     });
                 }
             });
-            console.log("5")
 
             //Ajout d'une section
             $('.nomSectionAddInput').on('input', function () {
@@ -428,7 +422,6 @@
                     }
                 });
             });
-            console.log("6")
 
             // activation du sortable des sections
             $('.sortableSections').sortable({
@@ -494,7 +487,7 @@
                     }
                 });
             });
-            console.log("7")
+            console.log("6")
 
             // GESTION DES RESSOURCES
             // suppression d'un item
@@ -551,7 +544,7 @@
 
 
             });
-
+            console.log("7")
             // modification d'un champ d'une ressource
             $('.champAdmin').on('input', function () {
                 var elem = $(this).closest('.courseElemAdmin');
