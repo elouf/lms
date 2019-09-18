@@ -749,6 +749,31 @@ class DevoirController extends Controller
         return new JsonResponse('This is not ajax!', 400);
     }
 
+    /**
+     * @Route("/deleteCopie_ajax", name="deleteCopie_ajax")
+     * @Method({"GET", "POST"})
+     */
+    public function deleteCopieAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+            $id = $request->request->get('copieId');
+
+            /* @var $copie Copie */
+            $copie = $em->getRepository('AppBundle:Copie')->findOneBy(array('id' => $id));
+            $em->remove($copie);
+
+            $em->flush();
+
+            return new JsonResponse(array(
+                    'action' =>'delete Copie',
+                    )
+            );
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
     public function sendMailCorrigeDepose(User $user, $devoir){
         $message = \Swift_Message::newInstance()
             ->setSubject('[AFADEC] Corrigé déposé')
