@@ -487,7 +487,6 @@
                     }
                 });
             });
-            console.log("6")
 
             // GESTION DES RESSOURCES
             // suppression d'un item
@@ -550,6 +549,7 @@
                 var elem = $(this).closest('.courseElemAdmin');
                 detectInput(elem);
             });
+            console.log("7.1")
             $('[data-champName=typeLien]').on('change', function () {
                 var elem = $(this).closest('.courseElemAdmin');
                 detectInput(elem);
@@ -557,10 +557,12 @@
                 elem.find('.detailIconTypeLien i').remove();
                 elem.find('.detailIconTypeLien').append('<i class="fa ' + $(this).find("option:selected").attr('data-icon') + '"></i>');
             });
+            console.log("7.2")
             $('.addNewResponsable').click(function () {
                 var elem = $(this).closest('.courseElemAdmin');
                 detectInput(elem);
             });
+            console.log("7.3")
             $('[data-champName=enabled]').click(function () {
                 var elem = $(this).closest('.courseElemAdmin');
                 detectInput(elem);
