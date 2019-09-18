@@ -110,6 +110,7 @@
                 height: 200,
                 allowedContent: true
             };
+            console.log("1")
 
             var uncheckedClass = 'fa-square-o';
             var checkedClass = 'fa-check-square-o';
@@ -174,6 +175,7 @@
                     }
                 });
             });
+            console.log("2")
 
             // déplacement des zones
             $('.btnMoveDown').click(function () {
@@ -221,6 +223,7 @@
                     }
                 });
             }
+            console.log("3")
 
             /*
              AJOUTS DE ZONES
@@ -296,6 +299,7 @@
                     }
                 });
             });
+            console.log("4")
 
             // click sur le check : affichage ou non de la section
             $('.activationSectionBtn').click(function () {
@@ -373,6 +377,7 @@
                     });
                 }
             });
+            console.log("5")
 
             //Ajout d'une section
             $('.nomSectionAddInput').on('input', function () {
@@ -423,6 +428,7 @@
                     }
                 });
             });
+            console.log("6")
 
             // activation du sortable des sections
             $('.sortableSections').sortable({
@@ -488,6 +494,7 @@
                     }
                 });
             });
+            console.log("7")
 
             // GESTION DES RESSOURCES
             // suppression d'un item
@@ -574,6 +581,8 @@
                     detectInput(elem);
                 });
             }*/
+            console.log("8")
+
             function detectInput(elem) {
                 if (!elem.hasClass('inEdition')) {
                     elem.addClass('inEdition');
@@ -792,6 +801,7 @@
                     });
                 });
             }
+            console.log("9")
 
             // Gestion particilière de l'édition des groupes de liens
             // tri de ces liens
@@ -835,6 +845,8 @@
                 }
                 detectInput(groupe);
             });
+            console.log("10")
+
             // ajout d'un lien dans un groupe
             $('.selectLienToAddToGroupe').click(function () {
                 // On commence par sauvegarder le groupe s'il était en cours d'édition
@@ -1017,6 +1029,7 @@
                     });
                 });
             });
+            console.log("11")
 
             // met à jour les noms de responsables des chats
             $('.chatAdminSelectPicker').each(function () {
@@ -1042,6 +1055,7 @@
             $('select').each(function () {
                 $(this).val($(this).find("[selected=selected]").attr('value'));
             });
+            console.log("12")
 
             function updateCheckedState(btn, isVisible) {
                 if (isVisible) {
@@ -1073,6 +1087,7 @@
             } else if (getUrlParameter("ressourcesAdmin")) {
                 $('#ressourcesAdmin a').click();
             }
+            console.log("13")
 
             // upload d'un fichier pour un lien
             function uploadLinkFile(lienId, refresh, idSection) {
@@ -1180,6 +1195,7 @@
                 uploadLinkFile($(this).attr('data-idItem'), false, null);
             });
 
+            console.log("14")
 
             // upload d'un fichier pour un sujet de devoir ou pour un corrige type
             $('.selectSujetAddToDevoir, .selectCorrigeTypeAddToDevoir').click(function () {
@@ -1421,6 +1437,7 @@
                     detectInput(elem);
                 });
             });
+            console.log("16")
 
             function toJSDate(phpDateTime) {
                 var dateTime = phpDateTime.split(" ");//dateTime[0] = date, dateTime[1] = time
@@ -1489,6 +1506,8 @@
                 });
 
             });
+            console.log("17")
+
         });
 
     </script>
