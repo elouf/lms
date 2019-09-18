@@ -37,7 +37,7 @@
             var folderLocation = $('[data-folderUpload]').attr('data-folderUpload');
             var upload_course = $('[data-courseUpload]').attr('data-courseUpload');
             var idSection;
-
+            console.log("1")
             $('.btnOpenDevoir').click(function () {
                 var idItem = $(this).closest('[data-iditem]').attr('data-iditem');
                 var myBtn = $(this);
@@ -264,6 +264,8 @@
                     }
                 });
             });
+            console.log("2")
+
             $('.btnDeleteCopieEtu').click(function () {
                 var idItem = $(this).closest('[data-iditem]').attr('data-iditem');
                 $.ajax({
@@ -282,6 +284,7 @@
                     }
                 });
             });
+            console.log("3")
 
             function launchChrono() {
                 clearInterval(chrono);
@@ -321,6 +324,7 @@
                     }
                 }, 1000);
             }
+            console.log("4")
 
             function toJSDate(phpDateTime) {
                 var dateTime = phpDateTime.split(" ");//dateTime[0] = date, dateTime[1] = time
@@ -349,6 +353,8 @@
                     }
                 }
             };
+            console.log("5")
+
             // on clique sur la section passée en paramètre (si reload de la page)
             if (getUrlParameter("idSection")) {
                 $('.ongletSection[data-idsection=' + getUrlParameter("idSection") + '] a').click();
@@ -356,6 +362,7 @@
                     $('.devoir[data-iditem=' + getUrlParameter("idDevoirOpen") + '] .btnOpenDevoir').click();
                 }
             }
+            console.log("6")
 
             $('.btnUserStatRessource').click(function (e) {
                 var ressId = $(this).attr('data-statRessId');
@@ -373,6 +380,7 @@
                     }
                 });
             });
+            console.log("7")
 
             var ressId = $('[data-coursId]').attr('data-coursId');
 
@@ -390,6 +398,8 @@
                 error: function (xhr, status, error) {
                 }
             });
+            console.log("8")
+
         });
     </script>
     {% set hasVisibilityRights = app.user.hasRole('ROLE_SUPER_ADMIN') or ((app.user.statut == 'Responsable' or app.user.statut == 'Formateur') and app.user.confirmedByAdmin) %}
