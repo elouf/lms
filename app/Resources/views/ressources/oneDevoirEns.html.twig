@@ -12,7 +12,8 @@
                 <li class="color3">
                     <a href="{{ path('myCourses') }}" class="label label-info">{{ cours.discipline.nom }}</a>
                     >
-                    <a href="{{ path('oneCours', {id: cours.id, mode: 'ens'}) }}" class="label label-info">{{ cours.nom }}</a>
+                    <a href="{{ path('oneCours', {id: cours.id, mode: 'ens'}) }}"
+                       class="label label-info">{{ cours.nom }}</a>
 
                 </li>
             </ul>
@@ -28,7 +29,7 @@
                 $('.modal').modal('toggle');
             });
 
-            $('.btnDownCopie').click(function(){
+            $('.btnDownCopie').click(function () {
                 $('.modal').modal('toggle');
                 var tr = $(this).closest('tr');
                 var link = $(this).attr('data-href');
@@ -36,7 +37,7 @@
                 $('.modal-studentName').text(tr.find('.etudiantNom').text());
                 $('.modal-dateDepot').text(tr.find('.dateDepot').text());
 
-                $('.valideDownload').unbind('click').click(function(){
+                $('.valideDownload').unbind('click').click(function () {
                     btnValidAssocCorrecteur.click();
                     //window.location.href = link;
                     window.open(link);
@@ -53,8 +54,8 @@
 
             var userId = $('[data-userId]').attr('data-userId');
 
-            var url = steps + folderLocation+idCours+'/devoir/'+idDevoir+'/corriges/';
-            var urlCopie = steps + folderLocation+idCours+'/devoir/'+idDevoir+'/copies/';
+            var url = steps + folderLocation + idCours + '/devoir/' + idDevoir + '/corriges/';
+            var urlCopie = steps + folderLocation + idCours + '/devoir/' + idDevoir + '/copies/';
 
             /*$('.corrigeUpload').each(function(){
                 var etuId = $(this).closest('[data-userId]').attr('data-userId');
@@ -76,21 +77,21 @@
 
             $('.corrigeUpload').fileupload({
                 url: steps + upload_srcSteps + folderLocation,
-                dropZone:null,
+                dropZone: null,
                 dataType: 'json',
-                add: function(e, data) {
+                add: function (e, data) {
                     var uploadErrors = [];
-                    if(data.files[0]['size'] > 5000000) {
+                    if (data.files[0]['size'] > 5000000) {
                         uploadErrors.push('Fichier trop volumineux : ne pas dépasser 5MO');
                     }
-                    if(uploadErrors.length > 0) {
+                    if (uploadErrors.length > 0) {
                         alert(uploadErrors.join("\n"));
                     } else {
                         var etuId = $(this).closest('[data-userId]').attr('data-userId');
-                        var destUrl = url+etuId+'/';
+                        var destUrl = url + etuId + '/';
                         $.ajax({
                             type: 'POST',
-                            url: "{{path('checkDirForUploadFile_ajax')}}",
+                            url: "{{ path('checkDirForUploadFile_ajax') }}",
                             async: false,
                             dataType: "json",
                             data: {
@@ -98,7 +99,7 @@
                             },
                             success: function (data) {
                             },
-                            error: function(xhr, status, error) {
+                            error: function (xhr, status, error) {
                             }
                         });
 
@@ -107,12 +108,12 @@
                 },
                 done: function (e, data) {
                     var etuId = $(this).closest('[data-userId]').attr('data-userId');
-                    var destUrl = url+etuId+'/';
+                    var destUrl = url + etuId + '/';
                     $.each(data.result.files, function (index, file) {
                         var myUrlTab = file.url.split(folderLocation);
                         $.ajax({
                             type: 'POST',
-                            url: "{{path('uploadCorrigeFile_ajax')}}",
+                            url: "{{ path('uploadCorrigeFile_ajax') }}",
                             async: false,
                             dataType: "json",
                             data: {
@@ -126,7 +127,7 @@
                             success: function (data) {
                                 window.location.href = window.location.href;
                             },
-                            error: function(xhr, status, error) {
+                            error: function (xhr, status, error) {
                             }
                         });
                     });
@@ -135,31 +136,31 @@
                 progressall: function (e, data) {
                     var progress = parseInt(data.loaded / data.total * 100, 10);
                     $('.progress-bar').css(
-                            'width',
-                            progress + '%'
+                        'width',
+                        progress + '%'
                     );
                 }
             }).prop('disabled', !$.support.fileInput)
-                    .parent().addClass($.support.fileInput ? undefined : 'disabled');
+                .parent().addClass($.support.fileInput ? undefined : 'disabled');
 
             // l'admin peut uploader une copie pour l'étudiant
             $('.copieUpload').fileupload({
                 url: steps + upload_srcSteps + folderLocation,
-                dropZone:null,
+                dropZone: null,
                 dataType: 'json',
-                add: function(e, data) {
+                add: function (e, data) {
                     var uploadErrors = [];
-                    if(data.files[0]['size'] > 5000000) {
+                    if (data.files[0]['size'] > 5000000) {
                         uploadErrors.push('Fichier trop volumineux : ne pas dépasser 5MO');
                     }
-                    if(uploadErrors.length > 0) {
+                    if (uploadErrors.length > 0) {
                         alert(uploadErrors.join("\n"));
                     } else {
                         var etuId = $(this).closest('[data-userId]').attr('data-userId');
-                        var destUrl = urlCopie+etuId+'/';
+                        var destUrl = urlCopie + etuId + '/';
                         $.ajax({
                             type: 'POST',
-                            url: "{{path('checkDirForUploadFile_ajax')}}",
+                            url: "{{ path('checkDirForUploadFile_ajax') }}",
                             async: false,
                             dataType: "json",
                             data: {
@@ -167,7 +168,7 @@
                             },
                             success: function (data) {
                             },
-                            error: function(xhr, status, error) {
+                            error: function (xhr, status, error) {
                             }
                         });
                         data.submit();
@@ -175,12 +176,12 @@
                 },
                 done: function (e, data) {
                     var etuId = $(this).closest('[data-userId]').attr('data-userId');
-                    var destUrl = urlCopie+etuId+'/';
+                    var destUrl = urlCopie + etuId + '/';
                     $.each(data.result.files, function (index, file) {
                         var myUrlTab = file.url.split(folderLocation);
                         $.ajax({
                             type: 'POST',
-                            url: "{{path('uploadCopieFile_ajax')}}",
+                            url: "{{ path('uploadCopieFile_ajax') }}",
                             async: false,
                             dataType: "json",
                             data: {
@@ -193,7 +194,7 @@
                             success: function (data) {
                                 window.location.href = window.location.href;
                             },
-                            error: function(xhr, status, error) {
+                            error: function (xhr, status, error) {
                             }
                         });
                     });
@@ -202,15 +203,15 @@
                 progressall: function (e, data) {
                     var progress = parseInt(data.loaded / data.total * 100, 10);
                     $('.progress-bar').css(
-                            'width',
-                            progress + '%'
+                        'width',
+                        progress + '%'
                     );
                 }
             }).prop('disabled', !$.support.fileInput)
-                    .parent().addClass($.support.fileInput ? undefined : 'disabled');
+                .parent().addClass($.support.fileInput ? undefined : 'disabled');
 
 
-            $('.btnEditNote').click(function(){
+            $('.btnEditNote').click(function () {
                 var tr = $(this).closest('tr');
                 var span = tr.find('.copieNote');
                 var input = tr.find('.copieNoteEdit');
@@ -220,7 +221,7 @@
                 btnValidNote.removeClass('hidden');
                 $(this).addClass('hidden');
             });
-            $('.btnValidNote').click(function(){
+            $('.btnValidNote').click(function () {
                 var tr = $(this).closest('tr');
                 var copieId = tr.attr('data-copieId');
                 var span = tr.find('.copieNote');
@@ -249,7 +250,7 @@
                     }
                 });
             });
-            $('.btnValidAssocCorrecteur').click(function(){
+            $('.btnValidAssocCorrecteur').click(function () {
                 var tr = $(this).closest('tr');
                 var copieId = tr.attr('data-copieId');
                 var span = tr.find('.copieAssocCorrecteur');
@@ -265,7 +266,7 @@
                         copieId: copieId
                     },
                     success: function (data) {
-                        span.text('Le '+data['date']+' par '+ data['correcteur']);
+                        span.text('Le ' + data['date'] + ' par ' + data['correcteur']);
                         span.removeClass('hidden');
                         btnCancel.removeClass('hidden');
                         myBtn.addClass('hidden');
@@ -274,7 +275,7 @@
                     }
                 });
             });
-            $('.btnCancelAssocCorrecteur').click(function(){
+            $('.btnCancelAssocCorrecteur').click(function () {
                 var btnCancel = $(this);
                 var tr = $(this).closest('tr');
                 var copieId = tr.attr('data-copieId');
@@ -300,9 +301,9 @@
                 });
             });
             $(".tableCopies").tablesorter({
-                sortList: [[1,0]]
+                sortList: [[1, 0]]
             });
-            $('.btnDeleteCopie').click(function(){
+            $('.btnDeleteCopie').click(function () {
                 let tr = $(this).closest('tr');
                 let id = tr.attr('data-copieId');
                 $.ajax({
@@ -323,9 +324,12 @@
         });
     </script>
 
-    <div class="container mt-10" data-coursId="{{ cours.id }}" data-idDevoir="{{ devoir.id }}" data-folderUpload="{{ folderUpload }}" data-uploadSteps="{{ uploadSteps }}" data-uploadSrcSteps="{{ uploadSrcSteps }}">
+    <div class="container mt-10" data-coursId="{{ cours.id }}" data-idDevoir="{{ devoir.id }}"
+         data-folderUpload="{{ folderUpload }}" data-uploadSteps="{{ uploadSteps }}"
+         data-uploadSrcSteps="{{ uploadSrcSteps }}">
         <div class="alert alert-info mb-10">
-            <p>Pour télécharger une copie, cliquez sur le bouton <a class="btn btn-warning btn-sm selColor"><i class="fa fa-external-link fa-2x"></i></a></p>
+            <p>Pour télécharger une copie, cliquez sur le bouton <a class="btn btn-warning btn-sm selColor"><i
+                            class="fa fa-external-link fa-2x"></i></a></p>
         </div>
 
         <div class="clearfix"></div>
@@ -368,9 +372,11 @@
                             <th>Note</th>
                             <th>Corrigé</th>
                             <th>Nouvel upload</th>
+                            {#
                             {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
                                 <th>Action</th>
                             {% endif %}
+                            #}
                         </tr>
                         </thead>
                         <tbody>
@@ -383,18 +389,21 @@
                                     <td>
                                         {% if val.copieFichier is not null %}
                                             <span class="dateDepot">{{ val.copie.dateCreation|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}</span>
-                                            <a class="btn btn-warning btn-sm selColor {% if not app.user.hasRole('ROLE_SUPER_ADMIN') %}btnDownCopie{% endif %}" target="_blank" {% if not app.user.hasRole('ROLE_SUPER_ADMIN') %}data-{% endif %}href="{{ val.copieFichier.url }}"><i class="fa fa-external-link fa-2x"></i></a>
+                                            <a class="btn btn-warning btn-sm selColor {% if not app.user.hasRole('ROLE_SUPER_ADMIN') %}btnDownCopie{% endif %}"
+                                               target="_blank"
+                                               {% if not app.user.hasRole('ROLE_SUPER_ADMIN') %}data-{% endif %}href="{{ val.copieFichier.url }}"><i
+                                                        class="fa fa-external-link fa-2x"></i></a>
                                         {% else %}
                                             Pas de copie déposée
                                         {% endif %}
                                         {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
-                                            <br />
+                                            <br/>
                                             <div class="fileUploader col-sm-6 col-xs-12">
-                                            <span class="btn btn-success fileinput-button">
-                                                <i class="glyphicon glyphicon-plus"></i>
-                                                <span>Déposer une copie</span>
-                                                <input class="copieUpload" id="copieUpload_{{ val.copie.id }}" type="file" name="files[]" multiple>
-                                            </span>
+                <span class="btn btn-success fileinput-button">
+                    <i class="glyphicon glyphicon-plus"></i>
+                    <span>Déposer une copie</span>
+                    <input class="copieUpload" id="copieUpload_{{ val.copie.id }}" type="file" name="files[]" multiple>
+                </span>
 
                                                 <div id="itemProgressCop_{{ val.copie.id }}" class="progress col-xs-12">
                                                     <div class="progress-bar progress-bar-success"></div>
@@ -404,12 +413,15 @@
                                     </td>
                                     <td class="celluleAssocCorCopie">
                                         {% if not val.copie.assocCorrecteur %}
-                                            <a class="btn btnValidAssocCorrecteur inversedBtn btn-success btn-sm" ><i class="fa fa-check fa-2x hiddenIcon"></i></a>
+                                            <a class="btn btnValidAssocCorrecteur inversedBtn btn-success btn-sm"><i
+                                                        class="fa fa-check fa-2x hiddenIcon"></i></a>
                                             <span class="copieAssocCorrecteur hidden"></span>
                                             <div class="btnCancelAssocCorrecteur hidden">x</div>
                                         {% else %}
-                                            <a class="btn btnValidAssocCorrecteur inversedBtn btn-success btn-sm hidden" ><i class="fa fa-check fa-2x hiddenIcon"></i></a>
-                                            <span class="copieAssocCorrecteur">Le {{ val.copie.assocCorrecteur.createdAt|localizeddate('none', 'none', 'fr', null, 'dd/MM/Y à H:mm' ) }} par {{ val.copie.assocCorrecteur.correcteur }}</span>
+                                            <a class="btn btnValidAssocCorrecteur inversedBtn btn-success btn-sm hidden"><i
+                                                        class="fa fa-check fa-2x hiddenIcon"></i></a>
+                                            <span class="copieAssocCorrecteur">Le {{ val.copie.assocCorrecteur.createdAt|localizeddate('none', 'none', 'fr', null, 'dd/MM/Y à H:mm' ) }}
+                                                par {{ val.copie.assocCorrecteur.correcteur }}</span>
                                             {% if app.user.hasRole('ROLE_SUPER_ADMIN') or val.copie.assocCorrecteur.correcteur.id == app.user.id %}
                                                 <div class="btnCancelAssocCorrecteur">x</div>
                                             {% endif %}
@@ -418,33 +430,41 @@
                                     <td>
                                         {% if val.copie.note >= 0 %}
                                             <span class="copieNote">{{ val.copie.note }}</span>
-                                            <input class="copieNoteEdit hidden" id="copieNoteEdit_{{ val.copie.id }}" type="text" value="{{ val.copie.note }}" />
-                                            <a class="btn btnEditNote inversedBtn btn-success btn-sm selColor" ><i class="fa fa-pencil fa-2x"></i></a>
-                                            <a class="btn btnValidNote hidden inversedBtn btn-success btn-sm selColor" ><i class="fa fa-check fa-2x"></i></a>
+                                            <input class="copieNoteEdit hidden" id="copieNoteEdit_{{ val.copie.id }}"
+                                                   type="text" value="{{ val.copie.note }}"/>
+                                            <a class="btn btnEditNote inversedBtn btn-success btn-sm selColor"><i
+                                                        class="fa fa-pencil fa-2x"></i></a>
+                                            <a class="btn btnValidNote hidden inversedBtn btn-success btn-sm selColor"><i
+                                                        class="fa fa-check fa-2x"></i></a>
                                         {% endif %}
                                     </td>
                                     <td>
                                         {% if val.corrige != "undefined" %}
                                             {{ val.corrige.dateRendu|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}
-                                            <a class="btn btn-success btn-sm selColor" target="_blank" href="{{ val.corrigeFichier.url }}"><i class="fa fa-external-link fa-2x"></i></a>
+                                            <a class="btn btn-success btn-sm selColor" target="_blank"
+                                               href="{{ val.corrigeFichier.url }}"><i
+                                                        class="fa fa-external-link fa-2x"></i></a>
                                         {% endif %}
                                     </td>
                                     <td>
                                         <div class="fileUploader col-sm-6 col-xs-12">
-                                            <span class="btn btn-success fileinput-button">
-                                                <i class="glyphicon glyphicon-plus"></i>
-                                                <span>Déposer un corrigé</span>
-                                                <input class="corrigeUpload" id="corrigeUpload_{{ val.copie.id }}" type="file" name="files[]" multiple>
-                                            </span>
+                <span class="btn btn-success fileinput-button">
+                    <i class="glyphicon glyphicon-plus"></i>
+                    <span>Déposer un corrigé</span>
+                    <input class="corrigeUpload" id="corrigeUpload_{{ val.copie.id }}" type="file" name="files[]"
+                           multiple>
+                </span>
 
                                             <div id="itemProgressCor_{{ val.copie.id }}" class="progress col-xs-12">
                                                 <div class="progress-bar progress-bar-success"></div>
                                             </div>
                                         </div>
                                     </td>
-                            {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
-                                <td><a class="btn btnDeleteCopie btn-alert btn-sm" >Supprimer</a></td>
-                            {% endif %}
+                                    {#
+                                    {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                        <td><a class="btn btnDeleteCopie btn-alert btn-sm">Supprimer</a></td>
+                                    {% endif %}
+                                    #}
                                 </tr>
                             {% endif %}
                         {% endfor %}
