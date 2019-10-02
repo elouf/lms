@@ -372,11 +372,11 @@
                             <th>Note</th>
                             <th>Corrigé</th>
                             <th>Nouvel upload</th>
-                            {#
+
                             {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
                                 <th>Action</th>
                             {% endif %}
-                            #}
+
                         </tr>
                         </thead>
                         <tbody>
@@ -460,11 +460,9 @@
                                             </div>
                                         </div>
                                     </td>
-                                    {#
                                     {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
                                         <td><a class="btn btnDeleteCopie btn-alert btn-sm">Supprimer</a></td>
                                     {% endif %}
-                                    #}
                                 </tr>
                             {% endif %}
                         {% endfor %}
