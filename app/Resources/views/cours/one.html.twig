@@ -20,7 +20,9 @@
 {% endblock %}
 
 {% block pageHeader %}
-    {% include "cours/filAriane.html.twig" %}
+    {% if hasResponsableMinRights %}
+        {% include "cours/filAriane.html.twig" %}
+    {% endif %}
 {% endblock %}
 
 {% block main %}
