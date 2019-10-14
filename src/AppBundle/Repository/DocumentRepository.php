@@ -159,12 +159,21 @@ class DocumentRepository extends \Doctrine\ORM\EntityRepository
         $repoAssocDocInscr = $this->getEntityManager()->getRepository('AppBundle:AssocDocInscr');
         $repoInscription_coh = $this->getEntityManager()->getRepository('AppBundle:Inscription_coh');
         $repoInscription_d = $this->getEntityManager()->getRepository('AppBundle:Inscription_d');
+        $repoInscription_c = $this->getEntityManager()->getRepository('AppBundle:Inscription_c');
 
         // documents associés à une inscription à une cohorte (à laquelle le user est inscrit) inscrite au cours ou à la discipline qui la contient
         if($cohortes){
             foreach($cohortes as $cohorte){
                 if($cohorte->getDisciplines()->contains($discipline) || $cohorte->getCours()->contains($cours)){
-                    if ($user->hasRole('ROLE_SUPER_ADMIN')){
+                    if (!$user->hasRole('ROLE_SUPER_ADMIN')){
+                        $inscrCoh = $repoInscription_coh->findOneBy(array('user' => $user, 'cohorte' => $cohorte));
+                        if($inscrCoh) {
+                            if ($role == 'etu' && $inscrCoh->getRole()->getNom() == "Enseignant") {
+                                $role = 'ens';
+                            }
+                        }
+                    }
+                    /*if ($user->hasRole('ROLE_SUPER_ADMIN')){
                         $inscrCohs = $repoInscription_coh->findBy(array('cohorte' => $cohorte));
                         if ($inscrCohs) {
                             foreach($inscrCohs as $inscrCoh) {
@@ -201,14 +210,44 @@ class DocumentRepository extends \Doctrine\ORM\EntityRepository
                                 }
                             }
                         }
-                    }
+                    }*/
 
                 }
             }
         }
 
+        if (!$user->hasRole('ROLE_SUPER_ADMIN')){
+            $inscrDis = $repoInscription_d->findOneBy(array('user' => $user, 'discipline' => $discipline));
+            if($inscrDis) {
+                if ($role == 'etu' && $inscrDis->getRole()->getNom() == "Enseignant") {
+                    $role = 'ens';
+                }
+            }
+            $inscrCours = $repoInscription_c->findOneBy(array('user' => $user, 'cours' => $cours));
+            if($inscrCours) {
+                if ($role == 'etu' && $inscrCours->getRole()->getNom() == "Enseignant") {
+                    $role = 'ens';
+                }
+            }
+        }
+        $assocsInscr = $repoAssocDocInscr->findBy(array('cours' => $cours));
+        if($assocsInscr){
+            for ($i = 0; $i < count($assocsInscr); $i++) {
+                if($assocsInscr[$i]->getIsImportant()){
+                    if (!in_array($assocsInscr[$i]->getDocument(), $documentsImportants) && $assocsInscr[$i]->getCours() != null) {
+                        array_push($documentsImportants, $assocsInscr[$i]->getDocument());
+                    }
+                }else{
+                    if (!in_array($assocsInscr[$i]->getDocument(), $documents) && $assocsInscr[$i]->getCours() != null) {
+                        array_push($documents, $assocsInscr[$i]->getDocument());
+                    }
+                }
+            }
+        }
+
+
         // documents associés à une inscription à la discipline contenant le cours (à laquelle le user est inscrite)
-        if ($user->hasRole('ROLE_SUPER_ADMIN')){
+        /*if ($user->hasRole('ROLE_SUPER_ADMIN')){
             $inscrDiss = $repoInscription_d->findOneBy(array('discipline' => $discipline));
             if($inscrDiss) {
                 foreach ($inscrDiss as $inscrDis) {
@@ -245,7 +284,7 @@ class DocumentRepository extends \Doctrine\ORM\EntityRepository
                     }
                 }
             }
-        }
+        }*/
         return array($documents, $documentsImportants, $role);
     }
 }
