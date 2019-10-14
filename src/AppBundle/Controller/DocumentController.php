@@ -242,6 +242,7 @@ class DocumentController extends Controller
                             $inscrCoh = $repoInscription_coh->findOneBy(array('user' => $user, 'cohorte' => $cohorte));
                             if($inscrCoh){
                                 $assocInscr->setInscription($inscrCoh);
+                                $assocInscr->setTypeInscr('coh');
                                 $estAssocie = true;
                                 break 1;
                             }
@@ -253,6 +254,7 @@ class DocumentController extends Controller
                         $inscrD = $repoInscription_d->findOneBy(array('user' => $user, 'discipline' => $discipline));
                         if($inscrD){
                             $assocInscr->setInscription($inscrD);
+                            $assocInscr->setTypeInscr('dis');
                             $estAssocie = true;
                         }
                     }
@@ -373,6 +375,7 @@ class DocumentController extends Controller
                             $inscrCoh = $repoInscription_coh->findOneBy(array('user' => $user, 'cohorte' => $cohorte));
                             if($inscrCoh){
                                 $assocInscr->setInscription($inscrCoh);
+                                $assocInscr->setTypeInscr('coh');
                                 $estAssocie = true;
                                 break 1;
                             }
@@ -384,6 +387,7 @@ class DocumentController extends Controller
                         $inscrD = $repoInscription_d->findOneBy(array('user' => $user, 'discipline' => $cours->getDiscipline()));
                         if($inscrD){
                             $assocInscr->setInscription($inscrD);
+                            $assocInscr->setTypeInscr('dis');
                             $estAssocie = true;
                         }
                     }
@@ -391,6 +395,7 @@ class DocumentController extends Controller
                         $inscrC = $repoInscription_c->findOneBy(array('user' => $user, 'cours' => $cours));
                         if($inscrC){
                             $assocInscr->setInscription($inscrC);
+                            $assocInscr->setTypeInscr('cours');
                             $estAssocie = true;
                         }
                     }

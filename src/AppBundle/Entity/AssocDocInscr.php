@@ -21,6 +21,13 @@ class AssocDocInscr extends AssocDocEntity
     private $inscription;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="typeInscr", type="string", length=255)
+     */
+    protected $typeInscr;
+
+    /**
      * @var Cours
      *
      * @ORM\ManyToOne(targetEntity="Cours")
@@ -74,5 +81,29 @@ class AssocDocInscr extends AssocDocEntity
     public function getCours()
     {
         return $this->cours;
+    }
+
+    /**
+     * Set typeInscr
+     *
+     * @param string $typeInscr
+     *
+     * @return AssocDocInscr
+     */
+    public function setTypeInscr($typeInscr)
+    {
+        $this->typeInscr = $typeInscr;
+
+        return $this;
+    }
+
+    /**
+     * Get typeInscr
+     *
+     * @return string
+     */
+    public function getTypeInscr()
+    {
+        return $this->typeInscr;
     }
 }
