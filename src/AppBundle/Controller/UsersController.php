@@ -574,7 +574,6 @@ class UsersController extends Controller
 
 
         $inscrCohRepo = $doctrine->getRepository('AppBundle:Inscription_coh');
-        //$inscrDRepo = $doctrine->getRepository('AppBundle:Inscription_d');
 
         $itemRepo = $doctrine->getRepository('AppBundle:' . $entityName);
         $item = $doctrine->getRepository('AppBundle:' . $entityName)->findOneBy(array('id' => $id));
@@ -594,6 +593,8 @@ class UsersController extends Controller
         if ($type == "cours" || $type == 'discipline') {
             $inscritsItem = $itemRepo->getUsersInscr($item);
         }elseif ($type == "cohorte"){
+            $inscritsItem = $itemRepo->getUsersInscr($item);
+        }elseif ($type == "session"){
             $inscritsItem = $itemRepo->getUsersInscr($item);
         }
 

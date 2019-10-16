@@ -1,6 +1,7 @@
 <?php
 
 namespace AppBundle\Repository;
+use AppBundle\Entity\Inscription_sess;
 
 /**
  * SessionRepository
@@ -37,5 +38,22 @@ class SessionRepository extends \Doctrine\ORM\EntityRepository
             return $inscr->getRole();
         }
         return null;
+    }
+
+    public function getUsersInscr($session){
+        $em = $this->getEntityManager();
+        $inscs = $em->getRepository('AppBundle:Inscription_sess')->findBy(array('session' => $session));
+        $users = [];
+        if($inscs){
+            /* @var $insc Inscription_sess */
+            foreach ($inscs as $insc){
+                dump($insc);
+                $user = $insc->getUser();
+                if(!in_array($insc, $users) && $user->isEnabled()) {
+                    array_push($users, $user);
+                }
+            }
+        }
+        return $users;
     }
 }
