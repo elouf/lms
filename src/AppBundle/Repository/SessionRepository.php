@@ -47,7 +47,6 @@ class SessionRepository extends \Doctrine\ORM\EntityRepository
         if($inscs){
             /* @var $insc Inscription_sess */
             foreach ($inscs as $insc){
-                dump($insc);
                 $user = $insc->getUser();
                 if(!in_array($insc, $users) && $user->isEnabled()) {
                     array_push($users, $user);
