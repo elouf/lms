@@ -39,6 +39,17 @@ class SessionRepository extends \Doctrine\ORM\EntityRepository
         }
         return null;
     }
+    public function getDateInscr($user, $item)
+    {
+        $em = $this->getEntityManager();
+
+        /* @var $inscr Inscription_sess */
+        $inscr = $em->getRepository('AppBundle:Inscription_sess')->findOneBy(array('session' => $item, 'user' => $user));
+        if($inscr){
+            return $inscr->getDateInscription();
+        }
+        return null;
+    }
 
     public function getUsersInscr($session){
         $em = $this->getEntityManager();

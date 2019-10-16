@@ -717,6 +717,10 @@ class UsersController extends Controller
                         $hasAccessItem = false;
                     }
                 }
+                $dateInscr = null;
+                if($type == "session"){
+                    $dateInscr = $itemRepo->getDateInscr($user, $item);
+                }
 
                 if ($isInscrit) {
                     $role = $itemRepo->getRole($user, $item);
@@ -725,14 +729,16 @@ class UsersController extends Controller
                             "user" => $user,
                             "isInscrit" => $isInscrit,
                             "myCohs" => $myCohs,
-                            "role" => $role
+                            "role" => $role,
+                            "dateInscr" => $dateInscr
                         ]);
                     }else{
                         array_push($usersAccessTab_tampon, [
                             "user" => $user,
                             "isInscrit" => $isInscrit,
                             "myCohs" => $myCohs,
-                            "role" => $role
+                            "role" => $role,
+                            "dateInscr" => $dateInscr
                         ]);
                     }
 
@@ -744,14 +750,16 @@ class UsersController extends Controller
                                 "user" => $user,
                                 "isInscrit" => $isInscrit,
                                 "myCohs" => $myCohs,
-                                "role" => $role
+                                "role" => $role,
+                                "dateInscr" => $dateInscr
                             ]);
                         }else{
                             array_push($usersAccessTab_tampon, [
                                 "user" => $user,
                                 "isInscrit" => $isInscrit,
                                 "myCohs" => $myCohs,
-                                "role" => $role
+                                "role" => $role,
+                                "dateInscr" => $dateInscr
                             ]);
                         }
                     } else {

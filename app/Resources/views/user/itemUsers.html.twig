@@ -418,6 +418,7 @@
                         line.find('.userRoleCell').html($(this).find('.userRoleCell').html());
                         line.find('.userStatutCell').html($(this).find('.userStatutCell').html());
                         line.find('.userCohCell').html($(this).find('.userCohCell').html());
+                        line.find('.userSessInscrDateCell').html($(this).find('.userSessInscrDateCell').html());
                         line.find('.btnCellFilter').html($(this).find('.btnCellFilter').html());
                     });
                     $('.loaderIncrits').remove();
@@ -715,6 +716,9 @@
                                 <th class="filter-select">Statut</th>
                                 <th class="filter-select">Role</th>
                                 <th>Cohortes</th>
+                                {% if (entityName == "Session") %}
+                                    <th>Date inscription Session</th>
+                                {% endif %}
                                 {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
                                     <th>Désinscrire</th>
                                 {% endif %}
@@ -747,6 +751,9 @@
                                                 ){% if key < user.myCohs|length-1 %}, {% endif %}</a>
                                         {% endfor %}
                                     </td>
+                                    {% if (entityName == "Session") %}
+                                        <td>{{ user.dateInscr }}</td>
+                                    {% endif %}
                                     {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
                                         <td class="btnCellFilter">
                                             {% if user.isInscrit %}
@@ -768,6 +775,9 @@
                                     <td class="userStatutCell"></td>
                                     <td class="userRoleCell"></td>
                                     <td class="userCohCell"></td>
+                                    {% if (entityName == "Session") %}
+                                        <td class="userSessInscrDateCell"></td>
+                                    {% endif %}
                                     <td class="btnCellFilter"></td>
                                 </tr>
                             {% endfor %}
@@ -1098,6 +1108,9 @@
                 <th>Statut</th>
                 <th>Role</th>
                 <th>Cohortes</th>
+                {% if (entityName == "Session") %}
+                <th>dateSessInscrit</th>
+                {% endif %}
                 <th>isInscrit</th>
             </tr>
             </thead>
@@ -1125,6 +1138,9 @@
                                 ){% if key < user.myCohs|length-1 %}, {% endif %}</a>
                         {% endfor %}
                     </td>
+                    {% if (entityName == "Session") %}
+                        <td class="userSessInscrDateCell">{{ user.dateInscr|localizeddate('none', 'none', null, null, 'Y/MM/dd' ) }}</td>
+                    {% endif %}
                     <td class="btnCellFilter">
                         {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
                             {% if user.isInscrit %}
