@@ -525,7 +525,7 @@ label.alertMustBeSet{
     margin-top: 15px;
     margin-bottom: 10px;
 }
-@media (min-width: 1000px) {
+@media (max-width: 1000px) {
     .courseElem video, .courseElem audio, .blocMedia{
         max-width: 100%;
     }
