@@ -703,7 +703,7 @@
                                                             {% for keyG,valG in val.zones.content[keyR] %}
                                                                 {% if '.mp4' in valG.lien.url %}
                                                                     <div class="blocMedia">
-                                                                        <video controls>
+                                                                        <video style="max-width: 600px;" controls>
                                                                             <source src="{{ valG.lien.url }}"
                                                                                     type="video/mp4">
                                                                             Votre navigateur ne supporte pas la balise

@@ -521,14 +521,9 @@ label.alertMustBeSet{
     vertical-align: top;
 }
 .courseElem video, .courseElem audio, .blocMedia{
-    max-width: 800px;
+    max-width: 100%;
     margin-top: 15px;
     margin-bottom: 10px;
-}
-@media (max-width: 1000px) {
-    .courseElem video, .courseElem audio, .blocMedia{
-        max-width: 100%;
-    }
 }
 .blocMedia video, .blocMedia audio{
     margin-top: 30px;
