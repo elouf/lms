@@ -223,6 +223,9 @@ a { font-family: inherit; color: inherit; }
 .groupeLiensAdmin .titleBar{
     background: #0048a2;
 }
+.podcastAdmin .titleBar{
+    background: #b754bb;
+}
 .forumAdmin .titleBar{
     background: #45a29e;
 }
@@ -291,6 +294,16 @@ a { font-family: inherit; color: inherit; }
 }
 .btnSetIsVertical{
     border-radius: 5px;
+}
+.btnMp3Visibility{
+    font-size: 27px;
+    color: #0ba204;
+}
+.btnMp3Visibility .fa-eye-slash{
+    color: #b91e00;
+}
+.btnMp3PodcastRessource{
+    color: #000;
 }
 
 .formCol{

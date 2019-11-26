@@ -1,0 +1,75 @@
+<li data-idZone="{{ zoneId }}"
+    data-idItem="{{ podcast.id }}"
+    class="courseElemAdmin podcastAdmin col-md-12"
+    data-typeItem="podcast"
+        {% if inSection == 'true' %}
+            {% set isVisible = "false" %}
+            {% if  visible == 1 %}
+                {% set isVisible = "true" %}
+            {% endif %}
+            data-IsVisible="{{ isVisible }}"
+        {% endif %}
+>
+    <div class="titleBar">Podcast</div>
+
+    {% if inSection == 'true' %}
+        {% include "cours/adminBtns.html.twig" with {visible: visible, isReferent: isReferent} %}
+    {% else %}
+        <div class="btnActionCol col-md-1">
+            <ul>
+                <li class="myBtn btnDelete btnLeft btnSupprElem"><i class="fa fa-times"></i></li>
+            </ul>
+        </div>
+    {% endif %}
+
+    <div class="formCol col-md-11">
+        <div class="row mb-10">
+            <div class="LabelAdmin col-sm-3">Nom</div>
+            <input data-champName="nom" class="champAdmin col-sm-9 col-xs-12" value="{{ podcast.nom }}"/>
+        </div>
+        <div class="row mb-10">
+            <div class="LabelAdmin col-sm-3">Description</div>
+            <div class="noPadding col-sm-9  col-xs-12">
+                <textarea data-champName="description" id="zone_{{ zoneId }}_podcast_{{ podcast.id }}_descr"
+                          class="complexEditor editor champAdmin" readonly>{{ podcast.description | raw }}</textarea>
+            </div>
+        </div>
+        <div class="row mb-10">
+            <div class="LabelAdmin col-sm-3">Lien RSS</div>
+            <input data-champName="rss" class="champAdmin col-sm-9 col-xs-12" value="{{ podcast.rss }}"/>
+        </div>
+        <hr class="hrCourseElem"/>
+        <div class="row">
+            <div class="LabelAdmin col-sm-2">Mp3s</div>
+            <div class="selectMp3ToAddToPodcast btn btnAdmin col-sm-1"><i class="fa fa-plus"> </i></div>
+            <div class=" col-sm-9  col-xs-12 listeItemContained sortableMp3sInPodcast">
+                {% for mp3 in podcast.mp3s|sort((a, b) => a.position <=> b.position) %}
+                    <div class="row" data-idMp3="{{ mp3.id }}">
+                        <div class="col-xs-9">
+                            <div class="myBtn btnMove inlineBtn"><i class="fa fa-arrows-alt "></i></div>
+                            <div class="nomAssoc inlineBtn">
+                                <a class="btnMp3PodcastRessource btn btn-xs" target="_blank"
+                                   href="{{ mp3.url }}">{{ mp3.nom }}</a>
+                            </div>
+                        </div>
+                        <div class="col-xs-3 text-right noPadding">
+                            <div class="myBtn btnEdit inlineBtn btnEditMp3InPocast">
+                                <i class="fa fa-pencil"></i>
+                            </div>
+                            <div class="myBtn btnMp3Visibility inlineBtn btnChangeVisibilityMp3InPocast">
+                                {% if mp3.isVisible %}
+                                    <i class="fa fa-eye" aria-hidden="true"></i>
+                                {% else %}
+                                    <i class="fa fa-eye-slash" aria-hidden="true"></i>
+                                {% endif %}
+                            </div>
+                            <div class="myBtn btnDelete inlineBtn btnRemoveMp3FromPodcast">
+                                <i class="fa fa-trash"></i>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</li>

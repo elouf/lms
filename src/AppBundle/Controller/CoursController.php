@@ -150,6 +150,8 @@ class CoursController extends Controller
         $repoCorrige = $this->getDoctrine()->getRepository('AppBundle:Corrige');
         $repoCorrigeFichier = $this->getDoctrine()->getRepository('AppBundle:CorrigeFichier');
         $repoAssocGroupeLiens = $this->getDoctrine()->getRepository('AppBundle:AssocGroupeLiens');
+        $repoPodcast = $this->getDoctrine()->getRepository('AppBundle:Podcast');
+        $repoMp3Podcast = $this->getDoctrine()->getRepository('AppBundle:Mp3Podcast');
         for($i=0; $i<count($sections); $i++){
             $datas[$i]["section"] = $sections[$i];
 
@@ -236,6 +238,10 @@ class CoursController extends Controller
                         $repositoryGaL = $repoAssocGroupeLiens->findBy(array('groupe' => $ressource), array('position' => 'ASC'));
                         $datas[$i]["zones"]["groupe"][$j] = $ressource;
                         $datas[$i]["zones"]["content"][$j] = $repositoryGaL;
+                    }elseif($ressType == "podcast") {
+                        $repositoryPodMp3 = $repoMp3Podcast->findBy(array('podcast' => $ressource), array('position' => 'ASC'));
+                        $datas[$i]["zones"]["podcast"][$j] = $ressource;
+                        $datas[$i]["zones"]["content"][$j] = $repositoryPodMp3;
                     }elseif($ressType == "libre"){
                             $datas[$i]["zones"]["content"][$j] = $ressource;
                     }else{
@@ -256,6 +262,7 @@ class CoursController extends Controller
         $cForums = $this->getDoctrine()->getRepository('AppBundle:Forum')->findBy(array('cours' => $cours));
         $cChats = $this->getDoctrine()->getRepository('AppBundle:Chat')->findBy(array('cours' => $cours));
         $cLibres = $this->getDoctrine()->getRepository('AppBundle:RessourceLibre')->findBy(array('cours' => $cours));
+        $podcasts = $this->getDoctrine()->getRepository('AppBundle:Podcast')->findBy(array('cours' => $cours));
 
         $cGroupesEntity = $this->getDoctrine()->getRepository('AppBundle:GroupeLiens')->findBy(array('cours' => $cours));
         $cGroupes = array();
@@ -299,6 +306,7 @@ class CoursController extends Controller
                     'chats' => $cChats,
                     'devoirs' => $cDevoirs,
                     'groupes' => $cGroupes,
+                    'podcasts' => $podcasts,
                     'libres' => $cLibres,
                     'typeLiens' => $typeLiens,
                     'categorieLiens' => $categorieLiens,
@@ -484,6 +492,10 @@ class CoursController extends Controller
                 $entityRessourceName = "Forum";
             }elseif($type == "chat"){
                 $entityRessourceName = "Chat";
+            }elseif($type == "podcast"){
+                $entityRessourceName = "Podcast";
+            }elseif($type == "h5p"){
+                $entityRessourceName = "RessourceH5P";
             }
 
             if($entityRessourceName == ""){

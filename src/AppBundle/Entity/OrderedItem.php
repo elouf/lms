@@ -23,7 +23,7 @@ class OrderedItem
      *
      * @param integer $position
      *
-     * @return Section
+     * @return OrderedItem
      */
     public function setPosition($position)
     {

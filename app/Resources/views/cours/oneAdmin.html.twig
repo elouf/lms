@@ -33,33 +33,36 @@
           href="{{ asset('vendors/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css') }}"/>
 
     <style>
-        .btnValidateSharedDocsIntitule{
+        .btnValidateSharedDocsIntitule {
             height: 27px;
             line-height: 27px;
         }
-        .btnDesactivated{
+
+        .btnDesactivated {
             background: #aaa !important;
             cursor: default;
         }
-        .btnDesactivated:hover{
+
+        .btnDesactivated:hover {
             color: #fff !important;
         }
-        .unvalidated{
+
+        .unvalidated {
             color: red;
         }
     </style>
 
     <script>
         jQuery(document).ready(function () {
-            var steps = $('[data-uploadSteps]').attr('data-uploadSteps');
-            var upload_srcSteps = $('[data-uploadSrcSteps]').attr('data-uploadSrcSteps');
-            var folderLocation = $('[data-folderUpload]').attr('data-folderUpload');
-            var upload_course = $('[data-courseUpload]').attr('data-courseUpload');
+            let steps = $('[data-uploadSteps]').attr('data-uploadSteps');
+            let upload_srcSteps = $('[data-uploadSrcSteps]').attr('data-uploadSrcSteps');
+            let folderLocation = $('[data-folderUpload]').attr('data-folderUpload');
+            let upload_course = $('[data-courseUpload]').attr('data-courseUpload');
 
             CKEDITOR.config.entities = false;
             CKEDITOR.config.entities_latin = false;
 
-            var config = {
+            let config = {
                 configname: "lightConfig",
                 toolbar:
                     [
@@ -79,7 +82,7 @@
                 height: 100,
                 allowedContent: true
             };
-            var config2 = {
+            let config2 = {
                 configname: "hugeConfig",
                 toolbar:
                     [
@@ -110,8 +113,8 @@
                 allowedContent: true
             };
 
-            var uncheckedClass = 'fa-square-o';
-            var checkedClass = 'fa-check-square-o';
+            let uncheckedClass = 'fa-square-o';
+            let checkedClass = 'fa-check-square-o';
 
             // les ckeditors ne sont pas chargés à l'init, sinon la page est bcp trop lourde à charger
             $('.simpleEditor[readonly]').click(function () {
@@ -127,10 +130,10 @@
             function activateCK(editor, config) {
                 editor.attr("readonly", false);
                 editor.ckeditor(config);
-                for (var i in CKEDITOR.instances) {
+                for (let i in CKEDITOR.instances) {
                     CKEDITOR.instances[i].on('change', function () {
-                        var idItem = $(this).attr('name');
-                        var elem = $('#' + idItem).closest('.courseElemAdmin');
+                        let idItem = $(this).attr('name');
+                        let elem = $('#' + idItem).closest('.courseElemAdmin');
                         detectInput(elem);
                     });
                 }
@@ -138,10 +141,10 @@
 
             // click sur le check : affichage ou non de la zoneRessource
             $('.activationBtn').click(function () {
-                var elem = $(this).closest('.courseElemAdmin');
-                var id = elem.attr('data-idzone');
-                var isVisible = $(this).hasClass(checkedClass);
-                var myBtn = $(this);
+                let elem = $(this).closest('.courseElemAdmin');
+                let id = elem.attr('data-idzone');
+                let isVisible = $(this).hasClass(checkedClass);
+                let myBtn = $(this);
                 $.ajax({
                     type: "POST",
                     url: "{{ path('activateZone_ajax') }}",
@@ -159,8 +162,8 @@
 
             // click sur la suppression de la zoneRessource
             $('.btnDeleteElem').click(function () {
-                var id = $(this).closest('.courseElemAdmin').attr('data-idzone');
-                var myBtn = $(this);
+                let id = $(this).closest('.courseElemAdmin').attr('data-idzone');
+                let myBtn = $(this);
                 $.ajax({
                     type: "POST",
                     url: "{{ path('deleteZone_ajax') }}",
@@ -168,7 +171,7 @@
                         id: id
                     },
                     dataType: "json",
-                    success: function (response) {
+                    success: function () {
                         myBtn.closest('.courseElemAdmin').remove();
                     }
                 });
@@ -176,30 +179,30 @@
 
             // déplacement des zones
             $('.btnMoveDown').click(function () {
-                var elem = $(this).closest('.courseElemAdmin');
-                var next = elem.next('.courseElemAdmin');
+                let elem = $(this).closest('.courseElemAdmin');
+                let next = elem.next('.courseElemAdmin');
                 elem.insertAfter(next);
                 reorderZone($(this).closest('.courseElems'))
             });
             $('.btnMoveUp').click(function () {
-                var elem = $(this).closest('.courseElemAdmin');
-                var prev = elem.prev('.courseElemAdmin');
+                let elem = $(this).closest('.courseElemAdmin');
+                let prev = elem.prev('.courseElemAdmin');
                 elem.insertBefore(prev);
                 reorderZone($(this).closest('.courseElems'))
             });
             $('.btnMoveTotalDown').click(function () {
-                var elem = $(this).closest('.courseElemAdmin');
+                let elem = $(this).closest('.courseElemAdmin');
                 elem.appendTo(elem.closest('.courseElems'));
                 reorderZone($(this).closest('.courseElems'))
             });
             $('.btnMoveTotalUp').click(function () {
-                var elem = $(this).closest('.courseElemAdmin');
+                let elem = $(this).closest('.courseElemAdmin');
                 elem.prependTo(elem.parent());
                 reorderZone($(this).closest('.courseElems'))
             });
 
             function reorderZone(zoneList) {
-                var arrayZones = [];
+                let arrayZones = [];
                 zoneList.find('[data-idzone]').each(function () {
                     arrayZones.push($(this).attr('data-idzone'));
                 });
@@ -233,12 +236,11 @@
 
 
             // Ajout de nouvelles ressources
-            $('.addNewItem').click(function() {
-                console.log('click2');
-                var idItem = 0;
-                var idSection = $(this).closest('.section').attr('data-idSection');
+            $('.addNewItem').click(function () {
+                let idItem = 0;
+                let idSection = $(this).closest('.section').attr('data-idSection');
 
-                var typeItem;
+                let typeItem;
                 if ($(this).hasClass('addNewTypeDevoir')) {
                     typeItem = "devoir";
                 } else if ($(this).hasClass('addNewTypeLien')) {
@@ -251,31 +253,10 @@
                     typeItem = "forum";
                 } else if ($(this).hasClass('addNewTypeChat')) {
                     typeItem = "chat";
+                } else if ($(this).hasClass('addNewTypePodcast')) {
+                    typeItem = "podcast";
                 }
-                console.log(typeItem+"2");
-           /* });
-            $("#ressCreaSelectPicker").on("changed.bs.select", function(e, clickedIndex, newValue, oldValue) {
-                console.log('click');
-                var selectedD = $(this).find('option').eq(clickedIndex)
-                var idItem = 0;
-                var idSection = $(this).closest('.section').attr('data-idSection');
 
-                var typeItem;
-                if (selectedD.hasClass('addNewTypeDevoir')) {
-                    typeItem = "devoir";
-                } else if (selectedD.hasClass('addNewTypeLien')) {
-                    typeItem = "lien";
-                } else if (selectedD.hasClass('addNewTypeLibre')) {
-                    typeItem = "libre";
-                } else if (selectedD.hasClass('addNewTypeGroupe')) {
-                    typeItem = "groupe";
-                } else if (selectedD.hasClass('addNewTypeForum')) {
-                    typeItem = "forum";
-                } else if (selectedD.hasClass('addNewTypeChat')) {
-                    typeItem = "chat";
-                }
-                console.log(typeItem);
-*/
                 $.ajax({
                     type: "POST",
                     url: "{{ path('addZone_ajax') }}",
@@ -298,9 +279,9 @@
 
             // click sur le check : affichage ou non de la section
             $('.activationSectionBtn').click(function () {
-                var id = $(this).closest('.adminSectionRow').attr('data-idsection');
-                var isVisible = $(this).hasClass(checkedClass);
-                var myBtn = $(this);
+                let id = $(this).closest('.adminSectionRow').attr('data-idsection');
+                let isVisible = $(this).hasClass(checkedClass);
+                let myBtn = $(this);
                 $.ajax({
                     type: "POST",
                     url: "{{ path('activateSection_ajax') }}",
@@ -324,12 +305,12 @@
             // modification du nom d'une section
             $('.nomSectionInput').on('input', function () {
                 if (!$(this).hasClass('inEdition')) {
-                    var sectionInput = $(this);
+                    let sectionInput = $(this);
                     sectionInput.addClass('inEdition');
                     sectionInput.after('<div class="myBtn btnSaveInputChange btnAdmin btnMiddle col-sm-1 col-xs-1"><i class="fa fa-floppy-o"></i></div>')
                     sectionInput.next('.btnSaveInputChange').click(function () {
-                        var id = sectionInput.closest('.adminSectionRow').attr('data-idsection');
-                        var nom = sectionInput.val();
+                        let id = sectionInput.closest('.adminSectionRow').attr('data-idsection');
+                        let nom = sectionInput.val();
                         $.ajax({
                             type: 'POST',
                             url: "{{ path('changeNameSection_ajax') }}",
@@ -339,7 +320,7 @@
                                 id: id,
                                 nom: nom
                             },
-                            success: function (data) {
+                            success: function () {
                                 sectionInput.removeClass('inEdition');
                                 sectionInput.next('.btnSaveInputChange').remove();
                                 $('.ongletSection[data-idsection=' + id + '] .nomSection').text(nom);
@@ -350,12 +331,12 @@
             });
             $('.faIconSectionInput').on('input', function () {
                 if (!$(this).hasClass('inEdition')) {
-                    var sectionInput = $(this);
+                    let sectionInput = $(this);
                     sectionInput.addClass('inEdition');
                     sectionInput.after('<div class="myBtn btnSaveInputChange btnAdmin btnMiddle col-sm-1 col-xs-1"><i class="fa fa-floppy-o"></i></div>')
                     sectionInput.next('.btnSaveInputChange').click(function () {
-                        var id = sectionInput.closest('.adminSectionRow').attr('data-idsection');
-                        var faIcon = sectionInput.val();
+                        let id = sectionInput.closest('.adminSectionRow').attr('data-idsection');
+                        let faIcon = sectionInput.val();
                         $.ajax({
                             type: 'POST',
                             url: "{{ path('changefaIconSection_ajax') }}",
@@ -365,7 +346,7 @@
                                 id: id,
                                 faIcon: faIcon
                             },
-                            success: function (data) {
+                            success: function () {
                                 window.location.href = window.location.href.replace(/[\?#].*|$/, "?sectionAdmin");
                             }
                         });
@@ -375,8 +356,8 @@
 
             //Ajout d'une section
             $('.nomSectionAddInput').on('input', function () {
-                var sectionInput = $(this);
-                if (!$(this).next('.btnAddSection').hasClass('actif') && $(this).val() != "") {
+                let sectionInput = $(this);
+                if (!$(this).next('.btnAddSection').hasClass('actif') && $(this).val() !== "") {
                     sectionInput.addClass('inEdition');
                     sectionInput.next('.btnAddSection').addClass('actif').click(function () {
                         $.ajax({
@@ -393,7 +374,7 @@
                             }
                         });
                     });
-                } else if ($(this).val() == "") {
+                } else if ($(this).val() === "") {
                     sectionInput.removeClass('inEdition');
                     $('.btnAddSection').removeClass('actif').unbind('click');
                 }
@@ -401,7 +382,7 @@
 
             // click sur la suppression de la section
             $('.btnDeleteSection').click(function () {
-                var id = $(this).closest('.adminSectionRow').attr('data-idsection');
+                let id = $(this).closest('.adminSectionRow').attr('data-idsection');
                 $.ajax({
                     type: "POST",
                     url: "{{ path('deleteSection_ajax') }}",
@@ -413,7 +394,7 @@
                         if (!response["error"]) {
                             window.location.href = window.location.href.replace(/[\?#].*|$/, "?sectionAdmin");
                         } else {
-                            var chaine = "la zone contenue";
+                            let chaine = "la zone contenue";
                             if (response["nbZone"] > 1) {
                                 chaine = "les " + response["nbZone"] + " zones contenues";
                             }
@@ -429,9 +410,9 @@
                 handle: ".btnMove",
                 cancel: ".notSortable",
                 stop: function (event, ui) {
-                    var arraySections = [];
-                    var itemDropped = ui.item;
-                    var id = itemDropped.attr('data-idsection');
+                    let arraySections = [];
+                    let itemDropped = ui.item;
+                    let id = itemDropped.attr('data-idsection');
                     $(this).find('[data-idsection]').each(function () {
                         arraySections.push($(this).attr('data-idsection'));
                     });
@@ -446,10 +427,10 @@
                         success: function (response) {
                             if (!response["error"]) {
                                 //on remet aussi à la bonne place l'onglet de gauche correspondant
-                                var onglet = $('.ongletSection[data-idsection=' + id + ']');
-                                var newOngleIndex = itemDropped.index();
+                                let onglet = $('.ongletSection[data-idsection=' + id + ']');
+                                let newOngleIndex = itemDropped.index();
 
-                                var nbAdminIndex = $('.ongletAdmin').length;
+                                let nbAdminIndex = $('.ongletAdmin').length;
 
                                 onglet.insertAfter($('.ongletSection:eq(' + parseInt(newOngleIndex - 2 + nbAdminIndex) + ')'));
                             } else {
@@ -466,9 +447,9 @@
 
             // ajout d'un item du cours dans une section (via la modale)
             $('.btnAddItem').click(function () {
-                var idItem = $(this).closest('.item').attr('data-idItem');
-                var typeItem = $(this).closest('.item').attr('data-typeItem');
-                var idSection = $(this).closest('.modal-body').attr('data-idSection');
+                let idItem = $(this).closest('.item').attr('data-idItem');
+                let typeItem = $(this).closest('.item').attr('data-typeItem');
+                let idSection = $(this).closest('.modal-body').attr('data-idSection');
                 $.ajax({
                     type: "POST",
                     url: "{{ path('addZone_ajax') }}",
@@ -491,9 +472,9 @@
             // GESTION DES RESSOURCES
             // suppression d'un item
             $('.btnSupprElem:not(.btnDeleteSection)').click(function () {
-                var idItem = $(this).closest('.courseElemAdmin').attr('data-idItem');
-                var typeItem = $(this).closest('.courseElemAdmin').attr('data-typeItem');
-                var idSection = null;
+                let idItem = $(this).closest('.courseElemAdmin').attr('data-idItem');
+                let typeItem = $(this).closest('.courseElemAdmin').attr('data-typeItem');
+                let idSection = null;
 
                 if ($(this).closest('[data-idSection]')) {
                     idSection = $(this).closest('[data-idSection]').attr('data-idSection');
@@ -545,69 +526,62 @@
             });
             // modification d'un champ d'une ressource
             $('.champAdmin').on('input', function () {
-                var elem = $(this).closest('.courseElemAdmin');
+                let elem = $(this).closest('.courseElemAdmin');
                 detectInput(elem);
             });
             $('[data-champName=typeLien]').on('change', function () {
-                var elem = $(this).closest('.courseElemAdmin');
+                let elem = $(this).closest('.courseElemAdmin');
                 detectInput(elem);
                 // mise à jour de l'icone (prévisualisation) ) chaque changement d'option
                 elem.find('.detailIconTypeLien i').remove();
                 elem.find('.detailIconTypeLien').append('<i class="fa ' + $(this).find("option:selected").attr('data-icon') + '"></i>');
             });
             $('.addNewResponsable').click(function () {
-                var elem = $(this).closest('.courseElemAdmin');
+                let elem = $(this).closest('.courseElemAdmin');
                 detectInput(elem);
             });
             $('[data-champName=enabled]').click(function () {
-                var elem = $(this).closest('.courseElemAdmin');
+                let elem = $(this).closest('.courseElemAdmin');
                 detectInput(elem);
             });
-
-            /*for (var i in CKEDITOR.instances) {
-                CKEDITOR.instances[i].on('change', function() {
-
-                    var idItem = $(this).attr('name');
-                    var elem = $('#'+idItem).closest('.courseElemAdmin');
-                    detectInput(elem);
-                });
-            }*/
 
             function detectInput(elem) {
                 if (!elem.hasClass('inEdition')) {
                     elem.addClass('inEdition');
-                    if(elem.find('.btnActionCol .btnDelete').length){
+                    if (elem.find('.btnActionCol .btnDelete').length) {
                         elem.find('.btnActionCol .btnDelete:first').before('<div class="myBtn btnSaveInputChange btnAdmin btnLeft"><i class="fa fa-floppy-o"></i></div>');
-                    }else{
+                    } else {
                         elem.find('.btnActionCol').append('<div class="myBtn btnSaveInputChange btnAdmin btnLeft"><i class="fa fa-floppy-o"></i></div>');
                     }
-                    if (elem.attr('data-typeItem') == 'lien') {
+                    if (elem.attr('data-typeItem') === 'lien') {
                         changeLien(elem);
-                    } else if (elem.attr('data-typeItem') == 'groupe') {
+                    } else if (elem.attr('data-typeItem') === 'groupe') {
                         changeGroupe(elem);
-                    } else if (elem.attr('data-typeItem') == 'libre') {
+                    } else if (elem.attr('data-typeItem') === 'libre') {
                         changeLibre(elem);
-                    } else if (elem.attr('data-typeItem') == 'devoir') {
+                    } else if (elem.attr('data-typeItem') === 'devoir') {
                         changeDevoir(elem);
-                    } else if (elem.attr('data-typeItem') == 'forum') {
+                    } else if (elem.attr('data-typeItem') === 'forum') {
                         changeForum(elem);
-                    } else if (elem.attr('data-typeItem') == 'chat') {
+                    } else if (elem.attr('data-typeItem') === 'chat') {
                         changeChat(elem);
+                    } else if (elem.attr('data-typeItem') === 'podcast') {
+                        changePodcast(elem);
                     }
                 }
             }
 
             function changeLien(lien) {
                 lien.find('.btnSaveInputChange').click(function () {
-                    var idSection = $(this).closest('[data-idSection]').attr('data-idSection');
-                    var id = lien.attr('data-idItem');
-                    var nom = lien.find('[data-champName=nom]').val();
-                    var url = lien.find('[data-champName=url]').val();
-                    var description = lien.find('textarea[data-champName=description]').val();
+                    let idSection = $(this).closest('[data-idSection]').attr('data-idSection');
+                    let id = lien.attr('data-idItem');
+                    let nom = lien.find('[data-champName=nom]').val();
+                    let url = lien.find('[data-champName=url]').val();
+                    let description = lien.find('textarea[data-champName=description]').val();
                     if (CKEDITOR.instances[lien.find('[data-champName=description]').attr('id')]) {
                         description = CKEDITOR.instances[lien.find('[data-champName=description]').attr('id')].getData();
                     }
-                    var typeLien = lien.find('[data-champName=typeLien]').val();
+                    let typeLien = lien.find('[data-champName=typeLien]').val();
 
                     $.ajax({
                         type: 'POST',
@@ -621,7 +595,7 @@
                             description: description,
                             typeLien: typeLien
                         },
-                        success: function (data) {
+                        success: function () {
                             refreshInSection(idSection);
                         }
                     });
@@ -630,15 +604,15 @@
 
             function changeChat(chat) {
                 chat.find('.btnSaveInputChange').click(function () {
-                    var idSection = $(this).closest('[data-idSection]').attr('data-idSection');
-                    var id = chat.attr('data-idItem');
-                    var nom = chat.find('[data-champName=nom]').val();
-                    var description = chat.find('textarea[data-champName=description]').val();
+                    let idSection = $(this).closest('[data-idSection]').attr('data-idSection');
+                    let id = chat.attr('data-idItem');
+                    let nom = chat.find('[data-champName=nom]').val();
+                    let description = chat.find('textarea[data-champName=description]').val();
                     if (CKEDITOR.instances[chat.find('[data-champName=description]').attr('id')]) {
                         description = CKEDITOR.instances[chat.find('[data-champName=description]').attr('id')].getData();
                     }
-                    var userResponsables = [];
-                    var enabled = chat.find('[data-champName=enabled]').is(':checked');
+                    let userResponsables = [];
+                    let enabled = chat.find('[data-champName=enabled]').is(':checked');
                     chat.find('.addNewResponsable[aria-selected="true"]').each(function () {
                         userResponsables.push($(this).find('[data-idUser]').attr('data-idUser'));
                     });
@@ -655,7 +629,7 @@
                             userResponsables: userResponsables,
                             enabled: enabled
                         },
-                        success: function (data) {
+                        success: function () {
                             refreshInSection(idSection);
                         }
                     });
@@ -664,10 +638,10 @@
 
             function changeForum(forum) {
                 forum.find('.btnSaveInputChange').click(function () {
-                    var idSection = $(this).closest('[data-idSection]').attr('data-idSection');
-                    var id = forum.attr('data-idItem');
-                    var nom = forum.find('[data-champName=nom]').val();
-                    var description = forum.find('textarea[data-champName=description]').val();
+                    let idSection = $(this).closest('[data-idSection]').attr('data-idSection');
+                    let id = forum.attr('data-idItem');
+                    let nom = forum.find('[data-champName=nom]').val();
+                    let description = forum.find('textarea[data-champName=description]').val();
                     if (CKEDITOR.instances[forum.find('[data-champName=description]').attr('id')]) {
                         description = CKEDITOR.instances[forum.find('[data-champName=description]').attr('id')].getData();
                     }
@@ -682,7 +656,7 @@
                             nom: nom,
                             description: description
                         },
-                        success: function (data) {
+                        success: function () {
                             refreshInSection(idSection);
                         }
                     });
@@ -691,9 +665,9 @@
 
             function changeLibre(lien) {
                 lien.find('.btnSaveInputChange').click(function () {
-                    var idSection = $(this).closest('[data-idSection]').attr('data-idSection');
-                    var id = lien.attr('data-idItem');
-                    var description = lien.find('textarea[data-champName=description]').val();
+                    let idSection = $(this).closest('[data-idSection]').attr('data-idSection');
+                    let id = lien.attr('data-idItem');
+                    let description = lien.find('textarea[data-champName=description]').val();
                     if (CKEDITOR.instances[lien.find('[data-champName=description]').attr('id')]) {
                         description = CKEDITOR.instances[lien.find('[data-champName=description]').attr('id')].getData();
                     }
@@ -707,7 +681,7 @@
                             id: id,
                             description: description
                         },
-                        success: function (data) {
+                        success: function () {
                             refreshInSection(idSection);
                         }
                     });
@@ -716,12 +690,12 @@
 
             function changeGroupe(groupe) {
                 groupe.find('.btnSaveInputChange').click(function () {
-                    var idSection = $(this).closest('[data-idSection]').attr('data-idSection');
-                    var id = groupe.attr('data-idItem');
-                    var nom = groupe.find('[data-champName=nom]').val();
-                    var isVertical = groupe.find('.btnSetIsVertical i').hasClass(checkedClass);
+                    let idSection = $(this).closest('[data-idSection]').attr('data-idSection');
+                    let id = groupe.attr('data-idItem');
+                    let nom = groupe.find('[data-champName=nom]').val();
+                    let isVertical = groupe.find('.btnSetIsVertical i').hasClass(checkedClass);
 
-                    var description = groupe.find('textarea[data-champName=description]').val();
+                    let description = groupe.find('textarea[data-champName=description]').val();
                     if (CKEDITOR.instances[groupe.find('[data-champName=description]').attr('id')]) {
                         description = CKEDITOR.instances[groupe.find('[data-champName=description]').attr('id')].getData();
                     }
@@ -737,7 +711,37 @@
                             description: description,
                             isVertical: isVertical
                         },
-                        success: function (data) {
+                        success: function () {
+                            refreshInSection(idSection);
+                        }
+                    });
+                });
+            }
+
+            function changePodcast(podcast) {
+                podcast.find('.btnSaveInputChange').click(function () {
+                    let idSection = $(this).closest('[data-idSection]').attr('data-idSection');
+                    let id = podcast.attr('data-idItem');
+                    let nom = podcast.find('[data-champName=nom]').val();
+                    let rss = podcast.find('[data-champName=rss]').val();
+
+                    let description = podcast.find('textarea[data-champName=description]').val();
+                    if (CKEDITOR.instances[podcast.find('[data-champName=description]').attr('id')]) {
+                        description = CKEDITOR.instances[podcast.find('[data-champName=description]').attr('id')].getData();
+                    }
+
+                    $.ajax({
+                        type: 'POST',
+                        url: "{{ path('changeContentPodcast_ajax') }}",
+                        async: false,
+                        dataType: "json",
+                        data: {
+                            id: id,
+                            nom: nom,
+                            description: description,
+                            rss: rss
+                        },
+                        success: function () {
                             refreshInSection(idSection);
                         }
                     });
@@ -746,23 +750,23 @@
 
             function changeDevoir(devoir) {
                 devoir.find('.btnSaveInputChange').click(function () {
-                    var id = devoir.attr('data-idItem');
-                    var nom = devoir.find('[data-champName=nom]').val();
-                    var description = devoir.find('textarea[data-champName=description]').val();
-                    var commentaireCopieRendue = devoir.find('textarea[data-champName=commentaireCopieRendue]').val();
+                    let id = devoir.attr('data-idItem');
+                    let nom = devoir.find('[data-champName=nom]').val();
+                    let description = devoir.find('textarea[data-champName=description]').val();
+                    let commentaireCopieRendue = devoir.find('textarea[data-champName=commentaireCopieRendue]').val();
                     if (CKEDITOR.instances[devoir.find('[data-champName=description]').attr('id')]) {
                         description = CKEDITOR.instances[devoir.find('[data-champName=description]').attr('id')].getData();
                     }
                     if (CKEDITOR.instances[devoir.find('[data-champName=commentaireCopieRendue]').attr('id')]) {
                         commentaireCopieRendue = CKEDITOR.instances[devoir.find('[data-champName=commentaireCopieRendue]').attr('id')].getData();
                     }
-                    var dureeH = devoir.find('[data-champName=dureeHeures] input').val();
-                    var dureeM = devoir.find('[data-champName=dureeMinutes] input').val();
-                    var bareme = devoir.find('[data-champName=bareme] input').val();
-                    var dateDebut = devoir.find('[data-champName=dateDebut] input').val();
-                    var dateFin = devoir.find('[data-champName=dateFin] input').val();
-                    var mustReload = $(this).hasClass('mustReload');
-                    var idSection = $(this).closest('[data-idSection]').attr('data-idSection');
+                    let dureeH = devoir.find('[data-champName=dureeHeures] input').val();
+                    let dureeM = devoir.find('[data-champName=dureeMinutes] input').val();
+                    let bareme = devoir.find('[data-champName=bareme] input').val();
+                    let dateDebut = devoir.find('[data-champName=dateDebut] input').val();
+                    let dateFin = devoir.find('[data-champName=dateFin] input').val();
+                    let mustReload = $(this).hasClass('mustReload');
+                    let idSection = $(this).closest('[data-idSection]').attr('data-idSection');
 
                     $.ajax({
                         type: 'POST',
@@ -780,7 +784,7 @@
                             dateFin: dateFin,
                             commentaireCopieRendue: commentaireCopieRendue
                         },
-                        success: function (data) {
+                        success: function () {
                             if (mustReload) {
                                 refreshInSection(idSection);
                             } else {
@@ -792,6 +796,187 @@
                 });
             }
 
+            // Gestion particilière de l'édition des podcasts
+            // tri de ces mp3s
+            $('.sortableMp3sInPodcast').sortable({
+                placeholder: "ui-state-highlight",
+                handle: ".btnMove",
+                cancel: ".notSortable",
+                stop: function (event, ui) {
+                    let arrayAssocs = [];
+                    $(this).find('[data-idMp3]').each(function () {
+                        arrayAssocs.push($(this).attr('data-idMp3'));
+                    });
+
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ path('sortMp3InPodcast_ajax') }}",
+                        data: {
+                            arrayAssocs: arrayAssocs
+                        },
+                        dataType: "json",
+                        success: function (response) {
+                            if (!response["error"]) {
+
+                            } else {
+                                console.log("Erreur de tri des mp3s");
+                            }
+                        }
+                    });
+                }
+            });
+            $('.selectMp3ToAddToPodcast').click(function () {
+                // On commence par sauvegarder le podcast s'il était en cours d'édition
+                let podcast = $(this).closest('.courseElemAdmin');
+                if (podcast.find('.btnSaveInputChange')) {
+                    podcast.find('.btnSaveInputChange').click();
+                }
+                let podcastId = podcast.attr('data-idItem');
+
+                $('.btnAddNewMp3ToPodcast').hide();
+                let urlMp3 = '';
+
+                // puis, on affiche la popup d'ajout d'un mp3
+                let idSection = $('.ongletSection.active').attr('data-idSection');
+                $('.modal').modal();
+                $('.modal .modal-body').hide();
+                $('.modal .modal-body[data-contentModal=ajoutMp3ToPodcast]').attr('data-idPodcast', $(this).closest('[data-typeitem=podcast]').attr('data-iditem')).show();
+
+                $('.alertMustBeSet').removeClass('alertMustBeSet');
+
+                // si le folder n'existe pas, on le créé
+                let coursId = $('[data-coursId]').attr('data-coursId');
+                let url = steps + folderLocation + coursId + '/podcasts/' + podcastId + '/';
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ path('checkDirForUploadFile_ajax') }}",
+                    async: false,
+                    dataType: "json",
+                    data: {
+                        url: url
+                    },
+                    success: function (data) {
+                    },
+                    error: function (xhr, status, error) {
+                    }
+                });
+
+                // gestion de l'upload
+                $('#mp3Upload').fileupload({
+                    url: steps + upload_srcSteps + upload_course + folderLocation,
+                    dropZone: null,
+                    dataType: 'json',
+                    add: function (e, data) {
+                        let uploadErrors = [];
+                        if (data.files[0]['size'] > 256000000) {
+                            uploadErrors.push('Fichier trop volumineux : ne pas dépasser 256MO');
+                        }
+                        if (uploadErrors.length > 0) {
+                            alert(uploadErrors.join("\n"));
+                        } else {
+                            data.submit();
+                        }
+                    },
+                    done: function (e, data) {
+                        $.each(data.result.files, function (index, file) {
+                            let myUrlTab = file.url.split(folderLocation);
+                            $.ajax({
+                                type: 'POST',
+                                url: "{{ path('uploadMp3Podcast_ajax') }}",
+                                async: false,
+                                dataType: "json",
+                                data: {
+                                    type: file.type,
+                                    url: steps + folderLocation + myUrlTab[1],
+                                    urlDest: url,
+                                    currentUrl: window.location.pathname
+                                },
+                                success: function (data) {
+                                    urlMp3 = data['newLien'];
+                                    console.log(urlMp3)
+                                    $('.btnAddNewMp3ToPodcast').show();
+                                },
+                                error: function () {
+                                    $('.modal').modal('toggle');
+                                }
+                            });
+                        });
+
+                    },
+                    progressall: function (e, data) {
+                        let progress = parseInt(data.loaded / data.total * 100, 10);
+                        $('#itemProgress').find('.progress-bar').css(
+                            'width',
+                            progress + '%'
+                        );
+                    }
+                }).prop('disabled', !$.support.fileInput)
+                    .parent().addClass($.support.fileInput ? undefined : 'disabled');
+
+                $('.btnAddNewMp3ToPodcast').unbind('click').click(function () {
+                    $('.alertMustBeSet').removeClass('alertMustBeSet');
+                    let nomMp3 = $('[data-contentModal=ajoutMp3ToPodcast] [data-champName=podcastNewMp3_nom]').val();
+                    let descriptionMp3 = CKEDITOR.instances['newMp3InPodcastDescription'].getData();
+
+                    if (nomMp3 === "") {
+                        $('[data-contentModal=ajoutMp3ToPodcast] [data-champName=nomMp3]').addClass('alertMustBeSet');
+                    } else {
+                        $.ajax({
+                            type: 'POST',
+                            url: "{{ path('addMp3_ajax') }}",
+                            async: false,
+                            dataType: "json",
+                            data: {
+                                nom: nomMp3,
+                                description: descriptionMp3,
+                                url: urlMp3,
+                                podcastId: podcastId
+                            },
+                            success: function (data) {
+                                refreshInSection(idSection);
+                            }
+                        });
+                    }
+                });
+            });
+            // suppression d'un mp3 d'un podcast
+            $('.btnRemoveMp3FromPodcast').click(function () {
+                let mp3 = $(this).closest('[data-idMp3]');
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ path('removeMp3Podcasts_ajax') }}",
+                    async: false,
+                    dataType: "json",
+                    data: {
+                        mp3Id: mp3.attr('data-idMp3')
+                    },
+                    success: function () {
+                        mp3.remove();
+                    }
+                });
+            });
+            // changement de la visibilité d'un mp3 de podcast
+            $('.btnChangeVisibilityMp3InPocast').click(function () {
+                let iconeBtn = $(this).find('i');
+                let mp3 = $(this).closest('[data-idMp3]');
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ path('toggleVisibilityMp3Podcast_ajax') }}",
+                    async: false,
+                    dataType: "json",
+                    data: {
+                        mp3Id: mp3.attr('data-idMp3')
+                    },
+                    success: function (response) {
+                        if (response['isVisible']) {
+                            iconeBtn.removeClass('fa-eye-slash').addClass('fa-eye');
+                        } else {
+                            iconeBtn.removeClass('fa-eye').addClass('fa-eye-slash');
+                        }
+                    }
+                });
+            });
+
             // Gestion particilière de l'édition des groupes de liens
             // tri de ces liens
             $('.sortableLiensInGroupe').sortable({
@@ -799,9 +984,8 @@
                 handle: ".btnMove",
                 cancel: ".notSortable",
                 stop: function (event, ui) {
-                    var arrayAssocs = [];
-                    var itemDropped = ui.item;
-                    var id = itemDropped.attr('data-idLien');
+                    let arrayAssocs = [];
+                    let itemDropped = ui.item;
                     $(this).find('[data-idLien]').each(function () {
                         arrayAssocs.push($(this).attr('data-idLien'));
                     });
@@ -825,8 +1009,8 @@
             });
             // on passe les listes en vertical dans un groupe
             $('.btnSetIsVertical').click(function () {
-                var groupe = $(this).closest('.courseElemAdmin');
-                var btn = $(this).find('i');
+                let groupe = $(this).closest('.courseElemAdmin');
+                let btn = $(this).find('i');
                 if (btn.hasClass(uncheckedClass)) {
                     btn.removeClass(uncheckedClass).addClass(checkedClass);
                 } else {
@@ -838,13 +1022,13 @@
             // ajout d'un lien dans un groupe
             $('.selectLienToAddToGroupe').click(function () {
                 // On commence par sauvegarder le groupe s'il était en cours d'édition
-                var groupe = $(this).closest('.courseElemAdmin');
+                let groupe = $(this).closest('.courseElemAdmin');
                 if (groupe.find('.btnSaveInputChange')) {
                     groupe.find('.btnSaveInputChange').click();
                 }
 
                 // puis, on affiche la popup d'ajout d'un lien
-                var idSection = $('.ongletSection.active').attr('data-idSection');
+                let idSection = $('.ongletSection.active').attr('data-idSection');
                 $('.modal').modal();
                 $('.modal .modal-body').hide();
                 $('.modal .modal-body[data-contentModal=ajoutLienToGroupe]').attr('data-idGroupe', $(this).closest('[data-typeitem=groupe]').attr('data-iditem')).show();
@@ -853,24 +1037,24 @@
 
                 $('.btnAddNewLienToGroupe').unbind('click').click(function () {
                     $('.alertMustBeSet').removeClass('alertMustBeSet');
-                    var nomLienInGroupe = $(this).closest('.modal-body').find('[data-champName=nomLienInGroupe]').val();
-                    var selectedIdCat = $('[data-id=categorieLienInGroupeSelectPicker] [data-idcat]');
-                    var categorieLienInGroupe = selectedIdCat.attr('data-idcat');
+                    let nomLienInGroupe = $(this).closest('.modal-body').find('[data-champName=nomLienInGroupe]').val();
+                    let selectedIdCat = $('[data-id=categorieLienInGroupeSelectPicker] [data-idcat]');
+                    let categorieLienInGroupe = selectedIdCat.attr('data-idcat');
 
-                    var nomLien = $('[data-contentModal=ajoutLienToGroupe] [data-champName=groupeNewLien_nom]').val();
-                    var urlLien = $('[data-contentModal=ajoutLienToGroupe] [data-champName=groupeNewLien_url]').val();
-                    var descriptionLien = CKEDITOR.instances['newLienInGroupDescription'].getData();
-                    var selectedIdType = $('[data-id=typeLienInGroupeSelectPicker] [data-idType]');
-                    var typeLien = selectedIdType.attr('data-idType');
+                    let nomLien = $('[data-contentModal=ajoutLienToGroupe] [data-champName=groupeNewLien_nom]').val();
+                    let urlLien = $('[data-contentModal=ajoutLienToGroupe] [data-champName=groupeNewLien_url]').val();
+                    let descriptionLien = CKEDITOR.instances['newLienInGroupDescription'].getData();
+                    let selectedIdType = $('[data-id=typeLienInGroupeSelectPicker] [data-idType]');
+                    let typeLien = selectedIdType.attr('data-idType');
 
-                    if (nomLienInGroupe == "") {
+                    if (nomLienInGroupe === "") {
                         $('[data-contentModal=ajoutLienToGroupe] [data-champName=nomLienInGroupe]').addClass('alertMustBeSet');
-                    } else if (selectedIdCat.length == 0) {
+                    } else if (selectedIdCat.length === 0) {
                         $('[data-contentModal=ajoutLienToGroupe] [data-id=categorieLienInGroupeSelectPicker]').addClass('alertMustBeSet');
-                    } else if (selectedIdType.length == 0) {
+                    } else if (selectedIdType.length === 0) {
                         $('[data-contentModal=ajoutLienToGroupe] [data-id=typeLienInGroupeSelectPicker]').addClass('alertMustBeSet');
                     } else {
-                        var groupeId = $(this).closest('[data-idGroupe]').attr('data-idGroupe');
+                        let groupeId = $(this).closest('[data-idGroupe]').attr('data-idGroupe');
                         $.ajax({
                             type: 'POST',
                             url: "{{ path('addLien_ajax') }}",
@@ -884,7 +1068,7 @@
                                 idCours: $('[data-coursId]').attr('data-coursId')
                             },
                             success: function (data) {
-                                var lienId = data['id'];
+                                let lienId = data['id'];
                                 $.ajax({
                                     type: 'POST',
                                     url: "{{ path('addLienGroupe_ajax') }}",
@@ -896,8 +1080,8 @@
                                         nomLien: nomLienInGroupe,
                                         categorieId: categorieLienInGroupe
                                     },
-                                    success: function (data) {
-                                        if (urlLien == "") {
+                                    success: function () {
+                                        if (urlLien === "") {
                                             uploadLinkFile(lienId, true, idSection);
                                         } else {
                                             refreshInSection(idSection);
@@ -911,17 +1095,17 @@
 
                 $('.btnAddLienToGroupe').unbind('click').click(function () {
                     $('.alertMustBeSet').removeClass('alertMustBeSet');
-                    var nomLienInGroupe = $(this).closest('.modal-body').find('[data-champName=nomLienInGroupe]').val();
-                    var selectedIdCat = $('[data-id=categorieLienInGroupeSelectPicker] [data-idcat]');
-                    var categorieLienInGroupe = selectedIdCat.attr('data-idcat');
+                    let nomLienInGroupe = $(this).closest('.modal-body').find('[data-champName=nomLienInGroupe]').val();
+                    let selectedIdCat = $('[data-id=categorieLienInGroupeSelectPicker] [data-idcat]');
+                    let categorieLienInGroupe = selectedIdCat.attr('data-idcat');
 
-                    if (nomLienInGroupe == "") {
+                    if (nomLienInGroupe === "") {
                         $('[data-champName=nomLienInGroupe]').addClass('alertMustBeSet');
-                    } else if (selectedIdCat.length == 0) {
+                    } else if (selectedIdCat.length === 0) {
                         $('[data-id=categorieLienInGroupeSelectPicker]').addClass('alertMustBeSet');
                     } else {
-                        var groupeId = $(this).closest('[data-idGroupe]').attr('data-idGroupe');
-                        var lienId = $(this).closest('[data-typeitem]').attr('data-iditem');
+                        let groupeId = $(this).closest('[data-idGroupe]').attr('data-idGroupe');
+                        let lienId = $(this).closest('[data-typeitem]').attr('data-iditem');
                         $.ajax({
                             type: 'POST',
                             url: "{{ path('addLienGroupe_ajax') }}",
@@ -933,7 +1117,7 @@
                                 nomLien: nomLienInGroupe,
                                 categorieId: categorieLienInGroupe
                             },
-                            success: function (data) {
+                            success: function () {
                                 refreshInSection(idSection);
                             }
                         });
@@ -943,8 +1127,8 @@
             });
             // suppression d'un lien d'un groupe
             $('.btnRemoveLienFromGroup').click(function () {
-                var lien = $(this).closest('[data-idlien]');
-                var idAssoc = lien.attr('data-idlien');
+                let lien = $(this).closest('[data-idlien]');
+                let idAssoc = lien.attr('data-idlien');
                 $.ajax({
                     type: 'POST',
                     url: "{{ path('removeLienGroupe_ajax') }}",
@@ -953,14 +1137,14 @@
                     data: {
                         idAssoc: idAssoc
                     },
-                    success: function (data) {
+                    success: function () {
                         lien.remove();
                     }
                 });
             });
             $('.btnEditLienInGroup').click(function () {
-                var lien = $(this).closest('[data-idlien]');
-                var idAssoc = lien.attr('data-idlien');
+                let lien = $(this).closest('[data-idlien]');
+                let idAssoc = lien.attr('data-idlien');
                 $('.modal').modal();
                 $('.modal .modal-body').hide();
                 $('.modal .modal-body[data-contentModal=editLienInGroupe]').show();
@@ -988,12 +1172,12 @@
                 });
 
                 $('.btnSaveEditLienInGroupe').unbind('click').click(function () {
-                    var selectedIdType = $('[data-id=typeEditLienInGroupeSelectPicker] [data-idType]');
-                    var typeLien = selectedIdType.attr('data-idType');
-                    var selectedIdCat = $('[data-id=categorieEditLienInGroupeSelectPicker] [data-idcat]');
-                    var categorieLienInGroupe = selectedIdCat.attr('data-idcat');
+                    let selectedIdType = $('[data-id=typeEditLienInGroupeSelectPicker] [data-idType]');
+                    let typeLien = selectedIdType.attr('data-idType');
+                    let selectedIdCat = $('[data-id=categorieEditLienInGroupeSelectPicker] [data-idcat]');
+                    let categorieLienInGroupe = selectedIdCat.attr('data-idcat');
 
-                    var nomAssoc = $('[data-contentModal=editLienInGroupe] [data-champName=nomLienInGroupe]').val();
+                    let nomAssoc = $('[data-contentModal=editLienInGroupe] [data-champName=nomLienInGroupe]').val();
 
                     $.ajax({
                         type: 'POST',
@@ -1010,7 +1194,7 @@
                             categorieLienId: categorieLienInGroupe
 
                         },
-                        success: function (data) {
+                        success: function () {
                             lien.find('.nomAssoc').text(nomAssoc);
                             $('.modal').modal('toggle');
                         }
@@ -1020,11 +1204,11 @@
 
             // met à jour les noms de responsables des chats
             $('.chatAdminSelectPicker').each(function () {
-                var randomInt = Math.floor((Math.random() * 100000) + 1);
-                var idsAdmins = [];
-                var idItem = $(this).closest('[data-iditem]').attr('data-iditem');
-                var oldidSP = 'MyBtnSelectPicker' + idItem;
-                var idSP = oldidSP + '-' + randomInt;
+                let randomInt = Math.floor((Math.random() * 100000) + 1);
+                let idsAdmins = [];
+                let idItem = $(this).closest('[data-iditem]').attr('data-iditem');
+                let oldidSP = 'MyBtnSelectPicker' + idItem;
+                let idSP = oldidSP + '-' + randomInt;
                 $(this).find('.MyBtnSelectPicker [data-id=' + oldidSP + ']').attr('data-id', idSP);
                 $(this).find('.selectpicker').attr('id', idSP);
                 $(this).find('.responsablesIds span').each(function () {
@@ -1051,8 +1235,8 @@
                 }
             }
 
-            var getUrlParameter = function getUrlParameter(sParam) {
-                var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+            let getUrlParameter = function getUrlParameter(sParam) {
+                let sPageURL = decodeURIComponent(window.location.search.substring(1)),
                     sURLVariables = sPageURL.split('&'),
                     sParameterName,
                     i;
@@ -1076,15 +1260,15 @@
 
             // upload d'un fichier pour un lien
             function uploadLinkFile(lienId, refresh, idSection) {
-                var coursId = $('[data-coursId]').attr('data-coursId');
-                var lienUrlInput = $('[data-typeItem=lien][data-idItem=' + lienId + '] .champAdmin[data-champName=url]');
+                let coursId = $('[data-coursId]').attr('data-coursId');
+                let lienUrlInput = $('[data-typeItem=lien][data-idItem=' + lienId + '] .champAdmin[data-champName=url]');
 
                 $('.modal').modal();
                 $('.modal .modal-body').hide();
                 $('.modal .modal-body[data-contentModal=uploadFile]').attr('data-idItem', lienId).show();
 
                 // si le folder n'existe pas, on le créé
-                var url = steps + folderLocation + coursId + '/lien/' + lienId + '/';
+                let url = steps + folderLocation + coursId + '/lien/' + lienId + '/';
 
                 $.ajax({
                     type: 'POST',
@@ -1125,7 +1309,7 @@
                     dropZone: null,
                     dataType: 'json',
                     add: function (e, data) {
-                        var uploadErrors = [];
+                        let uploadErrors = [];
                         if (data.files[0]['size'] > 256000000) {
                             uploadErrors.push('Fichier trop volumineux : ne pas dépasser 256MO');
                         }
@@ -1137,7 +1321,7 @@
                     },
                     done: function (e, data) {
                         $.each(data.result.files, function (index, file) {
-                            var myUrlTab = file.url.split(folderLocation);
+                            let myUrlTab = file.url.split(folderLocation);
                             $.ajax({
                                 type: 'POST',
                                 url: "{{ path('uploadLien_ajax') }}",
@@ -1158,7 +1342,7 @@
                                         refreshInSection(idSection);
                                     }
                                 },
-                                error: function (xhr, status, error) {
+                                error: function () {
                                     $('.modal').modal('toggle');
                                 }
                             });
@@ -1166,7 +1350,7 @@
 
                     },
                     progressall: function (e, data) {
-                        var progress = parseInt(data.loaded / data.total * 100, 10);
+                        let progress = parseInt(data.loaded / data.total * 100, 10);
                         $('#itemProgress').find('.progress-bar').css(
                             'width',
                             progress + '%'
@@ -1183,24 +1367,24 @@
 
             // upload d'un fichier pour un sujet de devoir ou pour un corrige type
             $('.selectSujetAddToDevoir, .selectCorrigeTypeAddToDevoir').click(function () {
-                var idSection = $(this).closest('.section').attr('data-idSection');
-                var devoir = $(this).closest('[data-typeitem=devoir]');
-                var devoirId = devoir.attr('data-iditem');
-                var coursId = $('[data-coursId]').attr('data-coursId');
+                let idSection = $(this).closest('.section').attr('data-idSection');
+                let devoir = $(this).closest('[data-typeitem=devoir]');
+                let devoirId = devoir.attr('data-iditem');
+                let coursId = $('[data-coursId]').attr('data-coursId');
 
                 $('.modal').modal();
                 $('.modal .modal-body').hide();
                 $('.modal .modal-body[data-contentModal=uploadFile]').attr('data-idItem', devoirId).show();
 
                 // si le folder n'existe pas, on le créé
-                var typeItem = "sujets";
-                var titreDefaut = "Sujet du devoir";
+                let typeItem = "sujets";
+                let titreDefaut = "Sujet du devoir";
                 if ($(this).hasClass("selectCorrigeTypeAddToDevoir")) {
                     typeItem = "corrigeTypes";
                     titreDefaut = "Corrigé type du devoir";
                 }
-                var rand = Math.floor((Math.random() * 10000) + 1);
-                var url = steps + folderLocation + coursId + '/devoir/' + devoirId + '/' + typeItem + '/' + rand + '/';
+                let rand = Math.floor((Math.random() * 10000) + 1);
+                let url = steps + folderLocation + coursId + '/devoir/' + devoirId + '/' + typeItem + '/' + rand + '/';
 
                 $.ajax({
                     type: 'POST',
@@ -1258,7 +1442,7 @@
                             urlDest: $('.modal .modal-body[data-contentModal=uploadFile] [data-champName=inputFileURL]').val(),
                             nom: $('.modal .modal-body[data-contentModal=uploadFile] [data-champName=uploadedFileName]').val()
                         },
-                        success: function (data) {
+                        success: function () {
                             $('.modal').modal('toggle');
                             if (devoir.find('.btnSaveInputChange').length) {
                                 devoir.find('.btnSaveInputChange').addClass('mustReload');
@@ -1267,7 +1451,7 @@
                                 refreshInSection(idSection);
                             }
                         },
-                        error: function (xhr, status, error) {
+                        error: function () {
                             $('.modal').modal('toggle');
                         }
                     });
@@ -1278,7 +1462,7 @@
                     dropZone: null,
                     dataType: 'json',
                     add: function (e, data) {
-                        var uploadErrors = [];
+                        let uploadErrors = [];
                         if (data.files[0]['size'] > 256000000) {
                             uploadErrors.push('Fichier trop volumineux : ne pas dépasser 256MO');
                         }
@@ -1290,7 +1474,7 @@
                     },
                     done: function (e, data) {
                         $.each(data.result.files, function (index, file) {
-                            var myUrlTab = file.url.split(folderLocation);
+                            let myUrlTab = file.url.split(folderLocation);
                             $.ajax({
                                 type: 'POST',
                                 url: "{{ path('uploadDevoirFile_ajax') }}",
@@ -1306,7 +1490,7 @@
                                     currentUrl: window.location.pathname,
                                     nom: $('.modal .modal-body[data-contentModal=uploadFile] [data-champName=uploadedFileName]').val()
                                 },
-                                success: function (data) {
+                                success: function () {
                                     $('.modal').modal('toggle');
                                     if (devoir.find('.btnSaveInputChange').length) {
                                         devoir.find('.btnSaveInputChange').addClass('mustReload');
@@ -1315,7 +1499,7 @@
                                         refreshInSection(idSection);
                                     }
                                 },
-                                error: function (xhr, status, error) {
+                                error: function () {
                                     $('.modal').modal('toggle');
                                 }
                             });
@@ -1323,7 +1507,7 @@
 
                     },
                     progressall: function (e, data) {
-                        var progress = parseInt(data.loaded / data.total * 100, 10);
+                        let progress = parseInt(data.loaded / data.total * 100, 10);
                         $('#itemProgress').find('.progress-bar').css(
                             'width',
                             progress + '%'
@@ -1339,13 +1523,13 @@
                 handle: ".btnMove",
                 cancel: ".notSortable",
                 stop: function (event, ui) {
-                    var elementCible = "DevoirCorrigeType";
+                    let elementCible = "DevoirCorrigeType";
                     if ($(this).hasClass('sortableSujetDevoir')) {
                         elementCible = "DevoirSujet";
                     }
-                    var arrayFile = [];
-                    var itemDropped = ui.item;
-                    var id = itemDropped.attr('data-idFile');
+                    let arrayFile = [];
+                    let itemDropped = ui.item;
+                    let id = itemDropped.attr('data-idFile');
                     $(this).find('[data-idFile]').each(function () {
                         arrayFile.push($(this).attr('data-idFile'));
                     });
@@ -1369,14 +1553,14 @@
                 }
             });
             $('.btnRemoveSujetFromDevoir, .btnRemoveCorrigeTypeFromDevoir').click(function () {
-                var devoir = $(this).closest('[data-typeitem=devoir]');
+                let devoir = $(this).closest('[data-typeitem=devoir]');
 
-                var typeItem = "sujet";
+                let typeItem = "sujet";
                 if ($(this).hasClass("btnRemoveCorrigeTypeFromDevoir")) {
                     typeItem = "corrigeType";
                 }
-                var item = $(this).closest('[data-idfile]');
-                var idItem = item.attr('data-idfile');
+                let item = $(this).closest('[data-idfile]');
+                let idItem = item.attr('data-idfile');
 
                 $.ajax({
                     type: 'POST',
@@ -1387,10 +1571,10 @@
                         typeItem: typeItem,
                         itemId: idItem
                     },
-                    success: function (data) {
+                    success: function () {
                         item.remove();
                     },
-                    error: function (xhr, status, error) {
+                    error: function () {
                         console.log("error");
                     }
                 });
@@ -1398,8 +1582,8 @@
 
             // ajout des dateTimePicker pour les dates de début et de fin
             $('.datePickerEvtGroup').each(function () {
-                var dateD = $(this).find('.evtDateD');
-                var dateF = $(this).find('.evtDateF');
+                let dateD = $(this).find('.evtDateD');
+                let dateF = $(this).find('.evtDateF');
                 dateD.datetimepicker({
                     locale: 'fr',
                     date: toJSDate(dateD.attr('data-date'))
@@ -1412,21 +1596,21 @@
                 });
                 dateD.on("dp.change", function (e) {
                     dateF.data("DateTimePicker").minDate(e.date);
-                    var elem = $(this).closest('.courseElemAdmin');
+                    let elem = $(this).closest('.courseElemAdmin');
                     detectInput(elem);
                 });
                 dateF.on("dp.change", function (e) {
                     dateD.data("DateTimePicker").maxDate(e.date);
-                    var elem = $(this).closest('.courseElemAdmin');
+                    let elem = $(this).closest('.courseElemAdmin');
                     detectInput(elem);
                 });
             });
 
             function toJSDate(phpDateTime) {
-                var dateTime = phpDateTime.split(" ");//dateTime[0] = date, dateTime[1] = time
+                let dateTime = phpDateTime.split(" ");//dateTime[0] = date, dateTime[1] = time
 
-                var date = dateTime[0].split("-");
-                var time = dateTime[1].split(":");
+                let date = dateTime[0].split("-");
+                let time = dateTime[1].split(":");
 
                 return new Date(date[0], (date[1] - 1), date[2], time[0], time[1], 0, 0);
             }
@@ -1434,15 +1618,15 @@
             // champ durée
             $('.bootstrapNumber').bootstrapNumber();
             $('.devoirAdmin button').click(function () {
-                var elem = $(this).closest('.courseElemAdmin');
+                let elem = $(this).closest('.courseElemAdmin');
                 detectInput(elem);
             });
 
             // activation des documents
             $('.activationDocBtn').click(function () {
-                var id = $(this).closest('[data-coursId]').attr('data-coursId');
-                var isVisible = $(this).hasClass(checkedClass);
-                var myBtn = $(this);
+                let id = $(this).closest('[data-coursId]').attr('data-coursId');
+                let isVisible = $(this).hasClass(checkedClass);
+                let myBtn = $(this);
                 $.ajax({
                     type: "POST",
                     url: "{{ path('changeActivationDocsCours_ajax') }}",
@@ -1451,7 +1635,7 @@
                         isVisible: isVisible
                     },
                     dataType: "json",
-                    success: function (response) {
+                    success: function () {
                         if (isVisible) {
                             myBtn.removeClass(checkedClass).addClass(uncheckedClass);
                             myBtn.closest('[data-activated]').attr('data-activated', "0");
@@ -1463,16 +1647,16 @@
                 });
             });
 
-            $('#intituleSharedDocs').on('input', function(){
-                var input = $(this).val();
-                var id = $(this).closest('[data-coursId]').attr('data-coursId');
-                if(input === ""){
+            $('#intituleSharedDocs').on('input', function () {
+                let input = $(this).val();
+                let id = $(this).closest('[data-coursId]').attr('data-coursId');
+                if (input === "") {
                     $('.headingSharedDocs').text('Mes documents partagés');
-                }else{
+                } else {
                     $('.headingSharedDocs').text(input);
                 }
                 $('.headingSharedDocs').addClass('unvalidated');
-                $('.btnValidateSharedDocsIntitule').removeClass('btnDesactivated').unbind('click').click(function(){
+                $('.btnValidateSharedDocsIntitule').removeClass('btnDesactivated').unbind('click').click(function () {
                     $.ajax({
                         type: "POST",
                         url: "{{ path('updateIntituleSharedDocsCours_ajax') }}",
@@ -1481,7 +1665,7 @@
                             input: input
                         },
                         dataType: "json",
-                        success: function (response) {
+                        success: function () {
                             $('.btnValidateSharedDocsIntitule').addClass('btnDesactivated');
                             $('.headingSharedDocs').removeClass('unvalidated');
                         }
@@ -1565,7 +1749,8 @@
                     {% if isReferent or app.user.hasRole('ROLE_SUPER_ADMIN') %}
                         <li role="presentation" class="ongletAdmin">
                             <a href="#sectionDocs" aria-controls="sectionDocs" role="tab" data-toggle="tab"
-                               aria-expanded="true"><i class="fa fa-pencil fa-fw" aria-hidden="true"> </i>{% if cours.intituleSharedDocs != "" %}
+                               aria-expanded="true"><i class="fa fa-pencil fa-fw"
+                                                       aria-hidden="true"> </i>{% if cours.intituleSharedDocs != "" %}
                                 {{ cours.intituleSharedDocs }}
                             {% else %}
                                 Documents partagés
@@ -1630,6 +1815,9 @@
                             <li role="presentation"><a href="#btnListChat" aria-controls="btnListChat" role="tab"
                                                        data-toggle="tab"><i class="fa fa-comments-o fa-fw"></i> Chat</a>
                             </li>
+                            <li role="presentation"><a href="#btnListPodcast" aria-controls="btnListPodcast" role="tab"
+                                                       data-toggle="tab"><i class="fa fa-comments-o fa-fw"></i> Podcast</a>
+                            </li>
                         </ul>
                         <div class="tab-content">
                             <div role="tabpanel" class="tab-pane fade in active" id="btnListLien">
@@ -1673,6 +1861,14 @@
                                     {% endfor %}
                                 </ul>
                             </div>
+                            <div role="tabpanel" class="tab-pane fade" id="btnListPodcast">
+                                <ul class="list-default courseElems">
+                                    {% for key,val in podcasts %}
+                                        {% include "cours/adminPodcast.html.twig"
+                                            with {podcast:val, zoneId: '0', inSection: 'false'} %}
+                                    {% endfor %}
+                                </ul>
+                            </div>
                         </div>
                     </div>
 
@@ -1692,7 +1888,8 @@
                                 </h4>
                                 <div class="row">
                                     <label for="intituleSharedDocs" class=" col-xs-2">Intitulé</label>
-                                    <input  class=" col-xs-9" id="intituleSharedDocs" type="text" value="{{ cours.intituleSharedDocs }}" />
+                                    <input class=" col-xs-9" id="intituleSharedDocs" type="text"
+                                           value="{{ cours.intituleSharedDocs }}"/>
                                     <a class="myBtn btnAlone btnAdmin col-xs-1 btnDesactivated btnValidateSharedDocsIntitule">
                                         <i class="fa fa-check" aria-hidden="true"></i>
                                     </a>
@@ -1722,19 +1919,34 @@
                              id="t1body{{ val.section.id }}" data-idSection="{{ val.section.id }}">
                             <div class="editor">
                                 <div class="row">
-                                    <select id="ressCreaSelectPicker" class="selectpicker col-xs-6" data-style="MyBtnSelectPickeer"
+                                    <select id="ressCreaSelectPicker" class="selectpicker col-xs-6"
+                                            data-style="MyBtnSelectPickeer"
                                             title="Ajouter une ressource">
                                         {% if isReferent or app.user.hasRole('ROLE_SUPER_ADMIN') %}
-                                            <option title="Nouvelle ressource" class="addNewItem addNewTypeDevoir">Devoir</option>
-                                            <option title="Nouvelle ressource" class="addNewItem addNewTypeLien">Lien</option>
-                                            <option title="Nouvelle ressource" class="addNewItem addNewTypeGroupe">Groupe de liens</option>
-                                            <option title="Nouvelle ressource" class="addNewItem addNewTypeLibre">Zone libre</option>
+                                            <option title="Nouvelle ressource" class="addNewItem addNewTypeDevoir">
+                                                Devoir
+                                            </option>
+                                            <option title="Nouvelle ressource" class="addNewItem addNewTypeLien">Lien
+                                            </option>
+                                            <option title="Nouvelle ressource" class="addNewItem addNewTypeGroupe">
+                                                Groupe de liens
+                                            </option>
+                                            <option title="Nouvelle ressource" class="addNewItem addNewTypePodcast">
+                                                Podcast
+                                            </option>
+                                            <option title="Nouvelle ressource" class="addNewItem addNewTypeLibre">Zone
+                                                libre
+                                            </option>
                                         {% endif %}
-                                        <option title="Nouvelle ressource" class="addNewItem addNewTypeForum">Forum</option>
-                                        <option title="Nouvelle ressource" class="addNewItem addNewTypeChat">Chat</option>
+                                        <option title="Nouvelle ressource" class="addNewItem addNewTypeForum">Forum
+                                        </option>
+                                        <option title="Nouvelle ressource" class="addNewItem addNewTypeChat">Chat
+                                        </option>
                                         {% if isReferent or app.user.hasRole('ROLE_SUPER_ADMIN') %}
                                             <option data-divider="true"></option>
-                                            <option title="Nouvelle ressource" class="addExistingRessource">Ressource existante</option>
+                                            <option title="Nouvelle ressource" class="addExistingRessource">Ressource
+                                                existante
+                                            </option>
                                         {% endif %}
                                     </select>
                                 </div>
@@ -1756,6 +1968,10 @@
                                                 with {isVertical: val.zones.groupe[keyR].isVertical, nom:val.zones.groupe[keyR].nom, description: val.zones.groupe[keyR].description,
                                                 zoneId: val.zones.containers[keyR].id, itemId: val.zones.groupe[keyR].id, inSection: 'true',
                                                 liens: valR, visible: val.zones.containers[keyR].isVisible} %}
+                                        {% elseif val.zones.type[keyR] == "podcast" %}
+                                            {% include "cours/adminPodcast.html.twig"
+                                                with {podcast:val.zones.podcast[keyR], zoneId: val.zones.containers[keyR].id,
+                                                inSection: 'true', visible: val.zones.containers[keyR].isVisible} %}
                                         {% elseif val.zones.type[keyR] == "devoir" %}
                                             <!--
                                                                 DEVOIRS
@@ -2002,6 +2218,53 @@
 
                 </div>
 
+                <!--                  AJOUT D'UN MP3 dans un Podcast                     -->
+
+                <div class="modal-body" data-contentModal="ajoutMp3ToPodcast"
+                     style="background:#aaa; background-size:cover">
+                    <div class="row">
+                        <div class="bginverse">
+                            <div class="tab-content longLinkList">
+                                <div role="tabpanel" class="tab-pane fade in active">
+                                    <table class="tableAddNewLienInGroup">
+                                        <tr>
+                                            <td class="LabelAdmin">Nom du Mp3</td>
+                                            <td><input data-champName="podcastNewMp3_nom" class="col-xs-8" value=""/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="LabelAdmin">Fichier à déposer</td>
+                                            <td class="uploadMp3Zone">
+                                                <div class="fileUploader btn">
+                                                    <span class="btn btn-success fileinput-button">
+                                                        <i class="glyphicon glyphicon-plus"></i>
+                                                        <span>Ajouter un fichier</span>
+                                                        <input id="mp3Upload" type="file" name="files[]" multiple/>
+                                                    </span>
+                                                    <div id="itemProgress" class="progress col-xs-12">
+                                                        <div class="progress-bar progress-bar-success"></div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="LabelAdmin">Description du mp3</td>
+                                            <td><textarea id="newMp3InPodcastDescription"
+                                                          data-champName="podcastNewMp3_description"
+                                                          class="simpleEditor editor champAdmin toActivate"></textarea>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <div class="myBtn inlineBtn btnAdmin btnAlone btnAddNewMp3ToPodcast">Ajouter ce
+                                        nouveau mp3
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
                 <!--                  AJOUT D'UNERESSOURCE DANS UNE SECTION                      -->
 
                 <div class="modal-body" data-contentModal="ajoutRessExist" data-idSection="0"
@@ -2025,6 +2288,10 @@
                                 <li role="presentation"><a href="#btnListChatModal" aria-controls="btnListChatModal"
                                                            role="tab" data-toggle="tab"><i
                                                 class="fa fa-comments-o fa-fw"></i> Chat</a></li>
+                                <li role="presentation"><a href="#btnListPodcastModal"
+                                                           aria-controls="btnListPodcastModal"
+                                                           role="tab" data-toggle="tab"><i
+                                                class="fa fa-comments-o fa-fw"></i> Podcast</a></li>
                             </ul>
                             <div class="tab-content">
                                 <div role="tabpanel" class="tab-pane fade in active" id="btnListLienModal">
@@ -2115,6 +2382,40 @@
                                                             <td>
                                                                 <ul>
                                                                     {% for keyR,valR in val.content %}
+                                                                        <li>{{ valR.nom }}</li>
+                                                                    {% endfor %}
+                                                                </ul>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                                <td>
+                                                    <div class="myBtn btnAdmin btnAlone btnAddItem"><i
+                                                                class="fa fa-plus"></i></div>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </table>
+                                </div>
+                                <div role="tabpanel" class="tab-pane fade" id="btnListPodcastModal">
+                                    <table class="tableAddItem">
+                                        {% for key,val in podcasts %}
+                                            <tr class="item" data-typeItem="podcast" data-idItem="{{ val.id }}">
+                                                <td>
+                                                    <table class="tableDetailItem">
+                                                        <tr>
+                                                            <td class="nomChamp">Nom</td>
+                                                            <td>{{ val.nom }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="nomChamp">Description</td>
+                                                            <td>{{ val.description | raw }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="nomChamp">Mp3s présents</td>
+                                                            <td>
+                                                                <ul>
+                                                                    {% for keyR,valR in val.mp3s %}
                                                                         <li>{{ valR.nom }}</li>
                                                                     {% endfor %}
                                                                 </ul>

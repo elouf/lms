@@ -34,7 +34,7 @@ class GroupeLiens extends Ressource
      */
     public function setAssocLiens($assocLiens)
     {
-        $this->auteur = $assocLiens;
+        $this->assocLiens = $assocLiens;
 
         return $this;
     }

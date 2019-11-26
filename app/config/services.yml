@@ -101,6 +101,16 @@ services:
         arguments: [~, AppBundle\Entity\GroupeLiens, ~]
         tags:
             - { name: sonata.admin,manager_type: orm, label: Groupes de Liens, group: "Ressources" }
+    admin.podcast:
+        class: AppBundle\Admin\PodcastAdmin
+        arguments: [~, AppBundle\Entity\Podcast, ~]
+        tags:
+            - { name: sonata.admin,manager_type: orm, label: Podcasts, group: "Ressources" }
+    admin.mp3Podcast:
+        class: AppBundle\Admin\Mp3PodcastAdmin
+        arguments: [~, AppBundle\Entity\Mp3Podcast, ~]
+        tags:
+            - { name: sonata.admin,manager_type: orm, label: Mp3 de Podcasts, group: "Ressources" }
     admin.forum:
         class: AppBundle\Admin\ForumAdmin
         arguments: [~, AppBundle\Entity\Forum, ~]

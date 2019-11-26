@@ -18,7 +18,8 @@ use Doctrine\ORM\Mapping as ORM;
  *     Ressource::TYPE_LIBRE = "RessourceLibre",
  *     Ressource::TYPE_FORUM = "Forum",
  *     Ressource::TYPE_CHAT = "Chat",
- *     Ressource::TYPE_H5P = "RessourceH5P"
+ *     Ressource::TYPE_H5P = "RessourceH5P",
+ *     Ressource::TYPE_PODCAST = "Podcast"
  * })
  *
  */
@@ -31,6 +32,7 @@ abstract class Ressource extends Evenement
     const TYPE_FORUM   = 'forum';
     const TYPE_CHAT   = 'chat';
     const TYPE_H5P   = 'h5p';
+    const TYPE_PODCAST   = 'podcast';
 
     /**
      * @var Cours

@@ -8,6 +8,7 @@ use AppBundle\Entity\Forum;
 use AppBundle\Entity\GroupeLiens;
 use AppBundle\Entity\Lien;
 use AppBundle\Entity\Cours;
+use AppBundle\Entity\Podcast;
 use AppBundle\Entity\RessourceH5P;
 use AppBundle\Entity\RessourceLibre;
 use AppBundle\Entity\ZoneRessource;
@@ -93,6 +94,8 @@ class ZoneRessourceController extends Controller
                 $entityRessourceName = "Chat";
             }elseif($typeItem == "h5p"){
                 $entityRessourceName = "RessourceH5P";
+            }elseif($typeItem == "podcast"){
+                $entityRessourceName = "Podcast";
             }
 
             if($entityRessourceName == ""){
@@ -127,6 +130,8 @@ class ZoneRessourceController extends Controller
                         $ressource = new Chat();
                     }elseif($typeItem == "h5p"){
                         $ressource = new RessourceH5P();
+                    }elseif($typeItem == "podcast"){
+                        $ressource = new Podcast();
                     }
                     $ressource->setDescription("");
                     $ressource->setNom("");
