@@ -303,7 +303,7 @@ class PodcastController extends Controller
             $newName = 'podcast_afadec_'.$date->format('YmdHis');
             rename($url, $urlDest.$newName.'.'.$ext);
 
-            $newurl = $urlTab[0].'/var'.$urlDestTab[1].'file.'.$ext;
+            $newurl = $urlTab[0].'/var'.$urlDestTab[1].$newName.'.'.$ext;
 
             $em->flush();
             return new JsonResponse(array('action' =>'upload Mp3Podcast', 'type' => $type, 'ext' => $ext, 'newLien' => $newurl));
