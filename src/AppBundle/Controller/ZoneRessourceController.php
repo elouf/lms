@@ -146,17 +146,25 @@ class ZoneRessourceController extends Controller
                         $folderOK = true;
                         $folderUpload = $this->getParameter('upload_directory');
                         $uploadSteps = $this->getParameter('upload_steps');
-                        $url = $uploadSteps.$folderUpload.$idCours.'/podcasts/'.$ressource->getId();
+                        $webUrl1 = $request->getUriForPath('');
+                        $webUrl2 = str_replace('/app_dev.php', '', $webUrl1);
+                        $webUrl = str_replace('/web', '', $webUrl2);
 
-                        if (!is_dir($url)) {
-                            if (!mkdir($url, 0777, true)) {
+                        $url_withVar = $uploadSteps.$folderUpload.$idCours.'/podcasts/'.$ressource->getId();
+                        $url_withVar_tab = explode('var/', $url_withVar);
+
+                        $url = $webUrl.'/var/'.$url_withVar_tab[1];
+
+                        $sortie .= $url;
+                        if (!is_dir($url_withVar)) {
+                            if (!mkdir($url_withVar, 0777, true)) {
                                 $folderOK = false;
-                                $sortie = 'error : Echec de la création du dossier. url : '.$url;
+                                $sortie .= 'error : Echec de la création du dossier. url : '.$url_withVar;
                             } else {
-                                $sortie = 'Dossier créé. url : '.$url;
+                                $sortie .= 'Dossier créé. url : '.$url_withVar;
                             }
                         } else {
-                            $sortie = 'Dossier existe déjà. url : '.$url;
+                            $sortie .= 'Dossier existe déjà. url : '.$url_withVar;
                         }
                         if($folderOK){
                             $manager = $this->get('assets.packages');
@@ -177,13 +185,13 @@ class ZoneRessourceController extends Controller
                             $xml_channel_title = $xml->createElement("title");
                             $xml_channel_gpAuthor = $xml->createElement("googleplay:author");
                             $xml_channel_gpImage = $xml->createElement("googleplay:image");
-                            $xml_channel_gpImage->setAttribute("href", $this->get('kernel')->getRootDir().'/'.$url.'/'.$cours->getDiscipline()->getPodcastImgFilename());
+                            $xml_channel_gpImage->setAttribute("href", $url.'/'.$cours->getDiscipline()->getPodcastImgFilename());
                             $xml_channel_gpAuthor->nodeValue = 'AFADEC';
                             $xml_channel_descr = $xml->createElement("description");
                             $xml_channel_img = $xml->createElement("image");
                             $xml_channel_gpCat = $xml->createElement("googleplay:category");
                             $xml_channel_gpCat->setAttribute('text', 'Education');
-                            $xml_channel_ituneCat = $xml->createElement("googleplay:category");
+                            $xml_channel_ituneCat = $xml->createElement("itunes:category");
                             $xml_channel_ituneCat->setAttribute('text', 'Education');
                             $xml_channel_lang = $xml->createElement("language");
                             $xml_channel_lang->nodeValue = 'fr';
@@ -195,6 +203,7 @@ class ZoneRessourceController extends Controller
                             $xml_channel_img_title = $xml->createElement("title");
                             $xml_channel_img_title->nodeValue = 'AFADEC logo';
                             $xml_channel_img_url = $xml->createElement("url");
+                            $xml_channel_img_url->nodeValue = $url.'/'.$cours->getDiscipline()->getPodcastImgFilename();
 
                             $xml_channel_img->appendChild( $xml_channel_img_link);
                             $xml_channel_img->appendChild( $xml_channel_img_title);
@@ -210,9 +219,9 @@ class ZoneRessourceController extends Controller
                             $xml_rss->appendChild( $xml_channel);
                             $xml->appendChild( $xml_rss );
 
-                            copy($this->get('kernel')->getRootDir().'/../..'.$manager->getUrl('images/podcast/'.$cours->getDiscipline()->getPodcastImgFilename()), $url.'/'.$cours->getDiscipline()->getPodcastImgFilename());
+                            copy($this->get('kernel')->getRootDir().'/../..'.$manager->getUrl('images/podcast/'.$cours->getDiscipline()->getPodcastImgFilename()), $url_withVar.'/'.$cours->getDiscipline()->getPodcastImgFilename());
 
-                            $xml->save($url."/podcast.rss");
+                            $xml->save($url_withVar."/podcast.rss");
                             $ressource->setRss($url."/podcast.rss");
                         }
 
