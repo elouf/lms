@@ -299,7 +299,9 @@ class PodcastController extends Controller
             $urlDestTab = explode('var', $urlDest);
 
             $ext = pathinfo($url, PATHINFO_EXTENSION);
-            rename($url, $urlDest.'file.'.$ext);
+            $date = new \DateTime();
+            $newName = 'podcast_afadec_'.$date->format('YmdHis');
+            rename($url, $urlDest.$newName.'.'.$ext);
 
             $newurl = $urlTab[0].'/var'.$urlDestTab[1].'file.'.$ext;
 
