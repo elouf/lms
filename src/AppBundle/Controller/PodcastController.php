@@ -5,12 +5,15 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\CategorieLien;
 use AppBundle\Entity\Mp3Podcast;
 use AppBundle\Entity\Podcast;
+use DOMDocument;
+use DOMXPath;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use wapmorgan\Mp3Info\Mp3Info;
 
 class PodcastController extends Controller
 {
@@ -26,24 +29,127 @@ class PodcastController extends Controller
             $id = $request->request->get('id');
             $nom = $request->request->get('nom');
             $description = $request->request->get('description');
-            $rss = $request->request->get('rss');
 
             /* @var $podcast Podcast */
             $podcast = $em->getRepository('AppBundle:Podcast')->findOneBy(array('id' => $id));
             $podcast->setNom($nom);
             $podcast->setDescription($description);
-            $podcast->setRss($rss);
 
-            $em->persist($podcast);
+            $url = $this->getRssFile($podcast);
+
+            $xml = new DOMDocument();
+            $xml->load($url."/podcast.rss");
+            $xpath = new DOMXPath($xml);
+            $titleNode = $xpath->query("channel/title")[0];
+            $titleNode->nodeValue = $nom;
+
+            $descrNode = $xpath->query("channel/description")[0];
+            $descrNode->nodeValue = $description;
+
+            $xml->save($url."/podcast.rss");
+
             $em->flush();
-
             return new JsonResponse(array(
                 'action' =>'change Podcast Infos',
-                'podcast' => $podcast)
+                'podcast' => $podcast->getId()
+                )
             );
         }
 
         return new JsonResponse('This is not ajax!', 400);
+    }
+
+    /**
+     * @Route("/changeContentMp3PodcastRssFile_ajax", name="changeContentMp3PodcastRssFile_ajax")
+     * @Method({"GET", "POST"})
+     * @throws \Exception
+     */
+    public function changeContentMp3PodcastRssFileAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+
+            $id = $request->request->get('id');
+
+            /* @var $podcast Podcast */
+            $podcast = $em->getRepository('AppBundle:Podcast')->findOneBy(array('id' => $id));
+
+            $url = $this->getRssFile($podcast);
+
+            $xml = new DOMDocument();
+            $xml->load($url."/podcast.rss");
+
+            // supprime tous les items (mp3)
+            $listItems = $xml->getElementsByTagName("item");
+            while ($listItems->length > 0) {
+                $item = $listItems->item(0);
+                $item->parentNode->removeChild($item);
+            }
+
+            $xpath = new DOMXPath($xml);
+            $channelNode = $xpath->query("channel")[0];
+
+            $mp3s = $em->getRepository('AppBundle:Mp3Podcast')->findBy(array('podcast' => $podcast, 'isVisible' => true), array('position' => 'ASC'));
+            if($mp3s){
+                /* @var $mp3 Mp3Podcast */
+                foreach($mp3s as $mp3){
+                    $urlFile = $mp3->getUrl();
+                    $urlPieces = explode("/var/", $urlFile);
+                    $filePath = '../var/'.$urlPieces[1];
+
+                    $itemNode = $xml->createElement("item");
+                    $itemTitleNode = $xml->createElement("title");
+                    $itemTitleNode->nodeValue = $mp3->getNom();
+                    $itemDescriptionNode = $xml->createElement("description");
+                    $itemDescriptionNode->nodeValue = $mp3->getDescription();
+                    $itemPubDateNode = $xml->createElement("pubDate");
+                    $pubDateToday = new \DateTime();
+                    $format = 'd/m/Y H:i:s';
+                    $pubDate = $pubDateToday->format($format);
+                    if($mp3->getUpdatedAt() !== null){
+                        $pubDate = $mp3->getUpdatedAt()->format($format);
+                    }
+                    $itemPubDateNode->nodeValue = $pubDate;
+                    $itemGuidNode = $xml->createElement("guid");
+                    $itemGuidNode->nodeValue = "afadec".$mp3->getPosition();
+                    $itemGuidNode->setAttribute('isPermaLink', 'false');
+                    $itemDurationNode = $xml->createElement("itunes:duration");
+                    $audio = new Mp3Info($filePath);
+                    $itemDurationNode->nodeValue = floor($audio->duration / 60).':'.floor($audio->duration % 60);
+                    $itemEnclosureNode = $xml->createElement("enclosure");
+                    $itemEnclosureNode->setAttribute('url', $mp3->getUrl());
+                    $itemEnclosureNode->setAttribute('type', 'audio/mpeg');
+                    $itemEnclosureNode->setAttribute('length', $audio->audioSize);
+
+                    $itemNode->appendChild($itemTitleNode);
+                    $itemNode->appendChild($itemDescriptionNode);
+                    $itemNode->appendChild($itemPubDateNode);
+                    $itemNode->appendChild($itemGuidNode);
+                    $itemNode->appendChild($itemDurationNode);
+                    $itemNode->appendChild($itemEnclosureNode);
+
+                    $channelNode->appendChild($itemNode);
+                }
+            }
+
+            $xml->save($url."/podcast.rss");
+
+            $em->flush();
+            return new JsonResponse(array(
+                'action' =>'change Podcast Infos',
+                'podcast' => $podcast->getId()
+                )
+            );
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
+    public function getRssFile(Podcast $podcast){
+        $folderUpload = $this->getParameter('upload_directory');
+        $uploadSteps = $this->getParameter('upload_steps');
+        $url = $uploadSteps.$folderUpload.$podcast->getCours()->getId().'/podcasts/'.$podcast->getId();
+        return $url;
     }
 
     /**
@@ -55,6 +161,7 @@ class PodcastController extends Controller
         if ($request->isXMLHttpRequest()) {
             $em = $this->getDoctrine()->getEntityManager();
 
+            $idMp3 = $request->request->get('idMp3');
             $nom = $request->request->get('nom');
             $url = $request->request->get('url');
             $description = $request->request->get('description');
@@ -62,16 +169,24 @@ class PodcastController extends Controller
 
             /* @var $podcast Podcast */
             $podcast = $em->getRepository('AppBundle:Podcast')->findOneBy(array('id' => $idPodcast));
-            $nbMp3 = $podcast->getMp3s()->count();
 
-            $mp3 = new Mp3Podcast();
+            $mp3 = null;
+
+            if($idMp3 == '0'){
+                $nbMp3 = $podcast->getMp3s()->count();
+
+                $mp3 = new Mp3Podcast();
+                $mp3->setPodcast($podcast);
+                $mp3->setPosition($nbMp3);
+                $em->persist($mp3);
+            }else{
+                /* @var $mp3 Mp3Podcast */
+                $mp3 = $em->getRepository('AppBundle:Mp3Podcast')->findOneBy(array('id' => $idMp3));
+            }
             $mp3->setNom($nom);
             $mp3->setUrl($url);
             $mp3->setDescription($description);
-            $mp3->setPodcast($podcast);
-            $mp3->setPosition($nbMp3);
 
-            $em->persist($mp3);
             $em->flush();
 
             return new JsonResponse(array(
@@ -190,6 +305,48 @@ class PodcastController extends Controller
 
             $em->flush();
             return new JsonResponse(array('action' =>'upload Mp3Podcast', 'type' => $type, 'ext' => $ext, 'newLien' => $newurl));
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
+    /**
+     * @Route("/getMp3Podcast_ajax", name="getMp3Podcast_ajax")
+     * @Method({"GET", "POST"})
+     */
+    public function getMp3PodcastAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+            $em = $this->getDoctrine()->getEntityManager();
+
+            $idMp3 = $request->request->get('idMp3');
+            /* @var $mp3 Mp3Podcast */
+            $mp3 = $em->getRepository('AppBundle:Mp3Podcast')->findOneBy(array('id' => $idMp3));
+
+            return new JsonResponse(array(
+                    'action' =>'Get Mp3 from Podcast',
+                    'nomMp3' => $mp3->getNom(),
+                    'descrMp3' => $mp3->getDescription(),
+                    'urlMp3' => $mp3->getUrl()
+                )
+            );
+        }
+
+        return new JsonResponse('This is not ajax!', 400);
+    }
+
+    /**
+     * @Route("/test_ajax", name="test_ajax")
+     * @Method({"GET", "POST"})
+     */
+    public function testAjaxAction (Request $request)
+    {
+        if ($request->isXMLHttpRequest()) {
+
+            return new JsonResponse(array(
+                    'action' =>'test'
+                )
+            );
         }
 
         return new JsonResponse('This is not ajax!', 400);

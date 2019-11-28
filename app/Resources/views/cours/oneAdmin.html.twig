@@ -723,7 +723,6 @@
                     let idSection = $(this).closest('[data-idSection]').attr('data-idSection');
                     let id = podcast.attr('data-idItem');
                     let nom = podcast.find('[data-champName=nom]').val();
-                    let rss = podcast.find('[data-champName=rss]').val();
 
                     let description = podcast.find('textarea[data-champName=description]').val();
                     if (CKEDITOR.instances[podcast.find('[data-champName=description]').attr('id')]) {
@@ -738,8 +737,7 @@
                         data: {
                             id: id,
                             nom: nom,
-                            description: description,
-                            rss: rss
+                            description: description
                         },
                         success: function () {
                             refreshInSection(idSection);
@@ -802,7 +800,7 @@
                 placeholder: "ui-state-highlight",
                 handle: ".btnMove",
                 cancel: ".notSortable",
-                stop: function (event, ui) {
+                stop: function () {
                     let arrayAssocs = [];
                     $(this).find('[data-idMp3]').each(function () {
                         arrayAssocs.push($(this).attr('data-idMp3'));
@@ -825,16 +823,71 @@
                     });
                 }
             });
+
+            // gestion de l'upload
+            let urlMp3 = '';
+            let podcastId = null;
+            $('#mp3Upload').fileupload({
+                url: steps + upload_srcSteps + upload_course + folderLocation,
+                dropZone: null,
+                dataType: 'json',
+                add: function (e, data) {
+                    let uploadErrors = [];
+                    if (data.files[0]['size'] > 256000000) {
+                        uploadErrors.push('Fichier trop volumineux : ne pas dépasser 256MO');
+                    }
+                    if (uploadErrors.length > 0) {
+                        alert(uploadErrors.join("\n"));
+                    } else {
+                        data.submit();
+                    }
+                },
+                done: function (e, data) {
+                    $.each(data.result.files, function (index, file) {
+                        let myUrlTab = file.url.split(folderLocation);
+                        $.ajax({
+                            type: 'POST',
+                            url: "{{ path('uploadMp3Podcast_ajax') }}",
+                            async: false,
+                            dataType: "json",
+                            data: {
+                                type: file.type,
+                                url: steps + folderLocation + myUrlTab[1],
+                                urlDest: url,
+                                currentUrl: window.location.pathname
+                            },
+                            success: function (data) {
+                                urlMp3 = data['newLien'];
+                                $('.btnAddNewMp3ToPodcast').show();
+                            },
+                            error: function () {
+                                $('.modal').modal('toggle');
+                            }
+                        });
+                    });
+
+                },
+                progressall: function (e, data) {
+                    let progress = parseInt(data.loaded / data.total * 100, 10);
+                    $('#itemProgress').find('.progress-bar').css(
+                        'width',
+                        progress + '%'
+                    );
+                }
+            }).prop('disabled', !$.support.fileInput)
+                .parent().addClass($.support.fileInput ? undefined : 'disabled');
+
             $('.selectMp3ToAddToPodcast').click(function () {
                 // On commence par sauvegarder le podcast s'il était en cours d'édition
                 let podcast = $(this).closest('.courseElemAdmin');
                 if (podcast.find('.btnSaveInputChange')) {
                     podcast.find('.btnSaveInputChange').click();
                 }
-                let podcastId = podcast.attr('data-idItem');
+                podcastId = podcast.attr('data-idItem');
 
-                $('.btnAddNewMp3ToPodcast').hide();
-                let urlMp3 = '';
+                $('[data-contentModal=ajoutMp3ToPodcast] [data-champName=podcastNewMp3_url]').hide().val('');
+                $('[data-contentModal=ajoutMp3ToPodcast] [data-champName=podcastNewMp3_nom]').val('');
+                CKEDITOR.instances['newMp3InPodcastDescription'].setData('');
 
                 // puis, on affiche la popup d'ajout d'un mp3
                 let idSection = $('.ongletSection.active').attr('data-idSection');
@@ -861,57 +914,101 @@
                     }
                 });
 
-                // gestion de l'upload
-                $('#mp3Upload').fileupload({
-                    url: steps + upload_srcSteps + upload_course + folderLocation,
-                    dropZone: null,
-                    dataType: 'json',
-                    add: function (e, data) {
-                        let uploadErrors = [];
-                        if (data.files[0]['size'] > 256000000) {
-                            uploadErrors.push('Fichier trop volumineux : ne pas dépasser 256MO');
-                        }
-                        if (uploadErrors.length > 0) {
-                            alert(uploadErrors.join("\n"));
-                        } else {
-                            data.submit();
-                        }
-                    },
-                    done: function (e, data) {
-                        $.each(data.result.files, function (index, file) {
-                            let myUrlTab = file.url.split(folderLocation);
-                            $.ajax({
-                                type: 'POST',
-                                url: "{{ path('uploadMp3Podcast_ajax') }}",
-                                async: false,
-                                dataType: "json",
-                                data: {
-                                    type: file.type,
-                                    url: steps + folderLocation + myUrlTab[1],
-                                    urlDest: url,
-                                    currentUrl: window.location.pathname
-                                },
-                                success: function (data) {
-                                    urlMp3 = data['newLien'];
-                                    console.log(urlMp3)
-                                    $('.btnAddNewMp3ToPodcast').show();
-                                },
-                                error: function () {
-                                    $('.modal').modal('toggle');
-                                }
-                            });
-                        });
+                $('.btnAddNewMp3ToPodcast').hide().unbind('click').click(function () {
+                    $('.alertMustBeSet').removeClass('alertMustBeSet');
+                    let nomMp3 = $('[data-contentModal=ajoutMp3ToPodcast] [data-champName=podcastNewMp3_nom]').val();
+                    let descriptionMp3 = CKEDITOR.instances['newMp3InPodcastDescription'].getData();
 
-                    },
-                    progressall: function (e, data) {
-                        let progress = parseInt(data.loaded / data.total * 100, 10);
-                        $('#itemProgress').find('.progress-bar').css(
-                            'width',
-                            progress + '%'
-                        );
+                    if (nomMp3 === "") {
+                        $('[data-contentModal=ajoutMp3ToPodcast] [data-champName=nomMp3]').addClass('alertMustBeSet');
+                    } else {
+                        $.ajax({
+                            type: 'POST',
+                            url: "{{ path('addMp3_ajax') }}",
+                            async: false,
+                            dataType: "json",
+                            data: {
+                                idMp3:'0',
+                                nom: nomMp3,
+                                description: descriptionMp3,
+                                url: urlMp3,
+                                podcastId: podcastId
+                            },
+                            success: function () {
+                                refreshInSection(idSection);
+                            }
+                        });
                     }
-                }).prop('disabled', !$.support.fileInput)
-                    .parent().addClass($.support.fileInput ? undefined : 'disabled');
+                });
+            });
+            // suppression d'un mp3 d'un podcast
+            $('.btnRemoveMp3FromPodcast').click(function () {
+                let mp3 = $(this).closest('[data-idMp3]');
+                podcastId = $(this).closest('.courseElemAdmin').attr('data-idItem');
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ path('removeMp3Podcasts_ajax') }}",
+                    async: false,
+                    dataType: "json",
+                    data: {
+                        mp3Id: mp3.attr('data-idMp3')
+                    },
+                    success: function () {
+                        mp3.remove();
+                        changeMp3PodcastRssFile(podcastId, false);
+                    }
+                });
+            });
+            // changement de la visibilité d'un mp3 de podcast
+            $('.btnMp3Visibility').click(function () {
+                let iconeBtn = $(this).find('i');
+                let mp3 = $(this).closest('[data-idMp3]');
+                podcastId = $(this).closest('.courseElemAdmin').attr('data-idItem');
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ path('toggleVisibilityMp3Podcast_ajax') }}",
+                    async: false,
+                    dataType: "json",
+                    data: {
+                        mp3Id: mp3.attr('data-idMp3')
+                    },
+                    success: function (response) {
+                        if (response['isVisible']) {
+                            iconeBtn.removeClass('fa-eye-slash').addClass('fa-eye');
+                        } else {
+                            iconeBtn.removeClass('fa-eye').addClass('fa-eye-slash');
+                        }
+                        changeMp3PodcastRssFile(podcastId, false);
+                    }
+                });
+            });
+            // édition d'un Mp3 d'un podcast
+            $('.btnEditMp3InPocast').click(function () {
+                let mp3 = $(this).closest('[data-idMp3]');
+                let podcast = $(this).closest('.courseElemAdmin');
+                podcastId = podcast.attr('data-idItem');
+
+                $('.modal').modal();
+                $('.modal .modal-body').hide();
+                $('.modal .modal-body[data-contentModal=ajoutMp3ToPodcast]').show();
+
+                $('.alertMustBeSet').removeClass('alertMustBeSet');
+
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ path('getMp3Podcast_ajax') }}",
+                    async: false,
+                    dataType: "json",
+                    data: {
+                        idMp3: mp3.attr('data-idMp3')
+                    },
+                    success: function (data) {
+                        $('[data-contentModal=ajoutMp3ToPodcast] [data-champName=podcastNewMp3_nom]').val(data['nomMp3']);
+                        $('[data-contentModal=ajoutMp3ToPodcast] [data-champName=podcastNewMp3_url]').show().val(data['urlMp3']);
+
+                        CKEDITOR.instances['newMp3InPodcastDescription'].setData(data['descrMp3']);
+                    }
+                });
 
                 $('.btnAddNewMp3ToPodcast').unbind('click').click(function () {
                     $('.alertMustBeSet').removeClass('alertMustBeSet');
@@ -927,55 +1024,37 @@
                             async: false,
                             dataType: "json",
                             data: {
+                                idMp3:mp3.attr('data-idMp3'),
                                 nom: nomMp3,
                                 description: descriptionMp3,
                                 url: urlMp3,
                                 podcastId: podcastId
                             },
-                            success: function (data) {
-                                refreshInSection(idSection);
+                            success: function () {
+                                changeMp3PodcastRssFile(podcastId, true);
                             }
                         });
                     }
                 });
             });
-            // suppression d'un mp3 d'un podcast
-            $('.btnRemoveMp3FromPodcast').click(function () {
-                let mp3 = $(this).closest('[data-idMp3]');
+
+            function changeMp3PodcastRssFile(podcastId, mustRefresh) {
+                let idSection = $('.ongletSection.active').attr('data-idSection');
                 $.ajax({
                     type: 'POST',
-                    url: "{{ path('removeMp3Podcasts_ajax') }}",
+                    url: "{{ path('changeContentMp3PodcastRssFile_ajax') }}",
                     async: false,
                     dataType: "json",
                     data: {
-                        mp3Id: mp3.attr('data-idMp3')
+                        id: podcastId
                     },
                     success: function () {
-                        mp3.remove();
-                    }
-                });
-            });
-            // changement de la visibilité d'un mp3 de podcast
-            $('.btnChangeVisibilityMp3InPocast').click(function () {
-                let iconeBtn = $(this).find('i');
-                let mp3 = $(this).closest('[data-idMp3]');
-                $.ajax({
-                    type: 'POST',
-                    url: "{{ path('toggleVisibilityMp3Podcast_ajax') }}",
-                    async: false,
-                    dataType: "json",
-                    data: {
-                        mp3Id: mp3.attr('data-idMp3')
-                    },
-                    success: function (response) {
-                        if (response['isVisible']) {
-                            iconeBtn.removeClass('fa-eye-slash').addClass('fa-eye');
-                        } else {
-                            iconeBtn.removeClass('fa-eye').addClass('fa-eye-slash');
+                        if(mustRefresh){
+                            refreshInSection(idSection);
                         }
                     }
                 });
-            });
+            }
 
             // Gestion particilière de l'édition des groupes de liens
             // tri de ces liens
@@ -983,9 +1062,8 @@
                 placeholder: "ui-state-highlight",
                 handle: ".btnMove",
                 cancel: ".notSortable",
-                stop: function (event, ui) {
+                stop: function () {
                     let arrayAssocs = [];
-                    let itemDropped = ui.item;
                     $(this).find('[data-idLien]').each(function () {
                         arrayAssocs.push($(this).attr('data-idLien'));
                     });
@@ -1553,8 +1631,6 @@
                 }
             });
             $('.btnRemoveSujetFromDevoir, .btnRemoveCorrigeTypeFromDevoir').click(function () {
-                let devoir = $(this).closest('[data-typeitem=devoir]');
-
                 let typeItem = "sujet";
                 if ($(this).hasClass("btnRemoveCorrigeTypeFromDevoir")) {
                     typeItem = "corrigeType";
@@ -2235,6 +2311,7 @@
                                         <tr>
                                             <td class="LabelAdmin">Fichier à déposer</td>
                                             <td class="uploadMp3Zone">
+                                                <input class="col-xs-8" data-champName="podcastNewMp3_url" readonly />
                                                 <div class="fileUploader btn">
                                                     <span class="btn btn-success fileinput-button">
                                                         <i class="glyphicon glyphicon-plus"></i>

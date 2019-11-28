@@ -295,7 +295,7 @@ a { font-family: inherit; color: inherit; }
 .btnSetIsVertical{
     border-radius: 5px;
 }
-.btnMp3Visibility{
+.btnMp3Visibility, .btnMp3AdminPlay{
     font-size: 27px;
     color: #0ba204;
 }
@@ -304,6 +304,14 @@ a { font-family: inherit; color: inherit; }
 }
 .btnMp3PodcastRessource{
     color: #000;
+}
+[data-contentModal=ajoutMp3ToPodcast] [data-champName=podcastNewMp3_url]{
+    background-color: #eee;
+    user-select: none;
+    cursor: default;
+}
+.mp3InPodcast{
+    padding: 12px 10px 0px 50px;
 }
 
 .formCol{

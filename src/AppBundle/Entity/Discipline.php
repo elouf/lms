@@ -44,6 +44,13 @@ class Discipline extends DocContainer
     private $imgFilePath;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="podcastImgFilename", type="string", length=255, unique=false)
+     */
+    private $podcastImgFilename;
+
+    /**
      *@var ArrayCollection
      *
      * @ORM\ManyToMany(targetEntity="Cohorte", mappedBy="disciplines")
@@ -240,5 +247,29 @@ class Discipline extends DocContainer
     public function getAccronyme()
     {
         return $this->accronyme;
+    }
+
+    /**
+     * Set podcastImgFilename
+     *
+     * @param string $podcastImgFilename
+     *
+     * @return Discipline
+     */
+    public function setPodcastImgFilename($podcastImgFilename)
+    {
+        $this->podcastImgFilename = $podcastImgFilename;
+
+        return $this;
+    }
+
+    /**
+     * Get podcastImgFilename
+     *
+     * @return string
+     */
+    public function getPodcastImgFilename()
+    {
+        return $this->podcastImgFilename;
     }
 }

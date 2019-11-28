@@ -737,6 +737,45 @@
                                                         </div>
                                                     </div>
                                                 </li>
+                                            {% elseif val.zones.type[keyR] == "podcast" %}
+                                                <!--
+                                                        PODCAST
+                                                -->
+                                                <li data-idZone="{{ val.zones.containers[keyR].id }}"
+                                                    class="courseElem podcastRessource {% if val.zones.containers[keyR].isVisible == 0 %} visibility_{% endif %}">
+                                                    <div class="row">
+                                                        <div class="itemInfos itemHeader col-xs-4 col-sm-3 col-md-2">
+                                                            <img src="{{ asset('images/podcast/') }}{{ cours.discipline.podcastImgFilename }}" class="img-responsive imgPodcast" alt="">
+                                                        </div>
+                                                        <div class="itemInfos itemHeader col-xs-8 col-sm-9 col-md-10">
+                                                            <div class="itemTitle">{{ val.zones.podcast[keyR].nom }}</div>
+                                                            <div class="itemDescription">{{ val.zones.podcast[keyR].description | raw }}</div>
+                                                            <div class="itemRss">{{ val.zones.podcast[keyR].rss }}</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        {% for keyG,valG in val.zones.content[keyR] %}
+                                                            {% if valG.isVisible %}
+                                                            <div class="mp3InPodcast">
+                                                                <div class="row">
+                                                                <div class="col-sm-12 col-md-6">
+                                                                    <div style="margin-top: 15px; font-weight: bold">{{ valG.nom }}</div>
+                                                                    <div>{{ valG.description | raw }}</div>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-6">
+                                                                    <audio style="max-width: 600px; width: 100%" controls>
+                                                                        <source src="{{ valG.url }}" type="audio/mpeg">
+                                                                        Votre navigateur ne supporte pas la balise "audio".
+                                                                    </audio>
+                                                                </div>
+                                                                </div>
+
+                                                            </div>
+                                                            {% endif %}
+
+                                                        {% endfor %}
+                                                    </div>
+                                                </li>
                                             {% elseif val.zones.type[keyR] == "forum" %}
                                                 <!--
                                                         FORUM

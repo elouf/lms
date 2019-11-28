@@ -36,7 +36,7 @@
         </div>
         <div class="row mb-10">
             <div class="LabelAdmin col-sm-3">Lien RSS</div>
-            <input data-champName="rss" class="champAdmin col-sm-9 col-xs-12" value="{{ podcast.rss }}"/>
+            <input data-champName="rss" class="champAdmin col-sm-9 col-xs-12" value="{{ podcast.rss }}" readonly style="background-color: #eee;"/>
         </div>
         <hr class="hrCourseElem"/>
         <div class="row">
@@ -45,17 +45,22 @@
             <div class=" col-sm-9  col-xs-12 listeItemContained sortableMp3sInPodcast">
                 {% for mp3 in podcast.mp3s|sort((a, b) => a.position <=> b.position) %}
                     <div class="row" data-idMp3="{{ mp3.id }}">
-                        <div class="col-xs-9">
+                        <div class="col-xs-8">
                             <div class="myBtn btnMove inlineBtn"><i class="fa fa-arrows-alt "></i></div>
                             <div class="nomAssoc inlineBtn">
                                 <a class="btnMp3PodcastRessource btn btn-xs" target="_blank"
                                    href="{{ mp3.url }}">{{ mp3.nom }}</a>
                             </div>
                         </div>
-                        <div class="col-xs-3 text-right noPadding">
+                        <div class="col-xs-4 text-right noPadding">
                             <div class="myBtn btnEdit inlineBtn btnEditMp3InPocast">
                                 <i class="fa fa-pencil"></i>
                             </div>
+                            {% if mp3.url and 'mp3' in mp3.url %}
+                                <div class="myBtn btnMp3AdminPlay inlineBtn">
+                                    <a href="{{ mp3.url }}" target="_blank"><i class="fa fa-music" aria-hidden="true"></i></a>
+                                </div>
+                            {% endif %}
                             <div class="myBtn btnMp3Visibility inlineBtn btnChangeVisibilityMp3InPocast">
                                 {% if mp3.isVisible %}
                                     <i class="fa fa-eye" aria-hidden="true"></i>
