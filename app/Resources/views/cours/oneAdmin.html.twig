@@ -269,7 +269,7 @@
                     dataType: "json",
                     success: function (response) {
                         if (!response["error"]) {
-                            window.location.href = window.location.href.replace(/[\?#].*|$/, "?idSection=" + idSection);
+                            //window.location.href = window.location.href.replace(/[\?#].*|$/, "?idSection=" + idSection);
                         } else {
                             console.log("Erreur d'ajout de l'item " + idItem + " à la section");
                         }
