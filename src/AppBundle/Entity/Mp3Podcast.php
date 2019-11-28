@@ -45,8 +45,9 @@ class Mp3Podcast extends OrderedItem
     private $url;
 
     /**
+     *
      * @ORM\ManyToOne(targetEntity="Podcast", inversedBy="mp3s")
-     * @ORM\JoinColumn(name="podcast_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="podcast_id", referencedColumnName="id", onDelete="CASCADE")
      */
     private $podcast;
 
