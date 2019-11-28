@@ -505,6 +505,14 @@ class CoursController extends Controller
                 );
             }else {
                 $ressource = $em->getRepository('AppBundle:' . $entityRessourceName)->findOneBy(array('id' => $id));
+
+                if($type == "podcast"){
+                    $folderUpload = $this->getParameter('upload_directory');
+                    $uploadSteps = $this->getParameter('upload_steps');
+                    $url = $uploadSteps.$folderUpload.$ressource->getCours()->getId().'/podcasts/'.$ressource->getId();
+                    $this->deleteDir($url);
+                }
+
                 $em->remove($ressource);
                 $em->flush();
                 return new JsonResponse(array('action' =>'delete Zone', 'id' => $ressource->getId()));
@@ -512,6 +520,24 @@ class CoursController extends Controller
         }
 
         return new JsonResponse('This is not ajax!', 400);
+    }
+
+    public function deleteDir($dirPath) {
+        if (! is_dir($dirPath)) {
+            throw new InvalidArgumentException("$dirPath must be a directory");
+        }
+        if (substr($dirPath, strlen($dirPath) - 1, 1) != '/') {
+            $dirPath .= '/';
+        }
+        $files = glob($dirPath . '*', GLOB_MARK);
+        foreach ($files as $file) {
+            if (is_dir($file)) {
+                self::deleteDir($file);
+            } else {
+                unlink($file);
+            }
+        }
+        rmdir($dirPath);
     }
 
     /**

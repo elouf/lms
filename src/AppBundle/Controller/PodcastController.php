@@ -241,7 +241,14 @@ class PodcastController extends Controller
             $em = $this->getDoctrine()->getEntityManager();
 
             $mp3Id = $request->request->get('mp3Id');
+            /* @var $mp3 Mp3Podcast */
             $mp3 = $em->getRepository('AppBundle:Mp3Podcast')->findOneBy(array('id' => $mp3Id));
+
+            $urlTab = eplode('/', $mp3->getUrl());
+            $folderUpload = $this->getParameter('upload_directory');
+            $uploadSteps = $this->getParameter('upload_steps');
+            $url = $uploadSteps.$folderUpload.$mp3->getPodcast()->getCours()->getId().'/podcasts/'.$mp3->getPodcast()->getId().'/'.$urlTab[count($urlTab)-1];
+            unlink($url);
 
             $em->remove($mp3);
             $em->flush();
