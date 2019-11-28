@@ -303,10 +303,19 @@ class PodcastController extends Controller
             $newName = 'podcast_afadec_'.$date->format('YmdHis');
             rename($url, $urlDest.$newName.'.'.$ext);
 
+            // lms/var...
             $newurl = $urlTab[0].'/var'.$urlDestTab[1].$newName.'.'.$ext;
 
+            $webUrl1 = $request->getUriForPath('');
+            $webUrl2 = str_replace('/app_dev.php', '', $webUrl1);
+            $webUrl = str_replace('/web', '', $webUrl2);
+
+            $url_withVar_tab = explode('var/', $newurl);
+
+            $urlNew = $webUrl.'/var/'.$url_withVar_tab[1];
+
             $em->flush();
-            return new JsonResponse(array('action' =>'upload Mp3Podcast', 'type' => $type, 'ext' => $ext, 'newLien' => $newurl));
+            return new JsonResponse(array('action' =>'upload Mp3Podcast', 'type' => $type, 'ext' => $ext, 'newLien' => $urlNew));
         }
 
         return new JsonResponse('This is not ajax!', 400);
