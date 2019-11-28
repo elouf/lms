@@ -181,6 +181,14 @@ class ZoneRessourceController extends Controller
                             $xml_channel_gpAuthor->nodeValue = 'AFADEC';
                             $xml_channel_descr = $xml->createElement("description");
                             $xml_channel_img = $xml->createElement("image");
+                            $xml_channel_gpCat = $xml->createElement("googleplay:category");
+                            $xml_channel_gpCat->setAttribute('text', 'Education');
+                            $xml_channel_ituneCat = $xml->createElement("googleplay:category");
+                            $xml_channel_ituneCat->setAttribute('text', 'Education');
+                            $xml_channel_lang = $xml->createElement("language");
+                            $xml_channel_lang->nodeValue = 'fr';
+                            $xml_channel_link = $xml->createElement("link");
+                            $xml_channel_link->nodeValue = $url."/podcast.rss";
 
                             $xml_channel_img_link = $xml->createElement("link");
                             $xml_channel_img_link->nodeValue = 'http://www.afadec.fr';
@@ -195,7 +203,10 @@ class ZoneRessourceController extends Controller
                             $xml_channel->appendChild( $xml_channel_title);
                             $xml_channel->appendChild( $xml_channel_gpImage);
                             $xml_channel->appendChild( $xml_channel_gpAuthor);
+                            $xml_channel->appendChild( $xml_channel_gpCat);
+                            $xml_channel->appendChild( $xml_channel_ituneCat);
                             $xml_channel->appendChild( $xml_channel_descr);
+                            $xml_channel->appendChild( $xml_channel_lang);
                             $xml_rss->appendChild( $xml_channel);
                             $xml->appendChild( $xml_rss );
 
