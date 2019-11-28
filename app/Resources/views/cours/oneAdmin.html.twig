@@ -826,6 +826,7 @@
 
             // gestion de l'upload
             let urlMp3 = '';
+            let urlMp3Dest = '';
             let podcastId = null;
             $('#mp3Upload').fileupload({
                 url: steps + upload_srcSteps + upload_course + folderLocation,
@@ -853,7 +854,7 @@
                             data: {
                                 type: file.type,
                                 url: steps + folderLocation + myUrlTab[1],
-                                urlDest: url,
+                                urlDest: urlMp3Dest,
                                 currentUrl: window.location.pathname
                             },
                             success: function (data) {
@@ -899,14 +900,14 @@
 
                 // si le folder n'existe pas, on le créé
                 let coursId = $('[data-coursId]').attr('data-coursId');
-                let url = steps + folderLocation + coursId + '/podcasts/' + podcastId + '/';
+                urlMp3Dest = steps + folderLocation + coursId + '/podcasts/' + podcastId + '/';
                 $.ajax({
                     type: 'POST',
                     url: "{{ path('checkDirForUploadFile_ajax') }}",
                     async: false,
                     dataType: "json",
                     data: {
-                        url: url
+                        url: urlMp3Dest
                     },
                     success: function (data) {
                     },
