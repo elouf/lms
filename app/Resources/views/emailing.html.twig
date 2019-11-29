@@ -193,7 +193,7 @@
                         <div class="filtreEmailing">Tous les utilisateurs inscrits à une cohorte</div>
                     </div>
                     <div class="col-sm-6">
-                        <select class="selectpicker col-xs-6" data-style="MyBtnSelectPickeer" title="Choisir une cohorte" multiple>
+                        <select class="selectpicker col-xs-6" data-window-padding="[500, 0, 50, 0]" data-live-search="true" data-style="MyBtnSelectPickeer" title="Choisir une cohorte" multiple>
                             {% for key,val in cohortes %}
                                 <option class="addNewItem addFiltredCohorte" data-content="<span data-idCoh='{{ val.id }}'>{{ val.nom }}</span>"></option>
                             {% endfor %}
