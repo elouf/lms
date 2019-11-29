@@ -313,6 +313,33 @@ a { font-family: inherit; color: inherit; }
 .mp3InPodcast{
     padding: 12px 10px 0px 50px;
 }
+.itemRss{
+    display: inline-block;
+    margin-right: 20px;
+}
+.btnCopyRss{
+    border: #888 1px solid;
+    color: #888;
+    background-color: #ddd;
+    border-radius: 20px;
+    padding: 1px 2px;
+    cursor: pointer;
+    user-select: none;
+    display: inline-block;
+    font-family: Verdana, Arial, sans-serif;
+}
+.btnCopyRss:hover{
+    background-color: #888;
+    color: #ddd;
+}
+.btnCopyRssInternal{
+    border-radius: 20px;
+    padding: 2px 8px;
+}
+.btnCopyRssInternalClicked{
+    background: #fff;
+    color: #888;
+}
 
 .formCol{
     border: 2px solid #d1d1d1;
