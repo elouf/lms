@@ -392,6 +392,22 @@
                 error: function (xhr, status, error) {
                 }
             });
+
+            $('.btnCopyRss').click(function(){
+                let elem = $(this).closest('.itemInfos').find('.itemRss');
+                copyToClipboard(elem);
+                $('.btnCopyRssInternal').each(function(){
+                    $(this).removeClass('btnCopyRssInternalClicked').text('Copier le lien Rss');
+                });
+                $(this).find('.btnCopyRssInternal').addClass('btnCopyRssInternalClicked').text('Lien copié');
+            });
+            function copyToClipboard(element) {
+                var $temp = $("<input>");
+                $("body").append($temp);
+                $temp.val(element.text()).select();
+                document.execCommand("copy");
+                $temp.remove();
+            }
         });
     </script>
     {% set hasVisibilityRights = app.user.hasRole('ROLE_SUPER_ADMIN') or ((app.user.statut == 'Responsable' or app.user.statut == 'Formateur') and app.user.confirmedByAdmin) %}
@@ -751,6 +767,7 @@
                                                             <div class="itemTitle">{{ val.zones.podcast[keyR].nom }}</div>
                                                             <div class="itemDescription">{{ val.zones.podcast[keyR].description | raw }}</div>
                                                             <div class="itemRss">{{ val.zones.podcast[keyR].rss }}</div>
+                                                            <div class="btnCopyRss"><div class="btnCopyRssInternal">Copier le lien Rss</div></div>
                                                         </div>
                                                     </div>
                                                     <div class="row">
