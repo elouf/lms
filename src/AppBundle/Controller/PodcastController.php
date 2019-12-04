@@ -95,40 +95,43 @@ class PodcastController extends Controller
                 foreach($mp3s as $mp3){
                     $urlFile = $mp3->getUrl();
                     $urlPieces = explode("/var/", $urlFile);
-                    $filePath = '../var/'.$urlPieces[1];
+                    if(count($urlPieces) > 1){
+                        $filePath = '../var/'.$urlPieces[1];
 
-                    $itemNode = $xml->createElement("item");
-                    $itemTitleNode = $xml->createElement("title");
-                    $itemTitleNode->nodeValue = $mp3->getNom();
-                    $itemDescriptionNode = $xml->createElement("description");
-                    $itemDescriptionNode->nodeValue = $mp3->getDescription();
-                    $itemPubDateNode = $xml->createElement("pubDate");
-                    $pubDateToday = new \DateTime();
-                    $format = 'd/m/Y H:i:s';
-                    $pubDate = $pubDateToday->format($format);
-                    if($mp3->getUpdatedAt() !== null){
-                        $pubDate = $mp3->getUpdatedAt()->format($format);
+                        $itemNode = $xml->createElement("item");
+                        $itemTitleNode = $xml->createElement("title");
+                        $itemTitleNode->nodeValue = $mp3->getNom();
+                        $itemDescriptionNode = $xml->createElement("description");
+                        $itemDescriptionNode->nodeValue = $mp3->getDescription();
+                        $itemPubDateNode = $xml->createElement("pubDate");
+                        $pubDateToday = new \DateTime();
+                        $format = 'd/m/Y H:i:s';
+                        $pubDate = $pubDateToday->format($format);
+                        if($mp3->getUpdatedAt() !== null){
+                            $pubDate = $mp3->getUpdatedAt()->format($format);
+                        }
+                        $itemPubDateNode->nodeValue = $pubDate;
+                        $itemGuidNode = $xml->createElement("guid");
+                        $itemGuidNode->nodeValue = "afadec".$mp3->getPosition();
+                        $itemGuidNode->setAttribute('isPermaLink', 'false');
+                        $itemDurationNode = $xml->createElement("itunes:duration");
+                        $audio = new Mp3Info($filePath);
+                        $itemDurationNode->nodeValue = floor($audio->duration / 60).':'.floor($audio->duration % 60);
+                        $itemEnclosureNode = $xml->createElement("enclosure");
+                        $itemEnclosureNode->setAttribute('url', $mp3->getUrl());
+                        $itemEnclosureNode->setAttribute('type', 'audio/mpeg');
+                        $itemEnclosureNode->setAttribute('length', $audio->audioSize);
+
+                        $itemNode->appendChild($itemTitleNode);
+                        $itemNode->appendChild($itemDescriptionNode);
+                        $itemNode->appendChild($itemPubDateNode);
+                        $itemNode->appendChild($itemGuidNode);
+                        $itemNode->appendChild($itemDurationNode);
+                        $itemNode->appendChild($itemEnclosureNode);
+
+                        $channelNode->appendChild($itemNode);
                     }
-                    $itemPubDateNode->nodeValue = $pubDate;
-                    $itemGuidNode = $xml->createElement("guid");
-                    $itemGuidNode->nodeValue = "afadec".$mp3->getPosition();
-                    $itemGuidNode->setAttribute('isPermaLink', 'false');
-                    $itemDurationNode = $xml->createElement("itunes:duration");
-                    $audio = new Mp3Info($filePath);
-                    $itemDurationNode->nodeValue = floor($audio->duration / 60).':'.floor($audio->duration % 60);
-                    $itemEnclosureNode = $xml->createElement("enclosure");
-                    $itemEnclosureNode->setAttribute('url', $mp3->getUrl());
-                    $itemEnclosureNode->setAttribute('type', 'audio/mpeg');
-                    $itemEnclosureNode->setAttribute('length', $audio->audioSize);
 
-                    $itemNode->appendChild($itemTitleNode);
-                    $itemNode->appendChild($itemDescriptionNode);
-                    $itemNode->appendChild($itemPubDateNode);
-                    $itemNode->appendChild($itemGuidNode);
-                    $itemNode->appendChild($itemDurationNode);
-                    $itemNode->appendChild($itemEnclosureNode);
-
-                    $channelNode->appendChild($itemNode);
                 }
             }
 
