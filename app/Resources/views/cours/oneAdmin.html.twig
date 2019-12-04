@@ -988,6 +988,7 @@
                 let mp3 = $(this).closest('[data-idMp3]');
                 let podcast = $(this).closest('.courseElemAdmin');
                 podcastId = podcast.attr('data-idItem');
+                urlMp3 = '';
 
                 $('.modal').modal();
                 $('.modal .modal-body').hide();
@@ -1004,6 +1005,7 @@
                         idMp3: mp3.attr('data-idMp3')
                     },
                     success: function (data) {
+                        urlMp3 = data['urlMp3'];
                         $('[data-contentModal=ajoutMp3ToPodcast] [data-champName=podcastNewMp3_nom]').val(data['nomMp3']);
                         $('[data-contentModal=ajoutMp3ToPodcast] [data-champName=podcastNewMp3_url]').show().val(data['urlMp3']);
 
