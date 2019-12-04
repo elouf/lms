@@ -313,6 +313,16 @@ a { font-family: inherit; color: inherit; }
 .mp3InPodcast{
     padding: 12px 10px 0px 50px;
 }
+.podcastRessource .itemHeader .itemDescription a{
+    border: 1px solid #bbb;
+    padding: 3px 10px;
+    margin: 15px;
+    display: inline-block;
+    background: #ddd;
+}
+.podcastRessource .itemHeader .itemDescription a:hover{
+    background: #ccc;
+}
 .itemRss{
     display: inline-block;
     margin-right: 20px;
