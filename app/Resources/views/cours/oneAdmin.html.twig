@@ -879,6 +879,25 @@
             }).prop('disabled', !$.support.fileInput)
                 .parent().addClass($.support.fileInput ? undefined : 'disabled');
 
+            function getUrlMP3dest(){
+                // si le folder n'existe pas, on le créé
+                let coursId = $('[data-coursId]').attr('data-coursId');
+                urlMp3Dest = steps + folderLocation + coursId + '/podcasts/' + podcastId + '/';
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ path('checkDirForUploadFile_ajax') }}",
+                    async: false,
+                    dataType: "json",
+                    data: {
+                        url: urlMp3Dest
+                    },
+                    success: function (data) {
+                    },
+                    error: function (xhr, status, error) {
+                    }
+                });
+            }
+
             $('.selectMp3ToAddToPodcast').click(function () {
                 // On commence par sauvegarder le podcast s'il était en cours d'édition
                 let podcast = $(this).closest('.courseElemAdmin');
@@ -899,22 +918,7 @@
 
                 $('.alertMustBeSet').removeClass('alertMustBeSet');
 
-                // si le folder n'existe pas, on le créé
-                let coursId = $('[data-coursId]').attr('data-coursId');
-                urlMp3Dest = steps + folderLocation + coursId + '/podcasts/' + podcastId + '/';
-                $.ajax({
-                    type: 'POST',
-                    url: "{{ path('checkDirForUploadFile_ajax') }}",
-                    async: false,
-                    dataType: "json",
-                    data: {
-                        url: urlMp3Dest
-                    },
-                    success: function (data) {
-                    },
-                    error: function (xhr, status, error) {
-                    }
-                });
+                getUrlMP3dest();
 
                 $('.btnAddNewMp3ToPodcast').hide().unbind('click').click(function () {
                     $('.alertMustBeSet').removeClass('alertMustBeSet');
@@ -996,6 +1000,8 @@
                 $('.modal .modal-body[data-contentModal=ajoutMp3ToPodcast]').show();
 
                 $('.alertMustBeSet').removeClass('alertMustBeSet');
+
+                getUrlMP3dest();
 
                 $.ajax({
                     type: 'POST',
