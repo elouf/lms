@@ -1905,6 +1905,9 @@
                             <li role="presentation"><a href="#btnListPodcast" aria-controls="btnListPodcast" role="tab"
                                                        data-toggle="tab"><i class="fa fa-comments-o fa-fw"></i> Podcast</a>
                             </li>
+                            <li role="presentation"><a href="#btnListLibre" aria-controls="btnListLibre" role="tab"
+                                                       data-toggle="tab"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Libre</a>
+                            </li>
                         </ul>
                         <div class="tab-content">
                             <div role="tabpanel" class="tab-pane fade in active" id="btnListLien">
@@ -1953,6 +1956,14 @@
                                     {% for key,val in podcasts %}
                                         {% include "cours/adminPodcast.html.twig"
                                             with {podcast:val, zoneId: '0', inSection: 'false'} %}
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <div role="tabpanel" class="tab-pane fade" id="btnListLibre">
+                                <ul class="list-default courseElems">
+                                    {% for key,val in libres %}
+                                        {% include "cours/adminLibre.html.twig"
+                                            with {libre:val, zoneId: '0', inSection: 'false'} %}
                                     {% endfor %}
                                 </ul>
                             </div>
@@ -2073,7 +2084,7 @@
                                             -->
                                             {% include "cours/adminLibre.html.twig"
                                                 with {description: valR.description, visible: val.zones.containers[keyR].isVisible,
-                                                zoneId: val.zones.containers[keyR].id, itemId: valR.id, inSection: 'true'} %}
+                                                zoneId: val.zones.containers[keyR].id, libre: valR, inSection: 'true'} %}
                                         {% elseif val.zones.type[keyR] == "forum" %}
                                             <!--
                                                                 FORUM
@@ -2380,6 +2391,10 @@
                                                            aria-controls="btnListPodcastModal"
                                                            role="tab" data-toggle="tab"><i
                                                 class="fa fa-comments-o fa-fw"></i> Podcast</a></li>
+                                <li role="presentation"><a href="#btnListLibreModal"
+                                                           aria-controls="btnListLibreModal"
+                                                           role="tab" data-toggle="tab"><i
+                                                class="fa fa-pencil-square-o" aria-hidden="true"></i> Libre</a></li>
                             </ul>
                             <div class="tab-content">
                                 <div role="tabpanel" class="tab-pane fade in active" id="btnListLienModal">
@@ -2508,6 +2523,30 @@
                                                                     {% endfor %}
                                                                 </ul>
                                                             </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                                <td>
+                                                    <div class="myBtn btnAdmin btnAlone btnAddItem"><i
+                                                                class="fa fa-plus"></i></div>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </table>
+                                </div>
+                                <div role="tabpanel" class="tab-pane fade" id="btnListLibreModal">
+                                    <table class="tableAddItem">
+                                        {% for key,val in libres %}
+                                            <tr class="item" data-typeItem="libre" data-idItem="{{ val.id }}">
+                                                <td>
+                                                    <table class="tableDetailItem">
+                                                        <tr>
+                                                            <td class="nomChamp">Nom</td>
+                                                            <td>{{ val.nom }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="nomChamp">Description</td>
+                                                            <td>{{ val.description | raw }}</td>
                                                         </tr>
                                                     </table>
                                                 </td>

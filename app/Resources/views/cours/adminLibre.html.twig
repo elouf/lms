@@ -1,5 +1,5 @@
 <li data-idZone="{{ zoneId }}"
-    data-idItem="{{ itemId }}"
+    data-idItem="{{ libre.id }}"
     class="courseElemAdmin freeAdmin col-md-12"
     data-typeItem="libre"
     {% if inSection == 'true' %}
@@ -12,11 +12,20 @@
 >
 
     <div class="titleBar">Zone libre</div>
-    {% include "cours/adminBtns.html.twig" with {visible: visible, isReferent: isReferent}  %}
+    {% if inSection == 'true' %}
+        {% include "cours/adminBtns.html.twig" with {visible: visible, isReferent: isReferent}  %}
+    {% else %}
+        <div class="btnActionCol col-md-1">
+            <ul>
+                <li class="myBtn btnDelete btnLeft btnSupprElem"><i class="fa fa-times"></i></li>
+            </ul>
+        </div>
+    {% endif %}
+
     <div class="formCol col-md-11">
         <div class="row">
             <div class="col-xs-12 noPadding">
-                <textarea data-champName="description" id="zone_{{ zoneId }}_lien_{{ itemId }}_descr" class="complexEditor editor champAdmin" readonly>{{ description }}</textarea>
+                <textarea data-champName="description" id="zone_{{ zoneId }}_lien_{{ libre.id }}_descr" class="complexEditor editor champAdmin" readonly>{{ libre.description }}</textarea>
             </div>
         </div>
     </div>
