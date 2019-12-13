@@ -37,12 +37,18 @@
                 {% if template == 'studit' %}
                     <img src="{{ asset('educomp/images/logoSTUDIT.png') }}" alt="">
                 {% elseif template == 'afadec' %}
-                    <h4 class="heading pt-20 text-center mb-0">DÉCOUVREZ L’AFADEC <span
+                    <!--<h4 class="heading pt-20 text-center mb-0">DÉCOUVREZ L’AFADEC <span
                                 class="color2">EN 2 MINUTES</span>
+                    </h4>-->
+                    <h4 class="heading pt-20 text-center mb-0">Une entrée dans la nouvelle année <span
+                                class="color2">dans l’Espérance…</span>
                     </h4>
-                    <iframe class="" width="100%" height="430" frameborder="0" allowfullscreen=""
+
+                    <img src="{{ asset('images/accueil/afadec_noel2019.jpg') }}" />
+
+                    <!--<iframe class="" width="100%" height="430" frameborder="0" allowfullscreen=""
                             mozallowfullscreen="" webkitallowfullscreen=""
-                            src="https://player.vimeo.com/video/123835230"></iframe>
+                            src="https://player.vimeo.com/video/123835230"></iframe>-->
                 {% endif %}
             </div>
             {% if app.user %}
