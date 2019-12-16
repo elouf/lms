@@ -142,6 +142,7 @@
                         <th>Cohortes</th>
                         <th class="filter-select">Institut</th>
                         <th class="filter-select">Activé</th>
+                        <th class="filter-select">Engagement validé</th>
                         <th>Statut</th>
                         <th>Confirmer</th>
                     </tr>
@@ -162,6 +163,13 @@
                             <td>{{ myUser.user.institut }}</td>
                             <td>
                                 {% if myUser.user.enabled == 1 %}
+                                    oui
+                                {% else %}
+                                    non
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if myUser.user.validInscriptionFormateurEngagement == 1 %}
                                     oui
                                 {% else %}
                                     non

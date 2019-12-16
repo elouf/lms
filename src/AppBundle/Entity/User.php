@@ -96,6 +96,13 @@ class User extends BaseUser
     const STATUT_RESPONSABLE = 'Responsable';
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="validInscriptionFormateurEngagement", type="boolean", nullable=true)
+     */
+    private $validInscriptionFormateurEngagement = false;
+
+    /**
      * @ORM\Column(name="statut", type="string")
      * @Serializer\Groups({"oneUser"})
      */
@@ -336,6 +343,30 @@ class User extends BaseUser
     public function getConfirmedByAdmin()
     {
         return $this->confirmedByAdmin;
+    }
+
+    /**
+     * Set validInscriptionFormateurEngagement
+     *
+     * @param boolean $validInscriptionFormateurEngagement
+     *
+     * @return User
+     */
+    public function setValidInscriptionFormateurEngagement($validInscriptionFormateurEngagement)
+    {
+        $this->validInscriptionFormateurEngagement = $validInscriptionFormateurEngagement;
+
+        return $this;
+    }
+
+    /**
+     * Get validInscriptionFormateurEngagement
+     *
+     * @return bool
+     */
+    public function getValidInscriptionFormateurEngagement()
+    {
+        return $this->validInscriptionFormateurEngagement;
     }
 
     /**

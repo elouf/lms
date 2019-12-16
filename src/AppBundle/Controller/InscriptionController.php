@@ -80,6 +80,16 @@ class InscriptionController extends Controller
                 ),
                 'label' => "Section d'enseignement",
             ))
+            ->add('validInscriptionFormateurEngagement', ChoiceType::class, array(
+                'expanded' => true,
+                'multiple' => false,
+                'required' => true,
+                'choices'  => array(
+                    'Oui' => 1,
+                    'Non' => 0
+                ),
+                'label' => "Je m'engage",
+            ))
             ->add('matiereEtu', ChoiceType::class, array(
                 'choices'  => array(
                     'Anglais' => 'Anglais',
@@ -223,6 +233,7 @@ class InscriptionController extends Controller
                         $nomCoh = $data['matiereForm'];
                     }
                     $user->setConfirmedByAdmin(false);
+                    $user->setValidInscriptionFormateurEngagement($data['validInscriptionFormateurEngagement']);
                 }elseif($data['typeUser'] == 'Prof_stagiaire'){
                     // Prof stagiaire
                     $role = $em->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Stagiaire'));

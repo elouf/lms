@@ -42,6 +42,9 @@ class UserAdmin extends AbstractAdmin
             ->add('confirmedByAdmin', null, array(
                 'label' => "Statut confirmé par l'admin"
             ))
+            ->add('validInscriptionFormateurEngagement', null, array(
+                'label' => "Engagement de Formateur validé"
+            ))
             ->add('institut', 'sonata_type_model')
         ;
 
@@ -59,6 +62,9 @@ class UserAdmin extends AbstractAdmin
             ->add('statut')
             ->add('confirmedByAdmin', null, array(
                 'label' => "Statut confirmé par l'admin"
+            ))
+            ->add('validInscriptionFormateurEngagement', null, array(
+                'label' => "Engagement de Formateur validé"
             ))
             ->add('institut', null, array(), 'entity', array(
                 'class'    => 'AppBundle\Entity\Institut',
@@ -80,6 +86,9 @@ class UserAdmin extends AbstractAdmin
             ->add('statut')
             ->add('confirmedByAdmin', null, array(
                 'label' => "Statut confirmé par l'admin"
+            ))
+            ->add('validInscriptionFormateurEngagement', null, array(
+                'label' => "Engagement de Formateur validé"
             ))
         ;
     }

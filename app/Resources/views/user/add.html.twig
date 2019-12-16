@@ -75,13 +75,23 @@
             margin: auto;
             margin-top: 30px;
         }
-        .alertTypeUserValidation{
+        .alertTypeUserValidation, .alertFormateurEngagement{
             display: none;
             background-color: #8ec780;
             padding: 10px 15px;
             border-radius: 5px;
             border: 1px solid #48753d;
             margin: 10px 0;
+        }
+        .alertFormateurEngagement{
+            background-color: #f9c471;
+        }
+        .alertFormateurEngagement label{
+            width: auto;
+            float: none;
+        }
+        #form_validInscriptionFormateurEngagement{
+            display: inline-block;
         }
         .btnSubmitZone{
             /*display: none;*/
@@ -132,6 +142,12 @@
         }
         [data-color="etiq_r"]{
             background-color: #ff1d00;
+        }
+
+        label[for="form_validInscriptionFormateurEngagement"]{
+            display: inline-block;
+            width: auto;
+            float: inherit;
         }
     </style>
     <script src="{{ asset('vendors/jquery-ui/jquery-ui.min.js') }}" type=text/javascript></script>
@@ -185,7 +201,8 @@
                 $('#form_sectionEns').parent().hide();
                 $('#form_matiereEtu, #form_matiereForm, #form_matiereProfStag').parent().hide();
                 $('#form_concours').parent().show().val(0);
-                $('.alertTypeUserValidation').hide();
+                $('.alertTypeUserValidation, .alertFormateurEngagement').hide();
+                $('#form_validInscriptionFormateurEngagement [value=1]').prop('checked', true);
             }
 
             function loadFormateur() {
@@ -194,7 +211,8 @@
                 $('#form_concours').parent().hide();
 
                 // validation du compte par l'admin, il faut prévenir le user
-                $('.alertTypeUserValidation').show();
+                $('.alertTypeUserValidation, .alertFormateurEngagement').show();
+                $('#form_validInscriptionFormateurEngagement input').prop('checked', false);
             }
 
             function loadProfStagiaire() {
@@ -202,7 +220,8 @@
                 $('#form_matiereEtu, #form_matiereForm').parent().hide();
                 $('#form_matiereProfStag').parent().show();
                 $('#form_concours').parent().hide();
-                $('.alertTypeUserValidation').hide();
+                $('.alertTypeUserValidation, .alertFormateurEngagement').hide();
+                $('#form_validInscriptionFormateurEngagement input').prop('checked', false);
             }
 
             $( ".etiq" ).draggable({ revert: "valid" });
@@ -275,6 +294,10 @@
                         Attention, les statuts "Référent", "Formateur" et "Administrateur" permettent des fonctionnalités additionnelles dans la plateforme.
                         De ce fait, votre compte devra être confirmé par les administrateurs de l'Afadec. L'activation de votre compte ne sera pas instantannée mais pourra prendre jusqu'à 24h.
                         Merci pour votre compréhension.
+                    </div>
+                    <div class="alertFormateurEngagement">
+                        L’AFADEC va vous ouvrir un accès Formateur à sa plateforme qui vous permet, dans votre discipline, de voir les cours en ligne et ceux en préparation. En utilisant vos identifiants et mots de passe pour accéder à http://www.afadec.fr/, vous vous engagez à le faire dans le respect déontologique de l’utilisation des contenus publiés en particulier celui du droit d’auteur.
+                        <br><br>{{ form_label(form.validInscriptionFormateurEngagement) }}{{ form_widget(form.validInscriptionFormateurEngagement) }}
                     </div>
                     <div class="formRow">
                         {{ form_label(form.typeUser) }}{{ form_widget(form.typeUser) }}
