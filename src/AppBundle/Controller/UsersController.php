@@ -1479,6 +1479,7 @@ class UsersController extends Controller
     public function actionLotsUsersAjaxAction(Request $request)
     {
         if ($request->isXMLHttpRequest()) {
+            $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
             $em = $this->getDoctrine()->getEntityManager();
 
             $userIds = $request->request->get('userIds');
