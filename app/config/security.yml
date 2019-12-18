@@ -38,7 +38,7 @@ security:
         - { path: ^/cookies, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/metierEnseignant, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/afadec, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/, role: ROLE_USER }
         - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/logout, role: ROLE_USER }
         - { path: ^/admin/, role: ROLE_SUPER_ADMIN }
+        - { path: ^/, role: ROLE_USER }
