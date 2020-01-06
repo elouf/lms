@@ -166,7 +166,7 @@
             $.ajax({
                 type: 'POST',
                 url: "{{ path('addUserStatRessource_ajax') }}",
-                async: false,
+                async: true,
                 dataType: "json",
                 data: {
                     ressId: chatId

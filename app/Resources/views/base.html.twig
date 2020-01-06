@@ -76,7 +76,7 @@
                 $.ajax({
                     type: 'POST',
                     url: "{{path('getNbMsg_ajax')}}",
-                    async: false,
+                    async: true,
                     dataType: "json",
                     success: function (data) {
                         $('.newMsgsPuce').text(data['nbMsgs']);
@@ -87,7 +87,7 @@
                 $.ajax({
                     type: 'POST',
                     url: "{{path('getUsersToActivate_ajax')}}",
-                    async: false,
+                    async: true,
                     dataType: "json",
                     success: function (data) {
                         if(data['users'].length){

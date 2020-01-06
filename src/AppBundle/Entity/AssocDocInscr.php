@@ -23,7 +23,7 @@ class AssocDocInscr extends AssocDocEntity
     /**
      * @var string
      *
-     * @ORM\Column(name="typeInscr", type="string", length=255)
+     * @ORM\Column(name="typeInscr", type="string", length=255, nullable=true)
      */
     protected $typeInscr;
 

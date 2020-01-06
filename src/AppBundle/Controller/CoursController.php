@@ -59,7 +59,7 @@ class CoursController extends Controller
     public function oneCoursAction (Request $request, $id, $mode)
     {
         date_default_timezone_set('Europe/Paris');
-        ini_set('session.gc_maxlifetime', 21600);
+        //ini_set('session.gc_maxlifetime', 21600);
 
         $isReferent = false;
         $user = $this->getUser();
