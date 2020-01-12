@@ -52,6 +52,315 @@ class CoursController extends Controller
         return $this->render('cours/one.html.twig', ['courses' => $courses]);
     }
 
+
+
+
+
+
+    /**
+     *
+     * @Route("/cours/{id}/modeDebug/{mode}", name="oneCoursDebug")
+     */
+    public function oneCoursDebugAction (Request $request, $id, $mode)
+    {
+        date_default_timezone_set('Europe/Paris');
+        //ini_set('session.gc_maxlifetime', 21600);
+
+        $isReferent = false;
+        $user = $this->getUser();
+        $statut = $user->getStatut();
+        $isAdmin = $user->hasRole('ROLE_SUPER_ADMIN');
+
+        $repositoryC = $this->getDoctrine()->getRepository('AppBundle:Cours');
+        $cours = $repositoryC->find($id);
+        $discipline = $cours->getDiscipline();
+
+        $repoUsers = $this->getDoctrine()->getRepository('AppBundle:User');
+        $users = $repoUsers->findBy(array('enabled' => true));
+        $usersInscrits = $repositoryC->findInscrits($cours);
+
+        $repoSess = $this->getDoctrine()->getRepository('AppBundle:Session');
+
+        $allcourses = $repositoryC->findBy(array('discipline' => $discipline));
+        $courses = array();
+        foreach($allcourses as $coursFiltre){
+            if($coursFiltre->getSession() == null || $isAdmin){
+                array_push($courses, $coursFiltre);
+            }else{
+                $currentDate = new DateTime();
+                $sess = $coursFiltre->getSession();
+                if($repoSess->userIsInscrit($user, $sess) &&
+                    $currentDate >= $sess->getDateDebut() &&
+                    $currentDate <= $sess->getDateFin()){
+                    array_push($courses, $coursFiltre);
+                }
+            }
+        }
+
+        $role = "";
+        $cohortes = $this->getDoctrine()->getRepository('AppBundle:Cohorte')->findAll();
+        $repoInscription_coh = $this->getDoctrine()->getRepository('AppBundle:Inscription_coh');
+        $repoInscription_d = $this->getDoctrine()->getRepository('AppBundle:Inscription_d');
+        $repoInscription_c = $this->getDoctrine()->getRepository('AppBundle:Inscription_c');
+        if($cohortes){
+            foreach($cohortes as $cohorte){
+                if($cohorte->getDisciplines()->contains($discipline) || $cohorte->getCours()->contains($cours)){
+                    $inscrCoh = $repoInscription_coh->findOneBy(array('user' => $user, 'cohorte' => $cohorte));
+                    if($inscrCoh){
+                        $role = $inscrCoh->getRole()->getNom();
+                        break;
+                    }
+                }
+            }
+        }
+        if($role == ""){
+            $inscrDis = $repoInscription_d->findOneBy(array('user' => $user, 'discipline' => $discipline));
+            if($inscrDis) {
+                $role = $inscrDis->getRole()->getNom();
+            }
+        }
+
+        $inscrC = $repoInscription_c->findOneBy(array('user' => $user, 'cours' => $cours));
+        if($inscrC) {
+            if($role == "" || $inscrC->getRole()->getNom() == "Referent") {
+                $role = $inscrC->getRole()->getNom();
+            }
+        }
+        // on corrige le statut du user. Si c'est un enseignant, il ne doit pas être en etu. Si ce n'est pas un admin, il ne doit pas être admin
+        if( !($isAdmin || (($statut == 'Responsable' || $statut == 'Formateur') && $user->getConfirmedByAdmin())) ){
+            if($role == "Enseignant"){
+                $mode = 'ens';
+            }else{
+                $mode = 'etu';
+            }
+        }
+        if($role == "Referent"){
+            $isReferent = true;
+        }
+
+        $typeLiens = $this->getDoctrine()->getRepository('AppBundle:TypeLien')->findAll();
+        $categorieLiens = $this->getDoctrine()->getRepository('AppBundle:CategorieLien')->findAll();
+
+        $sections = $this->getDoctrine()->getRepository('AppBundle:Section')->findBy(array('cours' => $cours), array('position' => 'ASC'));
+
+        // On commence par récupérer le contenu des sections du cours
+        $datas = array();
+        $repoZoneRessource = $this->getDoctrine()->getRepository('AppBundle:ZoneRessource');
+        $repoRessource = $this->getDoctrine()->getRepository('AppBundle:Ressource');
+        $repoDevoir = $this->getDoctrine()->getRepository('AppBundle:Devoir');
+        $repoDevoirSujet = $this->getDoctrine()->getRepository('AppBundle:DevoirSujet');
+        $repoDevoirCorrigeType = $this->getDoctrine()->getRepository('AppBundle:DevoirCorrigeType');
+        $repoCopie = $this->getDoctrine()->getRepository('AppBundle:Copie');
+        $repoCopieFichier = $this->getDoctrine()->getRepository('AppBundle:CopieFichier');
+        $repoCorrige = $this->getDoctrine()->getRepository('AppBundle:Corrige');
+        $repoCorrigeFichier = $this->getDoctrine()->getRepository('AppBundle:CorrigeFichier');
+        $repoAssocGroupeLiens = $this->getDoctrine()->getRepository('AppBundle:AssocGroupeLiens');
+        $repoPodcast = $this->getDoctrine()->getRepository('AppBundle:Podcast');
+        $repoMp3Podcast = $this->getDoctrine()->getRepository('AppBundle:Mp3Podcast');
+        for($i=0; $i<count($sections); $i++){
+            $datas[$i]["section"] = $sections[$i];
+
+            $zones = $repoZoneRessource->findBy(array('section' => $sections[$i]), array('position' => 'ASC'));
+            $datas[$i]["zones"]["containers"] = $zones;
+            $datas[$i]["zones"]["content"] = array();
+            $datas[$i]["zones"]["type"] = array();
+            for($j=0; $j<count($zones); $j++){
+                $zone = $datas[$i]["zones"]["containers"][$j];
+
+                if($zone->getRessource() != null){
+                    $ressource = $repoRessource->findOneBy(array('id' => $zone->getRessource()->getId()));
+                    $ressType = $ressource->getType();
+                    $datas[$i]["zones"]["type"][$j] = $ressType;
+
+                    if($ressType == "lien"){
+                        $datas[$i]["zones"]["type"][$j] = "lien";
+                        $datas[$i]["zones"]["content"][$j] = $ressource;
+                    }elseif($ressType == "forum"){
+                        $datas[$i]["zones"]["type"][$j] = "forum";
+                        $datas[$i]["zones"]["content"][$j] = $ressource;
+                    }elseif($ressType == "chat"){
+                        $datas[$i]["zones"]["type"][$j] = "chat";
+                        $datas[$i]["zones"]["content"][$j] = $ressource;
+                    }elseif($ressType == "devoir"){
+                        $datas[$i]["zones"]["type"][$j] = "devoir";
+
+                        $repositorySujet = $repoDevoirSujet->findBy(array('devoir' => $ressource), array('position' => 'ASC'));
+
+                        $repositoryCorrigeType = $repoDevoirCorrigeType->findBy(array('devoir' => $ressource), array('position' => 'ASC'));
+
+                        $datas[$i]["zones"]["content"][$j] = $ressource;
+                        $datas[$i]["zones"]["sujet"][$j] = $repositorySujet;
+                        $datas[$i]["zones"]["corrigeType"][$j] = "undefined";
+
+                        if($repositoryCorrigeType) {
+                            $datas[$i]["zones"]["corrigeType"][$j] = $repositoryCorrigeType;
+                        }
+
+                        // on a pas besoin des copies du user si on est en mode admin, par contre en etu, oui
+                        if($mode == "admin"){
+
+                        }elseif($mode == 'ens'){
+                            // on compte le nombre de copies non corrigées
+                            $datas[$i]["zones"]["copiesDeposes"][$j] = 0;
+                            $datas[$i]["zones"]["corrigesDeposes"][$j] = 0;
+
+                            $copies = $repoCopie->findBy(array('devoir' => $ressource));
+                            for($u=0; $u<count($copies); $u++){
+                                $copieFichier = $repoCopieFichier->findOneBy(array('copie' => $copies[$u]));
+                                if($copieFichier){
+                                    $datas[$i]["zones"]["copiesDeposes"][$j]++;
+                                    $corrigeFichier = $repoCorrige->findOneBy(array('copie' => $copies[$u]));
+                                    if($corrigeFichier){
+                                        $datas[$i]["zones"]["corrigesDeposes"][$j]++;
+                                    }
+                                }
+                            }
+                        }else{
+                            $datas[$i]["zones"]["copie"][$j] = "undefined";
+                            $datas[$i]["zones"]["corrige"][$j] = "undefined";
+                            $datas[$i]["zones"]["copieFichier"][$j] = "undefined";
+                            $datas[$i]["zones"]["corrigeFichier"][$j] = "undefined";
+
+                            $copie = $repoCopie->findOneBy(array('devoir' => $ressource, 'auteur' => $user));
+                            if($copie){
+                                $datas[$i]["zones"]["copie"][$j] = $copie;
+
+                                $copieFichier = $repoCopieFichier->findOneBy(array('copie' => $copie));
+                                if($copieFichier){
+                                    $datas[$i]["zones"]["copieFichier"][$j] = $copieFichier;
+                                }
+
+                                $corrige = $repoCorrige->findOneBy(array('copie' => $copie));
+                                if($corrige){
+                                    $datas[$i]["zones"]["corrige"][$j] = $corrige;
+                                    $corrigeFichier = $repoCorrigeFichier->findOneBy(array('corrige' => $corrige));
+                                    $datas[$i]["zones"]["corrigeFichier"][$j] = $corrigeFichier;
+                                }
+                            }
+                        }
+
+                    }elseif($ressType == "groupe") {
+                        $repositoryGaL = $repoAssocGroupeLiens->findBy(array('groupe' => $ressource), array('position' => 'ASC'));
+                        $datas[$i]["zones"]["groupe"][$j] = $ressource;
+                        $datas[$i]["zones"]["content"][$j] = $repositoryGaL;
+                    }elseif($ressType == "podcast") {
+                        $repositoryPodMp3 = $repoMp3Podcast->findBy(array('podcast' => $ressource), array('position' => 'ASC'));
+                        $datas[$i]["zones"]["podcast"][$j] = $ressource;
+                        $datas[$i]["zones"]["content"][$j] = $repositoryPodMp3;
+                    }elseif($ressType == "libre"){
+                        $datas[$i]["zones"]["content"][$j] = $ressource;
+                    }else{
+                        // on ne trouve pas le type de la ressource
+                        $datas[$i]["zones"]["type"][$j] = "unknown";
+                        $datas[$i]["zones"]["content"][$j] = $zone->getDescription();
+                    }
+                }else{
+                    // Aucune ressource associée
+                    $datas[$i]["zones"]["type"][$j] = "free";
+                    $datas[$i]["zones"]["content"][$j] = $zone->getDescription();
+                }
+            }
+        }
+
+        // on récupère aussi tout le contenu du cours
+        $cLiens = $this->getDoctrine()->getRepository('AppBundle:Lien')->findBy(array('cours' => $cours));
+        $cForums = $this->getDoctrine()->getRepository('AppBundle:Forum')->findBy(array('cours' => $cours));
+        $cChats = $this->getDoctrine()->getRepository('AppBundle:Chat')->findBy(array('cours' => $cours));
+        $cLibres = $this->getDoctrine()->getRepository('AppBundle:RessourceLibre')->findBy(array('cours' => $cours));
+        $podcasts = $this->getDoctrine()->getRepository('AppBundle:Podcast')->findBy(array('cours' => $cours));
+
+        $cGroupesEntity = $this->getDoctrine()->getRepository('AppBundle:GroupeLiens')->findBy(array('cours' => $cours));
+        $cGroupes = array();
+        for($i=0; $i<count($cGroupesEntity); $i++){
+            $repositoryGaL = $repoAssocGroupeLiens->findBy(array('groupe' => $cGroupesEntity[$i]))
+            ;
+            $cGroupes[$i]['groupe'] = $cGroupesEntity[$i];
+            $cGroupes[$i]['content'] = $repositoryGaL;
+        }
+
+        $cDevoirsEntity = $repoDevoir->findBy(array('cours' => $cours));
+        $cDevoirs = array();
+        for($i=0; $i<count($cDevoirsEntity); $i++){
+            $repositorySujet = $repoDevoirSujet->findBy(array('devoir' => $cDevoirsEntity[$i]));
+            $repositoryCorrigeType = $repoDevoirCorrigeType->findBy(array('devoir' => $cDevoirsEntity[$i]));
+
+            $cDevoirs[$i]['content'] = $cDevoirsEntity[$i];
+            $cDevoirs[$i]['sujets'] = $repositorySujet;
+            $cDevoirs[$i]['corrigesType'] = $repositoryCorrigeType;
+        }
+
+        //Comme un accès aux documents du cours existe, on doit afficher l'info-bulle si certains n'ont pas été visités
+        $docs = $this->getDoctrine()->getRepository('AppBundle:Document')->findByCours($cours, $user);
+        $documents = array_merge($docs[0], $docs[1]);
+
+        $nbNewDocs = 0;
+        $repoStatsUsersDocs = $this->getDoctrine()->getRepository('AppBundle:StatsUsersDocs');
+        foreach($documents as $doc){
+            $stat = $repoStatsUsersDocs->findBy(array('user' => $user, 'document' => $doc));
+            if(!$stat){
+                $nbNewDocs++;
+            }
+        }
+        if($mode == "admin"){
+            return $this->render('cours/oneAdmin.html.twig',
+                [
+                    'cours' => $cours,
+                    'zonesSections' => $datas,
+                    'liens' => $cLiens,
+                    'forums' => $cForums,
+                    'chats' => $cChats,
+                    'devoirs' => $cDevoirs,
+                    'groupes' => $cGroupes,
+                    'podcasts' => $podcasts,
+                    'libres' => $cLibres,
+                    'typeLiens' => $typeLiens,
+                    'categorieLiens' => $categorieLiens,
+                    'folderUpload' => $this->getParameter('upload_directory'),
+                    'uploadSteps' => $this->getParameter('upload_steps'),
+                    'uploadSrcSteps' => $this->getParameter('upload_srcSteps'),
+                    'uploadCourse' => $this->getParameter('upload_course'),
+                    'nbNewDocs' => $nbNewDocs,
+                    'courses' => $courses,
+                    'users' => $users,
+                    'usersInscrits' => $usersInscrits,
+                    'isReferent' => $isReferent
+                ]);
+        }elseif($mode == "ens") {
+            return $this->render('cours/one.html.twig', [
+                'cours' => $cours,
+                'zonesSections' => $datas,
+                'mode' => 'ens',
+                'folderUpload' => $this->getParameter('upload_directory'),
+                'uploadSteps' => $this->getParameter('upload_steps'),
+                'uploadSrcSteps' => $this->getParameter('upload_srcSteps'),
+                'uploadCourse' => $this->getParameter('upload_course'),
+                'nbNewDocs' => $nbNewDocs,
+                'courses' => $courses,
+                'isReferent' => $isReferent
+            ]);
+        }else{
+            return $this->render('cours/one.html.twig', [
+                'cours' => $cours,
+                'zonesSections' => $datas,
+                'mode' => 'etu',
+                'folderUpload' => $this->getParameter('upload_directory'),
+                'uploadSteps' => $this->getParameter('upload_steps'),
+                'uploadSrcSteps' => $this->getParameter('upload_srcSteps'),
+                'uploadCourse' => $this->getParameter('upload_course'),
+                'nbNewDocs' => $nbNewDocs,
+                'courses' => $courses,
+                'isReferent' => $isReferent
+            ]);
+        }
+    }
+
+
+
+
+
+
+
+
     /**
      *
      * @Route("/cours/{id}/mode/{mode}", name="oneCours")
