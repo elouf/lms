@@ -142,7 +142,7 @@ class CoursController extends Controller
         $categorieLiens = $this->getDoctrine()->getRepository('AppBundle:CategorieLien')->findAll();
 
         $sections = $this->getDoctrine()->getRepository('AppBundle:Section')->findBy(array('cours' => $cours), array('position' => 'ASC'));
-
+        dump($sections);
         // On commence par récupérer le contenu des sections du cours
         $datas = array();
         $repoZoneRessource = $this->getDoctrine()->getRepository('AppBundle:ZoneRessource');
