@@ -543,6 +543,13 @@ label.alertMustBeSet{
 .visibility_{
     opacity: .3 !important;
 }
+.acces_condition_1, .acces_condition_1 *{
+    color: red !important;
+}
+.acces_condition_1 .nomSection::after{
+    font-family: FontAwesome;
+    content: " \f023";
+}
 
 .adminSectionRow input[data-champName="nom"], .adminSectionRow input[data-champName="faIcon"]{
     height: 32px;

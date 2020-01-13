@@ -1822,7 +1822,7 @@
 
                     <!--- sections -->
                     {% for key,val in zonesSections %}
-                        <li role="presentation" class="ongletSection visibility_{{ val.section.isVisible }}"
+                        <li role="presentation" class="ongletSection visibility_{{ val.section.isVisible }} acces_condition_{{ val.section.isAccesConditionne }}"
                             data-idsection="{{ val.section.id }}">
                             <a href="#t1body{{ val.section.id }}" aria-controls="t1body{{ val.section.id }}" role="tab"
                                data-toggle="tab" aria-expanded="true">
