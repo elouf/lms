@@ -152,6 +152,9 @@ class CoursController extends Controller
         $repoAssocGroupeLiens = $this->getDoctrine()->getRepository('AppBundle:AssocGroupeLiens');
         $repoPodcast = $this->getDoctrine()->getRepository('AppBundle:Podcast');
         $repoMp3Podcast = $this->getDoctrine()->getRepository('AppBundle:Mp3Podcast');
+
+        $h5pRessources = [];
+
         for($i=0; $i<count($sections); $i++){
             $datas[$i]["section"] = $sections[$i];
 
@@ -244,6 +247,10 @@ class CoursController extends Controller
                         $datas[$i]["zones"]["content"][$j] = $repositoryPodMp3;
                     }elseif($ressType == "libre"){
                             $datas[$i]["zones"]["content"][$j] = $ressource;
+                    }elseif($ressType == "h5p"){
+                        $datas[$i]["zones"]["content"][$j] = $ressource;
+                        array_push($h5pRessources, $ressource);
+                        //$datas[$i]["zones"]["h5p"][$j] = $this->get('RessourceH5PService')->getRessourceContent($ressource);
                     }else{
                         // on ne trouve pas le type de la ressource
                         $datas[$i]["zones"]["type"][$j] = "unknown";
@@ -257,12 +264,15 @@ class CoursController extends Controller
             }
         }
 
+        $h5p = $this->get('RessourceH5PService')->getRessourceContent($h5pRessources);
+
         // on récupère aussi tout le contenu du cours
         $cLiens = $this->getDoctrine()->getRepository('AppBundle:Lien')->findBy(array('cours' => $cours));
         $cForums = $this->getDoctrine()->getRepository('AppBundle:Forum')->findBy(array('cours' => $cours));
         $cChats = $this->getDoctrine()->getRepository('AppBundle:Chat')->findBy(array('cours' => $cours));
         $cLibres = $this->getDoctrine()->getRepository('AppBundle:RessourceLibre')->findBy(array('cours' => $cours));
         $podcasts = $this->getDoctrine()->getRepository('AppBundle:Podcast')->findBy(array('cours' => $cours));
+        $h5ps = $this->getDoctrine()->getRepository('AppBundle:RessourceH5p')->findBy(array('cours' => $cours));
 
         $cGroupesEntity = $this->getDoctrine()->getRepository('AppBundle:GroupeLiens')->findBy(array('cours' => $cours));
         $cGroupes = array();
@@ -296,57 +306,126 @@ class CoursController extends Controller
                 $nbNewDocs++;
             }
         }
-        if($mode == "admin"){
-            return $this->render('cours/oneAdmin.html.twig',
-                [
+        if ($h5p['H5PContent'] == true) {
+            if($mode == "admin"){
+                return $this->render('cours/oneAdmin.html.twig',
+                    [
+                        'cours' => $cours,
+                        'zonesSections' => $datas,
+                        'liens' => $cLiens,
+                        'forums' => $cForums,
+                        'chats' => $cChats,
+                        'devoirs' => $cDevoirs,
+                        'groupes' => $cGroupes,
+                        'podcasts' => $podcasts,
+                        'h5ps' => $h5ps,
+                        'libres' => $cLibres,
+                        'typeLiens' => $typeLiens,
+                        'categorieLiens' => $categorieLiens,
+                        'folderUpload' => $this->getParameter('upload_directory'),
+                        'uploadSteps' => $this->getParameter('upload_steps'),
+                        'uploadSrcSteps' => $this->getParameter('upload_srcSteps'),
+                        'uploadCourse' => $this->getParameter('upload_course'),
+                        'nbNewDocs' => $nbNewDocs,
+                        'courses' => $courses,
+                        'users' => $users,
+                        'usersInscrits' => $usersInscrits,
+                        'isReferent' => $isReferent,
+                        'h5piscontent' => true,
+                        'isFrame' => $h5p['H5PFrameIntegration']->getLibrary()->isFrame(),
+                        'h5pIntegration' => $h5p['h5pIntegration']
+                    ]);
+            }elseif($mode == "ens") {
+                return $this->render('cours/one.html.twig', [
                     'cours' => $cours,
                     'zonesSections' => $datas,
-                    'liens' => $cLiens,
-                    'forums' => $cForums,
-                    'chats' => $cChats,
-                    'devoirs' => $cDevoirs,
-                    'groupes' => $cGroupes,
-                    'podcasts' => $podcasts,
-                    'libres' => $cLibres,
-                    'typeLiens' => $typeLiens,
-                    'categorieLiens' => $categorieLiens,
+                    'mode' => 'ens',
                     'folderUpload' => $this->getParameter('upload_directory'),
                     'uploadSteps' => $this->getParameter('upload_steps'),
                     'uploadSrcSteps' => $this->getParameter('upload_srcSteps'),
                     'uploadCourse' => $this->getParameter('upload_course'),
                     'nbNewDocs' => $nbNewDocs,
                     'courses' => $courses,
-                    'users' => $users,
-                    'usersInscrits' => $usersInscrits,
-                    'isReferent' => $isReferent
+                    'isReferent' => $isReferent,
+                    'h5piscontent' => true,
+                    'isFrame' => $h5p['H5PFrameIntegration']->getLibrary()->isFrame(),
+                    'h5pIntegration' => $h5p['h5pIntegration']
                 ]);
-        }elseif($mode == "ens") {
-            return $this->render('cours/one.html.twig', [
-                'cours' => $cours,
-                'zonesSections' => $datas,
-                'mode' => 'ens',
-                'folderUpload' => $this->getParameter('upload_directory'),
-                'uploadSteps' => $this->getParameter('upload_steps'),
-                'uploadSrcSteps' => $this->getParameter('upload_srcSteps'),
-                'uploadCourse' => $this->getParameter('upload_course'),
-                'nbNewDocs' => $nbNewDocs,
-                'courses' => $courses,
-                'isReferent' => $isReferent
-            ]);
+            }else{
+                return $this->render('cours/one.html.twig', [
+                    'cours' => $cours,
+                    'zonesSections' => $datas,
+                    'mode' => 'etu',
+                    'folderUpload' => $this->getParameter('upload_directory'),
+                    'uploadSteps' => $this->getParameter('upload_steps'),
+                    'uploadSrcSteps' => $this->getParameter('upload_srcSteps'),
+                    'uploadCourse' => $this->getParameter('upload_course'),
+                    'nbNewDocs' => $nbNewDocs,
+                    'courses' => $courses,
+                    'isReferent' => $isReferent,
+                    'h5piscontent' => true,
+                    'isFrame' => $h5p['H5PFrameIntegration']->getLibrary()->isFrame(),
+                    'h5pIntegration' => $h5p['h5pIntegration']
+                ]);
+            }
         }else{
-            return $this->render('cours/one.html.twig', [
-                'cours' => $cours,
-                'zonesSections' => $datas,
-                'mode' => 'etu',
-                'folderUpload' => $this->getParameter('upload_directory'),
-                'uploadSteps' => $this->getParameter('upload_steps'),
-                'uploadSrcSteps' => $this->getParameter('upload_srcSteps'),
-                'uploadCourse' => $this->getParameter('upload_course'),
-                'nbNewDocs' => $nbNewDocs,
-                'courses' => $courses,
-                'isReferent' => $isReferent
-            ]);
+            if($mode == "admin"){
+                return $this->render('cours/oneAdmin.html.twig',
+                    [
+                        'cours' => $cours,
+                        'zonesSections' => $datas,
+                        'liens' => $cLiens,
+                        'forums' => $cForums,
+                        'chats' => $cChats,
+                        'devoirs' => $cDevoirs,
+                        'groupes' => $cGroupes,
+                        'podcasts' => $podcasts,
+                        'h5ps' => $h5ps,
+                        'libres' => $cLibres,
+                        'typeLiens' => $typeLiens,
+                        'categorieLiens' => $categorieLiens,
+                        'folderUpload' => $this->getParameter('upload_directory'),
+                        'uploadSteps' => $this->getParameter('upload_steps'),
+                        'uploadSrcSteps' => $this->getParameter('upload_srcSteps'),
+                        'uploadCourse' => $this->getParameter('upload_course'),
+                        'nbNewDocs' => $nbNewDocs,
+                        'courses' => $courses,
+                        'users' => $users,
+                        'usersInscrits' => $usersInscrits,
+                        'isReferent' => $isReferent,
+                        'h5piscontent' => false
+                    ]);
+            }elseif($mode == "ens") {
+                return $this->render('cours/one.html.twig', [
+                    'cours' => $cours,
+                    'zonesSections' => $datas,
+                    'mode' => 'ens',
+                    'folderUpload' => $this->getParameter('upload_directory'),
+                    'uploadSteps' => $this->getParameter('upload_steps'),
+                    'uploadSrcSteps' => $this->getParameter('upload_srcSteps'),
+                    'uploadCourse' => $this->getParameter('upload_course'),
+                    'nbNewDocs' => $nbNewDocs,
+                    'courses' => $courses,
+                    'isReferent' => $isReferent,
+                    'h5piscontent' => false
+                ]);
+            }else{
+                return $this->render('cours/one.html.twig', [
+                    'cours' => $cours,
+                    'zonesSections' => $datas,
+                    'mode' => 'etu',
+                    'folderUpload' => $this->getParameter('upload_directory'),
+                    'uploadSteps' => $this->getParameter('upload_steps'),
+                    'uploadSrcSteps' => $this->getParameter('upload_srcSteps'),
+                    'uploadCourse' => $this->getParameter('upload_course'),
+                    'nbNewDocs' => $nbNewDocs,
+                    'courses' => $courses,
+                    'isReferent' => $isReferent,
+                    'h5piscontent' => false
+                ]);
+            }
         }
+
     }
 
     /**

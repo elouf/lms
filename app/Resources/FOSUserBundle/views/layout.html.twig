@@ -37,24 +37,29 @@
                 {% if template == 'studit' %}
                     <img src="{{ asset('educomp/images/logoSTUDIT.png') }}" alt="">
                 {% elseif template == 'afadec' %}
-                    <h4 class="heading pt-20 text-center mb-0">DÉCOUVREZ L’AFADEC <span
-                                class="color2">EN 2 MINUTES</span>
-                    </h4>
+
                     <!--<h4 class="heading pt-20 text-center mb-0">Une entrée dans la nouvelle année <span
                                 class="color2">dans l’Espérance…</span>
                     </h4>-->
 
-                    <!--<img style="max-width: 100%;" src="{{ asset('images/accueil/afadec_noel2019.jpg') }}" />-->
+                    {#<img style="max-width: 100%;" src="{{ asset('images/accueil/afadec_noel2019.jpg') }}" />#}
+                        <h4 class="heading pt-20 text-center mb-0">DÉCOUVREZ L’AFADEC <span
+                                    class="color2">EN 2 MINUTES</span>
+                        </h4>
+                        <iframe class="" width="100%" height="430" frameborder="0" allowfullscreen=""
+                                mozallowfullscreen="" webkitallowfullscreen=""
+                                src="https://player.vimeo.com/video/123835230"></iframe>
 
-                    <iframe class="" width="100%" height="430" frameborder="0" allowfullscreen=""
-                            mozallowfullscreen="" webkitallowfullscreen=""
-                            src="https://player.vimeo.com/video/123835230"></iframe>
+                {% elseif template == "excellencePro" %}
+                    <img style="max-width: 100%;" src="{{ asset('images/accueil/excellencePro.jpg') }}" />
                 {% endif %}
             </div>
-            {% if app.user %}
-                <div class="col-md-7 col-lg-6 col-xl-4">
-                    {% include "calendrier/calendrierWidget.html.twig" %}
-                </div>
+            {% if template == "afadec" %}
+                {% if app.user %}
+                    <div class="col-md-7 col-lg-6 col-xl-4">
+                        {% include "calendrier/calendrierWidget.html.twig" %}
+                    </div>
+                {% endif %}
             {% endif %}
         </div>
         {% if template == "afadec" %}
@@ -127,9 +132,41 @@
                 </div>
             </div>
             {% include 'pagesFixes/afadecContent.html.twig' %}
+            {% elseif template == "excellencePro" %}
+
+            <div class="container mt-40 mb-40">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h4 class="heading">Mentions Légales</h4>
+
+                        <p>L'AFADEC (Association de la Formation A Distance de l'Enseignement Catholique) administre
+                            cette plateforme, dont l'objectif est d'accompagner la formation au salon Excellence Pro</p>
+
+                        <p>Les informations recueillies (nom, prénom, discipline, adresse mail, numéro de téléphone,
+                            établissement) sont nécessaires pour votre inscription.</p>
+
+                        <p>Elles font l'objet d'un traitement informatique et sont destinées au secrétariat de
+                            l'association.</p>
+
+                        <p>En application des articles 39 et suivants de la loi du 6 janvier 1978 modifiée, vous
+                            bénéficiez d'un droit d'accès et de rectification aux informations qui vous concernent.</p>
+
+                        <p>Si vous souhaitez exercer ce droit et obtenir communication des informations vous concernant,
+                            veuillez vous adresser à : <a href="mailTo:contact.afadec@gmail.com">contact.AFADEC@gmail.com</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Parallax Version 1.4.2 -->
+            <script src="{{ asset('educomp/js/parallax.js') }}" type="text/javascript"></script>
+
+            <script src="{{ asset('educomp/js/jquery.validate.min.js') }}" type="text/javascript"></script>
         {% endif %}
     </div>
-    {% if app.user %}
-        {% include "calendrier/calendrierPopup.html.twig" %}
+    {% if template == "afadec" %}
+        {% if app.user %}
+            {% include "calendrier/calendrierPopup.html.twig" %}
+        {% endif %}
     {% endif %}
 {% endblock %}

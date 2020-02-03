@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block pageHeader %}
+    <div>{{ template }}</div>
+    <div class="page-header">
+        <div class="container">
+            <h2 class="color3">H5P</h2>
+            <ul class="breadcrumb">
+                <li class="color3">
+                    <span class="">{{ h5p.cours.discipline  }}</span>
+                    >
+                    <a href="{{ path('oneCours', {id: h5p.cours.id, mode: "etu" }) }}"
+                       class="label label-info">{{ h5p.cours }}</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+
+{% block main %}
+    <div class="container">
+        <div class="card-body " id="bar-parent">
+            <div class="form-group">
+                {{ form_start(form) }}
+                {{ form_row(form.titre) }}
+                {{ form_row(form.description) }}
+                <br>
+                <div id="h5p-editor">Waiting for javascript...</div>
+                {{ form_row(form.library) }}
+                {{ form_row(form.parameters) }}
+                {{ form_row(form._token) }}
+                {{ form_row(form.library) }}
+                {{ form_row(form.parameters) }}
+                <div class="text-center mt-10">
+                    <button type="submit" class="btn btn-primary">Mettre à jour</button>
+                </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+
+    {{ include('@EmmedyH5P/edit_javascripts.html.twig') }}
+    <script src="{{ asset('bundles/emmedyh5p/h5p/symfony-h5p.js') }}"></script>
+{% endblock %}

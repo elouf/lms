@@ -32,162 +32,203 @@ class InscriptionController extends Controller
     public function inscriptionAction (Request $request)
     {
         date_default_timezone_set('Europe/Paris');
+
+        $template = $this->getParameter('template');
+
         $user = new User();
-        $form = $this->createFormBuilder()
-            ->add('nom', TextType::class, array(
-            ))
-            ->add('prenom', TextType::class, array(
-            ))
-            ->add('email', EmailType::class, array(
-            ))
-            ->add('phone', TextType::class, array(
-                'label' => 'Numéro de téléphone',
-                'required' => false
-            ))
-            ->add('mdp', RepeatedType::class, array(
-                'type' => PasswordType::class,
-                'invalid_message' => 'Les mots de passe ne sont pas identiques',
-                'required' => true,
-                'first_options'  => array('label' => 'Mot de passe'),
-                'second_options' => array('label' => 'Confirmation du mot de passe')
+
+        if($template === 'afadec'){
+            $form = $this->createFormBuilder()
+                ->add('nom', TextType::class, array(
                 ))
-            ->add('institut', EntityType::class, array(
-                'class' => 'AppBundle:Institut',
-                'query_builder' => function (InstitutRepository $in) {
-                    return $in->createQueryBuilder('i')
-                        ->orderBy('i.nom', 'ASC')
-                        ->where('i.actif = true');
-                },
-                'choice_label' => 'nom',
-                'placeholder' => '',
-                'multiple' => false,
+                ->add('prenom', TextType::class, array(
                 ))
-            ->add('typeUser', ChoiceType::class, array(
-                'choices'  => $user->getStatuts(),
-                'label' => 'Vous êtes',
-            ))
-            ->add('concours', ChoiceType::class, array(
-                'choices'  => array(
-                    '1er Degré' => 0,
-                    '2nd Degré' => 1
-                ),
-                'label' => 'Concours préparé',
-            ))
-            ->add('sectionEns', ChoiceType::class, array(
-                'choices'  => array(
-                    '1er Degré' => 0,
-                    '2nd Degré' => 1
-                ),
-                'label' => "Section d'enseignement",
-            ))
-            ->add('validInscriptionFormateurEngagement', ChoiceType::class, array(
-                'expanded' => true,
-                'multiple' => false,
-                'required' => true,
-                'choices'  => array(
-                    'Oui' => 1,
-                    'Non' => 0
-                ),
-                'label' => "Je m'engage",
-            ))
-            ->add('matiereEtu', ChoiceType::class, array(
-                'choices'  => array(
-                    'Anglais' => 'Anglais',
-                    'Education musicale et chant choral' => 'EducMusChantChoral',
-                    'Espagnol' => 'Espagnol',
-                    'Histoire-Géographie' => 'HG',
-                    'Lettres modernes' => 'LettresModernes',
-                    'Mathématiques' => 'Maths',
-                    'Physique-Chimie' => 'PhyChi',
-                    'SVT' => 'SVT'
-                ),
-                'label' => "Matière",
-            ))
-            ->add('matiereForm', ChoiceType::class, array(
-                'choices'  => array(
-                    'Anglais' => 'Anglais',
-                    'Anglais M2' => 'AnglaisM2',
-                    'Arts appliqués' => 'ArtsAppl',
-                    'Arts plastiques' => 'ArtsPlast',
-                    'Biotechnologies (CAPET/CAPLP)' => 'Biotech',
-                    'Documentation' => 'Documentation',
-                    'Economie Gestion (CAPET)' => 'ECOCAPET',
-                    'Economie Gestion (CAPLP)' => 'ECOCAPLP',
-                    'Education musicale et chant choral' => 'EducMusChantChoral',
-                    'EMCC' => 'EMCC',
-                    'EPS' => 'EPS',
-                    'Espagnol' => 'Espagnol',
-                    'Espagnol M2' => 'Interlangues',
-                    'Génies' => 'GENIE',
-                    'Histoire-Géographie' => 'HG',
-                    'Histoire-Géographie M2' => 'HGM2',
-                    'Hôtellerie Restauration' => 'HOTEL',
-                    'Interlangues' => 'Interlangues',
-                    'Lettres' => 'Lettres',
-                    'Lettres Histoire-Géographie' => 'LHG',
-                    'Lettres Langues' => 'LL',
-                    'Lettres modernes' => 'LettresModernes',
-                    'Mathématiques' => 'Maths',
-                    'Mathématiques M2' => 'MathsM2',
-                    'Mathématiques Sciences' => 'MathsSC',
-                    'Philosophie' => 'Philosophie',
-                    'Physique-Chimie M2' => 'PhyChiM2',
-                    'SES' => 'SES',
-                    'SII' => 'SII',
-                    'Physique-Chimie' => 'PhyChi',
-                    'STMS (CAPET)' => 'STMSCA',
-                    'STMS (CAPLP)' => 'STMSPLP',
-                    'SVT' => 'SVT',
-                    'SVT M2' => 'SVTM2'
-                ),
-                'label' => "Matière",
-            ))
-            ->add('matiereProfStag', ChoiceType::class, array(
-                'choices'  => array(
-                    'Anglais' => 'AnglaisM2',
-                    'Arts appliqués' => 'ArtsAppl',
-                    'Arts plastiques' => 'ArtsPlast',
-                    'Biotechnologies (CAPET/CAPLP)' => 'Biotech',
-                    'Documentation' => 'Documentation',
-                    'Economie Gestion (CAPET)' => 'ECOCAPET',
-                    'Economie Gestion (CAPLP)' => 'ECOCAPLP',
-                    'EMCC' => 'EMCC',
-                    'EPS' => 'EPS',
-                    'Espagnol' => 'Interlangues',
-                    'Génies' => 'GENIE',
-                    'Histoire-Géographie' => 'HGM2',
-                    'Hôtellerie Restauration' => 'HOTEL',
-                    'Interlangues' => 'Interlangues',
-                    'Lettres' => 'Lettres',
-                    'Lettres Histoire-Géographie' => 'LHG',
-                    'Lettres Langues' => 'LL',
-                    'Mathématiques' => 'MathsM2',
-                    'Mathématiques Sciences' => 'MathsSC',
-                    'Philosophie' => 'Philosophie',
-                    'Physique-Chimie' => 'PhyChiM2',
-                    'SES' => 'SES',
-                    'SII' => 'SII',
-                    'STMS (CAPET)' => 'STMSCA',
-                    'STMS (CAPLP)' => 'STMSPLP',
-                    'SVT' => 'SVTM2'
-                ),
-                'label' => "Matière",
-            ))
-            /*->add('optionsDisc', ChoiceType::class, array(
-                'choices'  => array(
-                    'Aucune' => '0',
-                    'Anglais niveau B2 (gratuit)' => 'English',
-                    'Langues Tell me More (payant)' => 'Langues Tell me More'
-                ),
-                'label' => "Options",
-                'label_attr' => array('class' => 'col-sm-4')
-            ))*/
-            ->add('submit', SubmitType::class, array(
-                'label' => 'Valider mon inscription',
-                'attr' => array('class' => 'btn btn-primary')
-            ))
-            ->getForm()
-        ;
+                ->add('email', EmailType::class, array(
+                ))
+                ->add('phone', TextType::class, array(
+                    'label' => 'Numéro de téléphone',
+                    'required' => false
+                ))
+                ->add('mdp', RepeatedType::class, array(
+                    'type' => PasswordType::class,
+                    'invalid_message' => 'Les mots de passe ne sont pas identiques',
+                    'required' => true,
+                    'first_options'  => array('label' => 'Mot de passe'),
+                    'second_options' => array('label' => 'Confirmation du mot de passe')
+                ))
+                ->add('institut', EntityType::class, array(
+                    'class' => 'AppBundle:Institut',
+                    'query_builder' => function (InstitutRepository $in) {
+                        return $in->createQueryBuilder('i')
+                            ->orderBy('i.nom', 'ASC')
+                            ->where('i.actif = true');
+                    },
+                    'choice_label' => 'nom',
+                    'placeholder' => '',
+                    'multiple' => false,
+                ))
+                ->add('typeUser', ChoiceType::class, array(
+                    'choices'  => $user->getStatuts(),
+                    'label' => 'Vous êtes',
+                ))
+                ->add('concours', ChoiceType::class, array(
+                    'choices'  => array(
+                        '1er Degré' => 0,
+                        '2nd Degré' => 1
+                    ),
+                    'label' => 'Concours préparé',
+                ))
+                ->add('sectionEns', ChoiceType::class, array(
+                    'choices'  => array(
+                        '1er Degré' => 0,
+                        '2nd Degré' => 1
+                    ),
+                    'label' => "Section d'enseignement",
+                ))
+                ->add('validInscriptionFormateurEngagement', ChoiceType::class, array(
+                    'expanded' => true,
+                    'multiple' => false,
+                    'required' => true,
+                    'choices'  => array(
+                        'Oui' => 1,
+                        'Non' => 0
+                    ),
+                    'label' => "Je m'engage",
+                ))
+                ->add('matiereEtu', ChoiceType::class, array(
+                    'choices'  => array(
+                        'Anglais' => 'Anglais',
+                        'Education musicale et chant choral' => 'EducMusChantChoral',
+                        'Espagnol' => 'Espagnol',
+                        'Histoire-Géographie' => 'HG',
+                        'Lettres modernes' => 'LettresModernes',
+                        'Mathématiques' => 'Maths',
+                        'Physique-Chimie' => 'PhyChi',
+                        'SVT' => 'SVT'
+                    ),
+                    'label' => "Matière",
+                ))
+                ->add('matiereForm', ChoiceType::class, array(
+                    'choices'  => array(
+                        'Anglais' => 'Anglais',
+                        'Anglais M2' => 'AnglaisM2',
+                        'Arts appliqués' => 'ArtsAppl',
+                        'Arts plastiques' => 'ArtsPlast',
+                        'Biotechnologies (CAPET/CAPLP)' => 'Biotech',
+                        'Documentation' => 'Documentation',
+                        'Economie Gestion (CAPET)' => 'ECOCAPET',
+                        'Economie Gestion (CAPLP)' => 'ECOCAPLP',
+                        'Education musicale et chant choral' => 'EducMusChantChoral',
+                        'EMCC' => 'EMCC',
+                        'EPS' => 'EPS',
+                        'Espagnol' => 'Espagnol',
+                        'Espagnol M2' => 'Interlangues',
+                        'Génies' => 'GENIE',
+                        'Histoire-Géographie' => 'HG',
+                        'Histoire-Géographie M2' => 'HGM2',
+                        'Hôtellerie Restauration' => 'HOTEL',
+                        'Interlangues' => 'Interlangues',
+                        'Lettres' => 'Lettres',
+                        'Lettres Histoire-Géographie' => 'LHG',
+                        'Lettres Langues' => 'LL',
+                        'Lettres modernes' => 'LettresModernes',
+                        'Mathématiques' => 'Maths',
+                        'Mathématiques M2' => 'MathsM2',
+                        'Mathématiques Sciences' => 'MathsSC',
+                        'Philosophie' => 'Philosophie',
+                        'Physique-Chimie M2' => 'PhyChiM2',
+                        'SES' => 'SES',
+                        'SII' => 'SII',
+                        'Physique-Chimie' => 'PhyChi',
+                        'STMS (CAPET)' => 'STMSCA',
+                        'STMS (CAPLP)' => 'STMSPLP',
+                        'SVT' => 'SVT',
+                        'SVT M2' => 'SVTM2'
+                    ),
+                    'label' => "Matière",
+                ))
+                ->add('matiereProfStag', ChoiceType::class, array(
+                    'choices'  => array(
+                        'Anglais' => 'AnglaisM2',
+                        'Arts appliqués' => 'ArtsAppl',
+                        'Arts plastiques' => 'ArtsPlast',
+                        'Biotechnologies (CAPET/CAPLP)' => 'Biotech',
+                        'Documentation' => 'Documentation',
+                        'Economie Gestion (CAPET)' => 'ECOCAPET',
+                        'Economie Gestion (CAPLP)' => 'ECOCAPLP',
+                        'EMCC' => 'EMCC',
+                        'EPS' => 'EPS',
+                        'Espagnol' => 'Interlangues',
+                        'Génies' => 'GENIE',
+                        'Histoire-Géographie' => 'HGM2',
+                        'Hôtellerie Restauration' => 'HOTEL',
+                        'Interlangues' => 'Interlangues',
+                        'Lettres' => 'Lettres',
+                        'Lettres Histoire-Géographie' => 'LHG',
+                        'Lettres Langues' => 'LL',
+                        'Mathématiques' => 'MathsM2',
+                        'Mathématiques Sciences' => 'MathsSC',
+                        'Philosophie' => 'Philosophie',
+                        'Physique-Chimie' => 'PhyChiM2',
+                        'SES' => 'SES',
+                        'SII' => 'SII',
+                        'STMS (CAPET)' => 'STMSCA',
+                        'STMS (CAPLP)' => 'STMSPLP',
+                        'SVT' => 'SVTM2'
+                    ),
+                    'label' => "Matière",
+                ))
+                /*->add('optionsDisc', ChoiceType::class, array(
+                    'choices'  => array(
+                        'Aucune' => '0',
+                        'Anglais niveau B2 (gratuit)' => 'English',
+                        'Langues Tell me More (payant)' => 'Langues Tell me More'
+                    ),
+                    'label' => "Options",
+                    'label_attr' => array('class' => 'col-sm-4')
+                ))*/
+                ->add('submit', SubmitType::class, array(
+                    'label' => 'Valider mon inscription',
+                    'attr' => array('class' => 'btn btn-primary')
+                ))
+                ->getForm()
+            ;
+        }elseif($template === 'excellencePro'){
+            $form = $this->createFormBuilder()
+                ->add('nom', TextType::class, array(
+                ))
+                ->add('prenom', TextType::class, array(
+                ))
+                ->add('email', EmailType::class, array(
+                ))
+                ->add('phone', TextType::class, array(
+                    'label' => 'Numéro de téléphone',
+                    'required' => false
+                ))
+                ->add('mdp', RepeatedType::class, array(
+                    'type' => PasswordType::class,
+                    'invalid_message' => 'Les mots de passe ne sont pas identiques',
+                    'required' => true,
+                    'first_options'  => array('label' => 'Mot de passe'),
+                    'second_options' => array('label' => 'Confirmation du mot de passe')
+                ))
+                ->add('typeUser', ChoiceType::class, array(
+                    'choices'  => array(
+                        'Enseignant bénéficiant d’une prise en charge des frais annexes par Formiris' => 0,
+                        'Enseignant sans prise en charge des frais annexes' => 1,
+                        'Parent d’élève' => 2,
+                        'Autre' => 3
+                    ),
+                    'label' => 'Vous êtes',
+                ))
+                ->add('submit', SubmitType::class, array(
+                    'label' => 'Valider mon inscription',
+                    'attr' => array('class' => 'btn btn-primary')
+                ))
+                ->getForm()
+            ;
+        }
+
 
         $form->handleRequest($request);
 

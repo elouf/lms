@@ -1,0 +1,59 @@
+<li data-idZone="{{ zoneId }}"
+    data-idItem="{{ h5p.id }}"
+    class="courseElemAdmin h5pAdmin col-md-12"
+    data-typeItem="h5p"
+        {% if inSection == 'true' %}
+            {% set isVisible = "false" %}
+            {% if  visible == 1 %}
+                {% set isVisible = "true" %}
+            {% endif %}
+            data-IsVisible="{{ isVisible }}"
+        {% endif %}
+>
+    <div class="titleBar">H5P</div>
+
+    {% if inSection == 'true' %}
+        {% include "cours/adminBtns.html.twig" with {visible: visible, isReferent: isReferent} %}
+    {% else %}
+        <div class="btnActionCol col-md-1">
+            <ul>
+                <li class="myBtn btnDelete btnLeft btnSupprElem"><i class="fa fa-times"></i></li>
+            </ul>
+        </div>
+    {% endif %}
+
+    <div class="formCol col-md-11">
+        <div class="row mb-10">
+            <div class="LabelAdmin col-sm-3">Nom</div>
+            <input data-champName="nom" class="champAdmin col-sm-9 col-xs-12" value="{{ h5p.nom }}"/>
+        </div>
+        <div class="row mb-10">
+            <div class="LabelAdmin col-sm-3">Description</div>
+            <div class="noPadding col-sm-9  col-xs-12">
+                <textarea data-champName="description" id="zone_{{ zoneId }}_h5p_{{ h5p.id }}_descr"
+                          class="complexEditor editor champAdmin" readonly>{{ h5p.description | raw }}</textarea>
+            </div>
+        </div>
+        <hr class="hrCourseElem"/>
+        <div class="row text-center">
+            {% if h5piscontent == true %}
+                {% if h5p != null %}
+                    {% if isFrame %}
+                        <div class="h5p-iframe-wrapper">
+                            <iframe id="h5p-iframe-{{ h5p.h5p }}" class="h5p-iframe"
+                                    data-content-id="{{ h5p.h5p }}"
+                                    style="height:100px;width:100%;" frameBorder="0"
+                                    scrolling="no"></iframe>
+                        </div>
+                    {% else %}
+                        <div class="h5p-content" data-content-id="{{ h5p.h5p }}"></div>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+
+            <a class="btn btnAdmin inlineBtn" href="{{ path('editH5Pressource', {id: h5p.id}) }}" >
+                <span>Modifier le H5P</span>
+            </a>
+        </div>
+    </div>
+</li>

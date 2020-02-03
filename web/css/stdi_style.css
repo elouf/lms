@@ -193,10 +193,10 @@ a { font-family: inherit; color: inherit; }
     color: #F99F1F;
 }
 .filArianeCourses .disciLink{
-    background: #456d94;
+    background-color: #456d94;
 }
 .filArianeCourses .coursLink{
-    background: #4f81b1;
+    background-color: #4f81b1;
 }
 
 .courseElemAdmin{
@@ -234,6 +234,9 @@ a { font-family: inherit; color: inherit; }
 }
 .freeAdmin .titleBar{
     background: #a29820;
+}
+.h5pAdmin .titleBar{
+    background: #c30055;
 }
 .myBtn{
     cursor: pointer;
@@ -1323,8 +1326,53 @@ ul.list-default>li.studitWhiteFC:before{
 .logoGrand{
     display: block !important;
 }
+
+[data-template="excellencePro"] .logoPtf{
+    width: 342px;
+}
+[data-template="excellencePro"] .color2{
+    color: #6c226b;
+}
+
+[data-template="excellencePro"] .navbar-default{
+    background-color: #6c226b;
+}
+[data-template="excellencePro"] #back{
+    background-color: #6c226b;
+}
+[data-template="excellencePro"] .sub-menu > li > a{
+    background-color: #6c226b;
+}
+[data-template="excellencePro"] .email, [data-template="excellencePro"] .phone, [data-template="excellencePro"] .footer-widget p.email, [data-template="excellencePro"] .footer-widget p.phone{
+    color: #6c226b;
+}
+[data-template="excellencePro"] .ball-1, [data-template="excellencePro"] .ball-2{
+    background-color: #6c226b;
+}
+[data-template="excellencePro"] .btn-primary {
+    background-color: #6c226b;
+}
+[data-template="excellencePro"] .breadcrumb{
+    border-color: #6c226b;
+}
+[data-template="excellencePro"] .studitBlueFC{
+    color: #6c226b;
+}
+[data-template="excellencePro"] .btnMenuDiscCourses{
+    background-color: #6c226b;
+}
+[data-template="excellencePro"] .filArianeCourses, [data-template="excellencePro"] .filArianeCourses .disciLink{
+    background-color: #6c226b;
+    border-color: #6c226b;
+}
+[data-template="excellencePro"] .filArianeCourses .coursLink{
+    background-color: #892488;
+}
+[data-template="excellencePro"] .footer-pri{
+    background-color: #bbb;
+}
 @media screen and (max-width: 1200px){
-    .logoAbsolute{
+    [data-template="afadec"] .logoAbsolute{
         left:-70px
     }
 }
@@ -1335,7 +1383,7 @@ ul.list-default>li.studitWhiteFC:before{
     }
 }
 @media screen and (max-width: 992px){
-    .logoAbsolute{
+    [data-template="afadec"] .logoAbsolute{
         width: 160px;
         left:-80px;
         top:25px;
@@ -1444,23 +1492,27 @@ ul.list-default>li.studitWhiteFC:before{
     }
 }
 
+[data-template="excellencePro"] .navbar .container{
+    width: 100%;
+}
+
 /* ==========================================================================
    Set containers fixed sizes for >1600px, >1920px, >2560px
    Remove all if don't want to use big fixed sizes for all blocks
    You still can use cols with .container-fluid blocks
    ========================================================================== */
 @media (min-width: 1600px) {
-    .container {
+    [data-template="afadec"] .container {
         width: 1530px;
     }
 }
 @media (min-width: 1920px) {
-    .container {
+    [data-template="afadec"] .container {
         width: 1830px;
     }
 }
 @media (min-width: 2560px) {
-    .container {
+    [data-template="afadec"] .container {
         width: 2490px;
     }
 }

@@ -11,8 +11,10 @@ parameters:
     distant_password: 'xserve'
     distant_database: 'chamilo'
     admin_password_init: '+JeSuisAfadecAdmin2017+'
-    template: 'afadec'
+    template: 'excellencePro'
     grouped_mails_limit: 2
+
+# templates : afadec, excellencePro, studit
 
 services:
     calendarServ:
@@ -155,3 +157,7 @@ services:
     authentication.success.listener:
         class: AppBundle\EventListener\AuthenticationEventListener
         arguments: ['@router', '@service_container', '@doctrine.orm.entity_manager', "@security.token_storage"]
+
+    RessourceH5PService:
+        class: AppBundle\Service\RessourceH5PService
+        arguments: ['@doctrine.orm.entity_manager', "@emmedy_h5p.integration", "@emmedy_h5p.core", "@emmedy_h5p.options"]

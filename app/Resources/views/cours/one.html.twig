@@ -26,6 +26,9 @@
 {% endblock %}
 
 {% block main %}
+    {% if h5piscontent == true %}
+        <link rel="stylesheet" href="{{ asset('bundles/emmedyh5p/h5p/h5p-core/styles/h5p.css') }}"/>
+    {% endif %}
     <style>
         .minHcontentDevoirRess{
             min-height: 130px;
@@ -34,6 +37,18 @@
     <script>
         var chrono;
         jQuery(document).ready(function () {
+            $('.ongletSection').click(function(){
+                let t = 0;
+                var resizeEvent = new Event('resize');
+                let redimH5P = setInterval(function(){
+                    t++;
+                    if(t < 20){
+                        window.dispatchEvent(resizeEvent);
+                    }else{
+                        clearInterval(redimH5P);
+                    }
+                }, 100);
+            });
             var steps = $('[data-uploadSteps]').attr('data-uploadSteps');
             var upload_srcSteps = $('[data-uploadSrcSteps]').attr('data-uploadSrcSteps');
             var folderLocation = $('[data-folderUpload]').attr('data-folderUpload');
@@ -817,6 +832,38 @@
 
 
                                                 </li>
+                                            {% elseif val.zones.type[keyR] == "h5p" %}
+                                                <!--
+                                                        H5P
+                                                -->
+                                                <li data-idZone="{{ val.zones.containers[keyR].id }}"
+                                                    class="courseElem h5p {% if val.zones.containers[keyR].isVisible == 0 %} visibility_{% endif %}">
+                                                    <div class="row">
+
+                                                        <div class="itemInfos itemHeader col-xs-10">
+                                                            <div class="itemTitle">{{ valR.nom }}</div>
+                                                            <div class="itemDescription">{{ valR.description | raw }}</div>
+                                                        </div>
+                                                        <div>
+                                                        {% if h5piscontent == true %}
+                                                            {% if valR.h5p != null %}
+                                                                {% if isFrame %}
+                                                                    <div class="h5p-iframe-wrapper">
+                                                                        <iframe id="h5p-iframe-{{ valR.h5p }}" class="h5p-iframe"
+                                                                                data-content-id="{{ valR.h5p }}"
+                                                                                style="height:100px;width:100%;" frameBorder="0"
+                                                                                scrolling="no"></iframe>
+                                                                    </div>
+                                                                {% else %}
+                                                                    <div class="h5p-content" data-content-id="{{ valR.h5p }}"></div>
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        {% endif %}
+                                                        </div>
+                                                    </div>
+
+
+                                                </li>
                                             {% elseif val.zones.type[keyR] == "chat" %}
                                                 <!--
                                                         CHAT
@@ -961,4 +1008,12 @@
             </div>
         </div>
     </div>
+    {% if h5piscontent == true %}
+        {{ include('@EmmedyH5P/javascripts.html.twig') }}
+        {% if not isFrame %}
+            {% for script in files.scripts %}
+                <script src="{{ asset(script.path ~ script.version) }}"></script>
+            {% endfor %}
+        {% endif %}
+    {% endif %}
 {% endblock %}

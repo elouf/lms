@@ -41,8 +41,12 @@
             display: none;
         }
 
+        /*[data-template="excellencePro"] .colDiscNames {
+            display: none;
+        }*/
+
         @media screen and (max-width: 1600px) {
-            .colCoursContent {
+            [data-template="afadec"] .colCoursContent {
                 width: 800px;
             }
 
@@ -52,7 +56,7 @@
         }
 
         @media screen and (max-width: 1200px) {
-            .colCoursContent {
+            [data-template="afadec"] .colCoursContent {
                 width: 700px;
             }
 
@@ -62,7 +66,7 @@
         }
 
         @media screen and (max-width: 1000px) {
-            .colCoursContent {
+            [data-template="afadec"] .colCoursContent {
                 width: 560px;
             }
 
@@ -72,7 +76,7 @@
         }
 
         @media screen and (max-width: 1000px) {
-            .colCoursContent {
+            [data-template="afadec"] .colCoursContent {
                 width: auto;
             }
 
@@ -206,7 +210,7 @@
                              id="p1body{{ val.discipline.id }}" {% if loop.index == 1 %} style="padding-top: 0;" {% endif %}>
                             <div class="container mt-0 mb-60">
                                 <div class="row">
-                                    <div class="colCoursContent col-sm-8">
+                                    <div class="colCoursContent {% if template == 'excellencePro' %}col-sm-12{% elseif template == 'afadec' %}col-sm-8{% endif %}">
                                         <div class="course-list discDescriptionMyCourses" data-enabled="{% if val.discipline.description is not null and val.discipline.description is not empty %}1{% else %}0{% endif %}">
                                             <div class="course-detail">
                                                 <h4 class="heading"><i class="fa fa-info-circle" aria-hidden="true"></i> {{ val.discipline.nom }}</h4>

@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\CategorieLien;
 use AppBundle\Entity\Mp3Podcast;
 use AppBundle\Entity\Podcast;
+use AppBundle\Entity\RessourceH5P;
 use DOMDocument;
 use DOMXPath;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;

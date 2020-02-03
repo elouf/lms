@@ -44,7 +44,7 @@
         input[type=checkbox]:not(:first-child) {
             margin-left: 15px;
         }*/
-        .formRow{
+        .formRow {
             width: 600px;
             display: flex;
             display: -webkit-flex;
@@ -58,24 +58,32 @@
             -webkit-align-items: center;
             height: 35px;
         }
-        .formRow label{
+
+        .formRow label {
             width: 300px;
             text-align: right;
         }
-        .formRow input{
+
+        .formRow input {
             flex: 1;
             -webkit-box-flex: 1;
             -webkit-flex: 1;
             -ms-flex: 1;
         }
-        .formRow select{
+
+        .formRow select {
             width: 220px;
         }
-        #form_submit{
+        [data-template="excellencePro"] .formRow select {
+            width: 300px;
+        }
+
+        #form_submit {
             margin: auto;
             margin-top: 30px;
         }
-        .alertTypeUserValidation, .alertFormateurEngagement{
+
+        .alertTypeUserValidation, .alertFormateurEngagement {
             display: none;
             background-color: #8ec780;
             padding: 10px 15px;
@@ -83,33 +91,40 @@
             border: 1px solid #48753d;
             margin: 10px 0;
         }
-        .alertFormateurEngagement{
+
+        .alertFormateurEngagement {
             background-color: #f9c471;
         }
-        .alertFormateurEngagement label{
+
+        .alertFormateurEngagement label {
             width: auto;
             float: none;
         }
-        #form_validInscriptionFormateurEngagement{
+
+        #form_validInscriptionFormateurEngagement {
             display: inline-block;
         }
-        .btnSubmitZone{
+
+        .btnSubmitZone {
             /*display: none;*/
         }
-        .myCaptcha{
+
+        .myCaptcha {
             background: #fff;
             display: none;
             padding: 10px;
             border-radius: 3px;
         }
-        .etiq{
+
+        .etiq {
             width: 35px;
             height: 35px;
             cursor: pointer;
             display: inline-block;
             margin: 2px;
         }
-        .dest{
+
+        .dest {
             width: 100px;
             height: 40px;
             line-height: 40px;
@@ -118,33 +133,40 @@
             background: #fff;
             border-radius: 3px;
         }
-        .colorInList{
+
+        .colorInList {
             display: inline-block;
             color: #fff;
             background: #000;
             padding: 5px 10px;
             margin: 5px;
         }
-        [data-color="etiq_bl"]{
+
+        [data-color="etiq_bl"] {
             background-color: #168dd1;
         }
-        [data-color="etiq_b"]{
+
+        [data-color="etiq_b"] {
             background-color: #000;
         }
-        [data-color="etiq_g"]{
+
+        [data-color="etiq_g"] {
             background-color: #0cad43;
         }
-        [data-color="etiq_gr"]{
+
+        [data-color="etiq_gr"] {
             background-color: #a2b0b1;
         }
-        [data-color="etiq_j"]{
+
+        [data-color="etiq_j"] {
             background-color: #f5e822;
         }
-        [data-color="etiq_r"]{
+
+        [data-color="etiq_r"] {
             background-color: #ff1d00;
         }
 
-        label[for="form_validInscriptionFormateurEngagement"]{
+        label[for="form_validInscriptionFormateurEngagement"] {
             display: inline-block;
             width: auto;
             float: inherit;
@@ -224,17 +246,17 @@
                 $('#form_validInscriptionFormateurEngagement input').prop('checked', false);
             }
 
-            $( ".etiq" ).draggable({ revert: "valid" });
-            $( ".dest" ).droppable({
-                drop: function( event, ui ) {
+            $(".etiq").draggable({revert: "valid"});
+            $(".dest").droppable({
+                drop: function (event, ui) {
                     $(this).attr('data-color', ui.draggable.attr("data-color"));
                     ui.draggable.remove();
                 }
             });
             let colArray = ['gris', 'noir', 'bleu', 'jaune', 'rouge', 'vert'];
             shuffle(colArray);
-            for(let i=0; i<colArray.length; i++){
-                $('.colorsList').append('<div class="colorInList">'+parseInt(i+1)+' : '+colArray[i]+'</div>')
+            for (let i = 0; i < colArray.length; i++) {
+                $('.colorsList').append('<div class="colorInList">' + parseInt(i + 1) + ' : ' + colArray[i] + '</div>')
             }
 
             function shuffle(array) {
@@ -245,6 +267,7 @@
 
     <div class="container mt-10 mb-40">
         <div class="text-justify">
+            {% if template == 'afadec' %}
             <h4 class="heading">Pourquoi <span class="color2">s'inscrire ?</span></h4>
 
             <p>Vous êtes étudiants en Master MEEF, vous êtes professeur stagiaire, vous êtes formateur dans un ISFEC…
@@ -256,6 +279,7 @@
                 La première démarche à faire est de s’inscrire sur la
                 plate-forme.
             </p>
+            {% endif %}
             <h4 class="heading">Comment <span class="color2">s'inscrire ?</span></h4>
 
             <p>Créez votre compte à l’aide du formulaire ci-dessous.</p>
@@ -263,6 +287,7 @@
             <p>En cas de problème ou de question : <a class="studitBlueFC" href="mailTo:contact.afadec@gmail.com">contact.afadec@gmail.com</a>
             </p>
         </div>
+
         <div>
             <h4 class="heading">Renseigner <span class="color2">mes informations</span></h4>
 
@@ -288,35 +313,44 @@
                         {{ form_label(form.mdp.second) }}{{ form_widget(form.mdp.second) }}
                     </div>
                     <div class="formRow">
-                        {{ form_label(form.institut) }}{{ form_widget(form.institut) }}
-                    </div>
-                    <div class="alertTypeUserValidation">
-                        Attention, les statuts "Référent", "Formateur" et "Administrateur" permettent des fonctionnalités additionnelles dans la plateforme.
-                        De ce fait, votre compte devra être confirmé par les administrateurs de l'Afadec. L'activation de votre compte ne sera pas instantannée mais pourra prendre jusqu'à 24h.
-                        Merci pour votre compréhension.
-                    </div>
-                    <div class="alertFormateurEngagement">
-                        L’AFADEC va vous ouvrir un accès Formateur à sa plateforme qui vous permet, dans votre discipline, de voir les cours en ligne et ceux en préparation. En utilisant vos identifiants et mots de passe pour accéder à http://www.afadec.fr/, vous vous engagez à le faire dans le respect déontologique de l’utilisation des contenus publiés en particulier celui du droit d’auteur.
-                        <br><br>{{ form_label(form.validInscriptionFormateurEngagement) }}{{ form_widget(form.validInscriptionFormateurEngagement) }}
-                    </div>
-                    <div class="formRow">
                         {{ form_label(form.typeUser) }}{{ form_widget(form.typeUser) }}
                     </div>
-                    <div class="formRow">
-                        {{ form_label(form.concours) }}{{ form_widget(form.concours) }}
-                    </div>
-                    <div class="formRow">
-                        {{ form_label(form.sectionEns) }}{{ form_widget(form.sectionEns) }}
-                    </div>
-                    <div class="formRow">
-                        {{ form_label(form.matiereEtu) }}{{ form_widget(form.matiereEtu) }}
-                    </div>
-                    <div class="formRow">
-                        {{ form_label(form.matiereForm) }}{{ form_widget(form.matiereForm) }}
-                    </div>
-                    <div class="formRow">
-                        {{ form_label(form.matiereProfStag) }}{{ form_widget(form.matiereProfStag) }}
-                    </div>
+                    {% if template == 'afadec' %}
+                        <div class="formRow">
+                            {{ form_label(form.institut) }}{{ form_widget(form.institut) }}
+                        </div>
+                        <div class="alertTypeUserValidation">
+                            Attention, les statuts "Référent", "Formateur" et "Administrateur" permettent des
+                            fonctionnalités additionnelles dans la plateforme.
+                            De ce fait, votre compte devra être confirmé par les administrateurs de l'Afadec.
+                            L'activation de votre compte ne sera pas instantannée mais pourra prendre jusqu'à 24h.
+                            Merci pour votre compréhension.
+                        </div>
+                        <div class="alertFormateurEngagement">
+                            L’AFADEC va vous ouvrir un accès Formateur à sa plateforme qui vous permet, dans votre
+                            discipline, de voir les cours en ligne et ceux en préparation. En utilisant vos identifiants
+                            et mots de passe pour accéder à http://www.afadec.fr/, vous vous engagez à le faire dans le
+                            respect déontologique de l’utilisation des contenus publiés en particulier celui du droit
+                            d’auteur.
+                            <br><br>{{ form_label(form.validInscriptionFormateurEngagement) }}{{ form_widget(form.validInscriptionFormateurEngagement) }}
+                        </div>
+                        <div class="formRow">
+                            {{ form_label(form.concours) }}{{ form_widget(form.concours) }}
+                        </div>
+                        <div class="formRow">
+                            {{ form_label(form.sectionEns) }}{{ form_widget(form.sectionEns) }}
+                        </div>
+                        <div class="formRow">
+                            {{ form_label(form.matiereEtu) }}{{ form_widget(form.matiereEtu) }}
+                        </div>
+                        <div class="formRow">
+                            {{ form_label(form.matiereForm) }}{{ form_widget(form.matiereForm) }}
+                        </div>
+                        <div class="formRow">
+                            {{ form_label(form.matiereProfStag) }}{{ form_widget(form.matiereProfStag) }}
+                        </div>
+                    {% elseif template == 'excellencePro' %}
+                    {% endif %}
                     {#<div class="myCaptcha">
                         <div>Afin de vérifier que vous n'êtes pas un robot, nous vous demandons de déplacer les carrés dans la cible, dans l'ordre suivant :</div>
                         <div class="colorsList"></div>

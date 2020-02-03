@@ -18,7 +18,7 @@
     {% endblock %}
 
     {% block mystylesheets %}
-        <link rel="stylesheet" href="{{ asset('vendors/bootstrap/dist/css/bootstrap.min.css') }}" />
+        <link rel="stylesheet" href="{{ asset('vendors/bootstrap/dist/css/bootstrap.css') }}" />
         <link rel="stylesheet" href="{{ asset('vendors/bootstrap-select/dist/css/bootstrap-select.min.css') }}" />
         <link rel="stylesheet" href="{{ asset('vendors/components-font-awesome/css/font-awesome.min.css') }}" />
         <link rel="stylesheet" href="{{ asset('vendors/blueimp-file-upload/css/jquery.fileupload.css') }}" />
@@ -29,9 +29,6 @@
         <link rel="stylesheet" href="{{ asset('css/style.css') }}" />
         <link rel="stylesheet" href="{{ asset('css/components.css') }}" />
         <link rel="stylesheet" href="{{ asset('css/stdi_style.css?v1') }}">
-        {% if template == "studit" %}
-            <link rel="stylesheet" href="{{ asset('css/studit.css') }}">
-        {% endif %}
 
         <!--Google Fonts-->
         <link href='https://fonts.googleapis.com/css?family=Oswald:300,700,400' rel='stylesheet' type='text/css'>
@@ -103,7 +100,7 @@
 
 </head>
 
-<body class="bgcolor3">
+<body class="bgcolor3" data-template="{{ template }}">
 
 <div class="loader-backdrop">           <!-- Loader -->
     <div class="loader">
@@ -142,6 +139,11 @@
                         <img class="logoAbsolute logoGrand" src="{{ asset('educomp/images/logo.png') }}" alt="">
                         <img class="logoAbsolute logoPetit" src="{{ asset('educomp/images/logo_petit.png') }}" alt="">
                         <img class="logoAbsolute logoToutPetit" src="{{ asset('educomp/images/logo_1.png') }}" alt="">
+                    {% elseif template == "excellencePro" %}
+                        <img src="{{ asset('educomp/images/logo_empty.png') }}" alt="">
+                        <img class="logoAbsolute logoGrand" src="{{ asset('educomp/images/logoEP.png') }}" alt="">
+                        <img class="logoAbsolute logoPetit" src="{{ asset('educomp/images/logoEP_petit.png') }}" alt="">
+                        <img class="logoAbsolute logoToutPetit" src="{{ asset('educomp/images/logoEP_petit.png') }}" alt="">
                     {% endif %}
                 </a> <!-- Replace with your Logo -->
 
@@ -164,6 +166,19 @@
                             </ul>
                         </li>
                         <li><a href="{{ path('myCourses') }}">Les cours</a></li>
+                    {% elseif template == 'excellencePro' %}
+                        <li><a target="_blank" href="https://enseignement-catholique.fr/wp-content/uploads/2019/10/EXCELLENCE-PRO-Plaquette-3-volets-BD-Page-par-page.pdf">Présentation</a></li>
+                        <li><a href="#">Infos pratiques</a>
+                            <ul class="sub-menu">									<!-- Sub Menu -->
+                                <li><a href="{{ path('concours') }}">Concours</a></li>
+                                <li><a href="{{ path('faq') }}">FAQ</a></li>
+                                <li><a href="{{ path('metierEnseignant') }}">Le métier d'enseignant</a></li>
+                                <li><a href="{{ path('inscription') }}">Comment s'inscrire ?</a></li>
+                                <li><a href="{{ path('cookies') }}">Cookies</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="{{ path('myCourses') }}">Votre parcours</a></li>
+                        <li><a href="https://enseignement-catholique.fr/les-actus-du-salon/">Newsletter</a></li>
                     {% endif %}
 
                     {% if app.user %}
@@ -206,8 +221,10 @@
                                     <li><a href="{{ path('inscriptionDiscipline') }}">Mes inscriptions</a></li>
                                 {% endif %}
                                 {% block vueAdmin %}{% endblock %}
-                                <li><a href="{{ path('calendrier') }}">Mon calendrier</a></li>
-                                <li><a href="{{ path('messagerie') }}">Messagerie</a><span class="newDocsPuce newMsgsPuce"></span></li>
+                                {% if template == 'afadec'  %}
+                                    <li><a href="{{ path('calendrier') }}">Mon calendrier</a></li>
+                                    <li><a href="{{ path('messagerie') }}">Messagerie</a><span class="newDocsPuce newMsgsPuce"></span></li>
+                                {% endif %}
                                 <li><a href="{{ path('fos_user_security_logout') }}">Déconnexion</a></li>
                             </ul>
                         </li>
@@ -272,6 +289,17 @@
                         <!--<a href="" class="email"><i class="fa fa-facebook fa-fw"></i> notre Facebook</a>-->
                         <a href="mailto:contact.afadec@gmail.com" class="email"><i class="fa fa-envelope fa-fw"></i> contact.afadec@gmail.com</a>
                     </div>
+                {% elseif template == 'excellencePro' %}
+                    <div class="col-sm-6 footer-widget" style="text-align: center">
+                        <ul class="affiliations">
+                            <li><a target="_blank" href="http://enseignement-catholique.fr/"><img src="{{ asset('educomp/images/logoEP.png') }}" class="img-responsive" alt=""></a></li>
+                            </ul>
+                    </div>
+                    <div class="col-sm-4 footer-widget">            <!-- Footer Widget - Contact Info -->
+                        <h5 class="heading inverse">Nous <span class="color2">contacter</span></h5>
+                        <!--<a href="" class="email"><i class="fa fa-facebook fa-fw"></i> notre Facebook</a>-->
+                        <a href="mailto:contact.afadec@gmail.com" class="email"><i class="fa fa-envelope fa-fw"></i> contact.afadec@gmail.com</a>
+                    </div>
                 {% endif %}
             </div>
         </div>
@@ -281,9 +309,11 @@
             <div class="row">
                 <div class="col-sm-6 text-center">
                     {% if template == 'studit'  %}
-                        <span class="copyright">&copy; STUDIT 2017</span>
+                        <span class="copyright">&copy; STUDIT 2020</span>
                     {% elseif template == 'afadec' %}
-                        <span class="copyright">&copy; AFADEC 2017</span>
+                        <span class="copyright">&copy; AFADEC 2020</span>
+                    {% elseif template == 'excellencePro' %}
+                        <span class="copyright">&copy; AFADEC 2020</span>
                     {% endif %}
                 </div>
                 <div class="col-sm-6 text-center">

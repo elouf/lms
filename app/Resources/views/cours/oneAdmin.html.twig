@@ -31,6 +31,9 @@
             src="{{ asset('vendors/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js') }}"></script>
     <link rel="stylesheet"
           href="{{ asset('vendors/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css') }}"/>
+    {% if h5piscontent == true %}
+        <link rel="stylesheet" href="{{ asset('bundles/emmedyh5p/h5p/h5p-core/styles/h5p.css') }}"/>
+    {% endif %}
 
     <style>
         .btnValidateSharedDocsIntitule {
@@ -54,6 +57,18 @@
 
     <script>
         jQuery(document).ready(function () {
+            $('.ongletSection').click(function(){
+                let t = 0;
+                var resizeEvent = new Event('resize');
+                let redimH5P = setInterval(function(){
+                    t++;
+                    if(t < 20){
+                        window.dispatchEvent(resizeEvent);
+                    }else{
+                        clearInterval(redimH5P);
+                    }
+                }, 100);
+            });
             let steps = $('[data-uploadSteps]').attr('data-uploadSteps');
             let upload_srcSteps = $('[data-uploadSrcSteps]').attr('data-uploadSrcSteps');
             let folderLocation = $('[data-folderUpload]').attr('data-folderUpload');
@@ -255,6 +270,8 @@
                     typeItem = "chat";
                 } else if ($(this).hasClass('addNewTypePodcast')) {
                     typeItem = "podcast";
+                } else if ($(this).hasClass('addNewTypeH5P')) {
+                    typeItem = "h5p";
                 }
 
                 $.ajax({
@@ -567,6 +584,8 @@
                         changeChat(elem);
                     } else if (elem.attr('data-typeItem') === 'podcast') {
                         changePodcast(elem);
+                    } else if (elem.attr('data-typeItem') === 'h5p') {
+                        changeH5p(elem);
                     }
                 }
             }
@@ -732,6 +751,34 @@
                     $.ajax({
                         type: 'POST',
                         url: "{{ path('changeContentPodcast_ajax') }}",
+                        async: false,
+                        dataType: "json",
+                        data: {
+                            id: id,
+                            nom: nom,
+                            description: description
+                        },
+                        success: function () {
+                            refreshInSection(idSection);
+                        }
+                    });
+                });
+            }
+
+            function changeH5p(h5p) {
+                h5p.find('.btnSaveInputChange').click(function () {
+                    let idSection = $(this).closest('[data-idSection]').attr('data-idSection');
+                    let id = h5p.attr('data-idItem');
+                    let nom = h5p.find('[data-champName=nom]').val();
+
+                    let description = h5p.find('textarea[data-champName=description]').val();
+                    if (CKEDITOR.instances[h5p.find('[data-champName=description]').attr('id')]) {
+                        description = CKEDITOR.instances[h5p.find('[data-champName=description]').attr('id')].getData();
+                    }
+
+                    $.ajax({
+                        type: 'POST',
+                        url: "{{ path('changeContentH5p_ajax') }}",
                         async: false,
                         dataType: "json",
                         data: {
@@ -1905,6 +1952,9 @@
                             <li role="presentation"><a href="#btnListPodcast" aria-controls="btnListPodcast" role="tab"
                                                        data-toggle="tab"><i class="fa fa-comments-o fa-fw"></i> Podcast</a>
                             </li>
+                            <li role="presentation"><a href="#btnListH5p" aria-controls="btnListH5p" role="tab"
+                                                       data-toggle="tab"><i class="fa fa-comments-o fa-fw"></i> H5P</a>
+                            </li>
                             <li role="presentation"><a href="#btnListLibre" aria-controls="btnListLibre" role="tab"
                                                        data-toggle="tab"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Libre</a>
                             </li>
@@ -1964,6 +2014,14 @@
                                     {% for key,val in libres %}
                                         {% include "cours/adminLibre.html.twig"
                                             with {libre:val, zoneId: '0', inSection: 'false'} %}
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <div role="tabpanel" class="tab-pane fade" id="btnListH5p">
+                                <ul class="list-default courseElems">
+                                    {% for key,val in h5ps %}
+                                        {% include "cours/adminH5p.html.twig"
+                                            with {h5p:val, zoneId: '0', inSection: 'false'} %}
                                     {% endfor %}
                                 </ul>
                             </div>
@@ -2035,6 +2093,8 @@
                                             <option title="Nouvelle ressource" class="addNewItem addNewTypeLibre">Zone
                                                 libre
                                             </option>
+                                            <option title="Nouvelle ressource" class="addNewItem addNewTypeH5P">H5P
+                                            </option>
                                         {% endif %}
                                         <option title="Nouvelle ressource" class="addNewItem addNewTypeForum">Forum
                                         </option>
@@ -2098,6 +2158,13 @@
                                             -->
                                             {% include "cours/adminChat.html.twig"
                                                 with {chat:valR, description: valR.description, visible: val.zones.containers[keyR].isVisible,
+                                                zoneId: val.zones.containers[keyR].id, itemId: valR.id, inSection: 'true', users: users} %}
+                                        {% elseif val.zones.type[keyR] == "h5p" %}
+                                            <!--
+                                                                H5P
+                                            -->
+                                            {% include "cours/adminH5p.html.twig"
+                                                with {h5p:valR, description: valR.description, visible: val.zones.containers[keyR].isVisible,
                                                 zoneId: val.zones.containers[keyR].id, itemId: valR.id, inSection: 'true', users: users} %}
                                         {% endif %}
                                     {% endfor %}
@@ -2391,6 +2458,10 @@
                                                            aria-controls="btnListPodcastModal"
                                                            role="tab" data-toggle="tab"><i
                                                 class="fa fa-comments-o fa-fw"></i> Podcast</a></li>
+                                <li role="presentation"><a href="#btnListH5PModal"
+                                                           aria-controls="btnListH5PModal"
+                                                           role="tab" data-toggle="tab"><i
+                                                class="fa fa-comments-o fa-fw"></i> H5P</a></li>
                                 <li role="presentation"><a href="#btnListLibreModal"
                                                            aria-controls="btnListLibreModal"
                                                            role="tab" data-toggle="tab"><i
@@ -2534,6 +2605,11 @@
                                         {% endfor %}
                                     </table>
                                 </div>
+                                <div role="tabpanel" class="tab-pane fade" id="btnListH5PModal">
+                                    <table class="tableAddItem">
+
+                                    </table>
+                                </div>
                                 <div role="tabpanel" class="tab-pane fade" id="btnListLibreModal">
                                     <table class="tableAddItem">
                                         {% for key,val in libres %}
@@ -2613,4 +2689,12 @@
             </div>
         </div>
     </div>
+    {% if h5piscontent == true %}
+        {{ include('@EmmedyH5P/javascripts.html.twig') }}
+        {% if not isFrame %}
+            {% for script in files.scripts %}
+                <script src="{{ asset(script.path ~ script.version) }}"></script>
+            {% endfor %}
+        {% endif %}
+    {% endif %}
 {% endblock %}

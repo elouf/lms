@@ -42,7 +42,7 @@
         "gos/web-socket-bundle": "^1.8",
         "symfony/assetic-bundle": "^2.8",
         "knplabs/knp-paginator-bundle": "^2.7",
-        "studit/h5p-bundle": "0.3.3",
+        "studit/h5p-bundle": "^0.3.3",
         "wapmorgan/mp3info": "^0.0.4"
     },
     "require-dev": {
