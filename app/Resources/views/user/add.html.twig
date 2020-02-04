@@ -74,6 +74,7 @@
         .formRow select {
             width: 220px;
         }
+
         [data-template="excellencePro"] .formRow select {
             width: 300px;
         }
@@ -175,7 +176,7 @@
     <script src="{{ asset('vendors/jquery-ui/jquery-ui.min.js') }}" type=text/javascript></script>
     <script>
         jQuery(document).ready(function () {
-
+            $('.dependOnType').hide();
             $('label').addClass('col-sm-4');
 
             if ($('#form_mdp_first').parent().find('ul').length) {
@@ -216,6 +217,16 @@
                 } else if ($(this).val() == 1) {
                     // 2nd degré
                     $('#form_matiereForm').parent().show();
+                }
+            });
+            $('#form_typeUser').on('change', function () {
+                $('.dependOnType input[type="text"]').each(function(){
+                    $(this).val('');
+                });
+                if ($(this).val() === '0') {
+                    $('.dependOnType').hide();
+                } else {
+                    $('.dependOnType').show();
                 }
             });
 
@@ -268,17 +279,19 @@
     <div class="container mt-10 mb-40">
         <div class="text-justify">
             {% if template == 'afadec' %}
-            <h4 class="heading">Pourquoi <span class="color2">s'inscrire ?</span></h4>
+                <h4 class="heading">Pourquoi <span class="color2">s'inscrire ?</span></h4>
 
-            <p>Vous êtes étudiants en Master MEEF, vous êtes professeur stagiaire, vous êtes formateur dans un ISFEC…
-                L’AFADEC vous accompagne dans votre parcours (conférences vidéos en ligne, concours blancs, exercices,
-                sessions de travail ou de révision, documents de référence….etc. ).
-            </p>
+                <p>Vous êtes étudiants en Master MEEF, vous êtes professeur stagiaire, vous êtes formateur dans un
+                    ISFEC…
+                    L’AFADEC vous accompagne dans votre parcours (conférences vidéos en ligne, concours blancs,
+                    exercices,
+                    sessions de travail ou de révision, documents de référence….etc. ).
+                </p>
 
-            <p>
-                La première démarche à faire est de s’inscrire sur la
-                plate-forme.
-            </p>
+                <p>
+                    La première démarche à faire est de s’inscrire sur la
+                    plate-forme.
+                </p>
             {% endif %}
             <h4 class="heading">Comment <span class="color2">s'inscrire ?</span></h4>
 
@@ -350,21 +363,16 @@
                             {{ form_label(form.matiereProfStag) }}{{ form_widget(form.matiereProfStag) }}
                         </div>
                     {% elseif template == 'excellencePro' %}
-                    {% endif %}
-                    {#<div class="myCaptcha">
-                        <div>Afin de vérifier que vous n'êtes pas un robot, nous vous demandons de déplacer les carrés dans la cible, dans l'ordre suivant :</div>
-                        <div class="colorsList"></div>
-                        <div>Vous avez trois essais pour confirmer que vous n'êtes pas un robot.</div>
-                        <div class="dest">Cible</div>
-                        <div class="start">
-                            <div class="etiq" data-color="etiq_r"><img src="{{ asset('images/captcha/r.png') }}" /></div>
-                            <div class="etiq" data-color="etiq_b"><img src="{{ asset('images/captcha/n.png') }}" /></div>
-                            <div class="etiq" data-color="etiq_j"><img src="{{ asset('images/captcha/j.png') }}" /></div>
-                            <div class="etiq" data-color="etiq_g"><img src="{{ asset('images/captcha/g.png') }}" /></div>
-                            <div class="etiq" data-color="etiq_bl"><img src="{{ asset('images/captcha/bl.png') }}" /></div>
-                            <div class="etiq" data-color="etiq_gr"><img src="{{ asset('images/captcha/gr.png') }}" /></div>
+                        <div class="formRow dependOnType">
+                            {{ form_label(form.nomEtabl) }}{{ form_widget(form.nomEtabl) }}
                         </div>
-                    </div>#}
+                        <div class="formRow dependOnType">
+                            {{ form_label(form.commune) }}{{ form_widget(form.commune) }}
+                        </div>
+                        <div class="formRow dependOnType">
+                            {{ form_label(form.codePost) }}{{ form_widget(form.codePost) }}
+                        </div>
+                    {% endif %}
                     <div class="formRow center btnSubmitZone">
                         {{ form_widget(form.submit) }}
                     </div>

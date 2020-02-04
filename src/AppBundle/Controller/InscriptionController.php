@@ -2,9 +2,11 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Cohorte;
 use AppBundle\Entity\Discipline;
 use AppBundle\Entity\Inscription_c;
 use AppBundle\Entity\Inscription_d;
+use AppBundle\Entity\Role;
 use AppBundle\Repository\DisciplineRepository;
 use AppBundle\Repository\InstitutRepository;
 use DateTime;
@@ -29,7 +31,7 @@ class InscriptionController extends Controller
     /**
      * @Route("/inscription", name="inscription")
      */
-    public function inscriptionAction (Request $request)
+    public function inscriptionAction(Request $request)
     {
         date_default_timezone_set('Europe/Paris');
 
@@ -37,14 +39,11 @@ class InscriptionController extends Controller
 
         $user = new User();
 
-        if($template === 'afadec'){
+        if ($template === 'afadec') {
             $form = $this->createFormBuilder()
-                ->add('nom', TextType::class, array(
-                ))
-                ->add('prenom', TextType::class, array(
-                ))
-                ->add('email', EmailType::class, array(
-                ))
+                ->add('nom', TextType::class, array())
+                ->add('prenom', TextType::class, array())
+                ->add('email', EmailType::class, array())
                 ->add('phone', TextType::class, array(
                     'label' => 'Numéro de téléphone',
                     'required' => false
@@ -53,7 +52,7 @@ class InscriptionController extends Controller
                     'type' => PasswordType::class,
                     'invalid_message' => 'Les mots de passe ne sont pas identiques',
                     'required' => true,
-                    'first_options'  => array('label' => 'Mot de passe'),
+                    'first_options' => array('label' => 'Mot de passe'),
                     'second_options' => array('label' => 'Confirmation du mot de passe')
                 ))
                 ->add('institut', EntityType::class, array(
@@ -68,18 +67,18 @@ class InscriptionController extends Controller
                     'multiple' => false,
                 ))
                 ->add('typeUser', ChoiceType::class, array(
-                    'choices'  => $user->getStatuts(),
+                    'choices' => $user->getStatuts(),
                     'label' => 'Vous êtes',
                 ))
                 ->add('concours', ChoiceType::class, array(
-                    'choices'  => array(
+                    'choices' => array(
                         '1er Degré' => 0,
                         '2nd Degré' => 1
                     ),
                     'label' => 'Concours préparé',
                 ))
                 ->add('sectionEns', ChoiceType::class, array(
-                    'choices'  => array(
+                    'choices' => array(
                         '1er Degré' => 0,
                         '2nd Degré' => 1
                     ),
@@ -89,14 +88,14 @@ class InscriptionController extends Controller
                     'expanded' => true,
                     'multiple' => false,
                     'required' => true,
-                    'choices'  => array(
+                    'choices' => array(
                         'Oui' => 1,
                         'Non' => 0
                     ),
                     'label' => "Je m'engage",
                 ))
                 ->add('matiereEtu', ChoiceType::class, array(
-                    'choices'  => array(
+                    'choices' => array(
                         'Anglais' => 'Anglais',
                         'Education musicale et chant choral' => 'EducMusChantChoral',
                         'Espagnol' => 'Espagnol',
@@ -109,7 +108,7 @@ class InscriptionController extends Controller
                     'label' => "Matière",
                 ))
                 ->add('matiereForm', ChoiceType::class, array(
-                    'choices'  => array(
+                    'choices' => array(
                         'Anglais' => 'Anglais',
                         'Anglais M2' => 'AnglaisM2',
                         'Arts appliqués' => 'ArtsAppl',
@@ -148,7 +147,7 @@ class InscriptionController extends Controller
                     'label' => "Matière",
                 ))
                 ->add('matiereProfStag', ChoiceType::class, array(
-                    'choices'  => array(
+                    'choices' => array(
                         'Anglais' => 'AnglaisM2',
                         'Arts appliqués' => 'ArtsAppl',
                         'Arts plastiques' => 'ArtsPlast',
@@ -191,16 +190,12 @@ class InscriptionController extends Controller
                     'label' => 'Valider mon inscription',
                     'attr' => array('class' => 'btn btn-primary')
                 ))
-                ->getForm()
-            ;
-        }elseif($template === 'excellencePro'){
+                ->getForm();
+        } elseif ($template === 'excellencePro') {
             $form = $this->createFormBuilder()
-                ->add('nom', TextType::class, array(
-                ))
-                ->add('prenom', TextType::class, array(
-                ))
-                ->add('email', EmailType::class, array(
-                ))
+                ->add('nom', TextType::class, array())
+                ->add('prenom', TextType::class, array())
+                ->add('email', EmailType::class, array())
                 ->add('phone', TextType::class, array(
                     'label' => 'Numéro de téléphone',
                     'required' => false
@@ -209,24 +204,35 @@ class InscriptionController extends Controller
                     'type' => PasswordType::class,
                     'invalid_message' => 'Les mots de passe ne sont pas identiques',
                     'required' => true,
-                    'first_options'  => array('label' => 'Mot de passe'),
+                    'first_options' => array('label' => 'Mot de passe'),
                     'second_options' => array('label' => 'Confirmation du mot de passe')
                 ))
                 ->add('typeUser', ChoiceType::class, array(
-                    'choices'  => array(
-                        'Enseignant bénéficiant d’une prise en charge des frais annexes par Formiris' => 0,
-                        'Enseignant sans prise en charge des frais annexes' => 1,
-                        'Parent d’élève' => 2,
-                        'Autre' => 3
+                    'choices' => array(
+                        'Autre' => 0,
+                        'Enseignant bénéficiant d’une prise en charge des frais annexes par Formiris' => 1,
+                        'Enseignant sans prise en charge des frais annexes' => 2,
+                        'Parent d’élève' => 3
                     ),
                     'label' => 'Vous êtes',
+                ))
+                ->add('nomEtabl', TextType::class, array(
+                    'label' => 'Nom de l‘établissement',
+                    'required' => false
+                ))
+                ->add('commune', TextType::class, array(
+                    'label' => 'Commune',
+                    'required' => false
+                ))
+                ->add('codePost', TextType::class, array(
+                    'label' => 'Code postal',
+                    'required' => false
                 ))
                 ->add('submit', SubmitType::class, array(
                     'label' => 'Valider mon inscription',
                     'attr' => array('class' => 'btn btn-primary')
                 ))
-                ->getForm()
-            ;
+                ->getForm();
         }
 
 
@@ -237,7 +243,7 @@ class InscriptionController extends Controller
 
             $em = $this->getDoctrine()->getManager();
             $checkUser = $em->getRepository('AppBundle:User')->findOneBy(array('email' => $data['email']));
-            if(!$checkUser){
+            if (!$checkUser) {
                 $user = new User();
 
                 $user->setFirstname($data['prenom']);
@@ -245,75 +251,82 @@ class InscriptionController extends Controller
                 $user->setEmail($data['email']);
                 $user->setPlainPassword($data['mdp']);
                 $user->setPhone($data['phone']);
-                $user->setInstitut($data['institut']);
-                $user->setStatut($data['typeUser']);
+
+                if ($template === 'afadec') {
+                    $user->setStatut($data['typeUser']);
+                    $user->setInstitut($data['institut']);
+                } elseif ($template === 'excellencePro') {
+                    $user->setTypeUser($data['typeUser']);
+                    $user->setCodePost($data['codePost']);
+                    $user->setCommune($data['commune']);
+                    $user->setNomEtabl($data['nomEtabl']);
+                }
+
 
                 $em->persist($user);
 
-                $nomCoh = "";
-                $role = "";
-                if($data['typeUser'] == 'Etudiant'){
-                    // Etudiant
-                    $role = $em->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Etudiant'));
-                    if($data['concours'] == 0){
-                        // CRPE étudiant
-                        $nomCoh = 'crpe';
-                    }elseif($data['concours'] == 1){
-                        // CAPES étudiant
-                        $nomCoh = $data['matiereEtu'];
+                if ($template === 'afadec') {
+                    $nomCoh = "";
+                    $role = "";
+                    if ($data['typeUser'] == 'Etudiant') {
+                        // Etudiant
+                        $role = $em->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Etudiant'));
+                        if ($data['concours'] == 0) {
+                            // CRPE étudiant
+                            $nomCoh = 'crpe';
+                        } elseif ($data['concours'] == 1) {
+                            // CAPES étudiant
+                            $nomCoh = $data['matiereEtu'];
+                        }
+                        $user->setConfirmedByAdmin(true);
+                    } elseif ($data['typeUser'] == 'Formateur' || $data['typeUser'] == 'Responsable') {
+                        // Formateur
+                        $role = $em->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Formateur'));
+                        if ($data['sectionEns'] == 0) {
+                            // CRPE formateur
+                            $nomCoh = 'crpe';
+                        } elseif ($data['sectionEns'] == 1) {
+                            // CAPES étudiant
+                            $nomCoh = $data['matiereForm'];
+                        }
+                        $user->setConfirmedByAdmin(false);
+                        $user->setValidInscriptionFormateurEngagement($data['validInscriptionFormateurEngagement']);
+                    } elseif ($data['typeUser'] == 'Prof_stagiaire') {
+                        // Prof stagiaire
+                        $role = $em->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Stagiaire'));
+                        $nomCoh = $data['matiereProfStag'];
+                        $user->setConfirmedByAdmin(true);
                     }
-                    $user->setConfirmedByAdmin(true);
-                }elseif($data['typeUser'] == 'Formateur' || $data['typeUser'] == 'Responsable'){
-                    // Formateur
-                    $role = $em->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Formateur'));
-                    if($data['sectionEns'] == 0){
-                        // CRPE formateur
-                        $nomCoh = 'crpe';
-                    }elseif($data['sectionEns'] == 1){
-                        // CAPES étudiant
-                        $nomCoh = $data['matiereForm'];
-                    }
-                    $user->setConfirmedByAdmin(false);
-                    $user->setValidInscriptionFormateurEngagement($data['validInscriptionFormateurEngagement']);
-                }elseif($data['typeUser'] == 'Prof_stagiaire'){
-                    // Prof stagiaire
-                    $role = $em->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Stagiaire'));
-                    $nomCoh = $data['matiereProfStag'];
-                    $user->setConfirmedByAdmin(true);
-                }
-                $coh = $em->getRepository('AppBundle:Cohorte')->findOneBy(array('nom' => $nomCoh));
-                $inscr = new Inscription_coh();
-                $inscr->setUser($user);
-                $inscr->setCohorte($coh);
-                $inscr->setDateInscription(new DateTime());
-                $inscr->setRole($role);
-                $em->persist($inscr);
+                    $coh = $em->getRepository('AppBundle:Cohorte')->findOneBy(array('nom' => $nomCoh));
+                    $inscr = new Inscription_coh();
+                    $inscr->setUser($user);
+                    $inscr->setCohorte($coh);
+                    $inscr->setDateInscription(new DateTime());
+                    $inscr->setRole($role);
+                    $em->persist($inscr);
 
-                $em->flush();
+                    $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+                    $routeName = $request->get('_route');
 
-                $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-                $routeName = $request->get('_route');
-
-                $message = \Swift_Message::newInstance()
-                    ->setSubject('[AFADEC] Confirmation de votre inscription')
-                    ->setFrom('contact.afadec@gmail.com')
-                    ->setTo($user->getEmail())
-                    ->setBody(
-                        $this->renderView(
-                            'user/registrationMail.html.twig',
-                            array(
-                                'prenom' => $user->getFirstname(),
-                                'nom' => $user->getLastname(),
-                                'id' => $user->getId(),
-                                'url' => str_replace($routeName, 'activation', $actual_link),
-                                'urlLogin' =>str_replace($routeName, 'login', $actual_link),
-                                'confirmedByAdmin' => $user->getConfirmedByAdmin(),
-                                'statut' => $user->getStatut(),
-                            )
-                        ),
-                        'text/html'
-                    )
-                    /*
+                    $message = \Swift_Message::newInstance()
+                        ->setSubject('[AFADEC] Confirmation de votre inscription')
+                        ->setFrom('contact.afadec@gmail.com')
+                        ->setTo($user->getEmail())
+                        ->setBody(
+                            $this->renderView(
+                                'user/registrationMail.html.twig',
+                                array(
+                                    'prenom' => $user->getFirstname(),
+                                    'nom' => $user->getLastname(),
+                                    'id' => $user->getId(),
+                                    'url' => str_replace($routeName, 'activation', $actual_link),
+                                    'urlLogin' => str_replace($routeName, 'login', $actual_link),
+                                    'confirmedByAdmin' => $user->getConfirmedByAdmin(),
+                                    'statut' => $user->getStatut(),
+                                )
+                            ),
+                            'text/html'
+                        )/*
                      * If you also want to include a plaintext version of the message
                     ->addPart(
                         $this->renderView(
@@ -323,9 +336,21 @@ class InscriptionController extends Controller
                         'text/plain'
                     )
                     */
-                ;
-                $this->get('mailer')->send($message);
-
+                    ;
+                    $this->get('mailer')->send($message);
+                } elseif ($template === 'excellencePro') {
+                    /* @var $role Role */
+                    $role = $em->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Etudiant'));
+                    /* @var $coh Cohorte */
+                    $coh = $em->getRepository('AppBundle:Cohorte')->findOneBy(array('nom' => 'ExcellencePro'));
+                    $inscr = new Inscription_coh();
+                    $inscr->setUser($user);
+                    $inscr->setCohorte($coh);
+                    $inscr->setDateInscription(new DateTime());
+                    $inscr->setRole($role);
+                    $em->persist($inscr);
+                }
+                $em->flush();
 
                 return $this->redirectToRoute('registration', array('userId' => $user->getId()));
             }
@@ -343,9 +368,9 @@ class InscriptionController extends Controller
     public function confirmInscrAction(Request $request, $userId)
     {
         $user = $this->getDoctrine()->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
-        if($user){
+        if ($user) {
             return $this->render('user/registration.html.twig', ['user' => $user]);
-        }else{
+        } else {
             return $this->redirectToRoute('homepage');
         }
 
@@ -359,7 +384,7 @@ class InscriptionController extends Controller
     {
         /* @var $user User */
         $user = $this->getUser();
-        if((($user->getStatut() !== 'Responsable' && $user->getStatut() !== 'Formateur') || !$user->getConfirmedByAdmin()) && !$this->getUser()->hasRole('ROLE_SUPER_ADMIN')){
+        if ((($user->getStatut() !== 'Responsable' && $user->getStatut() !== 'Formateur') || !$user->getConfirmedByAdmin()) && !$this->getUser()->hasRole('ROLE_SUPER_ADMIN')) {
             return $this->redirectToRoute('homepage');
         }
 
@@ -369,12 +394,12 @@ class InscriptionController extends Controller
         $disciplines = $discRepo->findAll();
         $discAccess = [];
         $discNoAccess = [];
-        if($disciplines){
+        if ($disciplines) {
             /* @var $discipline Discipline */
-            foreach ($disciplines as $discipline){
-                if($discRepo->userHasAccessOrIsInscrit($user, $discipline)){
+            foreach ($disciplines as $discipline) {
+                if ($discRepo->userHasAccessOrIsInscrit($user, $discipline)) {
                     array_push($discAccess, $discipline);
-                }else{
+                } else {
                     array_push($discNoAccess, $discipline);
                 }
             }
@@ -408,7 +433,7 @@ class InscriptionController extends Controller
             $user = $this->getDoctrine()->getRepository('AppBundle:User')
                 ->findOneBy(array('id' => $idUser));
 
-            if($isInscr){
+            if ($isInscr) {
                 /* @var $role Role */
                 $role = $this->getDoctrine()->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Etudiant'));
                 $inscr = new Inscription_d();
@@ -417,12 +442,12 @@ class InscriptionController extends Controller
                 $inscr->setDateInscription(new DateTime());
                 $inscr->setRole($role);
                 $em->persist($inscr);
-            }else{
+            } else {
                 $inscr = $this->getDoctrine()->getRepository('AppBundle:Inscription_d')
                     ->findOneBy(array('user' => $user, 'discipline' => $discipline));
-                if($inscr){
+                if ($inscr) {
                     $em->remove($inscr);
-                }else{
+                } else {
                     $noAction = true;
                 }
             }
@@ -447,14 +472,14 @@ class InscriptionController extends Controller
         $em = $this->getDoctrine()->getEntityManager();
 
         $user = $this->getDoctrine()->getRepository('AppBundle:User')->findOneBy(array('id' => $id));
-        if($user){
+        if ($user) {
             $user->setEnabled(true);
 
             $em->persist($user);
             $em->flush();
 
             return $this->render('user/activation.html.twig', ['user' => $user]);
-        }else{
+        } else {
             return $this->redirectToRoute('homepage');
         }
 

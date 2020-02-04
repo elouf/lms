@@ -47,6 +47,34 @@ class User extends BaseUser
     protected $lastname;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="nomEtabl", type="string", length=1024, nullable = true)
+     */
+    protected $nomEtabl;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="commune", type="string", length=255, nullable = true)
+     */
+    protected $commune;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="codePost", type="integer", nullable = true)
+     */
+    protected $codePost;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="typeUser", type="string", length=255, nullable = true)
+     */
+    protected $typeUser;
+
+    /**
      * @var Institut
      *
      * @ORM\ManyToOne(targetEntity="Institut")
@@ -169,6 +197,102 @@ class User extends BaseUser
     public function getLastname()
     {
         return $this->lastname;
+    }
+
+    /**
+     * Set nomEtabl
+     *
+     * @param string $nomEtabl
+     *
+     * @return User
+     */
+    public function setNomEtabl($nomEtabl)
+    {
+        $this->nomEtabl = $nomEtabl;
+
+        return $this;
+    }
+
+    /**
+     * Get nomEtabl
+     *
+     * @return string
+     */
+    public function getNomEtabl()
+    {
+        return $this->nomEtabl;
+    }
+
+    /**
+     * Set commune
+     *
+     * @param string $commune
+     *
+     * @return User
+     */
+    public function setCommune($commune)
+    {
+        $this->commune = $commune;
+
+        return $this;
+    }
+
+    /**
+     * Get commune
+     *
+     * @return string
+     */
+    public function getCommune()
+    {
+        return $this->commune;
+    }
+
+    /**
+     * Set codePost
+     *
+     * @param integer $codePost
+     *
+     * @return User
+     */
+    public function setCodePost($codePost)
+    {
+        $this->codePost = $codePost;
+
+        return $this;
+    }
+
+    /**
+     * Get codePost
+     *
+     * @return integer
+     */
+    public function getCodePost()
+    {
+        return $this->codePost;
+    }
+
+    /**
+     * Set typeUser
+     *
+     * @param string $typeUser
+     *
+     * @return User
+     */
+    public function setTypeUser($typeUser)
+    {
+        $this->typeUser = $typeUser;
+
+        return $this;
+    }
+
+    /**
+     * Get typeUser
+     *
+     * @return string
+     */
+    public function getTypeUser()
+    {
+        return $this->typeUser;
     }
 
     /**
