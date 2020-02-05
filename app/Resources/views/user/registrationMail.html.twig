@@ -1,0 +1,15 @@
+<h3>Votre compte est bien créé !</h3>
+
+<p>Bonjour {{ prenom }} {{ nom }}! Votre compte est bien créé.</p>
+<p>Pour l'activer, veuillez cliquer sur ce lien : <a href="{{ url }}/{{ id }}">Lien d'activation</a>
+
+<p>Vous pourrez ensuite vous authentifier sur <a href="{{ urlLogin }}">la page d'accueil</a></p>
+
+{% if not confirmedByAdmin %}
+    <p>Attention ! Vous avez choisi un statut {{ statut }}.</p>
+    <p>Ce statut vous donne droit à des fonctionnalités supplémentaires. Elles seront actives lorsque l'administrateur de l'AFADEC aura confirmé votre compte. Vous serez averti dans les 24h de cette confirmation.</p>
+{% endif %}
+
+<p>Merci!</p>
+<p>L'équipe AFADEC</p>
+<p><a class="studitBlueFC" href="mailTo:contact.afadec@gmail.com">contact.afadec@gmail.com</a></p>

@@ -365,6 +365,8 @@ class InscriptionController extends Controller
                 }
                 $em->flush();
 
+
+
                 return $this->redirectToRoute('registration', array('userId' => $user->getId()));
             }
 
