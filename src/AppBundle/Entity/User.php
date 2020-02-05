@@ -145,10 +145,19 @@ class User extends BaseUser
      */
     private $autorizedSections;
 
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\ManyToMany(targetEntity="GroupeResa", inversedBy="users")
+     * @ORM\JoinTable(name="users_resas")
+     */
+    private $resas;
+
     public function __construct()
     {
         parent::__construct();
         $this->autorizedSections = new ArrayCollection();
+        $this->resas = new ArrayCollection();
     }
 
     /**
@@ -583,6 +592,60 @@ class User extends BaseUser
         if ($this->autorizedSections->contains($autorizedSection)) {
             $this->autorizedSections->removeElement($autorizedSection);
             $autorizedSection->removeAutorizedUser($this);
+        }
+    }
+
+    /**
+     * Set resas
+     *
+     * @param array $resas
+     *
+     * @return User
+     */
+    public function setResas($resas)
+    {
+        $this->resas = $resas;
+
+        return $this;
+    }
+
+    /**
+     * Get resas
+     *
+     * @return ArrayCollection
+     */
+    public function getResas()
+    {
+        return $this->resas;
+    }
+
+    /**
+     * Add resa
+     *
+     * @param GroupeResa $resa
+     *
+     * @return User
+     */
+    public function addResa($resa)
+    {
+        if(!$this->resas->contains($resa)){
+            $this->resas[] = $resa;
+            $resa->addUser($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove resa
+     *
+     * @param GroupeResa $resa
+     */
+    public function removeResa($resa)
+    {
+        if ($this->resas->contains($resa)) {
+            $this->resas->removeElement($resa);
+            $resa->removeUser($this);
         }
     }
 }
