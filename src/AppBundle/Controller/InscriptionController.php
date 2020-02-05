@@ -304,6 +304,31 @@ class InscriptionController extends Controller
                     $inscr->setDateInscription(new DateTime());
                     $inscr->setRole($role);
                     $em->persist($inscr);
+
+                    $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+                    $routeName = $request->get('_route');
+
+                    $message = \Swift_Message::newInstance()
+                        ->setSubject('[AFADEC] Confirmation de votre inscription')
+                        ->setFrom('contact.afadec@gmail.com')
+                        ->setTo($user->getEmail())
+                        ->setBody(
+                            $this->renderView(
+                                'user/registrationMail.html.twig',
+                                array(
+                                    'prenom' => $user->getFirstname(),
+                                    'nom' => $user->getLastname(),
+                                    'id' => $user->getId(),
+                                    'url' => str_replace($routeName, 'activation', $actual_link),
+                                    'urlLogin' => str_replace($routeName, 'login', $actual_link),
+                                    'confirmedByAdmin' => $user->getConfirmedByAdmin(),
+                                    'statut' => $user->getStatut(),
+                                )
+                            ),
+                            'text/html'
+                        );
+                    $this->get('mailer')->send($message);
+
                 } elseif ($template === 'excellencePro') {
                     /* @var $role Role */
                     $role = $em->getRepository('AppBundle:Role')->findOneBy(array('nom' => 'Etudiant'));
@@ -315,32 +340,30 @@ class InscriptionController extends Controller
                     $inscr->setDateInscription(new DateTime());
                     $inscr->setRole($role);
                     $em->persist($inscr);
+
+                    $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+                    $routeName = $request->get('_route');
+
+                    $message = \Swift_Message::newInstance()
+                        ->setSubject('[AFADEC] Confirmation de votre inscription')
+                        ->setFrom('contact.afadec@gmail.com')
+                        ->setTo($user->getEmail())
+                        ->setBody(
+                            $this->renderView(
+                                'user/registrationMailExcellence.html.twig',
+                                array(
+                                    'prenom' => $user->getFirstname(),
+                                    'nom' => $user->getLastname(),
+                                    'id' => $user->getId(),
+                                    'url' => str_replace($routeName, 'activation', $actual_link),
+                                    'urlLogin' => str_replace($routeName, 'login', $actual_link)
+                                )
+                            ),
+                            'text/html'
+                        );
+                    $this->get('mailer')->send($message);
                 }
                 $em->flush();
-
-                $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-                $routeName = $request->get('_route');
-
-                $message = \Swift_Message::newInstance()
-                    ->setSubject('[AFADEC] Confirmation de votre inscription')
-                    ->setFrom('contact.afadec@gmail.com')
-                    ->setTo($user->getEmail())
-                    ->setBody(
-                        $this->renderView(
-                            'user/registrationMail.html.twig',
-                            array(
-                                'prenom' => $user->getFirstname(),
-                                'nom' => $user->getLastname(),
-                                'id' => $user->getId(),
-                                'url' => str_replace($routeName, 'activation', $actual_link),
-                                'urlLogin' => str_replace($routeName, 'login', $actual_link),
-                                'confirmedByAdmin' => $user->getConfirmedByAdmin(),
-                                'statut' => $user->getStatut(),
-                            )
-                        ),
-                        'text/html'
-                    );
-                $this->get('mailer')->send($message);
 
                 return $this->redirectToRoute('registration', array('userId' => $user->getId()));
             }
