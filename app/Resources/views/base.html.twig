@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
@@ -9,46 +9,51 @@
 
     {% block title %}
         <title>
-        {% if template == "studit" %}
-            STUDIT
-        {% elseif template == "afadec" %}
-            AFADEC
-        {% endif %}
+            {% if template == "studit" %}
+                STUDIT
+            {% elseif template == "afadec" %}
+                AFADEC
+            {% endif %}
         </title>
     {% endblock %}
 
     {% block mystylesheets %}
-        <link rel="stylesheet" href="{{ asset('vendors/bootstrap/dist/css/bootstrap.css') }}" />
-        <link rel="stylesheet" href="{{ asset('vendors/bootstrap-select/dist/css/bootstrap-select.min.css') }}" />
-        <link rel="stylesheet" href="{{ asset('vendors/components-font-awesome/css/font-awesome.min.css') }}" />
-        <link rel="stylesheet" href="{{ asset('vendors/blueimp-file-upload/css/jquery.fileupload.css') }}" />
-        <link rel="stylesheet" href="{{ asset('vendors/blueimp-file-upload/css/jquery.fileupload.css') }}" />
+        <link rel="stylesheet" href="{{ asset('vendors/bootstrap/dist/css/bootstrap.css') }}"/>
+        <link rel="stylesheet" href="{{ asset('vendors/bootstrap-select/dist/css/bootstrap-select.min.css') }}"/>
+        <link rel="stylesheet" href="{{ asset('vendors/components-font-awesome/css/font-awesome.min.css') }}"/>
+        <link rel="stylesheet" href="{{ asset('vendors/blueimp-file-upload/css/jquery.fileupload.css') }}"/>
+        <link rel="stylesheet" href="{{ asset('vendors/blueimp-file-upload/css/jquery.fileupload.css') }}"/>
 
         <!--EDUComp Stylesheet -->
-        <link rel="stylesheet" href="{{ asset('css/vendors.css') }}" />
-        <link rel="stylesheet" href="{{ asset('css/style.css') }}" />
-        <link rel="stylesheet" href="{{ asset('css/components.css') }}" />
+        <link rel="stylesheet" href="{{ asset('css/vendors.css') }}"/>
+        <link rel="stylesheet" href="{{ asset('css/style.css') }}"/>
+        <link rel="stylesheet" href="{{ asset('css/components.css') }}"/>
         <link rel="stylesheet" href="{{ asset('css/stdi_style.css?v1') }}">
 
         <!--Google Fonts-->
         <link href='https://fonts.googleapis.com/css?family=Oswald:300,700,400' rel='stylesheet' type='text/css'>
-        <link href='https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400italic,700' rel='stylesheet' type='text/css'>
+        <link href='https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400italic,700' rel='stylesheet'
+              type='text/css'>
         <link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
 
     {% endblock %}
     {% if template == "studit" %}
-        <link rel="icon" type="image/x-icon" href="{{ asset('faviconSTUDIT.ico?v=4') }}" />
+        <link rel="icon" type="image/x-icon" href="{{ asset('faviconSTUDIT.ico?v=4') }}"/>
     {% elseif template == "afadec" %}
-        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico?v=4') }}" />
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico?v=4') }}"/>
     {% endif %}
 
     {% block javascripts %}
         <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}" type="text/javascript"></script>
         <script src="{{ asset('vendors/bootstrap/dist/js/bootstrap.min.js') }}" type="text/javascript"></script>
-        <script src="{{ asset('vendors/bootstrap-select/dist/js/bootstrap-select.min.js') }}" type="text/javascript"></script>
-        <script src="{{ asset('vendors/blueimp-file-upload/js/vendor/jquery.ui.widget.js') }}" type="text/javascript"></script>
-        <script src="{{ asset('vendors/blueimp-file-upload/js/jquery.fileupload.js') }}" type="text/javascript"></script>
-        <script src="{{ asset('vendors/blueimp-file-upload/js/jquery.iframe-transport.js') }}" type="text/javascript"></script>
+        <script src="{{ asset('vendors/bootstrap-select/dist/js/bootstrap-select.min.js') }}"
+                type="text/javascript"></script>
+        <script src="{{ asset('vendors/blueimp-file-upload/js/vendor/jquery.ui.widget.js') }}"
+                type="text/javascript"></script>
+        <script src="{{ asset('vendors/blueimp-file-upload/js/jquery.fileupload.js') }}"
+                type="text/javascript"></script>
+        <script src="{{ asset('vendors/blueimp-file-upload/js/jquery.iframe-transport.js') }}"
+                type="text/javascript"></script>
 
         <!--Educomp Custom Script-->
         <script src="{{ asset('educomp/js/eduCompMain.js') }}" type=text/javascript></script>
@@ -67,12 +72,10 @@
                 "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
             ];
             jQuery(
-
-
                 document).ready(function () {
                 $.ajax({
                     type: 'POST',
-                    url: "{{path('getNbMsg_ajax')}}",
+                    url: "{{ path('getNbMsg_ajax') }}",
                     async: true,
                     dataType: "json",
                     success: function (data) {
@@ -83,11 +86,11 @@
                 });
                 $.ajax({
                     type: 'POST',
-                    url: "{{path('getUsersToActivate_ajax')}}",
+                    url: "{{ path('getUsersToActivate_ajax') }}",
                     async: true,
                     dataType: "json",
                     success: function (data) {
-                        if(data['users'].length){
+                        if (data['users'].length) {
                             $('.adminAlertUsersToValidate').show();
                         }
                     },
@@ -120,20 +123,24 @@
                     </div>
                 {% endif %}
                 {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
-                    <a class="adminAlertUsersToValidate" href="{{ path('activateSpecialStatus') }}">Des formateurs, Référents et Responsables sont en attente d'activation de leur compte.</a>
+                    <a class="adminAlertUsersToValidate" href="{{ path('activateSpecialStatus') }}">Des formateurs,
+                        Référents et Responsables sont en attente d'activation de leur compte.</a>
                 {% endif %}
             {% endif %}
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-navigation" aria-expanded="false">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                        data-target="#main-navigation" aria-expanded="false">
                     <span class="sr-only">Toggle Menu</span>
                     <span>Menu</span>
                 </button>
                 <a class="navbar-brand logoPtf" href=".">
-                    {% if template == 'studit'  %}
+                    {% if template == 'studit' %}
                         <img src="{{ asset('educomp/images/logo_empty.png') }}" alt="">
                         <img class="logoAbsolute logoGrand" src="{{ asset('educomp/images/logoSTUDIT.png') }}" alt="">
-                        <img class="logoAbsolute logoPetit" src="{{ asset('educomp/images/logo_petitSTUDIT.png') }}" alt="">
-                        <img class="logoAbsolute logoToutPetit" src="{{ asset('educomp/images/logo_1STUDIT.png') }}" alt="">
+                        <img class="logoAbsolute logoPetit" src="{{ asset('educomp/images/logo_petitSTUDIT.png') }}"
+                             alt="">
+                        <img class="logoAbsolute logoToutPetit" src="{{ asset('educomp/images/logo_1STUDIT.png') }}"
+                             alt="">
                     {% elseif template == "afadec" %}
                         <img src="{{ asset('educomp/images/logo_empty.png') }}" alt="">
                         <img class="logoAbsolute logoGrand" src="{{ asset('educomp/images/logo.png') }}" alt="">
@@ -143,7 +150,8 @@
                         <img src="{{ asset('educomp/images/logo_empty.png') }}" alt="">
                         <img class="logoAbsolute logoGrand" src="{{ asset('educomp/images/logoEP.png') }}" alt="">
                         <img class="logoAbsolute logoPetit" src="{{ asset('educomp/images/logoEP_petit.png') }}" alt="">
-                        <img class="logoAbsolute logoToutPetit" src="{{ asset('educomp/images/logoEP_petit.png') }}" alt="">
+                        <img class="logoAbsolute logoToutPetit" src="{{ asset('educomp/images/logoEP_petit.png') }}"
+                             alt="">
                     {% endif %}
                 </a> <!-- Replace with your Logo -->
 
@@ -152,12 +160,12 @@
             <div class="collapse navbar-collapse" id="main-navigation">         <!-- Main Menu -->
                 <ul class="nav navbar-nav navbar-right">
                     <li><a href="{{ path('homepage') }}">Accueil</a></li>
-                    {% if template == 'studit'  %}
+                    {% if template == 'studit' %}
                         <li><a href="{{ path('myCourses') }}">Collections</a></li>
                     {% elseif template == 'afadec' %}
                         <li><a href="{{ path('afadec') }}">L’AFADEC</a></li>
                         <li><a href="#">Informations pratiques</a>
-                            <ul class="sub-menu">									<!-- Sub Menu -->
+                            <ul class="sub-menu">                                    <!-- Sub Menu -->
                                 <li><a href="{{ path('concours') }}">Concours</a></li>
                                 <li><a href="{{ path('faq') }}">FAQ</a></li>
                                 <li><a href="{{ path('metierEnseignant') }}">Le métier d'enseignant</a></li>
@@ -167,9 +175,12 @@
                         </li>
                         <li><a href="{{ path('myCourses') }}">Les cours</a></li>
                     {% elseif template == 'excellencePro' %}
-                        <li><a target="_blank" href="https://enseignement-catholique.fr/wp-content/uploads/2019/10/EXCELLENCE-PRO-Plaquette-3-volets-BD-Page-par-page.pdf">Présentation</a></li>
                         <li><a href="#">Infos pratiques</a>
-                            <ul class="sub-menu">									<!-- Sub Menu -->
+                            <ul class="sub-menu">                                    <!-- Sub Menu -->
+                                <li><a target="_blank"
+                                       href="https://enseignement-catholique.fr/wp-content/uploads/2019/10/EXCELLENCE-PRO-Plaquette-3-volets-BD-Page-par-page.pdf">Présentation</a>
+                                </li>
+                                <li><a href="https://enseignement-catholique.fr/les-actus-du-salon/">Newsletter</a></li>
                                 <li><a href="{{ path('concours') }}">Concours</a></li>
                                 <li><a href="{{ path('faq') }}">FAQ</a></li>
                                 <li><a href="{{ path('metierEnseignant') }}">Le métier d'enseignant</a></li>
@@ -177,14 +188,16 @@
                                 <li><a href="{{ path('cookies') }}">Cookies</a></li>
                             </ul>
                         </li>
-                        <li><a href="{{ path('myCourses') }}">Votre parcours</a></li>
-                        <li><a href="https://enseignement-catholique.fr/les-actus-du-salon/">Newsletter</a></li>
+                        {% if app.user %}
+                            <li><a href="{{ path('myCourses') }}">Votre parcours</a></li>
+                        {% endif %}
                     {% endif %}
 
                     {% if app.user %}
                         {% set hasResponsableMinRights = app.user.hasRole('ROLE_SUPER_ADMIN') or (app.user.statut == 'Responsable' and app.user.confirmedByAdmin) %}
                         <li>
-                            <a href="#" data-userId="{{ app.user.id }}">{{ app.user.firstname }} {{ app.user.lastname }}</a>
+                            <a href="#"
+                               data-userId="{{ app.user.id }}">{{ app.user.firstname }} {{ app.user.lastname }}</a>
                             <ul class="sub-menu" style="margin-left: -30px;">
                                 <li><a href="{{ path('myprofile') }}">Mon Profil</a></li>
                                 {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
@@ -195,7 +208,7 @@
                                                 <a href="#">Des cohortes</a>
                                                 <ul class="sub-menu" style="margin-left: -400px;">
                                                     {{ render(controller(
-                                                    'AppBundle:Users:allCohortes'
+                                                        'AppBundle:Users:allCohortes'
                                                     )) }}
                                                 </ul>
                                             </li>
@@ -203,7 +216,7 @@
                                                 <a href="#">Des sessions</a>
                                                 <ul class="sub-menu" style="margin-left: -400px;">
                                                     {{ render(controller(
-                                                    'AppBundle:Users:allSessions'
+                                                        'AppBundle:Users:allSessions'
                                                     )) }}
                                                 </ul>
                                             </li>
@@ -213,7 +226,8 @@
                                             <li><a href="{{ path('notifsManag') }}">Des notifications</a></li>
                                         </ul>
                                     </li>
-                                    <li><a target="_blank" href="{{ path('sonata_admin_dashboard') }}">BackOffice</a></li>
+                                    <li><a target="_blank" href="{{ path('sonata_admin_dashboard') }}">BackOffice</a>
+                                    </li>
                                     <li><a href="{{ path('emailing') }}">Emailing</a></li>
                                     <li><a href="{{ path('stats') }}">Statistiques</a></li>
                                 {% endif %}
@@ -221,15 +235,17 @@
                                     <li><a href="{{ path('inscriptionDiscipline') }}">Mes inscriptions</a></li>
                                 {% endif %}
                                 {% block vueAdmin %}{% endblock %}
-                                {% if template == 'afadec'  %}
+                                {% if template == 'afadec' %}
                                     <li><a href="{{ path('calendrier') }}">Mon calendrier</a></li>
-                                    <li><a href="{{ path('messagerie') }}">Messagerie</a><span class="newDocsPuce newMsgsPuce"></span></li>
+                                    <li><a href="{{ path('messagerie') }}">Messagerie</a><span
+                                                class="newDocsPuce newMsgsPuce"></span></li>
                                 {% endif %}
                                 <li><a href="{{ path('fos_user_security_logout') }}">Déconnexion</a></li>
                             </ul>
                         </li>
                     {% else %}
-                        <li><a class="pull-right btn btn-info account" href="{{ path('fos_user_security_login') }}">Login</a></li>
+                        <li><a class="pull-right btn btn-info account" href="{{ path('fos_user_security_login') }}">Login</a>
+                        </li>
                     {% endif %}
                 </ul>
             </div>
@@ -238,17 +254,15 @@
 </header>
 
 
-
 {% block pageHeader %}{% endblock %}
 {% block main %}{% endblock %}
-
 
 
 <footer class="footer">         <!-- Footer -->
     <div class="footer-pri">            <!-- Primary Footer -->
         <div class="container-fluid">
             <div class="row">
-                {% if template == 'studit'  %}
+                {% if template == 'studit' %}
                     <div class="col-sm-4 footer-widget">
                         <h5 class="heading inverse">Informations <span class="color2">pratiques</span></h5>
                         <ul class="quick-links">
@@ -258,12 +272,13 @@
                     <div class="col-sm-4 footer-widget">
                         <h5 class="heading inverse">Nos <span class="color2">partenaires</span></h5>
                         <ul class="affiliations">
-                            </ul>
+                        </ul>
                     </div>
                     <div class="col-sm-4 footer-widget">            <!-- Footer Widget - Contact Info -->
                         <h5 class="heading inverse">Nous <span class="color2">contacter</span></h5>
                         <!--<a href="" class="email"><i class="fa fa-facebook fa-fw"></i> notre Facebook</a>-->
-                        <a href="mailto:contact.contact@studit.fr" class="email"><i class="fa fa-envelope fa-fw"></i> contact@studit.fr</a>
+                        <a href="mailto:contact.contact@studit.fr" class="email"><i class="fa fa-envelope fa-fw"></i>
+                            contact@studit.fr</a>
                     </div>
                 {% elseif template == 'afadec' %}
                     <div class="col-sm-4 footer-widget">
@@ -279,26 +294,36 @@
                     <div class="col-sm-4 footer-widget">
                         <h5 class="heading inverse">Nos <span class="color2">partenaires</span></h5>
                         <ul class="affiliations">
-                            <li><a target="_blank" href="http://enseignement-catholique.fr/"><img src="{{ asset('educomp/images/logo_1.png') }}" class="img-responsive" alt=""></a></li>
-                            <li><a target="_blank" href="http://www.udesca.fr/"><img src="{{ asset('educomp/images/logo_2.png') }}" class="img-responsive" alt=""></a></li>
-                            <li><a target="_blank" href="http://www.unisfec.fr/"><img src="{{ asset('educomp/images/logo_3.png') }}" class="img-responsive" alt=""></a></li>
+                            <li><a target="_blank" href="http://enseignement-catholique.fr/"><img
+                                            src="{{ asset('educomp/images/logo_1.png') }}" class="img-responsive"
+                                            alt=""></a></li>
+                            <li><a target="_blank" href="http://www.udesca.fr/"><img
+                                            src="{{ asset('educomp/images/logo_2.png') }}" class="img-responsive"
+                                            alt=""></a></li>
+                            <li><a target="_blank" href="http://www.unisfec.fr/"><img
+                                            src="{{ asset('educomp/images/logo_3.png') }}" class="img-responsive"
+                                            alt=""></a></li>
                         </ul>
                     </div>
                     <div class="col-sm-4 footer-widget">            <!-- Footer Widget - Contact Info -->
                         <h5 class="heading inverse">Nous <span class="color2">contacter</span></h5>
                         <!--<a href="" class="email"><i class="fa fa-facebook fa-fw"></i> notre Facebook</a>-->
-                        <a href="mailto:contact.afadec@gmail.com" class="email"><i class="fa fa-envelope fa-fw"></i> contact.afadec@gmail.com</a>
+                        <a href="mailto:contact.afadec@gmail.com" class="email"><i class="fa fa-envelope fa-fw"></i>
+                            contact.afadec@gmail.com</a>
                     </div>
                 {% elseif template == 'excellencePro' %}
                     <div class="col-sm-6 footer-widget" style="text-align: center">
                         <ul class="affiliations">
-                            <li><a target="_blank" href="http://enseignement-catholique.fr/"><img src="{{ asset('educomp/images/logoEP.png') }}" class="img-responsive" alt=""></a></li>
-                            </ul>
+                            <li><a target="_blank" href="http://enseignement-catholique.fr/"><img
+                                            src="{{ asset('educomp/images/logoEP.png') }}" class="img-responsive"
+                                            alt=""></a></li>
+                        </ul>
                     </div>
                     <div class="col-sm-4 footer-widget">            <!-- Footer Widget - Contact Info -->
                         <h5 class="heading inverse">Nous <span class="color2">contacter</span></h5>
                         <!--<a href="" class="email"><i class="fa fa-facebook fa-fw"></i> notre Facebook</a>-->
-                        <a href="mailto:contact.afadec@gmail.com" class="email"><i class="fa fa-envelope fa-fw"></i> contact.afadec@gmail.com</a>
+                        <a href="mailto:contact.afadec@gmail.com" class="email"><i class="fa fa-envelope fa-fw"></i>
+                            contact.afadec@gmail.com</a>
                     </div>
                 {% endif %}
             </div>
@@ -308,7 +333,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-6 text-center">
-                    {% if template == 'studit'  %}
+                    {% if template == 'studit' %}
                         <span class="copyright">&copy; STUDIT 2020</span>
                     {% elseif template == 'afadec' %}
                         <span class="copyright">&copy; AFADEC 2020</span>

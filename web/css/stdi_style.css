@@ -1371,15 +1371,35 @@ ul.list-default>li.studitWhiteFC:before{
 [data-template="excellencePro"] .footer-pri{
     background-color: #bbb;
 }
+[data-template="excellencePro"] ul.list-default>li:before {
+    color: #892488;
+}
+[data-template="excellencePro"] .nav-pills>li.active>a,
+[data-template="excellencePro"] .nav-pills>li.active>a:focus,
+[data-template="excellencePro"] .nav-pills>li.active>a:hover {
+    background-color: #892488;
+}
+[data-template="excellencePro"] .nav-stacked>li.active>a:after {
+    border-color: transparent transparent transparent #892488;
+}
+
 @media screen and (max-width: 1200px){
     [data-template="afadec"] .logoAbsolute{
         left:-70px
     }
 }
 @media screen and (max-width: 1100px){
-    .logoAbsolute{
+    body:not([data-template="excellencePro"]) .logoAbsolute{
         width: 280px;
         left:-20px
+    }
+    body[data-template="excellencePro"] .logoAbsolute{
+        width: 260px;
+        left: -10px;
+        top:17px;
+    }
+    [data-template="excellencePro"] .logoPtf{
+        width: 280px;
     }
 }
 @media screen and (max-width: 992px){
@@ -1388,27 +1408,41 @@ ul.list-default>li.studitWhiteFC:before{
         left:-80px;
         top:25px;
     }
-    .logoGrand{
+    body:not([data-template="excellencePro"]) .logoGrand{
         display: none !important;
     }
-    .logoPetit{
+    body:not([data-template="excellencePro"]) .logoPetit{
         display: block !important;
+    }
+    body[data-template="excellencePro"] .logoAbsolute{
+        width: 230px;
+        top:20px;
+    }
+    [data-template="excellencePro"] .logoPtf{
+        width: 235px;
     }
 }
 @media screen and (max-width: 880px){
-    .logoAbsolute{
+    body:not([data-template="excellencePro"]) .logoAbsolute{
         width: 80px;
         left:-10px;
         top:25px;
     }
-    .logoGrand{
+    body:not([data-template="excellencePro"]) .logoGrand{
         display: none !important;
     }
-    .logoPetit{
+    body:not([data-template="excellencePro"]) .logoPetit{
         display: none !important;
     }
-    .logoToutPetit{
+    body:not([data-template="excellencePro"]) .logoToutPetit{
         display: block !important;
+    }
+    body[data-template="excellencePro"] .logoAbsolute{
+        width: 170px;
+        top:25px;
+    }
+    [data-template="excellencePro"] .logoPtf{
+        width: 170px;
     }
 }
 @media screen and (max-width: 768px){
@@ -1417,14 +1451,22 @@ ul.list-default>li.studitWhiteFC:before{
         left:0px;
         top:10px;
     }
-    .logoGrand{
+    body:not([data-template="excellencePro"]) .logoGrand{
         display: block !important;
     }
-    .logoPetit{
+    body:not([data-template="excellencePro"]) .logoPetit{
         display: none !important;
     }
-    .logoToutPetit{
+    body:not([data-template="excellencePro"]) .logoToutPetit{
         display: none !important;
+    }
+    body[data-template="excellencePro"] .logoAbsolute{
+        width: 280px;
+        top:12px;
+        left:20px;
+    }
+    [data-template="excellencePro"] .logoPtf{
+        width: 280px;
     }
 }
 @media screen and (max-height: 1000px){

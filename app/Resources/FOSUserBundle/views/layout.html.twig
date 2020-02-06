@@ -28,8 +28,13 @@
             {% endif %}
 
             <div class="
+
                     {% if app.user %}
+                        {% if template == "excellencePro" %}
+                        col-md-12 col-lg-12 col-xl-12
+                        {% else %}
                         col-md-5 col-lg-6 col-xl-8
+                        {% endif %}
                     {% else %}
                         col-md-8 col-md-pull-4
                     {% endif %}
@@ -43,17 +48,17 @@
                     </h4>-->
 
                     {#<img style="max-width: 100%;" src="{{ asset('images/accueil/afadec_noel2019.jpg') }}" />#}
-                        <h4 class="heading pt-20 text-center mb-0">DÉCOUVREZ L’AFADEC <span
-                                    class="color2">EN 2 MINUTES</span>
-                        </h4>
-                        <iframe class="" width="100%" height="430" frameborder="0" allowfullscreen=""
-                                mozallowfullscreen="" webkitallowfullscreen=""
-                                src="https://player.vimeo.com/video/123835230"></iframe>
+                    <h4 class="heading pt-20 text-center mb-0">DÉCOUVREZ L’AFADEC <span
+                                class="color2">EN 2 MINUTES</span>
+                    </h4>
+                    <iframe class="" width="100%" height="430" frameborder="0" allowfullscreen=""
+                            mozallowfullscreen="" webkitallowfullscreen=""
+                            src="https://player.vimeo.com/video/123835230"></iframe>
 
                 {% elseif template == "excellencePro" %}
                     <video controls poster="{{ asset('images/accueil/excellencePro.jpg') }}" style="width: 100%">
                         <source src="{{ asset('images/accueil/generique_excellence.mp4') }}" type="video/mp4">
-                        <img style="max-width: 100%;" src="{{ asset('images/accueil/excellencePro.jpg') }}" />
+                        <img style="max-width: 100%;" src="{{ asset('images/accueil/excellencePro.jpg') }}"/>
                     </video>
 
                 {% endif %}
