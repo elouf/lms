@@ -125,6 +125,13 @@ class Cours extends DocContainer
     private $sections;
 
     /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="SystemeResa", mappedBy="cours")
+     */
+    private $resaSystems;
+
+    /**
      * @var bool
      *
      * @ORM\Column(name="enabled", type="boolean", options={"default":true})
@@ -132,11 +139,19 @@ class Cours extends DocContainer
     private $enabled = true;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="aDistance", type="boolean", options={"default":true})
+     */
+    private $aDistance = true;
+
+    /**
      * Constructor
      */
     public function __construct() {
         $this->cohortes = new ArrayCollection();
         $this->sections = new ArrayCollection();
+        $this->resaSystems = new ArrayCollection();
     }
 
     /**
@@ -532,6 +547,30 @@ class Cours extends DocContainer
     }
 
     /**
+     * Set aDistance
+     *
+     * @param boolean $aDistance
+     *
+     * @return Cours
+     */
+    public function setADistance($aDistance)
+    {
+        $this->aDistance = $aDistance;
+
+        return $this;
+    }
+
+    /**
+     * Get aDistance
+     *
+     * @return bool
+     */
+    public function getADistance()
+    {
+        return $this->aDistance;
+    }
+
+    /**
      * Set intituleSharedDocs
      *
      * @param string $intituleSharedDocs
@@ -586,7 +625,7 @@ class Cours extends DocContainer
      *
      * @return Cours
      */
-    public function addMessage($section)
+    public function addSection($section)
     {
         if(!$this->sections->contains($section)){
             $this->sections[] = $section;
@@ -605,6 +644,60 @@ class Cours extends DocContainer
     public function removeSection($section)
     {
         $this->sections->removeElement($section);
+
+        return $this;
+    }
+
+    /**
+     * Set resaSystems
+     *
+     * @param array $resaSystems
+     *
+     * @return Cours
+     */
+    public function setResaSystems($resaSystems)
+    {
+        $this->resaSystems = $resaSystems;
+
+        return $this;
+    }
+
+    /**
+     * Get resaSystems
+     *
+     * @return ArrayCollection
+     */
+    public function getResaSystems()
+    {
+        return $this->resaSystems;
+    }
+
+    /**
+     * Add resaSystem
+     *
+     * @param SystemeResa $resaSystem
+     *
+     * @return Cours
+     */
+    public function addMessage($resaSystem)
+    {
+        if(!$this->resaSystems->contains($resaSystem)){
+            $this->resaSystems[] = $resaSystem;
+            $resaSystem->setCours($this);
+        }
+        return $this;
+    }
+
+    /**
+     * Remove resaSystem
+     *
+     * @param SystemeResa $resaSystem
+     *
+     * @return Cours
+     */
+    public function removeResaSystem($resaSystem)
+    {
+        $this->resaSystems->removeElement($resaSystem);
 
         return $this;
     }

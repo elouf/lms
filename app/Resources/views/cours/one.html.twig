@@ -2,8 +2,7 @@
 {% set
     hasResponsableMinRights = app.user.hasRole('ROLE_SUPER_ADMIN')
     or
-    (app.user.statut == 'Responsable' and app.user.confirmedByAdmin)
-%}
+    (app.user.statut == 'Responsable' and app.user.confirmedByAdmin) %}
 
 {% block title %}
     <title>
@@ -30,21 +29,21 @@
         <link rel="stylesheet" href="{{ asset('bundles/emmedyh5p/h5p/h5p-core/styles/h5p.css') }}"/>
     {% endif %}
     <style>
-        .minHcontentDevoirRess{
+        .minHcontentDevoirRess {
             min-height: 130px;
         }
     </style>
     <script>
         var chrono;
         jQuery(document).ready(function () {
-            $('.ongletSection').click(function(){
+            $('.ongletSection').click(function () {
                 let t = 0;
                 var resizeEvent = new Event('resize');
-                let redimH5P = setInterval(function(){
+                let redimH5P = setInterval(function () {
                     t++;
-                    if(t < 20){
+                    if (t < 20) {
                         window.dispatchEvent(resizeEvent);
-                    }else{
+                    } else {
                         clearInterval(redimH5P);
                     }
                 }, 100);
@@ -98,16 +97,16 @@
                         popup.find('.popupDevoirNom').text(data['nom']);
                         popup.find('.popupDevoirDescription').html(data['description']);
 
-                        if(data['duree'] == 0){
+                        if (data['duree'] == 0) {
                             // si pas de durée, alors pas de durée
                             $('.beginDevoir, .masqueDevoir, .alert_duringDevoir, .alert_beforeDownload, .alert_afterTimeExpire, .chronometre').hide();
                             $('.alert_notime').show();
                             // On ajoute les liens vers les fichiers de sujets
                             $('.listeDevoirSujets').append(myBtn.closest('.conteneurLiensSujets').find('.listeSujets'));
                             $('.listeDevoirSujets .listeSujets *').removeClass('hidden');
-                            if(!$('.listeDevoirSujets .listeSujets .btn').length){
+                            if (!$('.listeDevoirSujets .listeSujets .btn').length) {
                                 $('.listeDevoirSujets').hide();
-                            }else{
+                            } else {
                                 $('.listeDevoirSujets').show();
                             }
                             $('.contentDevoirRess').addClass('minHcontentDevoirRess');
@@ -125,12 +124,12 @@
 
                                     }
                                 });
-                            }else{
+                            } else {
                                 // le devoir avait déjà été commencé
 
                             }
 
-                        }else{
+                        } else {
                             $('.alert_notime').hide();
                             $('.contentDevoirRess').removeClass('minHcontentDevoirRess');
                             var dureeH = parseInt(data['duree'] / 3600);
@@ -150,9 +149,9 @@
                             // On ajoute les liens vers les fichiers de sujets
                             $('.listeDevoirSujets').append(myBtn.closest('.conteneurLiensSujets').find('.listeSujets'));
                             $('.listeDevoirSujets .listeSujets *').removeClass('hidden');
-                            if(!$('.listeDevoirSujets .listeSujets .btn').length){
+                            if (!$('.listeDevoirSujets .listeSujets .btn').length) {
                                 $('.listeDevoirSujets').hide();
-                            }else{
+                            } else {
                                 $('.listeDevoirSujets').show();
                             }
 
@@ -408,20 +407,117 @@
                 }
             });
 
-            $('.btnCopyRss').click(function(){
+            $('.btnCopyRss').click(function () {
                 let elem = $(this).closest('.itemInfos').find('.itemRss');
                 copyToClipboard(elem);
-                $('.btnCopyRssInternal').each(function(){
+                $('.btnCopyRssInternal').each(function () {
                     $(this).removeClass('btnCopyRssInternalClicked').text('Copier le lien Rss');
                 });
                 $(this).find('.btnCopyRssInternal').addClass('btnCopyRssInternalClicked').text('Lien copié');
             });
+
             function copyToClipboard(element) {
                 var $temp = $("<input>");
                 $("body").append($temp);
                 $temp.val(element.text()).select();
                 document.execCommand("copy");
                 $temp.remove();
+            }
+
+
+            $('.resa-groupResa').click(function () {
+                if ($(this).find('.resa-controls').hasClass('hidden')) {
+                    $('.resa-controls').addClass('hidden');
+                    $(this).find('.resa-controls').removeClass('hidden');
+                } else {
+                    $(this).find('.resa-controls').addClass('hidden');
+                }
+            });
+            $('.resa-btn-inscr').click(function (e) {
+                e.stopPropagation();
+                let idGroupe = $(this).closest('.resa-groupResa').attr(("data-idGroup"));
+                let system = $(this).closest('.resa-system');
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ path('inscrGroupeResa_ajax') }}",
+                    async: true,
+                    dataType: "json",
+                    data: {
+                        idGroupe: idGroupe
+                    },
+                    success: function (data) {
+                        udpateResasNumbers(data, system)
+                    },
+                    error: function (xhr, status, error) {
+                    }
+                });
+            });
+            $('.resa-btn-desinscr').click(function (e) {
+                e.stopPropagation();
+                let system = $(this).closest('.resa-system');
+                let idGroupe = $(this).closest('.resa-groupResa').attr(("data-idGroup"));
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ path('desinscrGroupeResa_ajax') }}",
+                    async: true,
+                    dataType: "json",
+                    data: {
+                        idGroupe: idGroupe
+                    },
+                    success: function (data) {
+                        udpateResasNumbers(data, system)
+                    },
+                    error: function (xhr, status, error) {
+                    }
+                });
+            });
+
+            $('.btnAdminGroup').click(function (e) {
+                e.stopPropagation();
+            });
+
+            function udpateResasNumbers(data, system) {
+                $('.myGroup').removeClass('myGroup');
+                for (let i = 0; i < data['etat'].length; i++) {
+                    let places = data['etat'][i]['places'];
+                    let group = system.find('.resa-groupResa[data-idGroup="' + data['etat'][i]['groupId'] + '"]');
+                    group.find('.placesRestantes').text(places);
+                    if (places <= 0) {
+                        group.find('.resa-btn-inscr').hide();
+                    }
+                    if (data['userGroupId'] === data['etat'][i]['groupId']) {
+                        group.addClass('myGroup');
+                    } else if (places > 0) {
+                        group.find('.resa-btn-inscr').show();
+                    }
+                }
+
+            }
+
+            getGroupeResasNumbers();
+            setInterval(function () {
+                getGroupeResasNumbers();
+            }, 15000);
+
+            function getGroupeResasNumbers() {
+                $('.resa-system').each(function () {
+                    let system = $(this);
+                    let idSystem = system.attr('data-idSystem');
+                    $.ajax({
+                        type: 'POST',
+                        url: "{{ path('getGroupeResasNumbers_ajax') }}",
+                        async: true,
+                        dataType: "json",
+                        data: {
+                            idSystem: idSystem
+                        },
+                        success: function (data) {
+                            udpateResasNumbers(data, system);
+                        },
+                        error: function (xhr, status, error) {
+                        }
+                    });
+                });
             }
         });
     </script>
@@ -453,7 +549,49 @@
                 </div>
             </div>
         </div>
-
+        {% if systemResas is defined %}
+            {% if systemResas|length > 0 %}
+                <div class="row mt-20">
+                    <div class="col-sm-12">
+                        <h4 class="heading">Réservation de plage horaire</h4>
+                        {% for system in systemResas %}
+                            <div class="resa-system" data-idSystem="{{ system.id }}">
+                                <div class="resa-systemNom">{{ system.nom }}</div>
+                                <div class="resa-systemDescr">{{ system.description|raw }}</div>
+                                <div class="resa-groupsResaContainer">
+                                    {% for group in system.groups %}
+                                        <div class="resa-groupResa" data-idGroup="{{ group.id }}">
+                                            <div class="resa-groupResaNom">
+                                                <div class="resa-groupResaNomStr">{{ group.nom }}</div>
+                                                {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                                    <a class="btnAdminGroup" target="_blank"
+                                                       href="{{ path('admin_app_grouperesa_edit', {id: group.id}) }}">
+                                                        <i class="fa fa-cog" aria-hidden="true"></i>
+                                                    </a>
+                                                {% endif %}
+                                            </div>
+                                            <div class="resa-groupResaContent">
+                                                <div class="resa-groupResaDescr">{{ group.description|raw }}</div>
+                                                {% set nbPlaces = group.max - group.users|length %}
+                                                <div>Places restantes : <span
+                                                            class="placesRestantes">{{ nbPlaces }}</span>
+                                                </div>
+                                                <div class="resa-iAmIn">Mon inscription est enregistrée dans ce groupe
+                                                </div>
+                                            </div>
+                                            <div class="resa-controls hidden">
+                                                <div class="resa-btn resa-btn-inscr">S'inscrire</div>
+                                                <div class="resa-btn resa-btn-desinscr">Se désinscrire</div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        {% endif %}
         <div class="clearfix"></div>
 
         <div class="row mt-40 mb-100">
@@ -461,7 +599,8 @@
                 <ul class="nav nav-pills nav-stacked pull-left" role="tablist"
                     style="padding-bottom: 5px;padding-top: 5px">
                     {% for key,val in zonesSections if ((not val.section.isAccesConditionne or (val.section.isAccesConditionne and app.user in val.section.autorizedUsers)) and val.section.isVisible == 1) or hasVisibilityRights or isReferent %}
-                        <li role="presentation" class="ongletSection{% if loop.index == 1 %} active{% endif %} {% if val.section.isVisible == 0 %} visibility_{% endif %}"
+                        <li role="presentation"
+                            class="ongletSection{% if loop.index == 1 %} active{% endif %} {% if val.section.isVisible == 0 %} visibility_{% endif %}"
                             data-idsection="{{ val.section.id }}">
                             <a href="#t1body{{ val.section.id }}" aria-controls="t1body{{ val.section.id }}" role="tab"
                                data-toggle="tab" aria-expanded="true"><i class="fa {{ val.section.faIcon }} fa-fw"
@@ -472,7 +611,8 @@
                     {% if cours.docsActivated==1 %}
                         <li role="presentation" class="ongletSection">
                             <a href="#sectionDocs" aria-controls="sectionDocs" role="tab" data-toggle="tab"
-                               aria-expanded="true"><i class="fa fa-pencil fa-fw" aria-hidden="true"> </i>{% if cours.intituleSharedDocs != "" %}
+                               aria-expanded="true"><i class="fa fa-pencil fa-fw"
+                                                       aria-hidden="true"> </i>{% if cours.intituleSharedDocs != "" %}
                                 {{ cours.intituleSharedDocs }}
                             {% else %}
                                 Documents partagés
@@ -544,7 +684,8 @@
                                                         DEVOIR
                                                 -->
                                                 <li data-idZone="{{ val.zones.containers[keyR].id }}"
-                                                    class="courseElem devoir {% if val.zones.containers[keyR].isVisible == 0 %} visibility_{% endif %}" data-idItem="{{ valR.id }}">
+                                                    class="courseElem devoir {% if val.zones.containers[keyR].isVisible == 0 %} visibility_{% endif %}"
+                                                    data-idItem="{{ valR.id }}">
                                                     <div class="">
                                                         <div class="row">
                                                             <div class="itemHeader col-xs-9 mb-10">
@@ -776,33 +917,39 @@
                                                     class="courseElem podcastRessource {% if val.zones.containers[keyR].isVisible == 0 %} visibility_{% endif %}">
                                                     <div class="row">
                                                         <div class="itemInfos itemHeader col-xs-4 col-sm-3 col-md-2">
-                                                            <img src="{{ asset('images/podcast/') }}{{ cours.discipline.podcastImgFilename }}" class="img-responsive imgPodcast" alt="">
+                                                            <img src="{{ asset('images/podcast/') }}{{ cours.discipline.podcastImgFilename }}"
+                                                                 class="img-responsive imgPodcast" alt="">
                                                         </div>
                                                         <div class="itemInfos itemHeader col-xs-8 col-sm-9 col-md-10">
                                                             <div class="itemTitle">{{ val.zones.podcast[keyR].nom }}</div>
                                                             <div class="itemDescription">{{ val.zones.podcast[keyR].description | raw }}</div>
                                                             <div class="itemRss">{{ val.zones.podcast[keyR].rss }}</div>
-                                                            <div class="btnCopyRss"><div class="btnCopyRssInternal">Copier le lien Rss</div></div>
+                                                            <div class="btnCopyRss">
+                                                                <div class="btnCopyRssInternal">Copier le lien Rss</div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                     <div class="row">
                                                         {% for keyG,valG in val.zones.content[keyR] %}
                                                             {% if valG.isVisible %}
-                                                            <div class="mp3InPodcast">
-                                                                <div class="row">
-                                                                <div class="col-sm-12 col-md-6">
-                                                                    <div style="margin-top: 15px; font-weight: bold">{{ valG.nom }}</div>
-                                                                    <div>{{ valG.description | raw }}</div>
-                                                                </div>
-                                                                <div class="col-sm-12 col-md-6">
-                                                                    <audio style="max-width: 600px; width: 100%" controls>
-                                                                        <source src="{{ valG.url }}" type="audio/mpeg">
-                                                                        Votre navigateur ne supporte pas la balise "audio".
-                                                                    </audio>
-                                                                </div>
-                                                                </div>
+                                                                <div class="mp3InPodcast">
+                                                                    <div class="row">
+                                                                        <div class="col-sm-12 col-md-6">
+                                                                            <div style="margin-top: 15px; font-weight: bold">{{ valG.nom }}</div>
+                                                                            <div>{{ valG.description | raw }}</div>
+                                                                        </div>
+                                                                        <div class="col-sm-12 col-md-6">
+                                                                            <audio style="max-width: 600px; width: 100%"
+                                                                                   controls>
+                                                                                <source src="{{ valG.url }}"
+                                                                                        type="audio/mpeg">
+                                                                                Votre navigateur ne supporte pas la
+                                                                                balise "audio".
+                                                                            </audio>
+                                                                        </div>
+                                                                    </div>
 
-                                                            </div>
+                                                                </div>
                                                             {% endif %}
 
                                                         {% endfor %}
@@ -845,20 +992,23 @@
                                                             <div class="itemDescription">{{ valR.description | raw }}</div>
                                                         </div>
                                                         <div>
-                                                        {% if h5piscontent == true %}
-                                                            {% if valR.h5p != null %}
-                                                                {% if isFrame %}
-                                                                    <div class="h5p-iframe-wrapper">
-                                                                        <iframe id="h5p-iframe-{{ valR.h5p }}" class="h5p-iframe"
-                                                                                data-content-id="{{ valR.h5p }}"
-                                                                                style="height:100px;width:100%;" frameBorder="0"
-                                                                                scrolling="no"></iframe>
-                                                                    </div>
-                                                                {% else %}
-                                                                    <div class="h5p-content" data-content-id="{{ valR.h5p }}"></div>
+                                                            {% if h5piscontent == true %}
+                                                                {% if valR.h5p != null %}
+                                                                    {% if isFrame %}
+                                                                        <div class="h5p-iframe-wrapper">
+                                                                            <iframe id="h5p-iframe-{{ valR.h5p }}"
+                                                                                    class="h5p-iframe"
+                                                                                    data-content-id="{{ valR.h5p }}"
+                                                                                    style="height:100px;width:100%;"
+                                                                                    frameBorder="0"
+                                                                                    scrolling="no"></iframe>
+                                                                        </div>
+                                                                    {% else %}
+                                                                        <div class="h5p-content"
+                                                                             data-content-id="{{ valR.h5p }}"></div>
+                                                                    {% endif %}
                                                                 {% endif %}
                                                             {% endif %}
-                                                        {% endif %}
                                                         </div>
                                                     </div>
 
@@ -952,7 +1102,8 @@
 
                                 <div class="alert alert-info mb-10 alert_notime">
                                     Ce devoir n'est pas chronométré.
-                                    <p>Vous disposerez alors de tout le temps que vous estimez nécessaire pour déposer votre copie.</p>
+                                    <p>Vous disposerez alors de tout le temps que vous estimez nécessaire pour déposer
+                                        votre copie.</p>
                                 </div>
                                 <div class="alert alert-danger mb-10 alert_beforeDownload">
                                     <strong>Attention!</strong> Lors du click sur "commencer", le chronomètre du devoir

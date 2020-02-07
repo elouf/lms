@@ -92,6 +92,8 @@ class CoursController extends Controller
             }
         }
 
+        $systemResas = $this->getDoctrine()->getRepository('AppBundle:SystemeResa')->findBy(array('isVisible' => true, 'cours' => $cours));
+
         $role = "";
         $cohortes = $this->getDoctrine()->getRepository('AppBundle:Cohorte')->findAll();
         $repoInscription_coh = $this->getDoctrine()->getRepository('AppBundle:Inscription_coh');
@@ -333,7 +335,8 @@ class CoursController extends Controller
                         'isReferent' => $isReferent,
                         'h5piscontent' => true,
                         'isFrame' => $h5p['H5PFrameIntegration']->getLibrary()->isFrame(),
-                        'h5pIntegration' => $h5p['h5pIntegration']
+                        'h5pIntegration' => $h5p['h5pIntegration'],
+                        'systemResas' => $systemResas
                     ]);
             }elseif($mode == "ens") {
                 return $this->render('cours/one.html.twig', [
@@ -349,7 +352,8 @@ class CoursController extends Controller
                     'isReferent' => $isReferent,
                     'h5piscontent' => true,
                     'isFrame' => $h5p['H5PFrameIntegration']->getLibrary()->isFrame(),
-                    'h5pIntegration' => $h5p['h5pIntegration']
+                    'h5pIntegration' => $h5p['h5pIntegration'],
+                    'systemResas' => $systemResas
                 ]);
             }else{
                 return $this->render('cours/one.html.twig', [
@@ -365,7 +369,8 @@ class CoursController extends Controller
                     'isReferent' => $isReferent,
                     'h5piscontent' => true,
                     'isFrame' => $h5p['H5PFrameIntegration']->getLibrary()->isFrame(),
-                    'h5pIntegration' => $h5p['h5pIntegration']
+                    'h5pIntegration' => $h5p['h5pIntegration'],
+                    'systemResas' => $systemResas
                 ]);
             }
         }else{
@@ -393,7 +398,8 @@ class CoursController extends Controller
                         'users' => $users,
                         'usersInscrits' => $usersInscrits,
                         'isReferent' => $isReferent,
-                        'h5piscontent' => false
+                        'h5piscontent' => false,
+                        'systemResas' => $systemResas
                     ]);
             }elseif($mode == "ens") {
                 return $this->render('cours/one.html.twig', [
@@ -407,7 +413,8 @@ class CoursController extends Controller
                     'nbNewDocs' => $nbNewDocs,
                     'courses' => $courses,
                     'isReferent' => $isReferent,
-                    'h5piscontent' => false
+                    'h5piscontent' => false,
+                    'systemResas' => $systemResas
                 ]);
             }else{
                 return $this->render('cours/one.html.twig', [
@@ -421,7 +428,8 @@ class CoursController extends Controller
                     'nbNewDocs' => $nbNewDocs,
                     'courses' => $courses,
                     'isReferent' => $isReferent,
-                    'h5piscontent' => false
+                    'h5piscontent' => false,
+                    'systemResas' => $systemResas
                 ]);
             }
         }

@@ -51,6 +51,14 @@ class SystemeResa
     private $isVisible;
 
     /**
+     * @var Cours
+     *
+     * @ORM\JoinColumn(name="cours_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\ManyToOne(targetEntity="Cours", inversedBy="resaSystems")
+     */
+    private $cours;
+
+    /**
      * Get id
      *
      * @return int
@@ -84,6 +92,30 @@ class SystemeResa
     public function setIsVisible($isVisible)
     {
         $this->isVisible = $isVisible;
+
+        return $this;
+    }
+
+    /**
+     * Get cours
+     *
+     * @return Cours
+     */
+    public function getCours()
+    {
+        return $this->cours;
+    }
+
+    /**
+     * Set cours
+     *
+     * @param Cours $cours
+     *
+     * @return SystemeResa
+     */
+    public function setCours($cours)
+    {
+        $this->cours = $cours;
 
         return $this;
     }
