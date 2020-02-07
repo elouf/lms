@@ -26,7 +26,6 @@ class DefaultController extends Controller
             $myDiscs = $this->get('calendarServ')->getMyCalendarDatas($this->getUser())['myDiscs'];
         }
         $systemResas = $em->getRepository('AppBundle:SystemeResa')->findBy(array('isVisible' => true));
-        dump($systemResas);
         return $this->render('index.html.twig', [
             'base_dir' => realpath($this->getParameter('kernel.root_dir') . '/..'),
             'events' => $myEvents,
