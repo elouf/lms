@@ -17,7 +17,7 @@ class SystemeResaAdmin extends AbstractAdmin
             ->add('description', CKEditorType::class, array(
                 'config_name' => 'my_simple_config'
             ))
-            ->add('groups', 'sonata_type_collection', array('by_reference' => false))
+            ->add('groups', null, array('by_reference' => false))
             ->add('isVisible')
         ;
 
