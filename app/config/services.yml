@@ -150,6 +150,17 @@ services:
         tags:
             - { name: sonata.admin, manager_type: orm, label: Logs, group: "Administration" }
 
+    admin.resaSyst:
+        class: AppBundle\Admin\SystemeResaAdmin
+        arguments: [~, AppBundle\Entity\SystemeResa, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: Système, group: "Réservation de groupes" }
+    admin.resaGroups:
+        class: AppBundle\Admin\GroupeResaAdmin
+        arguments: [~, AppBundle\Entity\GroupeResa, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: Groupes, group: "Réservation de groupes" }
+
     chat.topic_sample_service:
         class: AppBundle\Service\Chat\ChatTopic
         arguments: ['@gos_web_socket.websocket.client_manipulator']

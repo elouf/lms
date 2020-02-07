@@ -148,7 +148,7 @@ class User extends BaseUser
     /**
      * @var ArrayCollection
      *
-     * @ORM\ManyToMany(targetEntity="GroupeResa", inversedBy="users")
+     * @ORM\ManyToMany(targetEntity="GroupeResa", inversedBy="users", cascade={"persist"})
      * @ORM\JoinTable(name="users_resas")
      */
     private $resas;

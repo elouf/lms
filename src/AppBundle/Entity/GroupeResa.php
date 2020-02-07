@@ -40,14 +40,14 @@ class GroupeResa
     /**
      *@var ArrayCollection
      *
-     * @ORM\ManyToMany(targetEntity="User", mappedBy="resas")
+     * @ORM\ManyToMany(targetEntity="User", mappedBy="resas", cascade={"persist"})
      */
     private $users;
 
     /**
      *
      * @ORM\ManyToOne(targetEntity="SystemeResa", inversedBy="groups")
-     * @ORM\JoinColumn(name="group_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="system_id", referencedColumnName="id", onDelete="CASCADE")
      */
     private $system;
 
@@ -57,6 +57,13 @@ class GroupeResa
      * @ORM\Column(name="isVisible", type="boolean", nullable=true)
      */
     private $isVisible;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="max", type="integer")
+     */
+    private $max;
 
     /**
      * Get id
@@ -103,6 +110,30 @@ class GroupeResa
     public function getNom()
     {
         return $this->nom;
+    }
+
+    /**
+     * Set max
+     *
+     * @param string $max
+     *
+     * @return GroupeResa
+     */
+    public function setMax($max)
+    {
+        $this->max = $max;
+
+        return $this;
+    }
+
+    /**
+     * Get max
+     *
+     * @return string
+     */
+    public function getMax()
+    {
+        return $this->max;
     }
 
     /**

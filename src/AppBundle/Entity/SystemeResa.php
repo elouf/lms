@@ -44,6 +44,13 @@ class SystemeResa
     private $groups;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="isVisible", type="boolean", nullable=true)
+     */
+    private $isVisible;
+
+    /**
      * Get id
      *
      * @return int
@@ -64,6 +71,31 @@ class SystemeResa
     public function __toString()
     {
         return (string) $this->getNom();
+    }
+
+
+    /**
+     * Set isVisible
+     *
+     * @param boolean $isVisible
+     *
+     * @return SystemeResa
+     */
+    public function setIsVisible($isVisible)
+    {
+        $this->isVisible = $isVisible;
+
+        return $this;
+    }
+
+    /**
+     * Get isVisible
+     *
+     * @return bool
+     */
+    public function getIsVisible()
+    {
+        return $this->isVisible;
     }
 
     /**

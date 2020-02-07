@@ -1315,6 +1315,120 @@ ul.list-default>li.studitWhiteFC:before{
     color: #008cd5;
 }
 
+/* SYSTEM RESA */
+.resa-system{
+    border: 1px solid #456d94;
+    padding: 0;
+}
+.resa-systemNom{
+    color: #fff;
+    background-color: #456d94;
+    padding: 5px;
+    text-align: center;
+}
+.resa-systemDescr{
+    font-style: italic;
+    padding: 5px 10px;
+}
+.resa-groupsResaContainer{
+    padding: 10px 16px;
+    background-color: #dff3ff;
+}
+.resa-groupResa{
+    display: inline-block;
+    border: 1px solid #456d94;
+    margin: 5px;
+    width: 180px;
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: pointer;
+    vertical-align: top;
+}
+.resa-groupResa:hover .resa-groupResaNom{
+    opacity: .8;
+}
+.resa-groupResaNom{
+    padding: 5px;
+    text-align: center;
+    color: #fff;
+    background-color: #456d94;
+
+    display: flex;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    flex-direction: row;
+    -webkit-flex-direction: row;
+    -webkit-box-orient: horizontal;
+    justify-content: center;
+    -webkit-justify-content: center;
+    align-items: center;
+    -webkit-align-items: center;
+}
+.resa-groupResaNomStr{
+    flex: 1;
+    -ms-flex: 1;
+    -webkit-flex: 1;
+    -moz-box-flex: 1;
+}
+.resa-groupResaContent{
+    background-color: #fff;
+    padding: 5px 8px;
+}
+.btnAdminGroup{
+    padding: 3px;
+}
+.btnAdminGroup:hover{
+    color: #e3bcf1;
+}
+.resa-controls{
+    display: flex;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    flex-direction: column;
+    -webkit-flex-direction: column;
+    -webkit-box-orient: vertical;
+    justify-content: center;
+    -webkit-justify-content: center;
+    align-items: center;
+    -webkit-align-items: center;
+    background-color: #fff;
+}
+.resa-btn{
+    border-radius: 3px;
+    color: #fff;
+    text-align: center;
+    padding: 6px;
+    width: 130px;
+    margin: 2px;
+}
+.resa-btn-inscr{
+    background-color: #0ba204;
+}
+.resa-btn-desinscr{
+    background-color: #a20500;
+}
+.myGroup .resa-btn-inscr, .resa-groupResa:not(.myGroup) .resa-btn-desinscr{
+    display: none;
+}
+.myGroup{
+    border: 2px solid #0ba204 !important;
+}
+.myGroup .resa-groupResaNom{
+    background-color: #0ba204 !important;
+}
+.resa-iAmIn{
+    display: none;
+    font-style: italic;
+    color: #0ba204;
+    font-size: 11px;
+    font-weight: bold;
+    text-align: center;
+}
+.myGroup .resa-iAmIn{
+    display: block;
+}
+
+
 /* MEDIA QUERIES */
 .logoAbsolute{
     width: 316px;
@@ -1326,6 +1440,23 @@ ul.list-default>li.studitWhiteFC:before{
 .logoGrand{
     display: block !important;
 }
+
+[data-template="excellencePro"] .resa-system{
+    border-color: #6c226b;
+}
+[data-template="excellencePro"] .resa-systemNom{
+    background-color: #6c226b;
+}
+[data-template="excellencePro"] .resa-groupsResaContainer{
+    background-color: #f8edff;
+}
+[data-template="excellencePro"] .resa-groupResa{
+    border-color: #6c226b;
+}
+[data-template="excellencePro"] .resa-groupResaNom {
+    background-color: #6c226b;
+}
+
 
 [data-template="excellencePro"] .logoPtf{
     width: 342px;
