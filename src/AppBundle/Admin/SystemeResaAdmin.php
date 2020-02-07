@@ -19,6 +19,7 @@ class SystemeResaAdmin extends AbstractAdmin
             ))
             ->add('groups', null, array('by_reference' => false))
             ->add('isVisible')
+            ->add('cours')
         ;
 
     }
@@ -29,6 +30,7 @@ class SystemeResaAdmin extends AbstractAdmin
         $datagridMapper
             ->add('nom')
             ->add('isVisible')
+            ->add('cours')
         ;
     }
 
@@ -38,6 +40,7 @@ class SystemeResaAdmin extends AbstractAdmin
         $listMapper
             ->addIdentifier('nom')
             ->add('isVisible')
+            ->add('cours')
         ;
     }
 }

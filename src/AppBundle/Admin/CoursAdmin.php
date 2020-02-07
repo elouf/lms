@@ -51,6 +51,13 @@ class CoursAdmin extends AbstractAdmin
                 ->add('enabled', null, array(
                     'label' => 'Visible'
                 ))
+                ->add('aDistance', null, array(
+                    'label' => 'Cours à distance'
+                ))
+                ->add('resaSystems', null, array(
+                    'label' => 'Systèmes de réservation',
+                    'by_reference' => false
+                ))
                 ->add('imageFile', 'file', $fileFieldOptions)
             ->end();
     }
@@ -62,6 +69,9 @@ class CoursAdmin extends AbstractAdmin
             ->add('nom')
             ->add('enabled', null, array(
                 'label' => 'Visible'
+            ))
+            ->add('aDistance', null, array(
+                'label' => 'à distance'
             ))
             ->add('discipline', null, array(), 'entity', array(
                 'class'    => 'AppBundle\Entity\Discipline',
@@ -85,6 +95,9 @@ class CoursAdmin extends AbstractAdmin
             ->addIdentifier('nom')
             ->add('enabled', null, array(
                 'label' => 'Visible'
+            ))
+            ->add('aDistance', null, array(
+                'label' => 'à distance'
             ))
             ->add('description')
             ->add('discipline', null, array(
