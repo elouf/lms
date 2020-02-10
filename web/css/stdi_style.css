@@ -1375,8 +1375,8 @@ ul.list-default>li.studitWhiteFC:before{
     padding: 5px 8px;
 }
 .btnAdminGroup{
-    padding: 3px;
-    font-size: 16px;
+    padding: 0 10px;
+    font-size: 20px;
 }
 .btnAdminGroup:hover{
     color: #e3bcf1;
