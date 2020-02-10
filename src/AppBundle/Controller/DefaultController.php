@@ -214,4 +214,5 @@ class DefaultController extends Controller
 
         return new JsonResponse('This is not ajax!', 400);
     }
+
 }

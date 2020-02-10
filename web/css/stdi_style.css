@@ -1376,6 +1376,7 @@ ul.list-default>li.studitWhiteFC:before{
 }
 .btnAdminGroup{
     padding: 3px;
+    font-size: 16px;
 }
 .btnAdminGroup:hover{
     color: #e3bcf1;
@@ -1437,6 +1438,29 @@ ul.list-default>li.studitWhiteFC:before{
 .linkCharte:hover{
     opacity: .7;
 }
+.resa-groupResaDescr{
+    background-color: #efefef;
+    border-radius: 2px;
+    padding: 0 5px;
+}
+.resa-groupResaDescrContent{
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+.resa-groupResaDescrBtnPlus{
+    text-align: center;
+}
+.resa-groupResa[data-actif="true"] .resa-groupResaDescrContent{
+    overflow: auto;
+    white-space: normal;
+    text-overflow: inherit;
+}
+.resa-groupResa[data-actif="true"] .resa-groupResaDescrBtnPlus{
+    display: none;
+}
+
 
 /* MEDIA QUERIES */
 .logoAbsolute{
@@ -1465,8 +1489,14 @@ ul.list-default>li.studitWhiteFC:before{
 [data-template="excellencePro"] .resa-groupResa{
     border-color: #6c226b;
 }
+.resa-groupResa[data-actif="true"]{
+    border-color: #1fb9e7;
+}
 [data-template="excellencePro"] .resa-groupResaNom {
     background-color: #6c226b;
+}
+.resa-groupResa[data-actif="true"] .resa-groupResaNom{
+    background-color: #1fb9e7;
 }
 
 

@@ -426,9 +426,11 @@
 
 
             $('.resa-groupResa').click(function () {
+                $('.resa-groupResa').attr('data-actif', 'false');
                 if ($(this).find('.resa-controls').hasClass('hidden')) {
                     $('.resa-controls').addClass('hidden');
                     $(this).find('.resa-controls').removeClass('hidden');
+                    $(this).attr('data-actif', 'true');
                 } else {
                     $(this).find('.resa-controls').addClass('hidden');
                 }
@@ -556,11 +558,23 @@
                         <h4 class="heading">Réservation de plage horaire</h4>
                         {% for system in systemResas %}
                             <div class="resa-system" data-idSystem="{{ system.id }}">
-                                <div class="resa-systemNom">{{ system.nom }}</div>
+                                <div class="resa-groupResaNom">
+                                    <div class="resa-groupResaNomStr">{{ system.nom }}</div>
+                                    {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                        <a class="btnDownloadGroupesResas"
+                                           href="{{ path('groupesResas', {id: system.id}) }}">
+                                            <i class="fa fa-download" aria-hidden="true"></i>
+                                        </a>
+                                        <a class="btnAdminGroup" target="_blank"
+                                           href="{{ path('admin_app_systemeresa_edit', {id: system.id}) }}">
+                                            <i class="fa fa-cog" aria-hidden="true"></i>
+                                        </a>
+                                    {% endif %}
+                                </div>
                                 <div class="resa-systemDescr">{{ system.description|raw }}</div>
                                 <div class="resa-groupsResaContainer">
                                     {% for group in system.groups %}
-                                        <div class="resa-groupResa" data-idGroup="{{ group.id }}">
+                                        <div class="resa-groupResa" data-idGroup="{{ group.id }}" data-actif="false">
                                             <div class="resa-groupResaNom">
                                                 <div class="resa-groupResaNomStr">{{ group.nom }}</div>
                                                 {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
@@ -571,7 +585,12 @@
                                                 {% endif %}
                                             </div>
                                             <div class="resa-groupResaContent">
-                                                <div class="resa-groupResaDescr">{{ group.description|raw }}</div>
+                                                <div class="resa-groupResaDescr">
+                                                    <div class="resa-groupResaDescrContent">{{ group.description|raw }}</div>
+                                                    <div class="resa-groupResaDescrBtnPlus">
+                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                                                    </div>
+                                                </div>
                                                 {% set nbPlaces = group.max - group.users|length %}
                                                 <div>Places restantes : <span
                                                             class="placesRestantes">{{ nbPlaces }}</span>

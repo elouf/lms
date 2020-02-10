@@ -1,0 +1,111 @@
+{% extends 'base.html.twig' %}
+
+{% block pageHeader %}
+    <div>{{ template }}</div>
+    <div class="page-header">
+        <div class="container">
+            <h2 class="color3">{{ system.nom }}</h2>
+            <ul class="breadcrumb">
+                <li class="color3">
+                    <span class="">{{ system.cours.discipline  }}</span>
+                    >
+                    <a href="{{ path('oneCours', {id: system.cours.id, mode: "etu" }) }}"
+                       class="label label-info">{{ system.cours }}</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+
+{% block main %}
+    <link rel="stylesheet" href="{{ asset('vendors/jquery-ui/themes/flick/jquery-ui.css') }}">
+    <script src="{{ asset('vendors/jquery-ui/jquery-ui.min.js') }}" type=text/javascript></script>
+
+    <link rel="stylesheet" href="{{ asset('vendors/tablesorter/dist/css/theme.default.min.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('vendors/tablesorter/dist/css/jquery.tablesorter.pager.min.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('vendors/tablesorter/dist/css/filter.formatter.min.css') }}">
+
+    <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/jquery.tablesorter.min.js') }}"></script>
+    <script type="text/javascript"
+            src="{{ asset('vendors/tablesorter/dist/js/jquery.tablesorter.widgets.min.js') }}"></script>
+    <script type="text/javascript"
+            src="{{ asset('vendors/tablesorter/dist/js/extras/jquery.tablesorter.pager.min.js') }}"></script>
+    <script type="text/javascript"
+            src="{{ asset('vendors/tablesorter/dist/js/widgets/widget-output.min.js') }}"></script>
+    <script src="{{ asset('vendors/tablesorter/dist/js/widgets/widget-filter-formatter-jui.min.js') }}"></script>
+
+    <script>
+        jQuery(document).ready(function () {
+            $('.download').click(function (e) {
+                e.preventDefault();
+                let table = $(this).closest('.container').find('.tablesorter');
+                table.trigger('outputTable');
+            });
+            $(".tablesorter")
+                .tablesorter({
+                    widthFixed: true,
+                    widgets: ['zebra', 'filter', 'output'],
+                    widgetOptions: {
+                        output_delivery: 'd',
+                        output_saveFileName: 'mytable.csv',
+                        filter_reset: 'button.reset',
+                        filter_formatter: {}
+                    }
+                })
+                .tablesorterPager({
+                    container: $("#pager"),
+                    output: 'de {startRow} à {endRow} sur {totalRows} lignes',
+                    size: 50
+                });
+        });
+    </script>
+    <div class="container mt-20 mb-40">
+        <div class="row">
+            <div class="col-md-12">
+                <table class="tablesorter ">
+                    <thead>
+                    <tr>
+                        <th data-filter="false"></th>
+                        <th>Id</th>
+                        <th>Email</th>
+                        <th>Prénom</th>
+                        <th>Nom</th>
+                        <th>Groupe</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for group in system.groups %}
+                        {% for user in group.users %}
+                            <tr class="userLine" data-userId="{{ user.id }}">
+                                <td><input class="selectUser" type="checkbox"></td>
+                                <td><a href="{{ path('user', {id:user.id }) }}">{{ user.id }}</a></td>
+                                <td><a href="{{ path('user', {id:user.id }) }}">{{ user.email }}</a></td>
+                                <td>{{ user.firstname }}</td>
+                                <td>{{ user.lastname }}</td>
+                                <td><a href="{{ path('admin_app_grouperesa_edit', {id: group.id}) }}">{{ group.nom }}</a></td>
+                            </tr>
+                        {% endfor %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <div id="pager" class="pager">
+                    <form>
+                        <img src="{{ asset('vendors/tablesorter/dist/css/images/first.png') }}" class="first"/>
+                        <img src="{{ asset('vendors/tablesorter/dist/css/images/prev.png') }}" class="prev"/>
+                        <input type="text" class="pagedisplay"/>
+                        <img src="{{ asset('vendors/tablesorter/dist/css/images/next.png') }}" class="next"/>
+                        <img src="{{ asset('vendors/tablesorter/dist/css/images/last.png') }}" class="last"/>
+                        <select class="pagesize">
+                            <option value="10">10</option>
+                            <option value="20">20</option>
+                            <option value="30">30</option>
+                            <option value="40">40</option>
+                            <option value="all">Toutes les lignes</option>
+                        </select>
+                        <button class="download">Télécharger le CSV</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

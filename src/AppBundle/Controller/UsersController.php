@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Document;
 use AppBundle\Entity\ForumPost;
 use AppBundle\Entity\ForumSujet;
+use AppBundle\Entity\GroupeResa;
 use AppBundle\Entity\Inscription;
 use AppBundle\Entity\Inscription_c;
 use AppBundle\Entity\Inscription_d;
@@ -14,6 +15,7 @@ use AppBundle\Entity\Discipline;
 use AppBundle\Entity\Inscription_sess;
 use AppBundle\Entity\Role;
 use AppBundle\Entity\Section;
+use AppBundle\Entity\SystemeResa;
 use AppBundle\Entity\User;
 use AppBundle\Repository\CohorteRepository;
 use AppBundle\Repository\CopieRepository;
@@ -1610,5 +1612,21 @@ class UsersController extends Controller
         $em->flush();
 
         return $hasChanged;
+    }
+
+    /**
+     * @Route("/groupesResas/{id}", name="groupesResas")
+     */
+    public function groupesResasAction(Request $request, $id)
+    {
+        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
+
+        /* @var $system SystemeResa */
+        $system = $this->getDoctrine()->getRepository('AppBundle:SystemeResa')
+            ->findOneBy(array('id' => $id));
+
+        return $this->render('user/userGroupesResas.html.twig', [
+            'system' => $system
+        ]);
     }
 }
