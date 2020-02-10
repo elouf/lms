@@ -1427,7 +1427,16 @@ ul.list-default>li.studitWhiteFC:before{
 .myGroup .resa-iAmIn{
     display: block;
 }
-
+.linkCharte{
+    background-color: #456d94;
+    color: #fff;
+    display: inline-block;
+    border-radius: 10px;
+    padding: 0 10px;
+}
+.linkCharte:hover{
+    opacity: .7;
+}
 
 /* MEDIA QUERIES */
 .logoAbsolute{
@@ -1441,6 +1450,9 @@ ul.list-default>li.studitWhiteFC:before{
     display: block !important;
 }
 
+[data-template="excellencePro"] .linkCharte{
+    background-color: #6c226b;
+}
 [data-template="excellencePro"] .resa-system{
     border-color: #6c226b;
 }
