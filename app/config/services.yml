@@ -2,10 +2,10 @@
 # http://symfony.com/doc/current/book/service_container.html
 parameters:
     dateLimiNotifs: 2019-01-01 00:00:00
-    upload_directory: 'var/upload/'
-    upload_steps: '../'
-    upload_srcSteps: '../'
-    upload_course: '../../'
+    upload_directory: 'upload/'
+    upload_steps: ''
+    upload_srcSteps: ''
+    upload_course: '../../../web/'
     distant_host: 'stdi.nfrance.com'
     distant_user: 'chamilo'
     distant_password: 'xserve'
@@ -15,6 +15,20 @@ parameters:
     grouped_mails_limit: 2
 
 # templates : afadec, excellencePro, studit
+
+# AFADEC  :
+#    dateLimiNotifs: 2019-01-01 00:00:00
+#    upload_directory: 'var/upload/'
+#    upload_steps: '../'
+#    upload_srcSteps: '../'
+#    upload_course: '../../'
+#    distant_host: 'stdi.nfrance.com'
+#    distant_user: 'chamilo'
+#    distant_password: 'xserve'
+#    distant_database: 'chamilo'
+#    admin_password_init: '+JeSuisAfadecAdmin2017+'
+#    template: 'afadec'
+#    grouped_mails_limit: 2
 
 services:
     calendarServ:
