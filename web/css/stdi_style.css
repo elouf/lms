@@ -207,6 +207,10 @@ a { font-family: inherit; color: inherit; }
 .courseElemAdmin::before, .courseElem::before{
     content: none !important;
 }
+.courseElem h3{
+    font-size: 20px;
+    text-transform: none;
+}
 .titleBar{
     text-align: center;
     color: #fff;
