@@ -1,0 +1,15 @@
+Votre compte est bien créé !
+
+Bonjour {{ prenom }} {{ nom }}! Votre compte est bien créé.
+Pour l'activer, veuillez suivre l'URL suivante : {{ url }}/{{ id }}
+
+Vous pourrez ensuite vous authentifier sur la page : {{ urlLogin }}
+
+{% if not confirmedByAdmin %}
+    Attention ! Vous avez choisi un statut {{ statut }}.
+    Ce statut vous donne droit à des fonctionnalités supplémentaires. Elles seront actives lorsque l'administrateur de l'AFADEC aura confirmé votre compte. Vous serez averti dans les 24h de cette confirmation.
+{% endif %}
+
+Merci!
+L'équipe AFADEC
+Pour nous contacter : contact.afadec@gmail.com

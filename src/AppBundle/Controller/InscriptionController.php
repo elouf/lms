@@ -310,7 +310,7 @@ class InscriptionController extends Controller
 
                     $message = \Swift_Message::newInstance()
                         ->setSubject('[AFADEC] Confirmation de votre inscription')
-                        ->setFrom('contact.afadec@gmail.com')
+                        ->setFrom('noreply@afadec.fr')
                         ->setTo($user->getEmail())
                         ->setBody(
                             $this->renderView(
@@ -326,7 +326,24 @@ class InscriptionController extends Controller
                                 )
                             ),
                             'text/html'
-                        );
+                        )
+                    ->addPart(
+                        $this->renderView(
+                            'user/registrationMail.txt.twig',
+                            array(
+                                'prenom' => $user->getFirstname(),
+                                'nom' => $user->getLastname(),
+                                'id' => $user->getId(),
+                                'url' => str_replace($routeName, 'activation', $actual_link),
+                                'urlLogin' => str_replace($routeName, 'login', $actual_link),
+                                'confirmedByAdmin' => $user->getConfirmedByAdmin(),
+                                'statut' => $user->getStatut(),
+                            )
+                        ),
+                        'text/plain'
+                    )
+
+                    ;
                     $this->get('mailer')->send($message);
 
                 } elseif ($template === 'excellencePro') {
