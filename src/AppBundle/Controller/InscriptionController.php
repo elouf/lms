@@ -346,7 +346,7 @@ class InscriptionController extends Controller
 
                     $message = \Swift_Message::newInstance()
                         ->setSubject('[AFADEC] Confirmation de votre inscription')
-                        ->setFrom('contact.afadec@gmail.com')
+                        ->setFrom('noreply@afadec.fr')
                         ->setTo($user->getEmail())
                         ->setBody(
                             $this->renderView(
