@@ -13,6 +13,8 @@
                 STUDIT
             {% elseif template == "afadec" %}
                 AFADEC
+            {% elseif template == "excellencePro" %}
+                EXCELLENCE PRO
             {% endif %}
         </title>
     {% endblock %}
@@ -41,6 +43,8 @@
         <link rel="icon" type="image/x-icon" href="{{ asset('faviconSTUDIT.ico?v=4') }}"/>
     {% elseif template == "afadec" %}
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico?v=4') }}"/>
+    {% elseif template == "excellencePro" %}
+        <link rel="icon" type="image/x-icon" href="{{ asset('faviconXP.ico?v=4') }}"/>
     {% endif %}
 
     {% block javascripts %}
