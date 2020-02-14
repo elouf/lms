@@ -102,7 +102,7 @@
                     }
                 });
                 let url = window.location.origin;
-                if(url.indexOf('.org') === -1){
+                if(url.indexOf('.org') === -1 && url.indexOf('local') === -1){
                     $('.col-md-push-8').empty().append('<h3>Accès au site</h3><p>Bonjour,</p><p>Vous êtes bien sur l’espace de formation à distance du salon ExcellencePro. La création d‘un compte et l‘accès aux différentes ressources seront ouverts le 1<sup>er</sup> Mars</p><p>Alors à très bientôt !</p>');
                 }
             });
