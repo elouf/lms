@@ -264,6 +264,7 @@ class InscriptionController extends Controller
 
 
                 $em->persist($user);
+                $em->flush();
 
                 if ($template === 'afadec') {
                     $nomCoh = "";
