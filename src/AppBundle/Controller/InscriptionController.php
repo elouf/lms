@@ -317,7 +317,7 @@ class InscriptionController extends Controller
                                 'user/registrationMail.html.twig',
                                 array(
                                     'user' => $user,
-                                    'url' => str_replace($routeName, 'activation', $actual_link).'/'.$user->getId(),
+                                    'url' => str_replace($routeName, 'activation', $actual_link),
                                     'urlLogin' => str_replace($routeName, 'login', $actual_link)
                                 )
                             ),
@@ -328,7 +328,7 @@ class InscriptionController extends Controller
                             'user/registrationMail.txt.twig',
                             array(
                                 'user' => $user,
-                                'url' => str_replace($routeName, 'activation', $actual_link).'/'.$user->getId(),
+                                'url' => str_replace($routeName, 'activation', $actual_link),
                                 'urlLogin' => str_replace($routeName, 'login', $actual_link)
                             )
                         ),

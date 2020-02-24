@@ -1,7 +1,7 @@
-<h3>Votre compte est bien créé !</h3>
+<h3>- Votre compte est bien créé !</h3>
 
 <p>Bonjour {{ user.firstname }} {{ user.lastname }}! Votre compte est bien créé.</p>
-<p>Pour l'activer, veuillez cliquer sur ce lien : <a href="{{ url }}">Lien d'activation</a>
+<p>Pour l'activer, veuillez cliquer sur ce lien : <a href="{{ url }}/{{ user.id }}">Lien d'activation</a>
 
 <p>Vous pourrez ensuite vous authentifier sur <a href="{{ urlLogin }}">la page d'accueil</a></p>
 
