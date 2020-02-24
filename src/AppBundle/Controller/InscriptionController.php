@@ -362,15 +362,25 @@ class InscriptionController extends Controller
                             $this->renderView(
                                 'user/registrationMailExcellence.html.twig',
                                 array(
-                                    'prenom' => $user->getFirstname(),
-                                    'nom' => $user->getLastname(),
-                                    'id' => $user->getId(),
+                                    'user' => $user,
                                     'url' => str_replace($routeName, 'activation', $actual_link),
                                     'urlLogin' => str_replace($routeName, 'login', $actual_link)
                                 )
                             ),
                             'text/html'
-                        );
+                        )
+                        ->addPart(
+                            $this->renderView(
+                                'user/registrationMailExcellence.txt.twig',
+                                array(
+                                    'user' => $user,
+                                    'url' => str_replace($routeName, 'activation', $actual_link),
+                                    'urlLogin' => str_replace($routeName, 'login', $actual_link)
+                                )
+                            ),
+                            'text/plain'
+                        )
+                    ;
                     $this->get('mailer')->send($message);
                 }
                 $em->flush();
