@@ -316,13 +316,9 @@ class InscriptionController extends Controller
                             $this->renderView(
                                 'user/registrationMail.html.twig',
                                 array(
-                                    'prenom' => $user->getFirstname(),
-                                    'nom' => $user->getLastname(),
-                                    'id' => $user->getId(),
-                                    'url' => str_replace($routeName, 'activation', $actual_link),
-                                    'urlLogin' => str_replace($routeName, 'login', $actual_link),
-                                    'confirmedByAdmin' => $user->getConfirmedByAdmin(),
-                                    'statut' => $user->getStatut(),
+                                    'user' => $user,
+                                    'url' => str_replace($routeName, 'activation', $actual_link).'/'.$user->getId(),
+                                    'urlLogin' => str_replace($routeName, 'login', $actual_link)
                                 )
                             ),
                             'text/html'
@@ -331,13 +327,9 @@ class InscriptionController extends Controller
                         $this->renderView(
                             'user/registrationMail.txt.twig',
                             array(
-                                'prenom' => $user->getFirstname(),
-                                'nom' => $user->getLastname(),
-                                'id' => $user->getId(),
-                                'url' => str_replace($routeName, 'activation', $actual_link),
-                                'urlLogin' => str_replace($routeName, 'login', $actual_link),
-                                'confirmedByAdmin' => $user->getConfirmedByAdmin(),
-                                'statut' => $user->getStatut(),
+                                'user' => $user,
+                                'url' => str_replace($routeName, 'activation', $actual_link).'/'.$user->getId(),
+                                'urlLogin' => str_replace($routeName, 'login', $actual_link)
                             )
                         ),
                         'text/plain'
