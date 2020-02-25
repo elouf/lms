@@ -45,6 +45,16 @@ class DefaultController extends Controller
     }
 
     /**
+     * @Route("/infosPratiques", name="infosPratiques")
+     */
+    public function infosPratiquesAction(Request $request)
+    {
+        return $this->render('pagesFixes/infosPratiques.html.twig', [
+            'base_dir' => realpath($this->getParameter('kernel.root_dir') . '/..'),
+        ]);
+    }
+
+    /**
      * @Route("/concours", name="concours")
      */
     public function concoursAction(Request $request)
