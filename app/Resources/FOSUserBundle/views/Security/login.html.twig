@@ -12,10 +12,9 @@
 
                     {% include "FOSUserBundle:Security:login_content.html.twig" %}
 
-                    <hr/>
-                    <a href="{{ path('fos_user_resetting_request') }}">Mot de passe oublié ?</a>
-                    <br/>
-                    <a href="{{ path('inscription') }}">Créer un compte</a>
+                    <a href="{{ path('fos_user_resetting_request') }}" style="margin-top: 15px;display: inline-block">Mot de passe oublié ?</a>
+                    <div style="text-align: center; font-size: 20px;color: #aaa;margin: 10px;">OU</div>
+                    <a href="{{ path('inscription') }}" class="btn btn-primary">Créer un compte</a>
                 {% else %}
                     <div class="row">
                         <div class="col-sm-12">
