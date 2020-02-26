@@ -521,6 +521,12 @@
                     });
                 });
             }
+
+            $('video').click(function(){
+                if(!$(this).hasClass('played')){
+                    $(this).addClass('played').get(0).play();
+                }
+            })
         });
     </script>
     {% set hasVisibilityRights = app.user.hasRole('ROLE_SUPER_ADMIN') or ((app.user.statut == 'Responsable' or app.user.statut == 'Formateur') and app.user.confirmedByAdmin) %}
