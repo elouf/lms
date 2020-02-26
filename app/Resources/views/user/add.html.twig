@@ -231,6 +231,11 @@
                 } else {
                     $('.dependOnType').show();
                 }
+                if ($(this).val() !== '0') {
+                    $('.dependOnTypeSpecial').hide();
+                } else {
+                    $('.dependOnTypeSpecial').show();
+                }
             });
 
             function loadEtudiant() {
@@ -366,12 +371,12 @@
                             {{ form_label(form.matiereProfStag) }}{{ form_widget(form.matiereProfStag) }}
                         </div>
                     {% elseif template == 'excellencePro' %}
-                        <div class="formRow dependOnType">
+                        <div class="formRow dependOnType dependOnTypeSpecial">
                             {{ form_label(form.numec) }}{{ form_widget(form.numec) }}
                         </div>
-                        <div class="dependOnType row" style="width: 600px;">
+                        <div class="dependOnType row dependOnTypeSpecial" style="width: 600px;">
                             <div style="width: 300px; height: 30px" class="col-sm-4">   </div>
-                            <div style="width: 300px; padding-right: 0; font-size: 12px; font-weight: bold;" class="col-sm-8">Le NUMEC est votre numéro d’identification de l’enseignement catholique. Il est différent du NUMEN. Si vous ne le connaissez pas, demandez le à votre chef d’établissement. </div>
+                            <div style="width: 300px; padding-right: 0; font-size: 12px;" class="col-sm-8">Le NUMEC est votre numéro d’identification de l’enseignement catholique. Il est différent du NUMEN. Si vous ne le connaissez pas, demandez le à votre chef d’établissement. Ce numero est demandé pour le remboursement des frais annexes.</div>
                         </div>
                         <div class="formRow dependOnType">
                             {{ form_label(form.nomEtabl) }}{{ form_widget(form.nomEtabl) }}
@@ -382,7 +387,7 @@
                         <div class="formRow dependOnType">
                             {{ form_label(form.codePost) }}{{ form_widget(form.codePost) }}
                         </div>
-                        <div class="formRow dependOnType">
+                        <div class="formRow dependOnType dependOnTypeSpecial">
                             {{ form_label(form.uai) }}{{ form_widget(form.uai) }}
                         </div>
                     {% endif %}
