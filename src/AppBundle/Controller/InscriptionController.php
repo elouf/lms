@@ -193,9 +193,15 @@ class InscriptionController extends Controller
                 ->getForm();
         } elseif ($template === 'excellencePro') {
             $form = $this->createFormBuilder()
-                ->add('nom', TextType::class, array())
-                ->add('prenom', TextType::class, array())
-                ->add('email', EmailType::class, array())
+                ->add('nom', TextType::class, array(
+                    'label' => 'Nom *'
+                ))
+                ->add('prenom', TextType::class, array(
+                    'label' => 'Prénom *'
+                ))
+                ->add('email', EmailType::class, array(
+                    'label' => 'Email *'
+                ))
                 ->add('phone', TextType::class, array(
                     'label' => 'Numéro de téléphone',
                     'required' => false
@@ -204,28 +210,36 @@ class InscriptionController extends Controller
                     'type' => PasswordType::class,
                     'invalid_message' => 'Les mots de passe ne sont pas identiques',
                     'required' => true,
-                    'first_options' => array('label' => 'Mot de passe'),
-                    'second_options' => array('label' => 'Confirmation du mot de passe')
+                    'first_options' => array('label' => 'Mot de passe *'),
+                    'second_options' => array('label' => 'Confirmation du mot de passe *')
                 ))
                 ->add('typeUser', ChoiceType::class, array(
                     'choices' => array(
-                        'Autre' => 0,
-                        'Enseignant bénéficiant d’une prise en charge des frais annexes par Formiris' => 1,
-                        'Enseignant sans prise en charge des frais annexes' => 2,
-                        'Parent d’élève' => 3
+                        'Enseignant bénéficiant d’une prise en charge des frais annexes par Formiris' => 0,
+                        'Enseignant sans prise en charge des frais annexes' => 1,
+                        'Parent d’élève' => 2,
+                        'Autre' => 3
                     ),
-                    'label' => 'Vous êtes',
+                    'label' => 'Vous êtes *',
+                ))
+                ->add('numec', TextType::class, array(
+                    'label' => 'NUMEC',
+                    'required' => false
                 ))
                 ->add('nomEtabl', TextType::class, array(
-                    'label' => 'Nom de l‘établissement',
-                    'required' => false
+                    'label' => 'Nom de l‘établissement *',
+                    'required' => true
                 ))
                 ->add('commune', TextType::class, array(
-                    'label' => 'Commune',
-                    'required' => false
+                    'label' => 'Commune *',
+                    'required' => true
                 ))
                 ->add('codePost', TextType::class, array(
-                    'label' => 'Code postal',
+                    'label' => 'Code postal *',
+                    'required' => true
+                ))
+                ->add('uai', TextType::class, array(
+                    'label' => 'UAI (RNE) de l‘établissement',
                     'required' => false
                 ))
                 ->add('submit', SubmitType::class, array(
@@ -260,6 +274,8 @@ class InscriptionController extends Controller
                     $user->setCodePost($data['codePost']);
                     $user->setCommune($data['commune']);
                     $user->setNomEtabl($data['nomEtabl']);
+                    $user->setNumec($data['numec']);
+                    $user->setUai($data['uai']);
                 }
 
 

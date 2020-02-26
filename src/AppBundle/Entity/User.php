@@ -49,6 +49,20 @@ class User extends BaseUser
     /**
      * @var string
      *
+     * @ORM\Column(name="numec", type="string", length=1024, nullable = true)
+     */
+    protected $numec;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="uai", type="string", length=1024, nullable = true)
+     */
+    protected $uai;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="nomEtabl", type="string", length=1024, nullable = true)
      */
     protected $nomEtabl;
@@ -216,6 +230,54 @@ class User extends BaseUser
     public function getLastname()
     {
         return $this->lastname;
+    }
+
+    /**
+     * Set numec
+     *
+     * @param string $numec
+     *
+     * @return User
+     */
+    public function setNumec($numec)
+    {
+        $this->numec = $numec;
+
+        return $this;
+    }
+
+    /**
+     * Get numec
+     *
+     * @return string
+     */
+    public function getNumec()
+    {
+        return $this->numec;
+    }
+
+    /**
+     * Set uai
+     *
+     * @param string $uai
+     *
+     * @return User
+     */
+    public function setUai($uai)
+    {
+        $this->uai = $uai;
+
+        return $this;
+    }
+
+    /**
+     * Get uai
+     *
+     * @return string
+     */
+    public function getUai()
+    {
+        return $this->uai;
     }
 
     /**
