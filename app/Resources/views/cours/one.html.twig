@@ -669,7 +669,7 @@
                                                             <div class="itemTitle">{{ valR.nom }}</div>
                                                             <div class="itemDescription">{{ valR.description | raw }}</div>
                                                             {% if '.mp4' in valR.url %}
-                                                                <video style="max-width: 600px;" controls preload="none">
+                                                                <video style="max-width: 600px;" controls preload="metadata" poster="https://www.studit.fr/poster.png">
                                                                     <source src="{{ valR.url }}" type="video/mp4">
                                                                     Votre navigateur ne supporte pas la balise "video".
                                                                 </video>
@@ -894,7 +894,7 @@
                                                             {% for keyG,valG in val.zones.content[keyR] %}
                                                                 {% if '.mp4' in valG.lien.url %}
                                                                     <div class="blocMedia">
-                                                                        <video style="max-width: 600px;" controls>
+                                                                        <video style="max-width: 600px;" controls  preload="metadata" poster="https://www.studit.fr/poster.png">
                                                                             <source src="{{ valG.lien.url }}"
                                                                                     type="video/mp4">
                                                                             Votre navigateur ne supporte pas la balise
