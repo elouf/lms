@@ -153,9 +153,11 @@ class UsersController extends Controller
         $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
 
         $users = $this->getDoctrine()->getRepository('AppBundle:User')->findAll();
+        $stats = $this->getDoctrine()->getRepository('AppBundle:UserStatLogin')->findAll();
 
         return $this->render('user/userFrontEnd.html.twig', [
-            'myUsers' => $users
+            'myUsers' => $users,
+            'stats' => $stats
         ]);
     }
 

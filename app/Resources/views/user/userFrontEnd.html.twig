@@ -44,37 +44,7 @@
                         output_delivery: 'd',
                         output_saveFileName: 'mytable.csv',
                         filter_reset: 'button.reset',
-                        filter_formatter: {
-                            /*'.inscrCol' : function($cell, indx) {
-                                return $.tablesorter.filterFormatter.uiDatepicker( $cell, indx, {
-                                    changeMonth : true,
-                                    changeYear : true,
-                                    dateFormat : 'yy/mm/dd',
-                                    textFrom: 'Du : ',
-                                    textTo: 'Au : '
-                                });
-                            }
-                            '.inscrCol' : function($cell, indx) {
-                                return $.tablesorter.filterFormatter.uiDateCompare( $cell, indx, {
-                                    cellText : 'Date 1', // text added before the input
-                                    compare : ['>=', '='], // search values greater/less than selected value; overrides exactMatch
-                                    selected : 3,       // zero-based index of compare starting selected value
-                                    changeMonth : true,
-                                    changeYear : true,
-                                    dateFormat : 'yy/mm/dd'
-                                });
-                            },
-                            '.inscrCol2' : function($cell, indx) {
-                                return $.tablesorter.filterFormatter.uiDateCompare( $cell, indx, {
-                                    cellText : 'Date 2', // text added before the input
-                                    compare : ['<=', '='], // search values greater/less than selected value; overrides exactMatch
-                                    selected : 3,       // zero-based index of compare starting selected value
-                                    changeMonth : true,
-                                    changeYear : true,
-                                    dateFormat : 'yy/mm/dd'
-                                });
-                            }*/
-                        }
+                        filter_formatter: {}
                     }
                 })
                 .tablesorterPager({
@@ -89,7 +59,7 @@
                 let select = $('tr:visible .selectUser:checked').length === 0;
                 $('tr:visible .selectUser').prop('checked', select);
             });
-            $('.actionEnLot').on('change', function() {
+            $('.actionEnLot').on('change', function () {
                 let userIds = [];
                 let mode = this.value;
                 $('.selectUser:checked').each(function () {
@@ -98,17 +68,17 @@
                 });
                 $('.modal').modal('toggle');
                 $('.alertModal').hide();
-                if(mode === 'delete'){
+                if (mode === 'delete') {
                     $('.alertDelete').show();
-                }else if(mode === 'desact'){
+                } else if (mode === 'desact') {
                     $('.alertDesinscr').show();
-                }else if(mode === 'react'){
+                } else if (mode === 'react') {
                     $('.alertReact').show();
                 }
                 $('.nbCompte').text(userIds.length);
-                if(userIds.length > 1){
+                if (userIds.length > 1) {
                     $('.plurielCompte').text('s');
-                }else{
+                } else {
                     $('.plurielCompte').text('');
                 }
 
@@ -135,13 +105,14 @@
 
             /* on va mettre à jour les données du tableau en ajax pour optimiser */
             let usersIdArray = [];
-            $('.userLine').each(function(){
+            $('.userLine').each(function () {
                 usersIdArray.push($(this).attr('data-userid'));
             });
             let partOfusersIdArray = chunkArray(usersIdArray, 200);
 
             treatUsersPart(0, partOfusersIdArray);
-            function treatUsersPart(part, ids){
+
+            function treatUsersPart(part, ids) {
                 $.ajax({
                     type: "POST",
                     url: "{{ path('updateUsersTab_ajax') }}",
@@ -150,14 +121,14 @@
                     },
                     dataType: "json",
                     success: function (response) {
-                        for (let i=0; i<response['users'].length; i++){
+                        for (let i = 0; i < response['users'].length; i++) {
                             let tabUser = response['users'][i];
                             let userId = tabUser['userid'];
-                            let cohCell = $('.userLine[data-userid='+userId+'] .cohCell');
+                            let cohCell = $('.userLine[data-userid=' + userId + '] .cohCell');
 
-                            for (let j=0; j<tabUser['cohortes'].length; j++){
+                            for (let j = 0; j < tabUser['cohortes'].length; j++) {
                                 let coh = tabUser['cohortes'][j];
-                                let link = '<a href="{{ path("itemUsers", {id: "cohid", type: "cohorte"}) }}">'+coh['nom']+'(roleNom)</a>';
+                                let link = '<a href="{{ path("itemUsers", {id: "cohid", type: "cohorte"}) }}">' + coh['nom'] + '(roleNom)</a>';
                                 link = link.replace("cohid", coh['id']);
                                 link = link.replace("roleNom", coh['role']);
                                 link = link.replace("Enseignant", 'Enseignant correcteur');
@@ -166,9 +137,9 @@
 
                         }
                         part++;
-                        if(part<=ids.length-1){
+                        if (part <= ids.length - 1) {
                             treatUsersPart(part, ids);
-                        }else{
+                        } else {
                             $('thead tr [data-column="6"] .loader-backdrop').remove();
                             $('thead tr [data-column="6"] input').show();
                             $('.download').show();
@@ -178,12 +149,12 @@
                 });
             }
 
-            function chunkArray(myArray, chunk_size){
+            function chunkArray(myArray, chunk_size) {
                 let arrayLength = myArray.length;
                 let tempArray = [];
 
                 for (let index = 0; index < arrayLength; index += chunk_size) {
-                    let myChunk = myArray.slice(index, index+chunk_size);
+                    let myChunk = myArray.slice(index, index + chunk_size);
                     tempArray.push(myChunk);
                 }
 
@@ -192,11 +163,11 @@
 
             // masque la colonne cohorte au début
             let loader = '<div class="loader-backdrop">\n' +
-            '    <div class="loader">\n' +
-            '        <div class="ball-1"></div>\n' +
-            '        <div class="ball-2"></div>\n' +
-            '    </div>\n' +
-            '</div>';
+                '    <div class="loader">\n' +
+                '        <div class="ball-1"></div>\n' +
+                '        <div class="ball-2"></div>\n' +
+                '    </div>\n' +
+                '</div>';
             $('thead tr [data-column="6"]').css({
                 'position': 'relative'
             });
@@ -205,15 +176,16 @@
         });
     </script>
     <style>
-        thead tr [data-column="6"] .loader-backdrop{
+        thead tr [data-column="6"] .loader-backdrop {
             position: absolute;
             height: auto;
             width: auto;
-            top:20px;
+            top: 20px;
             left: calc(50% - 15px);
             display: block !important;
         }
-        thead tr [data-column="6"] .loader{
+
+        thead tr [data-column="6"] .loader {
             width: 30px;
             height: 30px;
         }
@@ -221,48 +193,99 @@
     <div class="container mt-20 mb-40">
         <div class="row">
             <div class="col-md-12">
-                <table class="tablesorter ">
-                    <thead>
-                    <tr>
-                        <th data-filter="false"></th>
-                        <th>Id</th>
-                        <th>Email</th>
-                        <th>Prénom</th>
-                        <th>Nom</th>
-                        <th class="filter-select">Statut</th>
-                        <th>Cohortes</th>
-                        <th class="filter-select">Institut</th>
-                        <th class="filter-select">Activé</th>
-                        <th class="inscrCol">inscription</th>
-                        <!--<th class="inscrCol2">inscription</th>-->
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for myUser in myUsers %}
-                        <tr class="userLine" data-userId="{{ myUser.id }}">
-                            <td><input class="selectUser" type="checkbox"></td>
-                            <td><a href="{{ path('user', {id:myUser.id }) }}">{{ myUser.id }}</a></td>
-                            <td><a href="{{ path('user', {id:myUser.id }) }}">{{ myUser.email }}</a></td>
-                            <td>{{ myUser.firstname }}</td>
-                            <td>{{ myUser.lastname }}</td>
-                            <td>{{ myUser.statut }}</td>
-                            <td class="cohCell">
-
-                            </td>
-                            <td>{{ myUser.institut }}</td>
-                            <td>
-                                {% if myUser.enabled == 1 %}
-                                    oui
-                                {% else %}
-                                    non
-                                {% endif %}
-                            </td>
-                            <td>{{ myUser.createdAt|localizeddate('none', 'none', null, null, 'Y/LL/dd' ) }}</td>
-                            <!--<td>{{ myUser.createdAt|localizeddate('none', 'none', null, null, 'Y/LL/dd' ) }}</td>-->
+                {% if template == 'excellencePro' %}
+                    <table class="tablesorter ">
+                        <thead>
+                        <tr>
+                            <th data-filter="false"></th>
+                            <th>Id</th>
+                            <th>Email</th>
+                            <th>Prénom</th>
+                            <th>Nom</th>
+                            <th>Établissement</th>
+                            <th>Numec</th>
+                            <th>UAI</th>
+                            <th>Téléphone</th>
+                            <th class="filter-select">Activé</th>
+                            <th class="inscrCol">inscription</th>
+                            <th class="connexions">Connexions</th>
                         </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                        {% for myUser in myUsers %}
+                            <tr class="userLine" data-userId="{{ myUser.id }}">
+                                <td><input class="selectUser" type="checkbox"></td>
+                                <td><a href="{{ path('user', {id:myUser.id }) }}">{{ myUser.id }}</a></td>
+                                <td><a href="{{ path('user', {id:myUser.id }) }}">{{ myUser.email }}</a></td>
+                                <td>{{ myUser.firstname }}</td>
+                                <td>{{ myUser.lastname }}</td>
+                                <td>{{ myUser.nomEtabl }}</td>
+                                <td>{{ myUser.numec }}</td>
+                                <td>{{ myUser.uai }}</td>
+                                <td>{{ myUser.phone }}</td>
+                                <td>
+                                    {% if myUser.enabled == 1 %}
+                                        oui
+                                    {% else %}
+                                        non
+                                    {% endif %}
+                                </td>
+                                <td>{{ myUser.createdAt|localizeddate('none', 'none', null, null, 'Y/LL/dd' ) }}</td>
+                                <td>
+                                    {% for stat in stats %}
+                                        {% if stat.user.id is same as(myUser.id) %}
+                                            {{ stat.dateAcces|date("d/m") }},
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <table class="tablesorter ">
+                        <thead>
+                        <tr>
+                            <th data-filter="false"></th>
+                            <th>Id</th>
+                            <th>Email</th>
+                            <th>Prénom</th>
+                            <th>Nom</th>
+                            <th class="filter-select">Statut</th>
+                            <th>Cohortes</th>
+                            <th class="filter-select">Institut</th>
+                            <th class="filter-select">Activé</th>
+                            <th class="inscrCol">inscription</th>
+                            <!--<th class="inscrCol2">inscription</th>-->
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for myUser in myUsers %}
+                            <tr class="userLine" data-userId="{{ myUser.id }}">
+                                <td><input class="selectUser" type="checkbox"></td>
+                                <td><a href="{{ path('user', {id:myUser.id }) }}">{{ myUser.id }}</a></td>
+                                <td><a href="{{ path('user', {id:myUser.id }) }}">{{ myUser.email }}</a></td>
+                                <td>{{ myUser.firstname }}</td>
+                                <td>{{ myUser.lastname }}</td>
+                                <td>{{ myUser.statut }}</td>
+                                <td class="cohCell">
+
+                                </td>
+                                <td>{{ myUser.institut }}</td>
+                                <td>
+                                    {% if myUser.enabled == 1 %}
+                                        oui
+                                    {% else %}
+                                        non
+                                    {% endif %}
+                                </td>
+                                <td>{{ myUser.createdAt|localizeddate('none', 'none', null, null, 'Y/LL/dd' ) }}</td>
+                                <!--<td>{{ myUser.createdAt|localizeddate('none', 'none', null, null, 'Y/LL/dd' ) }}</td>-->
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
                 <div id="pager" class="pager">
                     <form>
                         <img src="{{ asset('vendors/tablesorter/dist/css/images/first.png') }}" class="first"/>
@@ -303,13 +326,16 @@
                         <div class="bginverse">
                             <div class="">
                                 <div class="alert alertModal alertDelete alert-danger mb-10">
-                                    <strong>Attention!</strong> Voulez-vous vraiment procéder à la suppression de <span class="nbCompte"></span> compte<span class="plurielCompte"></span> ?
+                                    <strong>Attention!</strong> Voulez-vous vraiment procéder à la suppression de <span
+                                            class="nbCompte"></span> compte<span class="plurielCompte"></span> ?
                                 </div>
                                 <div class="alert alertModal alertDesinscr alert-danger mb-10">
-                                    <strong>Attention!</strong> Voulez-vous vraiment procéder à la désactivation de <span class="nbCompte"></span> compte<span class="plurielCompte"></span> ?
+                                    <strong>Attention!</strong> Voulez-vous vraiment procéder à la désactivation de
+                                    <span class="nbCompte"></span> compte<span class="plurielCompte"></span> ?
                                 </div>
                                 <div class="alert alertModal alertReact alert-danger mb-10">
-                                    <strong>Attention!</strong> Voulez-vous vraiment procéder à la réactivation de <span class="nbCompte"></span> compte<span class="plurielCompte"></span> ?
+                                    <strong>Attention!</strong> Voulez-vous vraiment procéder à la réactivation de <span
+                                            class="nbCompte"></span> compte<span class="plurielCompte"></span> ?
                                 </div>
 
                                 <div class="row mb-10" style="text-align: center">
