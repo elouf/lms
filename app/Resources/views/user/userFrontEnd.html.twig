@@ -202,6 +202,7 @@
                             <th>Email</th>
                             <th>Prénom</th>
                             <th>Nom</th>
+                            <th>Type d'utilisateur</th>
                             <th>Établissement</th>
                             <th>Numec</th>
                             <th>UAI</th>
@@ -219,6 +220,17 @@
                                 <td><a href="{{ path('user', {id:myUser.id }) }}">{{ myUser.email }}</a></td>
                                 <td>{{ myUser.firstname }}</td>
                                 <td>{{ myUser.lastname }}</td>
+                                <td>
+                                    {% if myUser.typeUser is same as('0') %}
+                                        Enseignant
+                                    {% elseif myUser.typeUser is same as('1') %}
+                                        Enseignant sans prise en charge
+                                    {% elseif myUser.typeUser is same as('2') %}
+                                        Parent d'élève
+                                    {% elseif myUser.typeUser is same as('3') %}
+                                        Autre
+                                    {% endif %}
+                                </td>
                                 <td>{{ myUser.nomEtabl }}</td>
                                 <td>{{ myUser.numec }}</td>
                                 <td>{{ myUser.uai }}</td>
