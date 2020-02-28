@@ -210,6 +210,7 @@
                             <th class="filter-select">Activé</th>
                             <th class="inscrCol">inscription</th>
                             <th class="connexions">Connexions</th>
+                            <th class="nbConnexions">nb connexions</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -243,13 +244,20 @@
                                     {% endif %}
                                 </td>
                                 <td>{{ myUser.createdAt|localizeddate('none', 'none', null, null, 'Y/LL/dd' ) }}</td>
+                                {% set nb = 0 %}
                                 <td>
                                     {% for stat in stats %}
+                                        {% set lastDate = "now"|date %}
                                         {% if stat.user.id is same as(myUser.id) %}
-                                            {{ stat.dateAcces|date("d/m") }},
+                                            {% set nb = nb + 1 %}
+                                            {% if lastDate|date != stat.dateAcces|date %}
+                                                {% set lastDate = stat.dateAcces %}
+                                                {{ lastDate|date("d/m") }},
+                                            {% endif %}
                                         {% endif %}
                                     {% endfor %}
                                 </td>
+                                <td>{{ nb }}</td>
                             </tr>
                         {% endfor %}
                         </tbody>
