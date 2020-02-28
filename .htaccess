@@ -2,7 +2,7 @@
     RewriteEngine On
 
     RewriteCond %{HTTPS} off
-    RewriteRule ^(.*)$ https://www.excellencepro.afadec.org/$1 [L,R=301]
+    RewriteRule ^(.*)$ https://%{SERVER_NAME}/$1 [L,R=301]
 
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^(.*)$ web/$1 [QSA,L]
