@@ -47,6 +47,9 @@
                         clearInterval(redimH5P);
                     }
                 }, 100);
+                $('video').each(function() {
+                    $(this).get(0).pause();
+                });
             });
             var steps = $('[data-uploadSteps]').attr('data-uploadSteps');
             var upload_srcSteps = $('[data-uploadSrcSteps]').attr('data-uploadSrcSteps');
