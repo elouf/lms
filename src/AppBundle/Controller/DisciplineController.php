@@ -54,7 +54,7 @@ class DisciplineController extends Controller
     }
 
     /**
-     * @Route("/myCourses/{id}", defaults={"id" = 0}, name="myCourses", schemes={"%httpProtocol%"})
+     * @Route("/myCourses/{id}", defaults={"id" = 0}, name="myCourses")
      */
     public function myCoursesAction(Request $request, $id)
     {
