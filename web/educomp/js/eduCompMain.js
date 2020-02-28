@@ -10,8 +10,8 @@ $(window).on("load",function(){
     }
 });
 
-jQuery(document).ready(function() {	
-    
+jQuery(document).ready(function() {
+    $(".loader-backdrop").fadeOut();
 // ************ Function Calls ************//
     
     if($("#slider").length){
