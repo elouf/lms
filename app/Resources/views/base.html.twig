@@ -141,7 +141,7 @@
                     <span class="sr-only">Toggle Menu</span>
                     <span>Menu</span>
                 </button>
-                <a class="navbar-brand logoPtf" href=".">
+                <a class="navbar-brand logoPtf" href="{{ path('homepage') }}">
                     {% if template == 'studit' %}
                         <img src="{{ asset('educomp/images/logo_empty.png') }}" alt="">
                         <img class="logoAbsolute logoGrand" src="{{ asset('educomp/images/logoSTUDIT.png') }}" alt="">
@@ -191,7 +191,7 @@
                                 <li><a target="_blank"
                                        href="https://youtu.be/xxKc8G6S1jg">Présentation vidéo</a>
                                 </li>
-                                <li><a href="https://enseignement-catholique.fr/les-actus-du-salon/">Newsletter</a></li>
+                                <li><a target="_blank" href="https://enseignement-catholique.fr/les-actus-du-salon/">Newsletter</a></li>
                                 <li>
                                     <a href="{{ path('infosPratiques') }}">Infos pratiques</a>
                                     {#<ul class="sub-menu" style="margin-left: -400px;">
@@ -331,7 +331,10 @@
                     <div class="col-sm-6 footer-widget" style="text-align: center">
                         <ul class="affiliations">
                             <li><a target="_blank" href="http://enseignement-catholique.fr/"><img
-                                            src="{{ asset('educomp/images/logoEP.png') }}" class="img-responsive"
+                                            src="{{ asset('educomp/images/logoEP_AF.png') }}" class="img-responsive"
+                                            alt=""></a></li>
+                            <li><a href="{{ path('homepage') }}"><img
+                                            src="{{ asset('educomp/images/logoEP_EC.png') }}" class="img-responsive"
                                             alt=""></a></li>
                         </ul>
                     </div>

@@ -246,13 +246,13 @@
                                 <td>{{ myUser.createdAt|localizeddate('none', 'none', null, null, 'Y/LL/dd' ) }}</td>
                                 {% set nb = 0 %}
                                 <td>
+                                    {% set lastDate = "now"|date("d/m") %}
                                     {% for stat in stats %}
-                                        {% set lastDate = "now"|date %}
                                         {% if stat.user.id is same as(myUser.id) %}
                                             {% set nb = nb + 1 %}
-                                            {% if lastDate|date != stat.dateAcces|date %}
-                                                {% set lastDate = stat.dateAcces %}
-                                                {{ lastDate|date("d/m") }},
+                                            {% if lastDate != stat.dateAcces|date("d/m") %}
+                                                {% set lastDate = stat.dateAcces|date("d/m") %}
+                                                {{ lastDate }},
                                             {% endif %}
                                         {% endif %}
                                     {% endfor %}
