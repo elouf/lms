@@ -1,5 +1,6 @@
 <?php
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -15,6 +16,11 @@ $kernel->loadClassCache();
 // When using the HttpCache, you need to call the method in your front controller instead of relying on the configuration parameter
 //Request::enableHttpMethodParameterOverride();
 $request = Request::createFromGlobals();
-$response = $kernel->handle($request);
+if ($request->getScheme() === 'http') {
+    $urlRedirect = str_replace($request->getScheme(), 'https', $request->getUri());
+    $response = new RedirectResponse($urlRedirect);
+} else {
+    $response = $kernel->handle($request);
+}
 $response->send();
 $kernel->terminate($request, $response);
