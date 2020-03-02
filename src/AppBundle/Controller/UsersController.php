@@ -117,6 +117,15 @@ class UsersController extends Controller
                     'first_options' => array('label' => 'Mot de passe'),
                     'second_options' => array('label' => 'Répétez le mot de passe'),
                 ))
+                ->add('typeUser', ChoiceType::class, array(
+                    'choices'  => [
+                        'Enseignant avec prise en charge des frais annexes' => 0,
+                        'Enseignant sans prise en charge des frais annexes' => 1,
+                        'Parent d’élève' => 2,
+                        'Autre' => 3
+                    ],
+                    'label' => 'Type d‘utilisateur '
+                ))
                 ->add('uai', TextType::class, array(
                     'label' => 'UAI '
                 ))

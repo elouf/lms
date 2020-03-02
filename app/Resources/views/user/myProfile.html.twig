@@ -179,14 +179,19 @@
                     {{ form_widget(form.institut) }}
                 </div>
             {% elseif template == 'excellencePro' %}
-                <div class="formRow uai">
+                <div class="formRow">
+                    {{ form_label(form.typeUser) }}
+                    {{ form_widget(form.typeUser) }}
+                </div>
+                <div class="formRow">
                     {{ form_label(form.uai) }}
                     {{ form_widget(form.uai) }}
                 </div>
-                <div class="formRow lastRow">
+                <div class="formRow">
                     {{ form_label(form.numec) }}
                     {{ form_widget(form.numec) }}
                 </div>
+                <div style="margin: 0 0 17px 197px; font-size: 12px;">Le NUMEC est votre numéro d’identification de l’enseignement catholique. Il est différent du NUMEN. Si vous ne le connaissez pas, demandez le à votre chef d’établissement. Ce numero est demandé pour le remboursement des frais annexes.</div>
             {% endif %}
             {{ form_widget(form.submit) }}
             {{ form_end(form) }}
