@@ -127,10 +127,12 @@ class UsersController extends Controller
                     'label' => 'Type d‘utilisateur '
                 ))
                 ->add('uai', TextType::class, array(
-                    'label' => 'UAI '
+                    'label' => 'UAI ',
+                    'required' => false
                 ))
                 ->add('numec', TextType::class, array(
-                    'label' => 'NUMEC '
+                    'label' => 'NUMEC ',
+                    'required' => false
                 ))
                 ->add('submit', SubmitType::class, array(
                     'label' => 'Mettre à jour',
