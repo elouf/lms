@@ -506,9 +506,13 @@
                                 {{ form_label(form.nomEtabl) }}
                                 {{ form_widget(form.nomEtabl) }}
                             </div>
-                            <div class="formRow lastRow">
+                            <div class="formRow ">
                                 {{ form_label(form.commune) }}
                                 {{ form_widget(form.commune) }}
+                            </div>
+                            <div class="formRow lastRow">
+                                {{ form_label(form.codePost) }}
+                                {{ form_widget(form.codePost) }}
                             </div>
                             <div class="formRow">
                                 {{ form_label(form.uai) }}
@@ -517,10 +521,6 @@
                             <div class="formRow">
                                 {{ form_label(form.numec) }}
                                 {{ form_widget(form.numec) }}
-                            </div>
-                            <div class="formRow lastRow">
-                                {{ form_label(form.commune) }}
-                                {{ form_widget(form.commune) }}
                             </div>
                         {%  elseif template == 'afadec' %}
                             <div class="formRow">
