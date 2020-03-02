@@ -134,6 +134,18 @@ class UsersController extends Controller
                     'label' => 'NUMEC ',
                     'required' => false
                 ))
+                ->add('nomEtabl', TextType::class, array(
+                    'label' => 'Nom de l‘établissement ',
+                    'required' => false
+                ))
+                ->add('commune', TextType::class, array(
+                    'label' => 'Commune de l‘établissement ',
+                    'required' => false
+                ))
+                ->add('codePost', TextType::class, array(
+                    'label' => 'Code postal de l‘établissement ',
+                    'required' => false
+                ))
                 ->add('submit', SubmitType::class, array(
                     'label' => 'Mettre à jour',
                     'attr' => array('class' => 'button btn btnAdmin btnSaveInputChange')

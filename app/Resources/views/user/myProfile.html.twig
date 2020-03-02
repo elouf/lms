@@ -70,6 +70,25 @@
                     });
                 });
             });
+
+            $('#form_typeUser').on('change', function () {
+                $('.excellDepend input[type="text"]').each(function(){
+                    $(this).val('');
+                });
+                if ($(this).val() === '3') {
+                    $('.excellDepend').hide();
+                    $('.excellDepend input[type="text"]').each(function(){
+                        $(this).val(' ');
+                    });
+                } else {
+                    $('.excellDepend').show();
+                }
+                if ($(this).val() !== '0') {
+                    $('.dependOnTypeSpecial').hide();
+                } else {
+                    $('.dependOnTypeSpecial').show();
+                }
+            });
         });
     </script>
     <style>
@@ -183,15 +202,27 @@
                     {{ form_label(form.typeUser) }}
                     {{ form_widget(form.typeUser) }}
                 </div>
-                <div class="formRow">
+                <div class="formRow excellDepend">
+                    {{ form_label(form.nomEtabl) }}
+                    {{ form_widget(form.nomEtabl) }}
+                </div>
+                <div class="formRow excellDepend">
+                    {{ form_label(form.commune) }}
+                    {{ form_widget(form.commune) }}
+                </div>
+                <div class="formRow excellDepend">
+                    {{ form_label(form.codePost) }}
+                    {{ form_widget(form.codePost) }}
+                </div>
+                <div class="formRow excellDepend dependOnTypeSpecial">
                     {{ form_label(form.uai) }}
                     {{ form_widget(form.uai) }}
                 </div>
-                <div class="formRow">
+                <div class="formRow excellDepend dependOnTypeSpecial">
                     {{ form_label(form.numec) }}
                     {{ form_widget(form.numec) }}
                 </div>
-                <div style="margin: 0 0 17px 197px; font-size: 12px;">Le NUMEC est votre numéro d’identification de l’enseignement catholique. Il est différent du NUMEN. Si vous ne le connaissez pas, demandez le à votre chef d’établissement. Ce numero est demandé pour le remboursement des frais annexes.</div>
+                <div class="excellDepend dependOnTypeSpecial" style="margin: 0 0 17px 197px; font-size: 12px;">Le NUMEC est votre numéro d’identification de l’enseignement catholique. Il est différent du NUMEN. Si vous ne le connaissez pas, demandez le à votre chef d’établissement. Ce numero est demandé pour le remboursement des frais annexes.</div>
             {% endif %}
             {{ form_widget(form.submit) }}
             {{ form_end(form) }}
