@@ -19,11 +19,18 @@
 
                 <p>Bonjour {{ user.firstname }} {{ user.lastname }}! Votre compte est bien activé.</p>
 
-                <p>Vous pouvez maintenant vous authentifier sur <a href="{{ path('homepage') }}">la page d'accueil</a></p>
+                <p>Vous pouvez maintenant vous authentifier sur <a href="{{ path('homepage') }}">la page d'accueil</a>
+                </p>
 
-                {% if not user.confirmedByAdmin %}
-                    <p>Attention ! Vous avez choisi un statut {{ user.statut }}.</p>
-                    <p>Ce statut vous donne droit à des fonctionnalités supplémentaires. Elles seront actives lorsque l'administrateur de l'AFADEC aura confirmé votre compte. Vous serez averti dans les 24h de cette confirmation.</p>
+                {% if template == 'afadec' %}
+                    {% if not user.confirmedByAdmin %}
+                        <p>Attention ! Vous avez choisi un statut {{ user.statut }}.</p>
+                        <p>Ce statut vous donne droit à des fonctionnalités supplémentaires. Elles seront actives
+                            lorsque l'administrateur de l'AFADEC aura confirmé votre compte. Vous serez averti dans les
+                            24h de cette confirmation.</p>
+                    {% endif %}
+                {% elseif template == 'excellencePro' %}
+
                 {% endif %}
 
                 <p>Merci!</p>
