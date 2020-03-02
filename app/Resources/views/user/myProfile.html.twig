@@ -169,14 +169,25 @@
                 {{ form_label(form.plainPassword.second) }}
                 {{ form_widget(form.plainPassword.second) }}
             </div>
-            <div class="formRow">
-                {{ form_label(form.receiveAutoNotifs) }}
-                {{ form_widget(form.receiveAutoNotifs) }}
-            </div>
-            <div class="formRow lastRow">
-                {{ form_label(form.institut) }}
-                {{ form_widget(form.institut) }}
-            </div>
+            {% if template == 'afadec' %}
+                <div class="formRow">
+                    {{ form_label(form.receiveAutoNotifs) }}
+                    {{ form_widget(form.receiveAutoNotifs) }}
+                </div>
+                <div class="formRow lastRow">
+                    {{ form_label(form.institut) }}
+                    {{ form_widget(form.institut) }}
+                </div>
+            {% elseif template == 'excellencePro' %}
+                <div class="formRow uai">
+                    {{ form_label(form.uai) }}
+                    {{ form_widget(form.uai) }}
+                </div>
+                <div class="formRow lastRow">
+                    {{ form_label(form.numec) }}
+                    {{ form_widget(form.numec) }}
+                </div>
+            {% endif %}
             {{ form_widget(form.submit) }}
             {{ form_end(form) }}
             {% set hasResponsableMinRights = app.user.hasRole('ROLE_SUPER_ADMIN') or ((app.user.statut == 'Responsable' or app.user.statut == 'Formateur') and app.user.confirmedByAdmin) %}
@@ -306,6 +317,7 @@
                         <!--<button class="deleteDatas" data-typeDatas="Ressource">Effacer ces données</button>-->
                     </form>
                 </div>
+                {% if template == 'afadec' %}
                 <h3>Mes copies rendues</h3>
                 <table class="tablesorter" data-numPager="4">
                     <thead>
@@ -470,6 +482,7 @@
                         <!--<button class="deleteDatas" data-typeDatas="ForumPost">Effacer ces données</button>-->
                     </form>
                 </div>
+                {% endif %}
             </div>
         </div>
     </div>

@@ -60,41 +60,76 @@ class UsersController extends Controller
 
         /* @var $user User */
         $user = $this->getUser();
+        $template = $this->getParameter('template');
+        if ($template === 'afadec') {
+            $form = $this->createFormBuilder($user)
+                ->add('lastname', TextType::class, array(
+                    'label' => 'Nom '
+                ))
+                ->add('firstname', TextType::class, array(
+                    'label' => 'Prénom '
+                ))
+                ->add('email', EmailType::class, array(
+                    'label' => 'Email '
+                ))
+                ->add('plainPassword', RepeatedType::class, array(
+                    'label' => 'Mot de passe ',
+                    'type' => PasswordType::class,
+                    'invalid_message' => 'Les mots de passe doivent être identiques.',
+                    'error_bubbling' => true,
+                    'options' => array('attr' => array('class' => 'password-field')),
+                    'required' => false,
+                    'first_options' => array('label' => 'Mot de passe'),
+                    'second_options' => array('label' => 'Répétez le mot de passe'),
+                ))
+                ->add('receiveAutoNotifs', CheckboxType::class, array(
+                    'label' => 'Recevoir les notifications ',
+                    'required' => false
+                ))
+                ->add('institut', EntityType::class, array(
+                    'class' => 'AppBundle:Institut',
+                    'choice_label' => 'nom',
+                    'multiple' => false
+                ))
+                ->add('submit', SubmitType::class, array(
+                    'label' => 'Mettre à jour',
+                    'attr' => array('class' => 'button btn btnAdmin btnSaveInputChange')
+                ))
+                ->getForm();
+        }elseif ($template === 'excellencePro') {
+            $form = $this->createFormBuilder($user)
+                ->add('lastname', TextType::class, array(
+                    'label' => 'Nom '
+                ))
+                ->add('firstname', TextType::class, array(
+                    'label' => 'Prénom '
+                ))
+                ->add('email', EmailType::class, array(
+                    'label' => 'Email '
+                ))
+                ->add('plainPassword', RepeatedType::class, array(
+                    'label' => 'Mot de passe ',
+                    'type' => PasswordType::class,
+                    'invalid_message' => 'Les mots de passe doivent être identiques.',
+                    'error_bubbling' => true,
+                    'options' => array('attr' => array('class' => 'password-field')),
+                    'required' => false,
+                    'first_options' => array('label' => 'Mot de passe'),
+                    'second_options' => array('label' => 'Répétez le mot de passe'),
+                ))
+                ->add('uai', TextType::class, array(
+                    'label' => 'UAI '
+                ))
+                ->add('numec', TextType::class, array(
+                    'label' => 'NUMEC '
+                ))
+                ->add('submit', SubmitType::class, array(
+                    'label' => 'Mettre à jour',
+                    'attr' => array('class' => 'button btn btnAdmin btnSaveInputChange')
+                ))
+                ->getForm();
+        }
 
-        $form = $this->createFormBuilder($user)
-            ->add('lastname', TextType::class, array(
-                'label' => 'Nom '
-            ))
-            ->add('firstname', TextType::class, array(
-                'label' => 'Prénom '
-            ))
-            ->add('email', EmailType::class, array(
-                'label' => 'Email '
-            ))
-            ->add('plainPassword', RepeatedType::class, array(
-                'label' => 'Mot de passe ',
-                'type' => PasswordType::class,
-                'invalid_message' => 'Les mots de passe doivent être identiques.',
-                'error_bubbling' => true,
-                'options' => array('attr' => array('class' => 'password-field')),
-                'required' => false,
-                'first_options' => array('label' => 'Mot de passe'),
-                'second_options' => array('label' => 'Répétez le mot de passe'),
-            ))
-            ->add('receiveAutoNotifs', CheckboxType::class, array(
-                'label' => 'Recevoir les notifications ',
-                'required' => false
-            ))
-            ->add('institut', EntityType::class, array(
-                'class' => 'AppBundle:Institut',
-                'choice_label' => 'nom',
-                'multiple' => false
-            ))
-            ->add('submit', SubmitType::class, array(
-                'label' => 'Mettre à jour',
-                'attr' => array('class' => 'button btn btnAdmin btnSaveInputChange')
-            ))
-            ->getForm();
         $form->handleRequest($request);
 
 
