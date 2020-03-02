@@ -541,29 +541,77 @@ class UsersController extends Controller
                 ]);
             }
         }
+        $template = $this->getParameter('template');
+        if ($template === 'afadec') {
+            $form = $this->createFormBuilder($user)
+                ->add('lastname', TextType::class, array(
+                    'label' => 'Nom'
+                ))
+                ->add('firstname', TextType::class, array(
+                    'label' => 'Prénom'
+                ))
+                ->add('email', EmailType::class, array())
+                ->add('receiveAutoNotifs', CheckboxType::class, array(
+                    'label' => 'Recevoir les notifications ',
+                    'required' => false
+                ))
+                ->add('institut', EntityType::class, array(
+                    'class' => 'AppBundle:Institut',
+                    'choice_label' => 'nom',
+                    'multiple' => false
+                ))
+                ->add('enabled', CheckboxType::class, array(
+                    'label' => 'Activé',
+                    'required' => false
+                ))
+                ->add('save', SubmitType::class, array('label' => 'Enregistrer'))
+                ->getForm();
+        }elseif ($template === 'excellencePro'){
+            $form = $this->createFormBuilder($user)
+                ->add('lastname', TextType::class, array(
+                    'label' => 'Nom'
+                ))
+                ->add('firstname', TextType::class, array(
+                    'label' => 'Prénom'
+                ))
+                ->add('email', EmailType::class, array())
+                ->add('typeUser', ChoiceType::class, array(
+                    'choices'  => [
+                        'Enseignant avec prise en charge des frais annexes' => 0,
+                        'Enseignant sans prise en charge des frais annexes' => 1,
+                        'Parent d’élève' => 2,
+                        'Autre' => 3
+                    ],
+                    'label' => 'Type d‘utilisateur '
+                ))
+                ->add('uai', TextType::class, array(
+                    'label' => 'UAI ',
+                    'required' => false
+                ))
+                ->add('numec', TextType::class, array(
+                    'label' => 'NUMEC ',
+                    'required' => false
+                ))
+                ->add('nomEtabl', TextType::class, array(
+                    'label' => 'Nom de l‘établissement ',
+                    'required' => false
+                ))
+                ->add('commune', TextType::class, array(
+                    'label' => 'Commune de l‘établissement ',
+                    'required' => false
+                ))
+                ->add('codePost', TextType::class, array(
+                    'label' => 'Code postal de l‘établissement ',
+                    'required' => false
+                ))
+                ->add('enabled', CheckboxType::class, array(
+                    'label' => 'Activé',
+                    'required' => false
+                ))
+                ->add('save', SubmitType::class, array('label' => 'Enregistrer'))
+                ->getForm();
+        }
 
-        $form = $this->createFormBuilder($user)
-            ->add('lastname', TextType::class, array(
-                'label' => 'Nom'
-            ))
-            ->add('firstname', TextType::class, array(
-                'label' => 'Prénom'
-            ))
-            ->add('email', EmailType::class, array())
-            ->add('receiveAutoNotifs', CheckboxType::class, array(
-                'label' => 'Recevoir les notifications ',
-                'required' => false
-            ))
-            ->add('institut', EntityType::class, array(
-                'class' => 'AppBundle:Institut',
-                'choice_label' => 'nom',
-                'multiple' => false
-            ))
-            ->add('enabled', CheckboxType::class, array(
-                'label' => 'Activé'
-            ))
-            ->add('save', SubmitType::class, array('label' => 'Enregistrer'))
-            ->getForm();
 
         $form->handleRequest($request);
 

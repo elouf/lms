@@ -498,17 +498,40 @@
                             {{ form_widget(form.email) }}
                         </div>
                         <div class="formRow">
-                            {{ form_label(form.institut) }}
-                            {{ form_widget(form.institut) }}
-                        </div>
-                        <div class="formRow">
                             {{ form_label(form.enabled) }}
                             {{ form_widget(form.enabled) }}
                         </div>
-                        <div class="formRow lastRow">
-                            {{ form_label(form.receiveAutoNotifs) }}
-                            {{ form_widget(form.receiveAutoNotifs) }}
-                        </div>
+                        {% if template == 'excellencePro' %}
+                            <div class="formRow">
+                                {{ form_label(form.nomEtabl) }}
+                                {{ form_widget(form.nomEtabl) }}
+                            </div>
+                            <div class="formRow lastRow">
+                                {{ form_label(form.commune) }}
+                                {{ form_widget(form.commune) }}
+                            </div>
+                            <div class="formRow">
+                                {{ form_label(form.uai) }}
+                                {{ form_widget(form.uai) }}
+                            </div>
+                            <div class="formRow">
+                                {{ form_label(form.numec) }}
+                                {{ form_widget(form.numec) }}
+                            </div>
+                            <div class="formRow lastRow">
+                                {{ form_label(form.commune) }}
+                                {{ form_widget(form.commune) }}
+                            </div>
+                        {%  elseif template == 'afadec' %}
+                            <div class="formRow">
+                                {{ form_label(form.institut) }}
+                                {{ form_widget(form.institut) }}
+                            </div>
+                            <div class="formRow lastRow">
+                                {{ form_label(form.receiveAutoNotifs) }}
+                                {{ form_widget(form.receiveAutoNotifs) }}
+                            </div>
+                        {% endif %}
                         {{ form_end(form) }}
                     </div>
                 </div>
