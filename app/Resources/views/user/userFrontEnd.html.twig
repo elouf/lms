@@ -255,7 +255,7 @@
                                 <td>{{ myUser.createdAt|localizeddate('none', 'none', null, null, 'Y/LL/dd' ) }}</td>
                                 {% set nb = 0 %}
                                 <td>
-                                    {#{% set lastDate = "now"|date("d/m") %}
+                                    {% set lastDate = "now"|date("d/m") %}
                                     {% for stat in stats %}
                                         {% if stat.user.id is same as(myUser.id) %}
                                             {% set nb = nb + 1 %}
@@ -264,7 +264,7 @@
                                                 {{ lastDate }},
                                             {% endif %}
                                         {% endif %}
-                                    {% endfor %}#}
+                                    {% endfor %}
                                 </td>
                                 <td>{{ nb }}</td>
                             </tr>
