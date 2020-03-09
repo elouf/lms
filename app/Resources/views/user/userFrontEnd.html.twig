@@ -163,18 +163,21 @@
                 return tempArray;
             }
 
-            // masque la colonne cohorte au début
-            let loader = '<div class="loader-backdrop">\n' +
-                '    <div class="loader">\n' +
-                '        <div class="ball-1"></div>\n' +
-                '        <div class="ball-2"></div>\n' +
-                '    </div>\n' +
-                '</div>';
-            $('thead tr [data-column="6"]').css({
-                'position': 'relative'
-            });
-            $('thead tr [data-column="6"] input').hide().after(loader);
-            $('.download').hide();
+            if($('.launchSequence').length){
+                // masque la colonne cohorte au début
+                let loader = '<div class="loader-backdrop">\n' +
+                    '    <div class="loader">\n' +
+                    '        <div class="ball-1"></div>\n' +
+                    '        <div class="ball-2"></div>\n' +
+                    '    </div>\n' +
+                    '</div>';
+                $('thead tr [data-column="6"]').css({
+                    'position': 'relative'
+                });
+                $('thead tr [data-column="6"] input').hide().after(loader);
+                $('.download').hide();
+            }
+
         });
     </script>
     <style>
@@ -252,7 +255,7 @@
                                 <td>{{ myUser.createdAt|localizeddate('none', 'none', null, null, 'Y/LL/dd' ) }}</td>
                                 {% set nb = 0 %}
                                 <td>
-                                    {% set lastDate = "now"|date("d/m") %}
+                                    {#{% set lastDate = "now"|date("d/m") %}
                                     {% for stat in stats %}
                                         {% if stat.user.id is same as(myUser.id) %}
                                             {% set nb = nb + 1 %}
@@ -261,7 +264,7 @@
                                                 {{ lastDate }},
                                             {% endif %}
                                         {% endif %}
-                                    {% endfor %}
+                                    {% endfor %}#}
                                 </td>
                                 <td>{{ nb }}</td>
                             </tr>
