@@ -216,7 +216,7 @@
                             <th>Téléphone</th>
                             <th class="filter-select">Activé</th>
                             <th class="inscrCol">inscription</th>
-                            <th class="connexions">Connexions</th>
+                            {#<th class="connexions">Connexions</th>#}
                             <th class="nbConnexions">nb connexions</th>
                         </tr>
                         </thead>
@@ -254,8 +254,8 @@
                                 </td>
                                 <td>{{ myUser.createdAt|localizeddate('none', 'none', null, null, 'Y/LL/dd' ) }}</td>
                                 {% set nb = 0 %}
-                                <td>
-                                    {% set lastDate = "now"|date("d/m") %}
+                                {#<td>
+                                    {% set lastDate = "now"|date("d/m") %}#}
                                     {% for stat in stats %}
                                         {% if stat.user.id is same as(myUser.id) %}
                                             {% set nb = nb + 1 %}
@@ -265,8 +265,8 @@
                                             {% endif %}#}
                                         {% endif %}
                                     {% endfor %}
-                                    {{ nb }}
-                                </td>
+                            {#{{ nb }}
+                                </td>#}
                                 <td>{{ nb }}</td>
                             </tr>
                         {% endfor %}
