@@ -105,6 +105,14 @@
                 if(url.indexOf('.org') === -1 && url.indexOf('local') === -1 && "{{ template }}" === "excellencePro" ){
                     $('.col-md-push-8').empty().append('<h3>Accès au site</h3><p>Bonjour,</p><p>Vous êtes bien sur l’espace de formation à distance du salon ExcellencePro. La création d‘un compte et l‘accès aux différentes ressources seront ouverts le 1<sup>er</sup> Mars</p><p>Alors à très bientôt !</p>');
                 }*/
+                if($('.copyRexcellencePro').length){
+                    $('.page-header').append('<div class="msgAlertAnnul">Attention, le salon est reporté !<br>Retrouvez le communiqué ici.</div>').css({
+                        'position': 'relative'
+                    });
+                    $('.msgAlertAnnul').click(function(){
+                        var win = window.open('https://www.excellencepro.afadec.org/upload/Communique_annulation.pdf', '_blank');
+                    });
+                }
             });
         </script>
     {% endblock %}
@@ -357,7 +365,7 @@
                     {% elseif template == 'afadec' %}
                         <span class="copyright">&copy; AFADEC 2020</span>
                     {% elseif template == 'excellencePro' %}
-                        <span class="copyright">&copy; AFADEC 2020</span>
+                        <span class="copyright copyRexcellencePro">&copy; AFADEC 2020</span>
                     {% endif %}
                 </div>
                 <div class="col-sm-6 text-center">
