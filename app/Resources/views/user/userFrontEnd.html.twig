@@ -259,12 +259,13 @@
                                     {% for stat in stats %}
                                         {% if stat.user.id is same as(myUser.id) %}
                                             {% set nb = nb + 1 %}
-                                            {% if lastDate != stat.dateAcces|date("d/m") %}
+                                            {#{% if lastDate != stat.dateAcces|date("d/m") %}
                                                 {% set lastDate = stat.dateAcces|date("d/m") %}
                                                 {{ lastDate }},
-                                            {% endif %}
+                                            {% endif %}#}
                                         {% endif %}
                                     {% endfor %}
+                                    {{ nb }}
                                 </td>
                                 <td>{{ nb }}</td>
                             </tr>
