@@ -104,13 +104,15 @@
             });
 
             /* on va mettre à jour les données du tableau en ajax pour optimiser */
-            let usersIdArray = [];
-            $('.userLine').each(function () {
-                usersIdArray.push($(this).attr('data-userid'));
-            });
-            let partOfusersIdArray = chunkArray(usersIdArray, 200);
+            if($('.launchSequence').length){
+                let usersIdArray = [];
+                $('.userLine').each(function () {
+                    usersIdArray.push($(this).attr('data-userid'));
+                });
+                let partOfusersIdArray = chunkArray(usersIdArray, 200);
 
-            treatUsersPart(0, partOfusersIdArray);
+                treatUsersPart(0, partOfusersIdArray);
+            }
 
             function treatUsersPart(part, ids) {
                 $.ajax({
@@ -267,7 +269,7 @@
                         </tbody>
                     </table>
                 {% else %}
-                    <table class="tablesorter ">
+                    <table class="tablesorter launchSequence">
                         <thead>
                         <tr>
                             <th data-filter="false"></th>
