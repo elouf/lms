@@ -21,6 +21,7 @@ class DisciplineAdmin extends AbstractAdmin
             ->add('faIcon', 'text')
             ->add('accronyme', 'text')
             ->add('podcastImgFilename', 'text')
+            ->add('freeAccess')
         ;
 
     }
@@ -33,6 +34,7 @@ class DisciplineAdmin extends AbstractAdmin
             ->add('faIcon')
             ->add('accronyme')
             ->add('podcastImgFilename')
+            ->add('freeAccess')
         ;
     }
 
@@ -46,6 +48,7 @@ class DisciplineAdmin extends AbstractAdmin
             ->add('faIcon')
             ->add('accronyme')
             ->add('podcastImgFilename')
+            ->add('freeAccess')
         ;
     }
 }

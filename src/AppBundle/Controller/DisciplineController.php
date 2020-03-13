@@ -91,7 +91,7 @@ class DisciplineController extends Controller
         $cohortes = $repositoryCoh->findAll();
 
         // Par défaut, admin : toutes les disciplines
-        $disciplinesArray2Consider = $disciplines;
+        $disciplinesArray2Consider = [];
         $cohLiees = array();
 
         $coursesIndiv = array();
@@ -100,6 +100,8 @@ class DisciplineController extends Controller
         $statutUser = null;
         $userIsAdmin = false;
         if($user){
+            // Par défaut, admin : toutes les disciplines
+            $disciplinesArray2Consider = $disciplines;
             $statutUser = $user->getStatut();
             $userIsAdmin = $user->hasRole('ROLE_SUPER_ADMIN');
             // si ce n'est pas l'admin, on fait le tri
@@ -144,7 +146,7 @@ class DisciplineController extends Controller
                 }
             }
         }
-
+        dump($disciplinesArray2Consider);
         // user anonyme, il faudra lui donner les disciplines/cours en freeAccess
         foreach ($freeDiscs as $freeDisc){
             if (!in_array($freeDisc, $disciplinesArray2Consider)) {
