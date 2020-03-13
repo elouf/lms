@@ -108,6 +108,15 @@ class CoursController extends Controller
                     }
                 }
             }
+        }else{
+            if($discipline->getFreeAccess()){
+                /* @var $coursFiltre Cours */
+                foreach($allcourses as $coursFiltre){
+                    if($coursFiltre->getEnabled()){
+                        array_push($courses, $coursFiltre);
+                    }
+                }
+            }
         }
 
         $systemResas = $this->getDoctrine()->getRepository('AppBundle:SystemeResa')->findBy(array('isVisible' => true, 'cours' => $cours));

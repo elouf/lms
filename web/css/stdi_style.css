@@ -246,14 +246,17 @@ a {
     color: #444;
 }
 
-.menuDiscCourses {
+.menuDiscCourses, .menuGoBackDiscs {
     position: fixed;
     left: 20px;
     top: 110px;
     z-index: 10;
 }
+.menuDiscCourses{
+    left: 80px;
+}
 
-.btnMenuDiscCourses {
+.btnMenuDiscCourses, .btnGoBack {
     height: 45px;
     width: 45px;
     background-color: #456d94;
@@ -266,7 +269,7 @@ a {
     z-index: 99;
 }
 
-.btnMenuDiscCourses .fa {
+.btnMenuDiscCourses .fa, .btnGoBack .fa {
     font-size: 22px;
 }
 
