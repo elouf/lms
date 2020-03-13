@@ -1,8 +1,19 @@
 {% extends 'base.html.twig' %}
-{% set
-    hasResponsableMinRights = app.user.hasRole('ROLE_SUPER_ADMIN')
-    or
-    (app.user.statut == 'Responsable' and app.user.confirmedByAdmin) %}
+{% set hasResponsableMinRights = false %}
+{% set hasReferentMinRights = false %}
+{% set hasVisibilityRights = false %}
+{% set btnUserStatRessource = "" %}
+{% if app.user %}
+    {% set
+        hasResponsableMinRights = app.user.hasRole('ROLE_SUPER_ADMIN')
+        or (app.user.statut == 'Responsable' and app.user.confirmedByAdmin) %}
+    {% set hasVisibilityRights = app.user.hasRole('ROLE_SUPER_ADMIN')
+        or ((app.user.statut == 'Responsable' or app.user.statut == 'Formateur') and app.user.confirmedByAdmin) %}
+    {% set hasReferentMinRights = isReferent or app.user.hasRole('ROLE_SUPER_ADMIN')
+        or ((app.user.statut == 'Responsable' or app.user.statut == 'Formateur') and app.user.confirmedByAdmin) %}
+    {% set btnUserStatRessource = "btnUserStatRessource" %}
+{% endif %}
+
 
 {% block title %}
     <title>
@@ -11,7 +22,7 @@
 {% endblock %}
 
 {% block vueAdmin %}
-    {% if isReferent or app.user.hasRole('ROLE_SUPER_ADMIN') or ((app.user.statut == 'Responsable' or app.user.statut == 'Formateur') and app.user.confirmedByAdmin) %}
+    {% if hasReferentMinRights %}
         <li><a href="{{ path('oneCours', {id: cours.id, mode: 'admin'}) }}">Vue admin</a></li>
         <li><a href="{{ path('oneCours', {id: cours.id, mode: 'ens'}) }}">Vue enseignant correcteur</a></li>
         <li><a href="{{ path('oneCours', {id: cours.id, mode: 'etu'}) }}">Vue étudiant</a></li>
@@ -47,7 +58,7 @@
                         clearInterval(redimH5P);
                     }
                 }, 100);
-                $('video').each(function() {
+                $('video').each(function () {
                     $(this).get(0).pause();
                 });
             });
@@ -525,14 +536,13 @@
                 });
             }
 
-            $('video').click(function(){
-                if(!$(this).hasClass('played')){
+            $('video').click(function () {
+                if (!$(this).hasClass('played')) {
                     $(this).addClass('played').get(0).play();
                 }
             })
         });
     </script>
-    {% set hasVisibilityRights = app.user.hasRole('ROLE_SUPER_ADMIN') or ((app.user.statut == 'Responsable' or app.user.statut == 'Formateur') and app.user.confirmedByAdmin) %}
 
     <div class="container mt-140" data-coursId="{{ cours.id }}" data-folderUpload="{{ folderUpload }}"
          data-uploadSteps="{{ uploadSteps }}" data-uploadSrcSteps="{{ uploadSrcSteps }}"
@@ -565,57 +575,61 @@
                 <div class="row mt-20">
                     <div class="col-sm-12">
                         <!--<h4 class="heading">Réservation de plage horaire</h4>-->
-                        {% for system in systemResas %}
-                            <div class="resa-system" data-idSystem="{{ system.id }}">
-                                <div class="resa-groupResaNom">
-                                    <div class="resa-groupResaNomStr">{{ system.nom }}</div>
-                                    {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
-                                        <a class="btnDownloadGroupesResas"
-                                           href="{{ path('groupesResas', {id: system.id}) }}">
-                                            <i class="fa fa-download" aria-hidden="true"></i>
-                                        </a>
-                                        <a class="btnAdminGroup" target="_blank"
-                                           href="{{ path('admin_app_systemeresa_edit', {id: system.id}) }}">
-                                            <i class="fa fa-cog" aria-hidden="true"></i>
-                                        </a>
-                                    {% endif %}
-                                </div>
-                                <div class="resa-systemDescr">{{ system.description|raw }}</div>
-                                <div class="resa-groupsResaContainer">
-                                    {% for group in system.groups %}
-                                        <div class="resa-groupResa" data-idGroup="{{ group.id }}" data-actif="false">
-                                            <div class="resa-groupResaNom">
-                                                <div class="resa-groupResaNomStr">{{ group.nom }}</div>
-                                                {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
-                                                    <a class="btnAdminGroup" target="_blank"
-                                                       href="{{ path('admin_app_grouperesa_edit', {id: group.id}) }}">
-                                                        <i class="fa fa-cog" aria-hidden="true"></i>
-                                                    </a>
-                                                {% endif %}
-                                            </div>
-                                            <div class="resa-groupResaContent">
-                                                <div class="resa-groupResaDescr">
-                                                    <div class="resa-groupResaDescrContent">{{ group.description|raw }}</div>
-                                                    <div class="resa-groupResaDescrBtnPlus">
-                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                        {% if app.user %}
+                            {% for system in systemResas %}
+                                <div class="resa-system" data-idSystem="{{ system.id }}">
+                                    <div class="resa-groupResaNom">
+                                        <div class="resa-groupResaNomStr">{{ system.nom }}</div>
+                                        {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                            <a class="btnDownloadGroupesResas"
+                                               href="{{ path('groupesResas', {id: system.id}) }}">
+                                                <i class="fa fa-download" aria-hidden="true"></i>
+                                            </a>
+                                            <a class="btnAdminGroup" target="_blank"
+                                               href="{{ path('admin_app_systemeresa_edit', {id: system.id}) }}">
+                                                <i class="fa fa-cog" aria-hidden="true"></i>
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                    <div class="resa-systemDescr">{{ system.description|raw }}</div>
+                                    <div class="resa-groupsResaContainer">
+                                        {% for group in system.groups %}
+                                            <div class="resa-groupResa" data-idGroup="{{ group.id }}"
+                                                 data-actif="false">
+                                                <div class="resa-groupResaNom">
+                                                    <div class="resa-groupResaNomStr">{{ group.nom }}</div>
+                                                    {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                                        <a class="btnAdminGroup" target="_blank"
+                                                           href="{{ path('admin_app_grouperesa_edit', {id: group.id}) }}">
+                                                            <i class="fa fa-cog" aria-hidden="true"></i>
+                                                        </a>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="resa-groupResaContent">
+                                                    <div class="resa-groupResaDescr">
+                                                        <div class="resa-groupResaDescrContent">{{ group.description|raw }}</div>
+                                                        <div class="resa-groupResaDescrBtnPlus">
+                                                            <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                                                        </div>
+                                                    </div>
+                                                    {% set nbPlaces = group.max - group.users|length %}
+                                                    <div>Places restantes : <span
+                                                                class="placesRestantes">{{ nbPlaces }}</span>
+                                                    </div>
+                                                    <div class="resa-iAmIn">Mon inscription est enregistrée dans ce
+                                                        groupe
                                                     </div>
                                                 </div>
-                                                {% set nbPlaces = group.max - group.users|length %}
-                                                <div>Places restantes : <span
-                                                            class="placesRestantes">{{ nbPlaces }}</span>
-                                                </div>
-                                                <div class="resa-iAmIn">Mon inscription est enregistrée dans ce groupe
+                                                <div class="resa-controls hidden">
+                                                    <div class="resa-btn resa-btn-inscr">S'inscrire</div>
+                                                    <div class="resa-btn resa-btn-desinscr">Se désinscrire</div>
                                                 </div>
                                             </div>
-                                            <div class="resa-controls hidden">
-                                                <div class="resa-btn resa-btn-inscr">S'inscrire</div>
-                                                <div class="resa-btn resa-btn-desinscr">Se désinscrire</div>
-                                            </div>
-                                        </div>
-                                    {% endfor %}
+                                        {% endfor %}
+                                    </div>
                                 </div>
-                            </div>
-                        {% endfor %}
+                            {% endfor %}
+                        {% endif %}
                     </div>
                 </div>
             {% endif %}
@@ -678,7 +692,9 @@
                                                             <div class="itemTitle">{{ valR.nom }}</div>
                                                             <div class="itemDescription">{{ valR.description | raw }}</div>
                                                             {% if '.mp4' in valR.url %}
-                                                                <video style="max-width: 600px;" controls preload="metadata" poster="https://www.studit.fr/poster.png">
+                                                                <video style="max-width: 600px;" controls
+                                                                       preload="metadata"
+                                                                       poster="https://www.studit.fr/poster.png">
                                                                     <source src="{{ valR.url }}" type="video/mp4">
                                                                     Votre navigateur ne supporte pas la balise "video".
                                                                 </video>
@@ -690,7 +706,7 @@
                                                             {% endif %}
                                                         </div>
                                                         <div class="col-xs-2 text-right">
-                                                            <a class="btn btnLien btn-sm btn-warning btnUserStatRessource"
+                                                            <a class="btn btnLien btn-sm btn-warning {{ btnUserStatRessource }}"
                                                                target="_blank"
                                                                href="{{ valR.url }}"
                                                                data-statRessId="{{ valR.id }}"
@@ -773,7 +789,7 @@
                                                                         <td>Sujet du devoir</td>
                                                                         <td>
                                                                             {% for keyS,valS in val.zones.sujet[keyR] %}
-                                                                                <a class="btn btn-sm btn-info mb-3 btnUserStatRessource"
+                                                                                <a class="btn btn-sm btn-info mb-3 {{ btnUserStatRessource }}"
                                                                                    target="_blank"
                                                                                    href="{{ valS.url }}"
                                                                                    data-statRessId="{{ valR.id }}"
@@ -903,7 +919,9 @@
                                                             {% for keyG,valG in val.zones.content[keyR] %}
                                                                 {% if '.mp4' in valG.lien.url %}
                                                                     <div class="blocMedia">
-                                                                        <video style="max-width: 600px;" controls  preload="metadata" poster="https://www.studit.fr/poster.png">
+                                                                        <video style="max-width: 600px;" controls
+                                                                               preload="metadata"
+                                                                               poster="https://www.studit.fr/poster.png">
                                                                             <source src="{{ valG.lien.url }}"
                                                                                     type="video/mp4">
                                                                             Votre navigateur ne supporte pas la balise
@@ -914,7 +932,7 @@
                                                                     {% if val.zones.groupe[keyR].isVertical %}
                                                                         <div class="verticalGrLienElem">
                                                                     {% endif %}
-                                                                    <a class="btnLienGroupeRessource btn btn-xs btnUserStatRessource"
+                                                                    <a class="btnLienGroupeRessource btn btn-xs {{ btnUserStatRessource }}"
                                                                        style="background-color: {{ valG.categorieLien.couleur }};"
                                                                        target="_blank"
                                                                        href="{{ valG.lien.url }}"

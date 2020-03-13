@@ -58,11 +58,6 @@ class DisciplineController extends Controller
      */
     public function myCoursesAction(Request $request, $id)
     {
-        $template = $this->getParameter('template');
-        if($template !== 'afadec'){
-            $this->denyAccessUnlessGranted('ROLE_USER');
-        }
-
         date_default_timezone_set('Europe/Paris');
 
         $em = $this->getDoctrine();
@@ -146,7 +141,7 @@ class DisciplineController extends Controller
                 }
             }
         }
-        dump($disciplinesArray2Consider);
+
         // user anonyme, il faudra lui donner les disciplines/cours en freeAccess
         foreach ($freeDiscs as $freeDisc){
             if (!in_array($freeDisc, $disciplinesArray2Consider)) {
@@ -334,6 +329,10 @@ class DisciplineController extends Controller
                 return $this->redirectToRoute('myCourses');
 
             }
+        }
+
+        if(count($disciplinesArray2Consider) === 0){
+            $this->denyAccessUnlessGranted('ROLE_USER');
         }
 
         return $this->render('discipline/myCourses.html.twig', [

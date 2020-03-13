@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Cours;
+use AppBundle\Entity\Discipline;
 use AppBundle\Entity\Section;
 use AppBundle\Entity\UserStatCours;
 use AppBundle\Entity\UserStatRessource;
@@ -63,31 +64,48 @@ class CoursController extends Controller
 
         $isReferent = false;
         $user = $this->getUser();
-        $statut = $user->getStatut();
-        $isAdmin = $user->hasRole('ROLE_SUPER_ADMIN');
+        $statutUser = null;
+        $isAdmin = false;
+        if($user){
+            $statut = $user->getStatut();
+            $isAdmin = $user->hasRole('ROLE_SUPER_ADMIN');
+        }
+
 
         $repositoryC = $this->getDoctrine()->getRepository('AppBundle:Cours');
         $cours = $repositoryC->find($id);
+        /* @var $discipline Discipline */
         $discipline = $cours->getDiscipline();
 
-        $repoUsers = $this->getDoctrine()->getRepository('AppBundle:User');
-        $users = $repoUsers->findBy(array('enabled' => true));
-        $usersInscrits = $repositoryC->findInscrits($cours);
+        if($discipline->getFreeAccess() === false && !$user){
+            return $this->redirectToRoute('homepage');
+        }
+
+        $users = [];
+        $usersInscrits = [];
+        if($user){
+            $repoUsers = $this->getDoctrine()->getRepository('AppBundle:User');
+            $users = $repoUsers->findBy(array('enabled' => true));
+            $usersInscrits = $repositoryC->findInscrits($cours);
+        }
+
 
         $repoSess = $this->getDoctrine()->getRepository('AppBundle:Session');
 
         $allcourses = $repositoryC->findBy(array('discipline' => $discipline));
         $courses = array();
-        foreach($allcourses as $coursFiltre){
-            if($coursFiltre->getSession() == null || $isAdmin){
-                array_push($courses, $coursFiltre);
-            }else{
-                $currentDate = new DateTime();
-                $sess = $coursFiltre->getSession();
-                if($repoSess->userIsInscrit($user, $sess) &&
-                    $currentDate >= $sess->getDateDebut() &&
-                    $currentDate <= $sess->getDateFin()){
+        if($user){
+            foreach($allcourses as $coursFiltre){
+                if($coursFiltre->getSession() == null || $isAdmin){
                     array_push($courses, $coursFiltre);
+                }else{
+                    $currentDate = new DateTime();
+                    $sess = $coursFiltre->getSession();
+                    if($repoSess->userIsInscrit($user, $sess) &&
+                        $currentDate >= $sess->getDateDebut() &&
+                        $currentDate <= $sess->getDateFin()){
+                        array_push($courses, $coursFiltre);
+                    }
                 }
             }
         }
@@ -95,45 +113,48 @@ class CoursController extends Controller
         $systemResas = $this->getDoctrine()->getRepository('AppBundle:SystemeResa')->findBy(array('isVisible' => true, 'cours' => $cours));
 
         $role = "";
-        $cohortes = $this->getDoctrine()->getRepository('AppBundle:Cohorte')->findAll();
-        $repoInscription_coh = $this->getDoctrine()->getRepository('AppBundle:Inscription_coh');
-        $repoInscription_d = $this->getDoctrine()->getRepository('AppBundle:Inscription_d');
-        $repoInscription_c = $this->getDoctrine()->getRepository('AppBundle:Inscription_c');
-        if($cohortes){
-            foreach($cohortes as $cohorte){
-                if($cohorte->getDisciplines()->contains($discipline) || $cohorte->getCours()->contains($cours)){
-                    $inscrCoh = $repoInscription_coh->findOneBy(array('user' => $user, 'cohorte' => $cohorte));
-                    if($inscrCoh){
-                        $role = $inscrCoh->getRole()->getNom();
-                        break;
+        if($user){
+            $cohortes = $this->getDoctrine()->getRepository('AppBundle:Cohorte')->findAll();
+            $repoInscription_coh = $this->getDoctrine()->getRepository('AppBundle:Inscription_coh');
+            $repoInscription_d = $this->getDoctrine()->getRepository('AppBundle:Inscription_d');
+            $repoInscription_c = $this->getDoctrine()->getRepository('AppBundle:Inscription_c');
+            if($cohortes){
+                foreach($cohortes as $cohorte){
+                    if($cohorte->getDisciplines()->contains($discipline) || $cohorte->getCours()->contains($cours)){
+                        $inscrCoh = $repoInscription_coh->findOneBy(array('user' => $user, 'cohorte' => $cohorte));
+                        if($inscrCoh){
+                            $role = $inscrCoh->getRole()->getNom();
+                            break;
+                        }
                     }
                 }
             }
-        }
-        if($role == ""){
-            $inscrDis = $repoInscription_d->findOneBy(array('user' => $user, 'discipline' => $discipline));
-            if($inscrDis) {
-                $role = $inscrDis->getRole()->getNom();
+            if($role == ""){
+                $inscrDis = $repoInscription_d->findOneBy(array('user' => $user, 'discipline' => $discipline));
+                if($inscrDis) {
+                    $role = $inscrDis->getRole()->getNom();
+                }
+            }
+
+            $inscrC = $repoInscription_c->findOneBy(array('user' => $user, 'cours' => $cours));
+            if($inscrC) {
+                if($role == "" || $inscrC->getRole()->getNom() == "Referent") {
+                    $role = $inscrC->getRole()->getNom();
+                }
+            }
+            // on corrige le statut du user. Si c'est un enseignant, il ne doit pas être en etu. Si ce n'est pas un admin, il ne doit pas être admin
+            if( !($isAdmin || (($statut == 'Responsable' || $statut == 'Formateur') && $user->getConfirmedByAdmin())) ){
+                if($role == "Enseignant"){
+                    $mode = 'ens';
+                }else{
+                    $mode = 'etu';
+                }
+            }
+            if($role == "Referent"){
+                $isReferent = true;
             }
         }
 
-        $inscrC = $repoInscription_c->findOneBy(array('user' => $user, 'cours' => $cours));
-        if($inscrC) {
-            if($role == "" || $inscrC->getRole()->getNom() == "Referent") {
-                $role = $inscrC->getRole()->getNom();
-            }
-        }
-        // on corrige le statut du user. Si c'est un enseignant, il ne doit pas être en etu. Si ce n'est pas un admin, il ne doit pas être admin
-        if( !($isAdmin || (($statut == 'Responsable' || $statut == 'Formateur') && $user->getConfirmedByAdmin())) ){
-            if($role == "Enseignant"){
-                $mode = 'ens';
-            }else{
-                $mode = 'etu';
-            }
-        }
-        if($role == "Referent"){
-            $isReferent = true;
-        }
 
         $typeLiens = $this->getDoctrine()->getRepository('AppBundle:TypeLien')->findAll();
         $categorieLiens = $this->getDoctrine()->getRepository('AppBundle:CategorieLien')->findAll();
@@ -176,69 +197,74 @@ class CoursController extends Controller
                         $datas[$i]["zones"]["type"][$j] = "lien";
                         $datas[$i]["zones"]["content"][$j] = $ressource;
                     }elseif($ressType == "forum"){
-                        $datas[$i]["zones"]["type"][$j] = "forum";
-                        $datas[$i]["zones"]["content"][$j] = $ressource;
-                    }elseif($ressType == "chat"){
-                        $datas[$i]["zones"]["type"][$j] = "chat";
-                        $datas[$i]["zones"]["content"][$j] = $ressource;
-                    }elseif($ressType == "devoir"){
-                        $datas[$i]["zones"]["type"][$j] = "devoir";
-
-                        $repositorySujet = $repoDevoirSujet->findBy(array('devoir' => $ressource), array('position' => 'ASC'));
-
-                        $repositoryCorrigeType = $repoDevoirCorrigeType->findBy(array('devoir' => $ressource), array('position' => 'ASC'));
-
-                        $datas[$i]["zones"]["content"][$j] = $ressource;
-                        $datas[$i]["zones"]["sujet"][$j] = $repositorySujet;
-                        $datas[$i]["zones"]["corrigeType"][$j] = "undefined";
-
-                        if($repositoryCorrigeType) {
-                            $datas[$i]["zones"]["corrigeType"][$j] = $repositoryCorrigeType;
+                        if($user){
+                            $datas[$i]["zones"]["type"][$j] = "forum";
+                            $datas[$i]["zones"]["content"][$j] = $ressource;
                         }
+                    }elseif($ressType == "chat"){
+                        if($user){
+                            $datas[$i]["zones"]["type"][$j] = "chat";
+                            $datas[$i]["zones"]["content"][$j] = $ressource;
+                        }
+                    }elseif($ressType == "devoir"){
+                        if($user){
+                            $datas[$i]["zones"]["type"][$j] = "devoir";
 
-                        // on a pas besoin des copies du user si on est en mode admin, par contre en etu, oui
-                        if($mode == "admin"){
+                            $repositorySujet = $repoDevoirSujet->findBy(array('devoir' => $ressource), array('position' => 'ASC'));
 
-                        }elseif($mode == 'ens'){
-                            // on compte le nombre de copies non corrigées
-                            $datas[$i]["zones"]["copiesDeposes"][$j] = 0;
-                            $datas[$i]["zones"]["corrigesDeposes"][$j] = 0;
+                            $repositoryCorrigeType = $repoDevoirCorrigeType->findBy(array('devoir' => $ressource), array('position' => 'ASC'));
 
-                            $copies = $repoCopie->findBy(array('devoir' => $ressource));
-                            for($u=0; $u<count($copies); $u++){
-                                $copieFichier = $repoCopieFichier->findOneBy(array('copie' => $copies[$u]));
-                                if($copieFichier){
-                                    $datas[$i]["zones"]["copiesDeposes"][$j]++;
-                                    $corrigeFichier = $repoCorrige->findOneBy(array('copie' => $copies[$u]));
-                                    if($corrigeFichier){
-                                        $datas[$i]["zones"]["corrigesDeposes"][$j]++;
+                            $datas[$i]["zones"]["content"][$j] = $ressource;
+                            $datas[$i]["zones"]["sujet"][$j] = $repositorySujet;
+                            $datas[$i]["zones"]["corrigeType"][$j] = "undefined";
+
+                            if($repositoryCorrigeType) {
+                                $datas[$i]["zones"]["corrigeType"][$j] = $repositoryCorrigeType;
+                            }
+
+                            // on a pas besoin des copies du user si on est en mode admin, par contre en etu, oui
+                            if($mode == "admin"){
+
+                            }elseif($mode == 'ens'){
+                                // on compte le nombre de copies non corrigées
+                                $datas[$i]["zones"]["copiesDeposes"][$j] = 0;
+                                $datas[$i]["zones"]["corrigesDeposes"][$j] = 0;
+
+                                $copies = $repoCopie->findBy(array('devoir' => $ressource));
+                                for($u=0; $u<count($copies); $u++){
+                                    $copieFichier = $repoCopieFichier->findOneBy(array('copie' => $copies[$u]));
+                                    if($copieFichier){
+                                        $datas[$i]["zones"]["copiesDeposes"][$j]++;
+                                        $corrigeFichier = $repoCorrige->findOneBy(array('copie' => $copies[$u]));
+                                        if($corrigeFichier){
+                                            $datas[$i]["zones"]["corrigesDeposes"][$j]++;
+                                        }
+                                    }
+                                }
+                            }else{
+                                $datas[$i]["zones"]["copie"][$j] = "undefined";
+                                $datas[$i]["zones"]["corrige"][$j] = "undefined";
+                                $datas[$i]["zones"]["copieFichier"][$j] = "undefined";
+                                $datas[$i]["zones"]["corrigeFichier"][$j] = "undefined";
+
+                                $copie = $repoCopie->findOneBy(array('devoir' => $ressource, 'auteur' => $user));
+                                if($copie){
+                                    $datas[$i]["zones"]["copie"][$j] = $copie;
+
+                                    $copieFichier = $repoCopieFichier->findOneBy(array('copie' => $copie));
+                                    if($copieFichier){
+                                        $datas[$i]["zones"]["copieFichier"][$j] = $copieFichier;
+                                    }
+
+                                    $corrige = $repoCorrige->findOneBy(array('copie' => $copie));
+                                    if($corrige){
+                                        $datas[$i]["zones"]["corrige"][$j] = $corrige;
+                                        $corrigeFichier = $repoCorrigeFichier->findOneBy(array('corrige' => $corrige));
+                                        $datas[$i]["zones"]["corrigeFichier"][$j] = $corrigeFichier;
                                     }
                                 }
                             }
-                        }else{
-                            $datas[$i]["zones"]["copie"][$j] = "undefined";
-                            $datas[$i]["zones"]["corrige"][$j] = "undefined";
-                            $datas[$i]["zones"]["copieFichier"][$j] = "undefined";
-                            $datas[$i]["zones"]["corrigeFichier"][$j] = "undefined";
-
-                            $copie = $repoCopie->findOneBy(array('devoir' => $ressource, 'auteur' => $user));
-                            if($copie){
-                                $datas[$i]["zones"]["copie"][$j] = $copie;
-
-                                $copieFichier = $repoCopieFichier->findOneBy(array('copie' => $copie));
-                                if($copieFichier){
-                                    $datas[$i]["zones"]["copieFichier"][$j] = $copieFichier;
-                                }
-
-                                $corrige = $repoCorrige->findOneBy(array('copie' => $copie));
-                                if($corrige){
-                                    $datas[$i]["zones"]["corrige"][$j] = $corrige;
-                                    $corrigeFichier = $repoCorrigeFichier->findOneBy(array('corrige' => $corrige));
-                                    $datas[$i]["zones"]["corrigeFichier"][$j] = $corrigeFichier;
-                                }
-                            }
                         }
-
                     }elseif($ressType == "groupe") {
                         $repositoryGaL = $repoAssocGroupeLiens->findBy(array('groupe' => $ressource), array('position' => 'ASC'));
                         $datas[$i]["zones"]["groupe"][$j] = $ressource;
@@ -297,17 +323,21 @@ class CoursController extends Controller
         }
 
         //Comme un accès aux documents du cours existe, on doit afficher l'info-bulle si certains n'ont pas été visités
-        $docs = $this->getDoctrine()->getRepository('AppBundle:Document')->findByCours($cours, $user);
-        $documents = array_merge($docs[0], $docs[1]);
-
+        $docs = [];
         $nbNewDocs = 0;
-        $repoStatsUsersDocs = $this->getDoctrine()->getRepository('AppBundle:StatsUsersDocs');
-        foreach($documents as $doc){
-            $stat = $repoStatsUsersDocs->findBy(array('user' => $user, 'document' => $doc));
-            if(!$stat){
-                $nbNewDocs++;
+        if($user){
+            $docs = $this->getDoctrine()->getRepository('AppBundle:Document')->findByCours($cours, $user);
+            $documents = array_merge($docs[0], $docs[1]);
+
+            $repoStatsUsersDocs = $this->getDoctrine()->getRepository('AppBundle:StatsUsersDocs');
+            foreach($documents as $doc){
+                $stat = $repoStatsUsersDocs->findBy(array('user' => $user, 'document' => $doc));
+                if(!$stat){
+                    $nbNewDocs++;
+                }
             }
         }
+
         if ($h5p['H5PContent'] == true) {
             if($mode == "admin"){
                 return $this->render('cours/oneAdmin.html.twig',
