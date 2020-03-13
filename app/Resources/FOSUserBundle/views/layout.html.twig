@@ -48,12 +48,15 @@
                     </h4>-->
 
                     {#<img style="max-width: 100%;" src="{{ asset('images/accueil/afadec_noel2019.jpg') }}" />#}
-                    <h4 class="heading pt-20 text-center mb-0">DÉCOUVREZ L’AFADEC <span
+                    {#<h4 class="heading pt-20 text-center mb-0">DÉCOUVREZ L’AFADEC <span
                                 class="color2">EN 2 MINUTES</span>
                     </h4>
                     <iframe class="" width="100%" height="430" frameborder="0" allowfullscreen=""
                             mozallowfullscreen="" webkitallowfullscreen=""
-                            src="https://player.vimeo.com/video/123835230"></iframe>
+                            src="https://player.vimeo.com/video/123835230"></iframe>#}
+                    <a style="max-width: 100%; display: inline-block" href="{{ path('myCourses') }}">
+                        <img style="max-width: 100%;" src="{{ asset('images/accueil/corona-afadec.png') }}" />
+                    </a>
 
                 {% elseif template == "excellencePro" %}
                     <video controls poster="{{ asset('images/accueil/excellencePro.jpg') }}" style="width: 100%">
