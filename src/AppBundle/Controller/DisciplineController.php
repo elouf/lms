@@ -58,7 +58,10 @@ class DisciplineController extends Controller
      */
     public function myCoursesAction(Request $request, $id)
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
+        $template = $this->getParameter('template');
+        if($template !== 'afadec'){
+            $this->denyAccessUnlessGranted('ROLE_USER');
+        }
 
         date_default_timezone_set('Europe/Paris');
 
@@ -83,6 +86,7 @@ class DisciplineController extends Controller
         $repositoryDocuments = $em->getRepository('AppBundle:Document');
 
         $disciplines = $repositoryDis->findBy(array(), array('nom' => 'ASC'));
+        $freeDiscs = $repositoryDis->findBy(array('freeAccess' => true), array('nom' => 'ASC'));
 
         $cohortes = $repositoryCoh->findAll();
 
@@ -93,70 +97,85 @@ class DisciplineController extends Controller
         $coursesIndiv = array();
         /* @var $user User */
         $user = $this->getUser();
-        $statutUser = $user->getStatut();
-        $userIsAdmin = $user->hasRole('ROLE_SUPER_ADMIN');
+        $statutUser = null;
+        $userIsAdmin = false;
+        if($user){
+            $statutUser = $user->getStatut();
+            $userIsAdmin = $user->hasRole('ROLE_SUPER_ADMIN');
+            // si ce n'est pas l'admin, on fait le tri
+            if (!$userIsAdmin) {
+                // on créé un tableau qui contient les disciplines auxquelles l' user est inscrit par cohorte
+                $repositoryInscrCoh = $em->getRepository('AppBundle:Inscription_coh');
+                $inscrsCoh = $repositoryInscrCoh->findBy(array('user' => $user));
+                $discInscrCoh = array();
+                foreach ($inscrsCoh as $inscrCoh) {
+                    $cohorte = $repositoryCoh->find($inscrCoh->getCohorte());
+                    foreach ($cohorte->getDisciplines() as $disc) {
+                        if (!in_array($disc, $discInscrCoh)) {
+                            array_push($discInscrCoh, $disc);
+                        }
+                    }
+                }
 
-        // si ce n'est pas l'admin, on fait le tri
-        if (!$userIsAdmin) {
-            // on créé un tableau qui contient les disciplines auxquelles l' user est inscrit par cohorte
-            $repositoryInscrCoh = $em->getRepository('AppBundle:Inscription_coh');
-            $inscrsCoh = $repositoryInscrCoh->findBy(array('user' => $user));
-            $discInscrCoh = array();
-            foreach ($inscrsCoh as $inscrCoh) {
-                $cohorte = $repositoryCoh->find($inscrCoh->getCohorte());
-                foreach ($cohorte->getDisciplines() as $disc) {
-                    if (!in_array($disc, $discInscrCoh)) {
-                        array_push($discInscrCoh, $disc);
+                $disciplinesArray2Consider = $discInscrCoh;
+
+                // on ajoute les disciplines auxquelles le user est inscrit directement
+                $repositoryInscrD = $em->getRepository('AppBundle:Inscription_d');
+                $inscrsD = $repositoryInscrD->findBy(array('user' => $user));
+                foreach ($inscrsD as $inscrD) {
+                    if (!in_array($inscrD->getDiscipline(), $disciplinesArray2Consider)) {
+                        array_push($disciplinesArray2Consider, $inscrD->getDiscipline());
+                    }
+                }
+
+                // enfin, on ajoute les cours auxquels l'utilisateur est inscrit individuellement (du coup une portion de discipline)
+                $repositoryInscrC = $em->getRepository('AppBundle:Inscription_c');
+                $inscrsC = $repositoryInscrC->findBy(array('user' => $user));
+                foreach ($inscrsC as $inscrC) {
+                    if (!in_array($inscrC->getCours()->getDiscipline(), $disciplinesArray2Consider)) {
+                        array_push($coursesIndiv, $inscrC->getCours());
                     }
                 }
             }
-
-            $disciplinesArray2Consider = $discInscrCoh;
-
-            // on ajoute les disciplines auxquelles le user est inscrit directement
-            $repositoryInscrD = $em->getRepository('AppBundle:Inscription_d');
-            $inscrsD = $repositoryInscrD->findBy(array('user' => $user));
-            foreach ($inscrsD as $inscrD) {
-                if (!in_array($inscrD->getDiscipline(), $disciplinesArray2Consider)) {
-                    array_push($disciplinesArray2Consider, $inscrD->getDiscipline());
-                }
-            }
-
-            // enfin, on ajoute les cours auxquels l'utilisateur est inscrit individuellement (du coup une portion de discipline)
-            $repositoryInscrC = $em->getRepository('AppBundle:Inscription_c');
-            $inscrsC = $repositoryInscrC->findBy(array('user' => $user));
-            foreach ($inscrsC as $inscrC) {
-                if (!in_array($inscrC->getCours()->getDiscipline(), $disciplinesArray2Consider)) {
-                    array_push($coursesIndiv, $inscrC->getCours());
+            if ($userIsAdmin || $statutUser == 'Responsable' || $statutUser == 'Formateur') {
+                // on ajoute les cohortes liées pour l'admin pour qu'il puisse accéder aux pages d'inscriptions à ces cohortes
+                for ($i = 0; $i < count($disciplinesArray2Consider); $i++) {
+                    $cohLiees[$i] = $repositoryDis->getCohortes($disciplinesArray2Consider[$i]);
                 }
             }
         }
-        if ($userIsAdmin || $statutUser == 'Responsable' || $statutUser == 'Formateur') {
-            // on ajoute les cohortes liées pour l'admin pour qu'il puisse accéder aux pages d'inscriptions à ces cohortes
-            for ($i = 0; $i < count($disciplinesArray2Consider); $i++) {
-                $cohLiees[$i] = $repositoryDis->getCohortes($disciplinesArray2Consider[$i]);
+
+        // user anonyme, il faudra lui donner les disciplines/cours en freeAccess
+        foreach ($freeDiscs as $freeDisc){
+            if (!in_array($freeDisc, $disciplinesArray2Consider)) {
+                array_push($disciplinesArray2Consider, $freeDisc);
             }
         }
 
         $courses = array();
 
-        // on récupère en avance les cours pour lesquels l'utilisateur a été inscrit comme référent (même s'il est étudiant dans la discipline
-        // car il faudra lui afficher des infos supplémentaires sur la page "mes cours"
         $coursReferent = array();
-        $inscrsCoursReferent = $repoInscription_c->findBy(array('user' => $user));
-        if($inscrsCoursReferent){
-            /* @var $inscrCoursReferent Inscription_c */
-            foreach ($inscrsCoursReferent as $inscrCoursReferent){
-                if($inscrCoursReferent->getRole()->getNom() === "Referent"){
-                    array_push($coursReferent, $inscrCoursReferent->getCours()->getId());
+        if($user){
+            // on récupère en avance les cours pour lesquels l'utilisateur a été inscrit comme référent (même s'il est étudiant dans la discipline
+            // car il faudra lui afficher des infos supplémentaires sur la page "mes cours"
+
+            $inscrsCoursReferent = $repoInscription_c->findBy(array('user' => $user));
+            if($inscrsCoursReferent){
+                /* @var $inscrCoursReferent Inscription_c */
+                foreach ($inscrsCoursReferent as $inscrCoursReferent){
+                    if($inscrCoursReferent->getRole()->getNom() === "Referent"){
+                        array_push($coursReferent, $inscrCoursReferent->getCours()->getId());
+                    }
                 }
             }
         }
 
+
+
         // on construit le tableau des disciplines/cours complètes
         for ($i = 0; $i < count($disciplinesArray2Consider); $i++) {
             $courses[$i]["role"] = "";
-            if($cohortes){
+            if($cohortes && $user){
                 foreach($cohortes as $cohorte){
                     if($cohorte->getDisciplines()->contains($disciplinesArray2Consider[$i])){
                         $inscrCoh = $repoInscription_coh->findOneBy(array('user' => $user, 'cohorte' => $cohorte));
@@ -167,7 +186,7 @@ class DisciplineController extends Controller
                     }
                 }
             }
-            if($courses[$i]["role"] == ""){
+            if($courses[$i]["role"] == "" && $user){
                 $inscrDis = $repoInscription_d->findOneBy(array('user' => $user, 'discipline' => $disciplinesArray2Consider[$i]));
                 if($inscrDis) {
                     $courses[$i]["role"] = $inscrDis->getRole()->getNom();
@@ -185,6 +204,7 @@ class DisciplineController extends Controller
             if ($userIsAdmin || $statutUser == 'Responsable' || $statutUser == 'Formateur') {
                 $courses[$i]["cohortesLiees"] = $cohLiees[$i];
             }
+
             $coursesT = $repositoryCours->findBy(array('discipline' => $disciplinesArray2Consider[$i]), array('position' => 'ASC'));
             for ($j = 0; $j < count($coursesT); $j++) {
                 if (!$coursesT[$j]->getSession()) {
@@ -222,6 +242,7 @@ class DisciplineController extends Controller
                     }
                 }
             }
+
         }
         // on lui ajoute les cours individuels (avec leurs disciplines)
         for ($j = 0; $j < count($coursesIndiv); $j++) {
@@ -240,81 +261,84 @@ class DisciplineController extends Controller
             }
         }
 
-        // on recherche les infos liées aux documents
-        // Comme un accès aux documents de la discipline existe, on doit afficher l'info-bulle si certains n'ont pas été visités
-        for ($j = 0; $j < count($courses); $j++) {
-            $docs = $repositoryDocuments->findByDisc($courses[$j]["discipline"], $user);
-            $documents = array_merge($docs[0], $docs[1]);
+        $fcw = null;
+        if($user){
+            // on recherche les infos liées aux documents
+            // Comme un accès aux documents de la discipline existe, on doit afficher l'info-bulle si certains n'ont pas été visités
+            for ($j = 0; $j < count($courses); $j++) {
+                $docs = $repositoryDocuments->findByDisc($courses[$j]["discipline"], $user);
+                $documents = array_merge($docs[0], $docs[1]);
 
-            $nbNewDocs = 0;
-            foreach ($documents as $doc) {
-                $stat = $repositoryStatsUsersDocs->findBy(array('user' =>$user, 'document' => $doc));
-                if (!$stat) {
-                    $nbNewDocs++;
+                $nbNewDocs = 0;
+                foreach ($documents as $doc) {
+                    $stat = $repositoryStatsUsersDocs->findBy(array('user' =>$user, 'document' => $doc));
+                    if (!$stat) {
+                        $nbNewDocs++;
+                    }
                 }
+                $courses[$j]["nbNewDocs"] = $nbNewDocs;
             }
-            $courses[$j]["nbNewDocs"] = $nbNewDocs;
-        }
 
-        $disciplinesArray2ConsiderStr = [];
-        for ($j = 0; $j < count($disciplinesArray2Consider); $j++) {
-            $disciplinesArray2ConsiderStr[$disciplinesArray2Consider[$j]->getNom()] = $disciplinesArray2Consider[$j]->getId();
-        }
+            $disciplinesArray2ConsiderStr = [];
+            for ($j = 0; $j < count($disciplinesArray2Consider); $j++) {
+                $disciplinesArray2ConsiderStr[$disciplinesArray2Consider[$j]->getNom()] = $disciplinesArray2Consider[$j]->getId();
+            }
 
-        // formulaire de création de nouveau cours (pour le référent et l'admin
-        $form = $this->createFormBuilder()
-            ->add('nom', TextType::class, array(
-                'label' => 'Nom '
-            ))
-            ->add('imageFile', FileType::class, [
-                'label' => 'Image',
-                'required' => true,
-                'multiple' => false
-            ])
+            // formulaire de création de nouveau cours (pour le référent et l'admin
+            $form = $this->createFormBuilder()
+                ->add('nom', TextType::class, array(
+                    'label' => 'Nom '
+                ))
+                ->add('imageFile', FileType::class, [
+                    'label' => 'Image',
+                    'required' => true,
+                    'multiple' => false
+                ])
 
-            ->add('discipline', ChoiceType::class, [
-                'placeholder' => 'Veuillez choisir une discipline',
-                'label' => "Discipline",
-                'choices' => $disciplinesArray2ConsiderStr,
-                "disabled" => false
-            ])
-            ->add('description', CKEditorType::class, [
-                "required" => false
-            ])
-            ->add('accueil', CKEditorType::class, [
-                "required" => false
-            ])
-            ->add('submit', SubmitType::class, array(
-                'label' => 'Valider',
-                'attr' => array('class' => 'button')
-            ))
-            ->getForm();
-        $form->handleRequest($request);
+                ->add('discipline', ChoiceType::class, [
+                    'placeholder' => 'Veuillez choisir une discipline',
+                    'label' => "Discipline",
+                    'choices' => $disciplinesArray2ConsiderStr,
+                    "disabled" => false
+                ])
+                ->add('description', CKEditorType::class, [
+                    "required" => false
+                ])
+                ->add('accueil', CKEditorType::class, [
+                    "required" => false
+                ])
+                ->add('submit', SubmitType::class, array(
+                    'label' => 'Valider',
+                    'attr' => array('class' => 'button')
+                ))
+                ->getForm();
+            $form->handleRequest($request);
+            $fcw = $form->createView();
+            if ($form->isValid()) {
+                $cours = new Cours();
+                $cours->setNom($form['nom']->getData());
+                $dis = $repositoryDis->findOneBy(array('id' => $form['discipline']->getData()));
+                $cours->setDiscipline($dis);
+                $cours->setAccueil($form['accueil']->getData());
+                $cours->setDescription($form['description']->getData());
+                $cours->setAuteur($user);
 
-        if ($form->isValid()) {
-            $cours = new Cours();
-            $cours->setNom($form['nom']->getData());
-            $dis = $repositoryDis->findOneBy(array('id' => $form['discipline']->getData()));
-            $cours->setDiscipline($dis);
-            $cours->setAccueil($form['accueil']->getData());
-            $cours->setDescription($form['description']->getData());
-            $cours->setAuteur($user);
+                $cours->setImageFile($form['imageFile']->getData());
+                $cours->upload();
 
-            $cours->setImageFile($form['imageFile']->getData());
-            $cours->upload();
+                $em->getManager()->persist($cours);
 
-            $em->getManager()->persist($cours);
+                $em->getManager()->flush();
+                return $this->redirectToRoute('myCourses');
 
-            $em->getManager()->flush();
-            return $this->redirectToRoute('myCourses');
-
+            }
         }
 
         return $this->render('discipline/myCourses.html.twig', [
             'coursReferent' => $coursReferent,
             'courses' => $courses,
             'active' => $id,
-            'form' => $form->createView()
+            'form' => $fcw
         ]);
     }
 

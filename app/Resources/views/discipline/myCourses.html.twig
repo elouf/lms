@@ -168,8 +168,20 @@
         });
     </script>
 
-    {% set hasResponsableMinRights = app.user.hasRole('ROLE_SUPER_ADMIN') or (app.user.statut == 'Responsable' and app.user.confirmedByAdmin) %}
-    {% set hasInscritsRights = app.user.hasRole('ROLE_SUPER_ADMIN') or ((app.user.statut == 'Responsable' or app.user.statut == 'Formateur') and app.user.confirmedByAdmin) %}
+    {% set hasResponsableMinRights = false %}
+    {% set hasInscritsRights = false %}
+    {% set generatedRole = "anonyme" %}
+    {% if app.user %}
+        {% set hasResponsableMinRights = app.user.hasRole('ROLE_SUPER_ADMIN') or (app.user.statut == 'Responsable' and app.user.confirmedByAdmin) %}
+        {% set hasInscritsRights = app.user.hasRole('ROLE_SUPER_ADMIN') or ((app.user.statut == 'Responsable' or app.user.statut == 'Formateur') and app.user.confirmedByAdmin) %}
+        {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+            {% set generatedRole = "admin" %}
+        {% else %}
+            {% set generatedRole = val.role %}
+        {% endif %}
+    {% endif %}
+
+
 
     <div class="container mt-120">
         <div class="row mt-20 mb-100">
@@ -180,14 +192,16 @@
                     </a>
                 </div>
             {% endif %}
-            <div class="course-list createCourseForm" style="margin-top: 0; display: none">
-                <div class="createCourse mt-20 mb-20 col-xs-12">
-                    <a href="#" class="btn btnCreateCourse btn-warning btn-sm">Créer un nouveau cours</a>
+            {% if form %}
+                <div class="course-list createCourseForm" style="margin-top: 0; display: none">
+                    <div class="createCourse mt-20 mb-20 col-xs-12">
+                        <a href="#" class="btn btnCreateCourse btn-warning btn-sm">Créer un nouveau cours</a>
+                    </div>
+                    <div class="formCreateCourse">
+                        {{ form(form) }}
+                    </div>
                 </div>
-                <div class="formCreateCourse">
-                    {{ form(form) }}
-                </div>
-            </div>
+            {% endif %}
             <div class="col-sm-12">
                 {% set idActive = 0 %}
                 {% if active > 0 %}
@@ -197,7 +211,7 @@
                     style="padding-bottom: 5px;padding-top: 5px">
                     {% for key,val in courses %}
                         <li role="presentation"
-                            data-role="{% if app.user.hasRole('ROLE_SUPER_ADMIN') %}admin{% else %}{{ val.role }}{% endif %}"
+                            data-role="{{ generatedRole }}"
                                 {% if idActive != 0 and val.discipline.id == active or idActive == 0 and loop.index == 1 %}
                             class="active"
                                 {% endif %}>
@@ -211,7 +225,7 @@
                 <div class="tab-content">
                     {% for key,val in courses %}
                         <div data-discId="{{ val.discipline.id }}" role="tabpanel"
-                             data-role="{% if app.user.hasRole('ROLE_SUPER_ADMIN') %}admin{% else %}{{ val.role }}{% endif %}"
+                             data-role="{{ generatedRole }}"
                              class="tab-pane fade{% if idActive != 0 and val.discipline.id == active or idActive == 0 and loop.index == 1 %} in active{% endif %}"
                              id="p1body{{ val.discipline.id }}" {% if loop.index == 1 %} style="padding-top: 0;" {% endif %}>
                             <div class="container mt-0 mb-60">
@@ -249,43 +263,45 @@
                                                 </div>
                                             </div>
                                         {% endif %}
-                                        {% if app.user.hasRole('ROLE_SUPER_ADMIN') or val.discipline.docsActivated==1 %}
-                                            <div class="course-list documentsDisc"
-                                                 data-activated="{{ val.discipline.docsActivated }}"
-                                                 style="margin-top: 0;">
-                                                <div class="course-media text-center mt-10">
-                                                    <i class="fa fa-file-o fa-3" aria-hidden="true"></i>
-                                                </div>
-                                                <div class="course-detail">
-                                                    <h4 class="heading">Mes documents partagés</h4>
-                                                    {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
-                                                        <label class="ml-10"> Activer le partage</label>
-                                                        <div class="myBtn btnAlone btnAdmin col-xs-1">
-                                                            {% if val.discipline.docsActivated %}
-                                                                <i class="activationDocBtn fa fa-check-square-o"></i>
-                                                            {% else %}
-                                                                <i class="activationDocBtn fa fa-square-o"></i>
-                                                            {% endif %}
+                                        {% if app.user %}
+                                            {% if app.user.hasRole('ROLE_SUPER_ADMIN') or val.discipline.docsActivated==1 %}
+                                                <div class="course-list documentsDisc"
+                                                     data-activated="{{ val.discipline.docsActivated }}"
+                                                     style="margin-top: 0;">
+                                                    <div class="course-media text-center mt-10">
+                                                        <i class="fa fa-file-o fa-3" aria-hidden="true"></i>
+                                                    </div>
+                                                    <div class="course-detail">
+                                                        <h4 class="heading">Mes documents partagés</h4>
+                                                        {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                                            <label class="ml-10"> Activer le partage</label>
+                                                            <div class="myBtn btnAlone btnAdmin col-xs-1">
+                                                                {% if val.discipline.docsActivated %}
+                                                                    <i class="activationDocBtn fa fa-check-square-o"></i>
+                                                                {% else %}
+                                                                    <i class="activationDocBtn fa fa-square-o"></i>
+                                                                {% endif %}
+                                                            </div>
+                                                        {% endif %}
+                                                        {% if val.nbNewDocs != 0 %}
+                                                            <p class="newDocsP"><span
+                                                                        class="newDocsPuce">{{ val.nbNewDocs }}</span>
+                                                                nouveaux documents</p>
+                                                        {% endif %}
+                                                        <div class="resumeDocs mt-20 col-xs-12">
+                                                            <a href="{{ path('documents', {id: val.discipline.id}) }}"
+                                                               class="btn btn-primary btn-sm">Accéder</a>
                                                         </div>
-                                                    {% endif %}
-                                                    {% if val.nbNewDocs != 0 %}
-                                                        <p class="newDocsP"><span
-                                                                    class="newDocsPuce">{{ val.nbNewDocs }}</span>
-                                                            nouveaux documents</p>
-                                                    {% endif %}
-                                                    <div class="resumeDocs mt-20 col-xs-12">
-                                                        <a href="{{ path('documents', {id: val.discipline.id}) }}"
-                                                           class="btn btn-primary btn-sm">Accéder</a>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        {% elseif val.discipline.docsActivated == 1 %}
-                                            <div class="course-list documentsDisc" style="margin-top: 0;">
-                                                <div class="course-detail">
-                                                    <h4 class="heading">Documents</h4>
+                                            {% elseif val.discipline.docsActivated == 1 %}
+                                                <div class="course-list documentsDisc" style="margin-top: 0;">
+                                                    <div class="course-detail">
+                                                        <h4 class="heading">Documents</h4>
 
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            {% endif %}
                                         {% endif %}
                                         {% if val.sessions is defined %}
                                             {% for keyC,valC in val.sessions %}
@@ -457,17 +473,19 @@
                                                         <p class="brief">{{ valC.description|raw }}</p>
                                                         <a href="{{ path('oneCours', {id: valC.id, mode: 'etu'}) }}"
                                                            class="btn btn-primary btn-sm">Entrer</a>
-                                                        {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
-                                                            <a href="{{ path('itemUsers', {id: valC.id, type:"cours"}) }}"
-                                                               class="btn btn-warning btn-sm">Inscrits</a>
-                                                        {% endif %}
-                                                        {% if val.role == 'Referent' or app.user.hasRole('ROLE_SUPER_ADMIN') or valC.id in coursReferent %}
-                                                            <a href="{{ path('itemUsers', {id: valC.id, type:"cours"}) }}"
-                                                               class="btnIncrsForReferents btn btn-warning btn-sm">Modifier</a>
-                                                        {% endif %}
-                                                        {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
-                                                            <a href="{{ path('dupliqCours', {id: valC.id}) }}"
-                                                               class="btn btn-warning btn-sm">Dupliquer</a>
+                                                        {% if app.user %}
+                                                            {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                                                <a href="{{ path('itemUsers', {id: valC.id, type:"cours"}) }}"
+                                                                   class="btn btn-warning btn-sm">Inscrits</a>
+                                                            {% endif %}
+                                                            {% if val.role == 'Referent' or app.user.hasRole('ROLE_SUPER_ADMIN') or valC.id in coursReferent %}
+                                                                <a href="{{ path('itemUsers', {id: valC.id, type:"cours"}) }}"
+                                                                   class="btnIncrsForReferents btn btn-warning btn-sm">Modifier</a>
+                                                            {% endif %}
+                                                            {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                                                <a href="{{ path('dupliqCours', {id: valC.id}) }}"
+                                                                   class="btn btn-warning btn-sm">Dupliquer</a>
+                                                            {% endif %}
                                                         {% endif %}
                                                     </div>
                                                 </div>

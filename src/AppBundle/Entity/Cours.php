@@ -19,7 +19,6 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  */
 class Cours extends DocContainer
 {
-
     const SERVER_PATH_TO_IMAGE_FOLDER = '../web/images/cours';
 
     /**

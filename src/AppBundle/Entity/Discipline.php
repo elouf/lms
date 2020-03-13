@@ -72,6 +72,13 @@ class Discipline extends DocContainer
     private $accronyme;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="freeAccess", type="boolean")
+     */
+    private $freeAccess = false;
+
+    /**
      * Constructor
      */
     public function __construct() {
@@ -271,5 +278,29 @@ class Discipline extends DocContainer
     public function getPodcastImgFilename()
     {
         return $this->podcastImgFilename;
+    }
+
+    /**
+     * Set freeAccess
+     *
+     * @param boolean $freeAccess
+     *
+     * @return Discipline
+     */
+    public function setFreeAccess($freeAccess)
+    {
+        $this->freeAccess = $freeAccess;
+
+        return $this;
+    }
+
+    /**
+     * Get freeAccess
+     *
+     * @return bool
+     */
+    public function getFreeAccess()
+    {
+        return $this->freeAccess;
     }
 }
