@@ -163,6 +163,11 @@ services:
         arguments: [~, AppBundle\Entity\Log, ~]
         tags:
             - { name: sonata.admin, manager_type: orm, label: Logs, group: "Administration" }
+    admin.freeAccesslogs:
+        class: AppBundle\Admin\FreeAccessAdmin
+        arguments: [~, AppBundle\Entity\FreeAccessStats, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: FreeAccess, group: "Administration" }
 
     admin.resaSyst:
         class: AppBundle\Admin\SystemeResaAdmin
