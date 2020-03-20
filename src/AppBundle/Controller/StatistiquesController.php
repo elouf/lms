@@ -2,6 +2,9 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\FreeAccessStats;
+use AppBundle\Entity\Mp3Podcast;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -90,5 +93,4 @@ class StatistiquesController extends Controller
             'users' => $users
         ]);
     }
-
 }

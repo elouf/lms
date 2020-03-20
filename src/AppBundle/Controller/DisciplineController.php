@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Cours;
 use AppBundle\Entity\Discipline;
+use AppBundle\Entity\FreeAccessStats;
 use AppBundle\Entity\Inscription_c;
 use AppBundle\Entity\Inscription_sess;
 use AppBundle\Entity\User;
@@ -147,6 +148,10 @@ class DisciplineController extends Controller
             if (!in_array($freeDisc, $disciplinesArray2Consider)) {
                 array_push($disciplinesArray2Consider, $freeDisc);
             }
+        }
+        if(!$user){
+            $free = new FreeAccessStats();
+            $em->getManager()->persist($free);
         }
 
         $courses = array();
