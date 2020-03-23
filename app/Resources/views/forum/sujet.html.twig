@@ -55,25 +55,33 @@
             CKEDITOR.config.uploadUrl = '/stdiLMS/var/upload/upload.php';
 
             $('.btnSendPost').click(function(){
-                $('.alertMustBeSet').removeClass('alertMustBeSet');
-                var texte = description = CKEDITOR.instances['sujetTexte'].getData();
-                if(texte == ""){
-                    $('[for=sujetTexte]').addClass('alertMustBeSet');
+                if(!$(this).hasClass('clicked')){
+                    $('.alertMustBeSet').removeClass('alertMustBeSet');
+                    var texte = description = CKEDITOR.instances['sujetTexte'].getData();
+                    if(texte == ""){
+                        $('[for=sujetTexte]').addClass('alertMustBeSet');
+                    }
+                    if(!$('.alertMustBeSet').length){
+                        $.ajax({
+                            type: "POST",
+                            url: "{{path('forumNewPost_ajax')}}",
+                            data: {
+                                id: sujetId,
+                                texte: texte
+                            },
+                            dataType: "json",
+                            success: function (response) {
+                                window.location.href = window.location.href;
+                            }
+                        });
+                    }
+                    $(this).addClass('clicked');
+                    setTimeout(function(){
+                        console.log('tete')
+                        $('.btnSendPost').removeClass('clicked');
+                    }, 2000);
                 }
-                if(!$('.alertMustBeSet').length){
-                    $.ajax({
-                        type: "POST",
-                        url: "{{path('forumNewPost_ajax')}}",
-                        data: {
-                            id: sujetId,
-                            texte: texte
-                        },
-                        dataType: "json",
-                        success: function (response) {
-                            window.location.href = window.location.href;
-                        }
-                    });
-                }
+
             });
 
 

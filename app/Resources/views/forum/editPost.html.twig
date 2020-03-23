@@ -24,6 +24,11 @@
     <script src="{{ asset('vendors/ckeditor/ckeditor.js') }}"></script>
     <script src="{{ asset('vendors/ckeditor/adapters/jquery.js') }}"></script>
     {% include 'forum/commonJs.html.twig' %}
+    <style>
+        .btnSendPost.clicked{
+            opacity: .3;
+        }
+    </style>
     <script>
         jQuery(document).ready(function () {
             var postId = $('[data-postId]').attr('data-postId');
@@ -33,26 +38,32 @@
             });
 
             $('.btnSendPost').click(function(){
-                console.log('tete')
-                $('.alertMustBeSet').removeClass('alertMustBeSet');
-                var texte = description = CKEDITOR.instances['postTexte'].getData();
-                if(texte == ""){
-                    $('[for=sujetTexte]').addClass('alertMustBeSet');
+                if(!$(this).hasClass('clicked')){
+                    $('.alertMustBeSet').removeClass('alertMustBeSet');
+                    var texte = CKEDITOR.instances['postTexte'].getData();
+                    if(texte == ""){
+                        $('[for=sujetTexte]').addClass('alertMustBeSet');
+                    }
+                    if(!$('.alertMustBeSet').length){
+                        $.ajax({
+                            type: "POST",
+                            url: "{{path('forumEditPost_ajax')}}",
+                            data: {
+                                id: postId,
+                                texte: texte
+                            },
+                            dataType: "json",
+                            success: function (response) {
+                                window.location.href = $('[data-sujetRedirection]').attr('data-sujetRedirection');
+                            }
+                        });
+                    }
+                    $(this).addClass('clicked');
+                    setTimeout(function(){
+                        $('.btnSendPost').removeClass('clicked');
+                    },2000);
                 }
-                if(!$('.alertMustBeSet').length){
-                    $.ajax({
-                        type: "POST",
-                        url: "{{path('forumEditPost_ajax')}}",
-                        data: {
-                            id: postId,
-                            texte: texte
-                        },
-                        dataType: "json",
-                        success: function (response) {
-                            window.location.href = $('[data-sujetRedirection]').attr('data-sujetRedirection');
-                        }
-                    });
-                }
+
             });
         });
     </script>
