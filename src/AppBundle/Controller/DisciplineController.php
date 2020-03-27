@@ -151,6 +151,7 @@ class DisciplineController extends Controller
         }
         if(!$user){
             $ip = $this->container->get('request_stack')->getCurrentRequest()->getClientIp();
+            $ip = $_SERVER['REMOTE_ADDR'];
             // Je recherche s'il y a déjà un click aujourd'hui...
             $free = new FreeAccessStats();
             $free->setIp($ip);
