@@ -153,6 +153,7 @@ class DisciplineController extends Controller
             $free = new FreeAccessStats();
             $em->getManager()->persist($free);
         }
+        $em->getManager()->flush();
 
         $courses = array();
 
