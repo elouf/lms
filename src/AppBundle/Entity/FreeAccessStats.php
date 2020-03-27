@@ -23,6 +23,13 @@ class FreeAccessStats
     protected $id;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="ip", type="string", length=255)
+     */
+    protected $ip;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="createdAt", type="datetime")
@@ -73,4 +80,27 @@ class FreeAccessStats
         return $this->createdAt;
     }
 
+    /**
+     * Set ip
+     *
+     * @param string $ip
+     *
+     * @return FreeAccessStats
+     */
+    public function setIp($ip)
+    {
+        $this->ip = $ip;
+
+        return $this;
+    }
+
+    /**
+     * Get ip
+     *
+     * @return string
+     */
+    public function getIp()
+    {
+        return $this->ip;
+    }
 }

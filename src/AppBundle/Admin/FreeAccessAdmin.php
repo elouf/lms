@@ -13,6 +13,7 @@ class FreeAccessAdmin extends AbstractAdmin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
+            ->add('ip')
             ->add('createdAt', 'sonata_type_datetime_picker', array(
                 'dp_side_by_side'       => true,
                 'dp_use_current'        => false,
@@ -28,6 +29,7 @@ class FreeAccessAdmin extends AbstractAdmin
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
+            ->add('ip')
             ->add('createdAt')
         ;
     }
@@ -37,6 +39,7 @@ class FreeAccessAdmin extends AbstractAdmin
     {
         $listMapper
             ->addIdentifier('id')
+            ->add('ip')
             ->add('createdAt')
         ;
     }
