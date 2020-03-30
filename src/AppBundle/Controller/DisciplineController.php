@@ -219,36 +219,39 @@ class DisciplineController extends Controller
                 if (!$coursesT[$j]->getSession()) {
                     array_push($courses[$i]["courses"], $coursesT[$j]);
                 } else {
-                    $session = $coursesT[$j]->getSession();
-                    $currentDate = new DateTime();
-                    $inscrSess = $repositoryInscrSess->findOneBy(array('user' => $user, 'session' => $session));
-                    // on est inscrit et les dates sont bonnes (ou on est admin ou enseignant)
-                    $isEns = false;
-                    if ($inscrSess) {
-                        if ($inscrSess->getRole() == "Enseignant") {
-                            $isEns = true;
+                    if($user){
+                        $session = $coursesT[$j]->getSession();
+                        $currentDate = new DateTime();
+                        $inscrSess = $repositoryInscrSess->findOneBy(array('user' => $user, 'session' => $session));
+                        // on est inscrit et les dates sont bonnes (ou on est admin ou enseignant)
+                        $isEns = false;
+                        if ($inscrSess) {
+                            if ($inscrSess->getRole() == "Enseignant") {
+                                $isEns = true;
+                            }
+                        }
+
+                        $isAdminOrForm = $userIsAdmin || (($statutUser == 'Responsable' || $statutUser == 'Formateur') && $user->getConfirmedByAdmin());
+
+                        if ($currentDate >= $session->getDateDebut() &&
+                            $currentDate <= $session->getDateFin() &&
+                            ($inscrSess || $isAdminOrForm || $isEns)
+                        ) {
+                            // on peut rentrer dans la session et on est dans les dates
+                            array_push($courses[$i]["sessions"], $coursesT[$j]);
+                        } elseif ($currentDate >= $session->getDateDebutAlerte() && $currentDate < $session->getDateFinAlerte() && !$isAdminOrForm) {
+                            // on affiche l'alerte et on permet de s'inscrire
+                            array_push($courses[$i]["sessionsAlerte"], $coursesT[$j]);
+                            array_push($courses[$i]["sessionsAlerteIsInscrit"], $inscrSess != null);
+                        } elseif ($currentDate >= $session->getDateFinAlerte() && $currentDate < $session->getDateFin()) {
+                            // on affiche le message de fin de session
+                            array_push($courses[$i]["sessionsFinSession"], $coursesT[$j]);
+                        } elseif ($isEns || $isAdminOrForm) {
+                            // on peut rentrer dans la session hors des dates
+                            array_push($courses[$i]["sessionsAdmin"], $coursesT[$j]);
                         }
                     }
 
-                    $isAdminOrForm = $userIsAdmin || (($statutUser == 'Responsable' || $statutUser == 'Formateur') && $user->getConfirmedByAdmin());
-
-                    if ($currentDate >= $session->getDateDebut() &&
-                        $currentDate <= $session->getDateFin() &&
-                        ($inscrSess || $isAdminOrForm || $isEns)
-                    ) {
-                        // on peut rentrer dans la session et on est dans les dates
-                        array_push($courses[$i]["sessions"], $coursesT[$j]);
-                    } elseif ($currentDate >= $session->getDateDebutAlerte() && $currentDate < $session->getDateFinAlerte() && !$isAdminOrForm) {
-                        // on affiche l'alerte et on permet de s'inscrire
-                        array_push($courses[$i]["sessionsAlerte"], $coursesT[$j]);
-                        array_push($courses[$i]["sessionsAlerteIsInscrit"], $inscrSess != null);
-                    } elseif ($currentDate >= $session->getDateFinAlerte() && $currentDate < $session->getDateFin()) {
-                        // on affiche le message de fin de session
-                        array_push($courses[$i]["sessionsFinSession"], $coursesT[$j]);
-                    } elseif ($isEns || $isAdminOrForm) {
-                        // on peut rentrer dans la session hors des dates
-                        array_push($courses[$i]["sessionsAdmin"], $coursesT[$j]);
-                    }
                 }
             }
 
