@@ -364,7 +364,6 @@ class DisciplineController extends Controller
         if(count($disciplinesArray2Consider) === 0){
             $this->denyAccessUnlessGranted('ROLE_USER');
         }
-        dump($datas);
         return $this->render('discipline/myCourses.html.twig', [
             'coursReferent' => $coursReferent,
             'courses' => $courses,
