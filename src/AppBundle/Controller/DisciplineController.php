@@ -150,7 +150,7 @@ class DisciplineController extends Controller
             }
         }
         $freeAccessStats = null;
-        $datas = [];
+
         if(!$user){
             /*$ip = $this->container->get('request_stack')->getCurrentRequest()->getClientIp();
             $ip = $_SERVER['REMOTE_ADDR'];*/
@@ -160,19 +160,6 @@ class DisciplineController extends Controller
             $free = new FreeAccessStats();
             $free->setIp($ip);
             $em->getManager()->persist($free);
-        }elseif ($userIsAdmin){
-            $freeAccessStats = $em->getRepository('AppBundle:FreeAccessStats')->findBy([], array('createdAt' => 'ASC'));
-            if ($freeAccessStats){
-                /* @var $freeAccessStat FreeAccessStats */
-                foreach ($freeAccessStats as $freeAccessStat){
-                    $date = $freeAccessStat->getCreatedAt()->format('d/m');
-                    if(!array_key_exists($date, $datas)){
-                        $datas[$date] = 1;
-                    }else{
-                        $datas[$date]++;
-                    }
-                }
-            }
         }
         $em->getManager()->flush();
 
@@ -368,7 +355,38 @@ class DisciplineController extends Controller
             'coursReferent' => $coursReferent,
             'courses' => $courses,
             'active' => $id,
-            'form' => $fcw,
+            'form' => $fcw
+        ]);
+    }
+
+    /**
+     * @Route("/frequentation", name="frequentation")
+     */
+    public function frequentationAction(Request $request)
+    {
+        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
+
+        $em = $this->getDoctrine()->getEntityManager();
+
+        $datas = [];
+
+        $freeAccessStats = $em->getRepository('AppBundle:FreeAccessStats')->findBy([], array('createdAt' => 'ASC'));
+        if ($freeAccessStats){
+            /* @var $freeAccessStat FreeAccessStats */
+            foreach ($freeAccessStats as $freeAccessStat){
+                $date = $freeAccessStat->getCreatedAt()->format('d/m');
+                if(!array_key_exists($date, $datas)){
+                    $datas[$date] = 1;
+                }else{
+                    $datas[$date]++;
+                }
+            }
+        }
+
+        $repository = $this->getDoctrine()->getRepository('AppBundle:Discipline');
+        $disciplines = $repository->findAll();
+
+        return $this->render('stats/frequentation.html.twig', [
             'freeAccessStats' => $datas
         ]);
     }
