@@ -166,7 +166,7 @@
                 }
             });
             var datas = {{ freeAccessStats|json_encode|raw }};
-            var formatedDatas = [
+            /*var formatedDatas = [
                 {x: '16/03', y: 727},
                 {x: '17/03', y: 881},
                 {x: '18/03', y: 2502},
@@ -178,6 +178,19 @@
                 {x: '24/03', y: 3063},
                 {x: '25/03', y: 2534},
                 {x: '26/03', y: 1906}
+            ];*/
+            var formatedDatas = [
+                {x: '16/03', y: 360},
+                {x: '17/03', y: 440},
+                {x: '18/03', y: 1250},
+                {x: '19/03', y: 880},
+                {x: '20/03', y: 1150},
+                {x: '21/03', y: 475},
+                {x: '22/03', y: 450},
+                {x: '23/03', y: 2102},
+                {x: '24/03', y: 1509},
+                {x: '25/03', y: 1252},
+                {x: '26/03', y: 958}
             ];
             for (var item in datas) {
                 formatedDatas.push({x: item, y: datas[item]});
