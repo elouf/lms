@@ -166,7 +166,19 @@
                 }
             });
             var datas = {{ freeAccessStats|json_encode|raw }};
-            var formatedDatas = [];
+            var formatedDatas = [
+                {x: '16/03', y: 727},
+                {x: '17/03', y: 881},
+                {x: '18/03', y: 2502},
+                {x: '19/03', y: 1671},
+                {x: '20/03', y: 2313},
+                {x: '21/03', y: 908},
+                {x: '22/03', y: 838},
+                {x: '23/03', y: 4245},
+                {x: '24/03', y: 3063},
+                {x: '25/03', y: 2534},
+                {x: '26/03', y: 1906}
+            ];
             for (var item in datas) {
                 formatedDatas.push({x: item, y: datas[item]});
             }
