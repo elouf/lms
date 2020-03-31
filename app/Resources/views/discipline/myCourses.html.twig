@@ -165,6 +165,60 @@
                     $(this).show();
                 }
             });
+            var datas = {{ freeAccessStats|json_encode|raw }};
+            var formatedDatas = [];
+            for (var item in datas) {
+                formatedDatas.push({x: item, y: datas[item]});
+            }
+            if($('#chart2build').length){
+                var timeFormat = 'DD/MM';
+
+                var config = {
+                    type:    'line',
+                    data:    {
+                        datasets: [
+                            {
+                                label: "Visites",
+                                data: formatedDatas,
+                                fill: false,
+                                borderColor: 'red'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        title:      {
+                            display: true,
+                            text:    "Chart.js Time Scale"
+                        },
+                        scales:     {
+                            xAxes: [{
+                                type:       "time",
+                                time:       {
+                                    format: timeFormat,
+                                    tooltipFormat: 'll'
+                                },
+                                scaleLabel: {
+                                    display:     true,
+                                    labelString: 'Date'
+                                },
+                                ticks: {
+                                    source: 'data'
+                                }
+                            }],
+                            yAxes: [{
+                                scaleLabel: {
+                                    display:     true,
+                                    labelString: 'Nombre de visites par jour'
+                                }
+                            }]
+                        }
+                    }
+                };
+
+                var ctx = document.getElementById("chart2build").getContext("2d");
+                window.myLine = new Chart(ctx, config);
+            }
         });
     </script>
 
@@ -181,9 +235,12 @@
         {% endif %}
     {% endif %}
 
-
-
     <div class="container mt-120">
+        {% if generatedRole == "admin" %}
+            <script src="{{ asset('vendors/chart.js/dist/Chart.bundle.js') }}"
+                    type="text/javascript"></script>
+            <canvas id="chart2build"></canvas>
+        {% endif %}
         <div class="row mt-20 mb-100">
             {% if hasResponsableMinRights %}
                 <div style="margin-bottom: 10px;">

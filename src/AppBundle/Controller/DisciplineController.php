@@ -149,15 +149,30 @@ class DisciplineController extends Controller
                 array_push($disciplinesArray2Consider, $freeDisc);
             }
         }
+        $freeAccessStats = null;
+        $datas = [];
         if(!$user){
-            $ip = $this->container->get('request_stack')->getCurrentRequest()->getClientIp();
-            $ip = $_SERVER['REMOTE_ADDR'];
+            /*$ip = $this->container->get('request_stack')->getCurrentRequest()->getClientIp();
+            $ip = $_SERVER['REMOTE_ADDR'];*/
             $ip = $request->server->get('REMOTE_ADDR');
 
             // Je recherche s'il y a déjà un click aujourd'hui...
             $free = new FreeAccessStats();
             $free->setIp($ip);
             $em->getManager()->persist($free);
+        }elseif ($userIsAdmin){
+            $freeAccessStats = $em->getRepository('AppBundle:FreeAccessStats')->findBy([], array('createdAt' => 'ASC'));
+            if ($freeAccessStats){
+                /* @var $freeAccessStat FreeAccessStats */
+                foreach ($freeAccessStats as $freeAccessStat){
+                    $date = $freeAccessStat->getCreatedAt()->format('d/m');
+                    if(!array_key_exists($date, $datas)){
+                        $datas[$date] = 1;
+                    }else{
+                        $datas[$date]++;
+                    }
+                }
+            }
         }
         $em->getManager()->flush();
 
@@ -349,12 +364,13 @@ class DisciplineController extends Controller
         if(count($disciplinesArray2Consider) === 0){
             $this->denyAccessUnlessGranted('ROLE_USER');
         }
-
+        dump($datas);
         return $this->render('discipline/myCourses.html.twig', [
             'coursReferent' => $coursReferent,
             'courses' => $courses,
             'active' => $id,
-            'form' => $fcw
+            'form' => $fcw,
+            'freeAccessStats' => $datas
         ]);
     }
 
