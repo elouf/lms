@@ -7,6 +7,7 @@ use AppBundle\Entity\Discipline;
 use AppBundle\Entity\FreeAccessStats;
 use AppBundle\Entity\Inscription_c;
 use AppBundle\Entity\Inscription_sess;
+use AppBundle\Entity\Session;
 use AppBundle\Entity\User;
 use Ivory\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -222,6 +223,7 @@ class DisciplineController extends Controller
                     array_push($courses[$i]["courses"], $coursesT[$j]);
                 } else {
                     if($user){
+                        /* @var $session Session */
                         $session = $coursesT[$j]->getSession();
                         $currentDate = new DateTime();
                         $inscrSess = $repositoryInscrSess->findOneBy(array('user' => $user, 'session' => $session));
@@ -241,14 +243,14 @@ class DisciplineController extends Controller
                         ) {
                             // on peut rentrer dans la session et on est dans les dates
                             array_push($courses[$i]["sessions"], $coursesT[$j]);
-                        } elseif ($currentDate >= $session->getDateDebutAlerte() && $currentDate < $session->getDateFinAlerte() && !$isAdminOrForm) {
+                        } elseif ($currentDate >= $session->getDateDebutAlerte() && $currentDate < $session->getDateFinAlerte() && !$userIsAdmin && (!$isAdminOrForm || $session->getAccessOnlyForAdmin())) {
                             // on affiche l'alerte et on permet de s'inscrire
                             array_push($courses[$i]["sessionsAlerte"], $coursesT[$j]);
                             array_push($courses[$i]["sessionsAlerteIsInscrit"], $inscrSess != null);
                         } elseif ($currentDate >= $session->getDateFinAlerte() && $currentDate < $session->getDateFin()) {
                             // on affiche le message de fin de session
                             array_push($courses[$i]["sessionsFinSession"], $coursesT[$j]);
-                        } elseif ($isEns || $isAdminOrForm) {
+                        } elseif (($isEns || $isAdminOrForm) && !$session->getAccessOnlyForAdmin() || $userIsAdmin) {
                             // on peut rentrer dans la session hors des dates
                             array_push($courses[$i]["sessionsAdmin"], $coursesT[$j]);
                         }

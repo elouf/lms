@@ -123,6 +123,7 @@
 
             $('.btnInscrSess').click(function () {
                 var btn = $(this);
+                var idDisc = btn.closest('[data-discId]').attr('data-discId');
                 if (!btn.hasClass('inactivate')) {
                     btn.addClass('inactivate');
                     var block = btn.closest('[data-idSession]');
@@ -139,7 +140,10 @@
                         success: function (response) {
                             btn.remove();
                             block.find('.fdbackInscUserSess').removeClass('hidden');
-                            window.location.href = window.location.href;
+
+                            var url = '{{ path("myCourses", {'id': 'idDisc'}) }}';
+                            url = url.replace("idDisc", idDisc);
+                            window.location.href = url;
                         }
                     });
                 }

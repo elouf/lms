@@ -42,6 +42,13 @@ class Session extends Evenement
     private $dateFinAlerte;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="accessOnlyForAdmin", type="boolean", options={"default":false})
+     */
+    private $accessOnlyForAdmin = false;
+
+    /**
      * Set messageAlerte
      *
      * @param string $messageAlerte
@@ -135,5 +142,29 @@ class Session extends Evenement
     public function getDateFinAlerte()
     {
         return $this->dateFinAlerte;
+    }
+
+    /**
+     * Set accessOnlyForAdmin
+     *
+     * @param boolean $accessOnlyForAdmin
+     *
+     * @return Session
+     */
+    public function setAccessOnlyForAdmin($accessOnlyForAdmin)
+    {
+        $this->accessOnlyForAdmin = $accessOnlyForAdmin;
+
+        return $this;
+    }
+
+    /**
+     * Get accessOnlyForAdmin
+     *
+     * @return bool
+     */
+    public function getAccessOnlyForAdmin()
+    {
+        return $this->accessOnlyForAdmin;
     }
 }

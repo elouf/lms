@@ -15,6 +15,7 @@ class SessionAdmin extends AbstractAdmin
         $formMapper
             ->with('Informations', array('class' => 'col-md-6'))
                 ->add('nom', 'text')
+                ->add('accessOnlyForAdmin')
                 /*->add('description', CKEditorType::class, array(
                     'config_name' => 'my_simple_config'
                 ))*/
@@ -66,6 +67,7 @@ class SessionAdmin extends AbstractAdmin
     {
         $datagridMapper
             ->add('nom')
+            ->add('accessOnlyForAdmin')
         ;
     }
 
@@ -74,6 +76,7 @@ class SessionAdmin extends AbstractAdmin
     {
         $listMapper
             ->addIdentifier('nom')
+            ->add('accessOnlyForAdmin')
             ->add('messageAlerte')
             ->add('messageFinSession')
         ;
