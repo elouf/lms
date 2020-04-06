@@ -96,7 +96,7 @@ class UsersController extends Controller
                     'attr' => array('class' => 'button btn btnAdmin btnSaveInputChange')
                 ))
                 ->getForm();
-        }elseif ($template === 'excellencePro') {
+        } elseif ($template === 'excellencePro') {
             $form = $this->createFormBuilder($user)
                 ->add('lastname', TextType::class, array(
                     'label' => 'Nom '
@@ -118,7 +118,7 @@ class UsersController extends Controller
                     'second_options' => array('label' => 'Répétez le mot de passe'),
                 ))
                 ->add('typeUser', ChoiceType::class, array(
-                    'choices'  => [
+                    'choices' => [
                         'Enseignant avec prise en charge des frais annexes' => 0,
                         'Enseignant sans prise en charge des frais annexes' => 1,
                         'Parent d’élève' => 2,
@@ -211,7 +211,11 @@ class UsersController extends Controller
         $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
 
         $users = $this->getDoctrine()->getRepository('AppBundle:User')->findAll();
-        $stats = $this->getDoctrine()->getRepository('AppBundle:UserStatLogin')->findAll();
+        $template = $this->getParameter('template');
+        $stats = [];
+        if ($template === 'excellencePro') {
+            $stats = $this->getDoctrine()->getRepository('AppBundle:UserStatLogin')->findAll();
+        }
 
         return $this->render('user/userFrontEnd.html.twig', [
             'myUsers' => $users,
@@ -242,7 +246,7 @@ class UsersController extends Controller
                     $user = $repoUser->findOneBy(array('id' => $userId));
                     /* @var $cohorte Cohorte */
                     foreach ($cohortes as $cohorte) {
-                        $coh = $cohRepo->findOneBy(array('id'=> $cohorte->getId()));
+                        $coh = $cohRepo->findOneBy(array('id' => $cohorte->getId()));
                         $inscrs = $Inscription_cohRepo->findBy(array('cohorte' => $coh, 'user' => $user));
 
                         if ($inscrs) {
@@ -566,7 +570,7 @@ class UsersController extends Controller
                 ))
                 ->add('save', SubmitType::class, array('label' => 'Enregistrer'))
                 ->getForm();
-        }elseif ($template === 'excellencePro'){
+        } elseif ($template === 'excellencePro') {
             $form = $this->createFormBuilder($user)
                 ->add('lastname', TextType::class, array(
                     'label' => 'Nom'
@@ -576,7 +580,7 @@ class UsersController extends Controller
                 ))
                 ->add('email', EmailType::class, array())
                 ->add('typeUser', ChoiceType::class, array(
-                    'choices'  => [
+                    'choices' => [
                         'Enseignant avec prise en charge des frais annexes' => 0,
                         'Enseignant sans prise en charge des frais annexes' => 1,
                         'Parent d’élève' => 2,
@@ -689,22 +693,22 @@ class UsersController extends Controller
         $item = $doctrine->getRepository('AppBundle:' . $entityName)->findOneBy(array('id' => $id));
 
         $roleUser = 'admin';
-        if(!$currentUser->hasRole('ROLE_SUPER_ADMIN')){
+        if (!$currentUser->hasRole('ROLE_SUPER_ADMIN')) {
             $roleUser = $itemRepo->getRole($currentUser, $item)->getNom();
         }
 
         $userRepo = $doctrine->getRepository('AppBundle:User');
         $users = $userRepo->findBy(array('enabled' => true));
         $inscritsItem = [];
-        $havingAccessItem =[];
+        $havingAccessItem = [];
         if ($type == "cours") {
-           $havingAccessItem = $itemRepo->findInscrits($item);
+            $havingAccessItem = $itemRepo->findInscrits($item);
         }
         if ($type == "cours" || $type == 'discipline') {
             $inscritsItem = $itemRepo->getUsersInscr($item);
-        }elseif ($type == "cohorte"){
+        } elseif ($type == "cohorte") {
             $inscritsItem = $itemRepo->getUsersInscr($item);
-        }elseif ($type == "session"){
+        } elseif ($type == "session") {
             $inscritsItem = $itemRepo->getUsersInscr($item);
         }
 
@@ -715,25 +719,25 @@ class UsersController extends Controller
         $usersAccessTab_tampon = array();
         $limitNbTwigRows2Load = 0;
 
-        if ((($statut !== 'Responsable' && $statut !== 'Formateur') || !$currentUser->getConfirmedByAdmin()) && !$currentUser->hasRole('ROLE_SUPER_ADMIN') && $roleUser!='Referent') {
+        if ((($statut !== 'Responsable' && $statut !== 'Formateur') || !$currentUser->getConfirmedByAdmin()) && !$currentUser->hasRole('ROLE_SUPER_ADMIN') && $roleUser != 'Referent') {
             return $this->redirectToRoute('homepage');
         }
 
         foreach ($users as $user) {
             $myCohs = $inscrCohRepo->findBy(array('user' => $user));
             //$myCohs = [];
-            if($type == "cohorte"){
-                if(in_array($user, $inscritsItem)){
+            if ($type == "cohorte") {
+                if (in_array($user, $inscritsItem)) {
                     $role = $itemRepo->getRole($user, $item);
                     //$role = null;
-                    if(count($usersAccessTab)<$limitNbTwigRows2Load) {
+                    if (count($usersAccessTab) < $limitNbTwigRows2Load) {
                         array_push($usersAccessTab, [
                             "user" => $user,
                             "isInscrit" => true,
                             "myCohs" => $myCohs,
                             "role" => $role
                         ]);
-                    }else{
+                    } else {
                         array_push($usersAccessTab_tampon, [
                             "user" => $user,
                             "isInscrit" => true,
@@ -742,62 +746,62 @@ class UsersController extends Controller
                         ]);
                     }
                 } else {
-                    if(count($usersNoAccessTab)<$limitNbTwigRows2Load) {
+                    if (count($usersNoAccessTab) < $limitNbTwigRows2Load) {
                         array_push($usersNoAccessTab, [
                             'user' => $user,
                             "myCohs" => $myCohs
                         ]);
-                    }else{
+                    } else {
                         array_push($usersNoAccessTab_tampon, [
                             'user' => $user,
                             "myCohs" => $myCohs
                         ]);
                     }
                 }
-            }else if ($type == "discipline") {
+            } else if ($type == "discipline") {
                 $checkAccess = false;
                 $inscr = null;
                 $inscrD = null;
-                if($myCohs){
-                    foreach($myCohs as $inscrCoh){
+                if ($myCohs) {
+                    foreach ($myCohs as $inscrCoh) {
                         $coh = $inscrCoh->getCohorte();
-                        if($coh->getDisciplines()->contains($item)){
+                        if ($coh->getDisciplines()->contains($item)) {
                             $checkAccess = true;
                             $inscr = $inscrCoh;
                             break;
                         }
                     }
                 }
-                if(!$checkAccess){
-                    if(in_array($user, $inscritsItem)){
+                if (!$checkAccess) {
+                    if (in_array($user, $inscritsItem)) {
                         $checkAccess = true;
                         $inscrD = true;
                     }
                 }
                 if ($checkAccess) {
                     $role = null;
-                    if($inscr){
+                    if ($inscr) {
                         $role = $inscr->getRole();
-                    }elseif($inscrD) {
+                    } elseif ($inscrD) {
                         $role = $itemRepo->getRole($user, $item);
-                    }else{
-                        if($myCohs){
-                            foreach($myCohs as $inscrCoh){
+                    } else {
+                        if ($myCohs) {
+                            foreach ($myCohs as $inscrCoh) {
                                 $coh = $inscrCoh->getCohorte();
-                                if($coh->getDisciplines()->contains($item)){
+                                if ($coh->getDisciplines()->contains($item)) {
                                     $role = $inscrCoh->getRole();
                                 }
                             }
                         }
                     }
-                    if(count($usersAccessTab)<$limitNbTwigRows2Load) {
+                    if (count($usersAccessTab) < $limitNbTwigRows2Load) {
                         array_push($usersAccessTab, [
                             "user" => $user,
                             "isInscrit" => $inscrD != null,
                             "myCohs" => $myCohs,
                             "role" => $role
                         ]);
-                    }else{
+                    } else {
                         array_push($usersAccessTab_tampon, [
                             "user" => $user,
                             "isInscrit" => $inscrD != null,
@@ -806,35 +810,35 @@ class UsersController extends Controller
                         ]);
                     }
                 } else {
-                    if(count($usersNoAccessTab)<$limitNbTwigRows2Load) {
+                    if (count($usersNoAccessTab) < $limitNbTwigRows2Load) {
                         array_push($usersNoAccessTab, [
                             'user' => $user,
                             "myCohs" => $myCohs
                         ]);
-                    }else{
+                    } else {
                         array_push($usersNoAccessTab_tampon, [
                             'user' => $user,
                             "myCohs" => $myCohs
                         ]);
                     }
                 }
-            }else {
+            } else {
                 $isInscrit = true;
                 $hasAccessItem = true;
-                if(!in_array($user, $inscritsItem)) {
+                if (!in_array($user, $inscritsItem)) {
                     $isInscrit = false;
-                    if(!in_array($user, $havingAccessItem)) {
+                    if (!in_array($user, $havingAccessItem)) {
                         $hasAccessItem = false;
                     }
                 }
                 $dateInscr = null;
-                if($type == "session"){
+                if ($type == "session") {
                     $dateInscr = $itemRepo->getDateInscr($user, $item);
                 }
 
                 if ($isInscrit) {
                     $role = $itemRepo->getRole($user, $item);
-                    if(count($usersAccessTab)<$limitNbTwigRows2Load){
+                    if (count($usersAccessTab) < $limitNbTwigRows2Load) {
                         array_push($usersAccessTab, [
                             "user" => $user,
                             "isInscrit" => $isInscrit,
@@ -842,7 +846,7 @@ class UsersController extends Controller
                             "role" => $role,
                             "dateInscr" => $dateInscr
                         ]);
-                    }else{
+                    } else {
                         array_push($usersAccessTab_tampon, [
                             "user" => $user,
                             "isInscrit" => $isInscrit,
@@ -855,7 +859,7 @@ class UsersController extends Controller
                 } else {
                     if ($hasAccessItem) {
                         $role = $itemRepo->getRoleNoInscr($user, $item);
-                        if(count($usersAccessTab)<$limitNbTwigRows2Load) {
+                        if (count($usersAccessTab) < $limitNbTwigRows2Load) {
                             array_push($usersAccessTab, [
                                 "user" => $user,
                                 "isInscrit" => $isInscrit,
@@ -863,7 +867,7 @@ class UsersController extends Controller
                                 "role" => $role,
                                 "dateInscr" => $dateInscr
                             ]);
-                        }else{
+                        } else {
                             array_push($usersAccessTab_tampon, [
                                 "user" => $user,
                                 "isInscrit" => $isInscrit,
@@ -873,12 +877,12 @@ class UsersController extends Controller
                             ]);
                         }
                     } else {
-                        if(count($usersNoAccessTab)<$limitNbTwigRows2Load) {
+                        if (count($usersNoAccessTab) < $limitNbTwigRows2Load) {
                             array_push($usersNoAccessTab, [
                                 'user' => $user,
                                 "myCohs" => $myCohs
                             ]);
-                        }else{
+                        } else {
                             array_push($usersNoAccessTab_tampon, [
                                 'user' => $user,
                                 "myCohs" => $myCohs
@@ -1002,7 +1006,7 @@ class UsersController extends Controller
                     $itemForm->setImageFile($form['imageFile']->getData());
                     $itemForm->upload();
                 }
-            }else{
+            } else {
 
             }
             $em->persist($itemForm);
@@ -1059,7 +1063,7 @@ class UsersController extends Controller
             $userIds = $request->request->get('users');
             /* @var Section $section */
             $section = $em->getRepository('AppBundle:Section')->findOneBy(array('id' => $id));
-            if(count($userIds) > 0){
+            if (count($userIds) > 0) {
                 foreach ($userIds as $userId) {
                     /* @var User $user */
                     $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
@@ -1088,7 +1092,7 @@ class UsersController extends Controller
             $userIds = $request->request->get('users');
             /* @var Section $section */
             $section = $em->getRepository('AppBundle:Section')->findOneBy(array('id' => $id));
-            if(count($userIds) > 0){
+            if (count($userIds) > 0) {
                 foreach ($userIds as $userId) {
                     /* @var User $user */
                     $user = $em->getRepository('AppBundle:User')->findOneBy(array('id' => $userId));
