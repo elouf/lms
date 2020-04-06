@@ -128,6 +128,13 @@ class User extends BaseUser
     /**
      * @var bool
      *
+     * @ORM\Column(name="canEditForumsMsgs", type="boolean", nullable=true)
+     */
+    private $canEditForumsMsgs = false;
+
+    /**
+     * @var bool
+     *
      * @ORM\Column(name="confirmedByAdmin", type="boolean", nullable=true)
      */
     private $confirmedByAdmin = false;
@@ -524,6 +531,30 @@ class User extends BaseUser
     public function getReceiveAutoNotifs()
     {
         return $this->receiveAutoNotifs;
+    }
+
+    /**
+     * Set canEditForumsMsgs
+     *
+     * @param boolean $canEditForumsMsgs
+     *
+     * @return User
+     */
+    public function setCanEditForumsMsgs($canEditForumsMsgs)
+    {
+        $this->canEditForumsMsgs = $canEditForumsMsgs;
+
+        return $this;
+    }
+
+    /**
+     * Get canEditForumsMsgs
+     *
+     * @return bool
+     */
+    public function getCanEditForumsMsgs()
+    {
+        return $this->canEditForumsMsgs;
     }
 
     /**

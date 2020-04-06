@@ -113,7 +113,7 @@
                     <div class="blog-single">
                         <div class="headerPost">
                             <div class="auteurPostOptions">
-                                {% if val.auteur and val.auteur.id == app.user.id or app.user.hasRole('ROLE_SUPER_ADMIN') %}
+                                {% if val.auteur and val.auteur.id == app.user.id or app.user.hasRole('ROLE_SUPER_ADMIN') or app.user.canEditForumsMsgs %}
                                     <a href="{{ path('editForumPost', {id: val.id}) }}" class="btnEditPost fctAdminPost">Éditer</a>
                                 {% endif %}
                                 {% if app.user.hasRole('ROLE_SUPER_ADMIN') %}
