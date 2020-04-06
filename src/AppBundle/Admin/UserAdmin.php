@@ -33,6 +33,7 @@ class UserAdmin extends AbstractAdmin
             ->add('email', 'text')
             ->add('plainPassword', 'repeated', $passwordoptions)
             ->add('enabled')
+            ->add('canEditForumsMsgs')
             ->add('firstname')
             ->add('lastname')
             ->add('phone')
@@ -56,6 +57,7 @@ class UserAdmin extends AbstractAdmin
         $datagridMapper
             ->add('email')
             ->add('enabled')
+            ->add('canEditForumsMsgs')
             ->add('firstname')
             ->add('lastname')
             ->add('phone')
@@ -79,6 +81,7 @@ class UserAdmin extends AbstractAdmin
         $listMapper
             ->addIdentifier('email')
             ->add('enabled')
+            ->add('canEditForumsMsgs')
             ->add('firstname')
             ->add('lastname')
             ->add('phone')
