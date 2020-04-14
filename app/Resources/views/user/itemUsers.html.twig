@@ -429,7 +429,7 @@
                 }, 600);
             });
 
-            function loadBtnDesinscrEvent(){
+            function loadBtnDesinscrEvent() {
                 $('.btndesinscr').unbind('click').click(function () {
                     let idUser = $(this).closest('.userLine').attr('data-userId');
 
@@ -441,7 +441,8 @@
                     });
                 });
             }
-            function loadBtnInscrEvent(){
+
+            function loadBtnInscrEvent() {
                 $('.btninscr').unbind('click').click(function () {
                     let idUser = $(this).closest('.userLine').attr('data-userId');
 
@@ -581,12 +582,14 @@
                             <i class="fa fa-university fa-fw"></i> Informations générales ({{ roleUser }})</a>
                     </li>
                 {% endif %}
-                {% if (entityName == "Cours") and ressources is defined %}
-                    <li role="presentation">
-                        <a href="#Sections" aria-controls="Sections" role="tab" data-toggle="tab">
-                            <i class="fa fa-th-list" aria-hidden="true"></i>
-                            Sections</a>
-                    </li>
+                {% if roleUser == 'admin' %}
+                    {% if (entityName == "Cours") and ressources is defined %}
+                        <li role="presentation">
+                            <a href="#Sections" aria-controls="Sections" role="tab" data-toggle="tab">
+                                <i class="fa fa-th-list" aria-hidden="true"></i>
+                                Sections</a>
+                        </li>
+                    {% endif %}
                 {% endif %}
             </ul>
             <div class="tab-content">
@@ -1109,7 +1112,7 @@
                 <th>Role</th>
                 <th>Cohortes</th>
                 {% if (entityName == "Session") %}
-                <th>dateSessInscrit</th>
+                    <th>dateSessInscrit</th>
                 {% endif %}
                 <th>isInscrit</th>
             </tr>
