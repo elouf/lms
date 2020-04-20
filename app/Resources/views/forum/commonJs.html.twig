@@ -1,6 +1,7 @@
 {% block commonJS %}
     <script>
         jQuery(document).ready(function () {
+            CKEDITOR.config.extraPlugins = 'colorbutton';
             CKEDITOR.config.entities = false;
             CKEDITOR.config.entities_latin = false;
 
@@ -8,6 +9,10 @@
                 configname:"lightConfig",
                 toolbar:
                         [
+                            {
+                                name: 'clipboard',
+                                items: ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo']
+                            },
                             { name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript' ] },
                             { name: 'paragraph',   items : [ 'NumberedList','BulletedList','-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'] },
                             { name: 'styles',      items : [ 'Font','FontSize' ] },
