@@ -1138,6 +1138,9 @@ class UsersController extends Controller
                 } else if ($itemType == 'cours') {
                     $EntityName = 'Cours';
                     $EntityInscrName = 'Inscription_c';
+                } else if ($itemType == 'session') {
+                    $EntityName = 'Session';
+                    $EntityInscrName = 'Inscription_sess';
                 }
                 $item = $em->getRepository('AppBundle:' . $EntityName)->findOneBy(array('id' => $itemId));
                 /* @var $inscr Inscription_coh */
