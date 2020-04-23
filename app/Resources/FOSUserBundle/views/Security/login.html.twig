@@ -7,15 +7,20 @@
             <img src="{{ asset('educomp/images/applynow.png') }}" class="img-responsive center-block hidden-xs" alt="">
             <div class="apply-info">
                 {% set datetimeStart = '2017-07-01' %}
-                {% if "now"|date('Y-m-d') >= datetimeStart|date('Y-m-d') or app.environment=='dev'  %}
+                {% if "now"|date('Y-m-d') >= datetimeStart|date('Y-m-d') or app.environment=='dev' %}
                     <h4 class="heading text-center">CONNECTEZ VOUS</h4>
-                    <p style="text-align: center">Pour les étudiants et les professeurs stagiaires de l'AFADEC</p>
+                    {% if template == "afadec" %}
+                        <p style="text-align: center">Pour les étudiants et les professeurs stagiaires de l'AFADEC</p>
+                    {% endif %}
 
                     {% include "FOSUserBundle:Security:login_content.html.twig" %}
 
-                    <a href="{{ path('fos_user_resetting_request') }}" style="margin-top: 15px;display: inline-block">Mot de passe oublié ?</a>
-                    {#<div style="text-align: center; font-size: 20px;color: #aaa;margin: 10px;">OU</div>
-                    <a href="{{ path('inscription') }}" class="btn btn-primary">Créer un compte</a>#}
+                    <a href="{{ path('fos_user_resetting_request') }}" style="margin-top: 15px;display: inline-block">Mot
+                        de passe oublié ?</a>
+                    {% if template == "excellencePro" %}
+                        <div style="text-align: center; font-size: 20px;color: #aaa;margin: 10px;">OU</div>
+                        <a href="{{ path('inscription') }}" class="btn btn-primary">Créer un compte</a>
+                    {% endif %}
                 {% else %}
                     <div class="row">
                         <div class="col-sm-12">
@@ -25,8 +30,10 @@
                                 </div>
                                 <div class="icon-box-content">
                                     <h5 class="heading">S'INSCRIRE</h5>
-                                    <p>La plateforme de l’AFADEC ouvre bientôt, inscrivez-vous dès maintenant pour être prévenu en priorité.</p>
-                                    <a class="btn btn-primary btn-sm" href="{{ path('inscription') }}">Créer un compte</a>
+                                    <p>La plateforme de l’AFADEC ouvre bientôt, inscrivez-vous dès maintenant pour être
+                                        prévenu en priorité.</p>
+                                    <a class="btn btn-primary btn-sm" href="{{ path('inscription') }}">Créer un
+                                        compte</a>
                                 </div>
                             </div>
                         </div>
