@@ -1003,26 +1003,42 @@
                                                 <!--
                                                         FORUM
                                                 -->
-                                                <li data-idZone="{{ val.zones.containers[keyR].id }}"
-                                                    class="courseElem forum {% if val.zones.containers[keyR].isVisible == 0 %} visibility_{% endif %}">
-                                                    <div class="row">
-
-                                                        <div class="itemInfos itemHeader col-xs-10">
+                                                {% if template == "excellencePro" %}
+                                                    <li data-idZone="{{ val.zones.containers[keyR].id }}" class="courseElem forum {% if val.zones.containers[keyR].isVisible == 0 %} visibility_{% endif %}">
+                                                        <div class="forumLogo">
+                                                            <i class="fa fa-users" aria-hidden="true"></i>
+                                                        </div>
+                                                        <div class="itemInfos itemHeader col-xs-9">
                                                             <div class="itemTitle">{{ valR.nom }}</div>
                                                             <div class="itemDescription">{{ valR.description | raw }}</div>
+                                                            <div style="text-align: center; padding: 10px">
+                                                                <a class="btn btnLien btn-sm btn-warning" href="{{ path('forum', {id: valR.id}) }}">
+                                                                    Entrer dans le forum
+                                                                </a>
+                                                            </div>
+
                                                         </div>
+                                                    </li>
+                                                {% else %}
+                                                    <li data-idZone="{{ val.zones.containers[keyR].id }}"
+                                                        class="courseElem forum {% if val.zones.containers[keyR].isVisible == 0 %} visibility_{% endif %}">
+                                                        <div class="row">
 
-                                                        <div class="col-xs-2 text-right">
-                                                            <a class="btn btnLien btn-sm btn-warning"
-                                                               href="{{ path('forum', {id: valR.id}) }}"
-                                                            >
-                                                                <i class="fa fa-users" aria-hidden="true"></i>
-                                                            </a>
+                                                            <div class="itemInfos itemHeader col-xs-10">
+                                                                <div class="itemTitle">{{ valR.nom }}</div>
+                                                                <div class="itemDescription">{{ valR.description | raw }}</div>
+                                                            </div>
+
+                                                            <div class="col-xs-2 text-right">
+                                                                <a class="btn btnLien btn-sm btn-warning"
+                                                                   href="{{ path('forum', {id: valR.id}) }}"
+                                                                >
+                                                                    <i class="fa fa-users" aria-hidden="true"></i>
+                                                                </a>
+                                                            </div>
                                                         </div>
-                                                    </div>
-
-
-                                                </li>
+                                                    </li>
+                                                {% endif %}
                                             {% elseif val.zones.type[keyR] == "h5p" %}
                                                 <!--
                                                         H5P

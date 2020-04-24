@@ -1893,7 +1893,7 @@ ul.list-default > li.studitWhiteFC:before {
     color: #6c226b;
 }
 
-[data-template="excellencePro"] .btnMenuDiscCourses {
+[data-template="excellencePro"] .btnMenuDiscCourses, [data-template="excellencePro"] .btnGoBack {
     background-color: #6c226b;
 }
 
@@ -1924,6 +1924,46 @@ ul.list-default > li.studitWhiteFC:before {
     border-color: transparent transparent transparent #892488;
 }
 
+[data-template="excellencePro"] .courseElem.forum{
+    background: #f7e6ff;
+    display: flex;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    flex-direction: row;
+    -webkit-flex-direction: row;
+    -webkit-box-orient: horizontal;
+    padding: 10px 15px;
+    border-radius: 10px;
+}
+[data-template="excellencePro"] .courseElem.forum .btnLien{
+    background-color: #892488;
+}
+[data-template="excellencePro"] .courseElem.forum .fa-users{
+    color: #892488;
+    font-size: 120px
+}
+[data-template="excellencePro"] .courseElem.forum .forumLogo{
+    display: flex;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    align-items: center;
+    -webkit-align-items: center;
+}
+[data-template="excellencePro"] .courseElem.forum .itemDescription{
+    background: #fff;
+    padding: 10px;
+    border-radius: 5px;
+}
+[data-template="excellencePro"] .courseElem.forum .itemTitle{
+    margin: 15px 0;
+}
+[data-template="excellencePro"] .courseElem.forum .itemInfos{
+    flex: 1;
+    -ms-flex: 1;
+    -webkit-flex: 1;
+    -moz-box-flex: 1;
+}
+
 @media screen and (max-width: 1200px) {
     [data-template="afadec"] .logoAbsolute {
         left: -70px
@@ -1939,7 +1979,7 @@ ul.list-default > li.studitWhiteFC:before {
     body[data-template="excellencePro"] .logoAbsolute {
         width: 260px;
         left: -10px;
-        top: 17px;
+        top: 9px;
     }
 
     [data-template="excellencePro"] .logoPtf {
@@ -2002,9 +2042,12 @@ ul.list-default > li.studitWhiteFC:before {
 }
 
 @media screen and (max-width: 768px) {
+    [data-template="excellencePro"] .courseElem.forum .fa-users{
+        font-size: 72px;
+    }
     .logoAbsolute {
         width: 316px;
-        left: 0px;
+        left: 0;
         top: 10px;
     }
 
@@ -2021,13 +2064,18 @@ ul.list-default > li.studitWhiteFC:before {
     }
 
     body[data-template="excellencePro"] .logoAbsolute {
-        width: 280px;
-        top: 12px;
+        width: 240px;
+        top: 9px;
         left: 20px;
     }
 
     [data-template="excellencePro"] .logoPtf {
         width: 280px;
+    }
+}
+@media screen and (max-width: 600px) {
+    [data-template="excellencePro"] .courseElem.forum .fa-users{
+        display: none;
     }
 }
 
