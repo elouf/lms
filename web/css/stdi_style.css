@@ -313,6 +313,9 @@ a {
     content: none !important;
 }
 
+.courseElem h2 {
+    font-size: 30px;
+}
 .courseElem h3 {
     font-size: 20px;
     text-transform: none;
