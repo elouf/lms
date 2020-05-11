@@ -1,6 +1,7 @@
 <?php
 
 namespace AppBundle\Repository;
+use AppBundle\Entity\Discipline;
 use AppBundle\Entity\Inscription_c;
 
 /**
@@ -152,12 +153,16 @@ class CoursRepository extends \Doctrine\ORM\EntityRepository
     {
         $em = $this->getEntityManager();
         $repositoryDiscipline = $em->getRepository('AppBundle:Discipline');
+        /* @var $disc Discipline */
         $disc = $cours->getDiscipline();
 
         if($repositoryDiscipline->userIsInscrit($user, $disc)){
             return true;
         }
         if($repositoryDiscipline->userHasAccess($user, $disc)){
+            return true;
+        }
+        if($disc->getFreeAccess()){
             return true;
         }
         return false;

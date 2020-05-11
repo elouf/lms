@@ -485,7 +485,7 @@ class UsersController extends Controller
         $sessions_tabTest = array();
         $repoSession = $this->getDoctrine()->getRepository('AppBundle:Session');
         foreach ($allcourses as $coursFiltre) {
-            if ($coursFiltre->getSession() != null /*&& $cours_repo->userHasAccess($user, $coursFiltre)*/) {
+            if ($coursFiltre->getSession() != null && $cours_repo->userHasAccess($user, $coursFiltre)) {
                 $sess = $coursFiltre->getSession();
                 $cours_tabTest = array();
                 if (!in_array($sess, $sessions_tabTest)) {

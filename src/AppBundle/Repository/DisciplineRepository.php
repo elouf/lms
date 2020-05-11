@@ -85,7 +85,6 @@ class DisciplineRepository extends \Doctrine\ORM\EntityRepository
     {
         $em = $this->getEntityManager();
 
-
         $inscrCohs = $em->getRepository('AppBundle:Inscription_coh')->findBy(array(
             'user' => $user
         ));
@@ -97,6 +96,9 @@ class DisciplineRepository extends \Doctrine\ORM\EntityRepository
                 }
 
             }
+        }
+        if($discipline->getFreeAccess()){
+            return true;
         }
 
         return false;
