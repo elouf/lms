@@ -508,7 +508,7 @@ class UsersController extends Controller
                 }
             }
         }
-        dump($sessions_tab);
+        //dump($sessions_tab);
 
         $cohortes_inscr = array();
         if ($cohortes) {
