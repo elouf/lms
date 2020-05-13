@@ -22,7 +22,10 @@
 {% endblock %}
 
 {% block main %}
+    <link rel="stylesheet" href="{{ asset('vendors/tablesorter/dist/css/theme.default.min.css') }}"/>
     <script type="text/javascript" src="{{ asset('vendors/tablesorter/dist/js/jquery.tablesorter.min.js') }}"></script>
+    <script type="text/javascript"
+            src="{{ asset('vendors/tablesorter/dist/js/jquery.tablesorter.widgets.min.js') }}"></script>
     <script>
         jQuery(document).ready(function () {
             $('.cancelDownload').click(function () {
@@ -301,7 +304,8 @@
                 });
             });
             $(".tableCopies").tablesorter({
-                sortList: [[1, 0]]
+                sortList: [[1, 0]],
+                widgets: ['filter']
             });
             $('.btnDeleteCopie').click(function () {
                 let tr = $(this).closest('tr');
