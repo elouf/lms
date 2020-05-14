@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\FreeAccessStats;
 use AppBundle\Entity\Mp3Podcast;
+use AppBundle\Entity\UserStatLogin;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -91,6 +92,38 @@ class StatistiquesController extends Controller
             'discipline' => $disc,
             'assocs' => $myAssocs,
             'users' => $users
+        ]);
+    }
+
+    /**
+     * @Route("/frequentationSite", name="frequentationSite")
+     */
+    public function frequentationAction(Request $request)
+    {
+        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
+
+        $em = $this->getDoctrine()->getEntityManager();
+
+        $datas = [];
+
+        $userLogins = $em->getRepository('AppBundle:UserStatLogin')->findBy([], array('dateAcces' => 'ASC'));
+        if ($userLogins){
+            /* @var $userLogin UserStatLogin */
+            foreach ($userLogins as $userLogin){
+                $date = $userLogin->getDateAcces()->format('d/m');
+                if(!array_key_exists($date, $datas)){
+                    $datas[$date] = 1;
+                }else{
+                    $datas[$date]++;
+                }
+            }
+        }
+
+        $repository = $this->getDoctrine()->getRepository('AppBundle:Discipline');
+        $disciplines = $repository->findAll();
+
+        return $this->render('stats/frequentationSite.html.twig', [
+            'logins' => $datas
         ]);
     }
 }
