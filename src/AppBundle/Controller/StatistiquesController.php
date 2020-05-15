@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\FreeAccessStats;
 use AppBundle\Entity\Mp3Podcast;
 use AppBundle\Entity\UserStatLogin;
+use DateTime;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -105,22 +106,24 @@ class StatistiquesController extends Controller
         $em = $this->getDoctrine()->getEntityManager();
 
         $datas = [];
+        $startingDate = DateTime::createFromFormat('j-M-Y', '01-Mar-2020');
 
         $userLogins = $em->getRepository('AppBundle:UserStatLogin')->findBy([], array('dateAcces' => 'ASC'));
         if ($userLogins){
             /* @var $userLogin UserStatLogin */
             foreach ($userLogins as $userLogin){
-                $date = $userLogin->getDateAcces()->format('d/m');
-                if(!array_key_exists($date, $datas)){
-                    $datas[$date] = 1;
-                }else{
-                    $datas[$date]++;
+                $d = $userLogin->getDateAcces();
+                if($d >= $startingDate){
+                    $date = $d->format('d/m');
+                    if(!array_key_exists($date, $datas)){
+                        $datas[$date] = 1;
+                    }else{
+                        $datas[$date]++;
+                    }
                 }
+
             }
         }
-
-        $repository = $this->getDoctrine()->getRepository('AppBundle:Discipline');
-        $disciplines = $repository->findAll();
 
         return $this->render('stats/frequentationSite.html.twig', [
             'logins' => $datas
