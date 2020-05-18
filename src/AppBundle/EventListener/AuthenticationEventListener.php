@@ -33,15 +33,17 @@ class AuthenticationEventListener implements AuthenticationSuccessHandlerInterfa
     {
         $user = $this->tokenStorage->getToken()->getUser();
 
-        $stat = new UserStatLogin();
+        if(!$user->hasRole('ROLE_SUPER_ADMIN')){
+            $stat = new UserStatLogin();
 
-        $stat->setDateAcces(new DateTime());
-        $stat->setUser($user);
+            $stat->setDateAcces(new DateTime());
+            $stat->setUser($user);
 
-        $this->em->persist($stat);
+            $this->em->persist($stat);
 
-        $this->em->flush();
-        $response = new Response();
+            $this->em->flush();
+        }
+
         $response = new RedirectResponse('myCourses');
         return $response;
     }
