@@ -113,53 +113,11 @@ class StatistiquesController extends Controller
         $startingDate = DateTime::createFromFormat('j-M-Y', '01-Mar-2020');
 
         $userLogins = $em->getRepository('AppBundle:UserStatLogin')->findBy([], array('dateAcces' => 'ASC'));
-        if ($userLogins){
-            /* @var $userLogin UserStatLogin */
-            foreach ($userLogins as $userLogin){
-                $d = $userLogin->getDateAcces();
-                if($d >= $startingDate){
-                    $date = $d->format('d/m');
-                    if(!array_key_exists($date, $logins)){
-                        $logins[$date] = 1;
-                    }else{
-                        $logins[$date]++;
-                    }
-                }
 
-            }
-        }
         $userCours = $em->getRepository('AppBundle:UserStatCours')->findBy([], array('dateAcces' => 'ASC'));
-        if ($userCours){
-            /* @var $userCour UserStatCours */
-            foreach ($userCours as $userCour){
-                $d = $userCour->getDateAcces();
-                if($d >= $startingDate){
-                    $date = $d->format('d/m');
-                    if(!array_key_exists($date, $coursAccess)){
-                        $coursAccess[$date] = 1;
-                    }else{
-                        $coursAccess[$date]++;
-                    }
-                }
 
-            }
-        }
         $userRessources = $em->getRepository('AppBundle:UserStatRessource')->findBy([], array('dateAcces' => 'ASC'));
-        if ($userRessources){
-            /* @var $userRessource UserStatRessource */
-            foreach ($userRessources as $userRessource){
-                $d = $userRessource->getDateAcces();
-                if($d >= $startingDate){
-                    $date = $d->format('d/m');
-                    if(!array_key_exists($date, $ressourcesAccess)){
-                        $ressourcesAccess[$date] = 1;
-                    }else{
-                        $ressourcesAccess[$date]++;
-                    }
-                }
 
-            }
-        }
 
         return $this->render('stats/frequentationSite.html.twig', [
             'logins' => $logins,
