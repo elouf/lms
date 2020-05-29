@@ -25,6 +25,12 @@
                 formatedCoursAcces.push({x: item, y: coursAcces[item]});
             }
 
+            var ressourcesAcces = {{ ressourceAcces|json_encode|raw }};
+            var formatedRessourcesAcces = [];
+            for (item in ressourcesAcces) {
+                formatedRessourcesAcces.push({x: item, y: ressourcesAcces[item]});
+            }
+
             if($('#chart2build').length){
                 var timeFormat = 'DD/MM';
 
@@ -44,13 +50,20 @@
                                 fill: false,
                                 borderColor: 'blue'
                             }
+                            ,
+                            {
+                                label: "Accès à une ressource",
+                                data: formatedRessourcesAcces,
+                                fill: false,
+                                borderColor: 'green'
+                            }
                         ]
                     },
                     options: {
                         responsive: true,
                         title:      {
                             display: true,
-                            text:    "Fréquentation de la page en libre accès, seulement par les utilisateurs non connectés."
+                            text:    "Fréquentation du site par des utilisateurs (non admin)."
                         },
                         scales:     {
                             xAxes: [{
@@ -70,7 +83,7 @@
                             yAxes: [{
                                 scaleLabel: {
                                     display:     true,
-                                    labelString: 'Nombre de visites par jour'
+                                    labelString: 'Quantité'
                                 }
                             }]
                         }

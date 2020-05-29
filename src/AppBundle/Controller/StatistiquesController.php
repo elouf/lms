@@ -6,6 +6,7 @@ use AppBundle\Entity\FreeAccessStats;
 use AppBundle\Entity\Mp3Podcast;
 use AppBundle\Entity\UserStatCours;
 use AppBundle\Entity\UserStatLogin;
+use AppBundle\Entity\UserStatRessource;
 use DateTime;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -108,6 +109,7 @@ class StatistiquesController extends Controller
 
         $logins = [];
         $coursAccess = [];
+        $ressourcesAccess = [];
         $startingDate = DateTime::createFromFormat('j-M-Y', '01-Mar-2020');
 
         $userLogins = $em->getRepository('AppBundle:UserStatLogin')->findBy([], array('dateAcces' => 'ASC'));
@@ -142,10 +144,27 @@ class StatistiquesController extends Controller
 
             }
         }
+        $userRessources = $em->getRepository('AppBundle:UserStatRessource')->findBy([], array('dateAcces' => 'ASC'));
+        if ($userRessources){
+            /* @var $userRessource UserStatRessource */
+            foreach ($userRessources as $userRessource){
+                $d = $userRessource->getDateAcces();
+                if($d >= $startingDate){
+                    $date = $d->format('d/m');
+                    if(!array_key_exists($date, $ressourcesAccess)){
+                        $ressourcesAccess[$date] = 1;
+                    }else{
+                        $ressourcesAccess[$date]++;
+                    }
+                }
+
+            }
+        }
 
         return $this->render('stats/frequentationSite.html.twig', [
             'logins' => $logins,
-            'coursAcces' => $coursAccess
+            'coursAcces' => $coursAccess,
+            'ressourceAcces' => $ressourcesAccess
         ]);
     }
 }
