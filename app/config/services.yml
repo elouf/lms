@@ -11,7 +11,7 @@ parameters:
     distant_password: 'xserve'
     distant_database: 'chamilo'
     admin_password_init: '+JeSuisAfadecAdmin2017+'
-    template: 'afadec'
+    template: 'excellencePro'
     grouped_mails_limit: 2
 
 # templates : afadec, excellencePro, studit

@@ -154,7 +154,6 @@ class StatistiquesController extends Controller
                         $logins[$date]++;
                     }
                 }
-
             }
         }
 
@@ -168,7 +167,6 @@ class StatistiquesController extends Controller
                         $coursAccess[$date]++;
                     }
                 }
-
             }
         }
 
@@ -182,7 +180,6 @@ class StatistiquesController extends Controller
                         $ressourcesAccess[$date]++;
                     }
                 }
-
             }
         }
 
