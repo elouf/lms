@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\FreeAccessStats;
 use AppBundle\Entity\Mp3Podcast;
+use AppBundle\Entity\UserStatCours;
 use AppBundle\Entity\UserStatLogin;
 use DateTime;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -105,7 +106,8 @@ class StatistiquesController extends Controller
 
         $em = $this->getDoctrine()->getEntityManager();
 
-        $datas = [];
+        $logins = [];
+        $coursAccess = [];
         $startingDate = DateTime::createFromFormat('j-M-Y', '01-Mar-2020');
 
         $userLogins = $em->getRepository('AppBundle:UserStatLogin')->findBy([], array('dateAcces' => 'ASC'));
@@ -115,10 +117,26 @@ class StatistiquesController extends Controller
                 $d = $userLogin->getDateAcces();
                 if($d >= $startingDate){
                     $date = $d->format('d/m');
-                    if(!array_key_exists($date, $datas)){
-                        $datas[$date] = 1;
+                    if(!array_key_exists($date, $logins)){
+                        $logins[$date] = 1;
                     }else{
-                        $datas[$date]++;
+                        $logins[$date]++;
+                    }
+                }
+
+            }
+        }
+        $userCours = $em->getRepository('AppBundle:UserStatCours')->findBy([], array('dateAcces' => 'ASC'));
+        if ($userCours){
+            /* @var $userCour UserStatCours */
+            foreach ($userCours as $userCour){
+                $d = $userCour->getDateAcces();
+                if($d >= $startingDate){
+                    $date = $d->format('d/m');
+                    if(!array_key_exists($date, $coursAccess)){
+                        $coursAccess[$date] = 1;
+                    }else{
+                        $coursAccess[$date]++;
                     }
                 }
 
@@ -126,7 +144,8 @@ class StatistiquesController extends Controller
         }
 
         return $this->render('stats/frequentationSite.html.twig', [
-            'logins' => $datas
+            'logins' => $logins,
+            'coursAcces' => $coursAccess
         ]);
     }
 }
