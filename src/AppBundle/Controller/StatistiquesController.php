@@ -100,6 +100,7 @@ class StatistiquesController extends Controller
 
     /**
      * @Route("/frequentationSite", name="frequentationSite")
+     * @throws \Exception
      */
     public function frequentationAction(Request $request)
     {
@@ -112,12 +113,78 @@ class StatistiquesController extends Controller
         $ressourcesAccess = [];
         $startingDate = DateTime::createFromFormat('j-M-Y', '01-Mar-2020');
 
-        $userLogins = $em->getRepository('AppBundle:UserStatLogin')->findBy([], array('dateAcces' => 'ASC'));
+        // Get connection
+        $conn = $em->getConnection();
 
-        $userCours = $em->getRepository('AppBundle:UserStatCours')->findBy([], array('dateAcces' => 'ASC'));
+        // Get table name
+        $metaUserStatLogin = $em->getClassMetadata(UserStatLogin::class);
+        $tableNameUserStatLogin = $metaUserStatLogin->getTableName();
 
-        $userRessources = $em->getRepository('AppBundle:UserStatRessource')->findBy([], array('dateAcces' => 'ASC'));
+        $sql = "SELECT dateAcces AS dateAcces FROM $tableNameUserStatLogin ORDER BY dateAcces";
+        $statement = $conn->executeQuery($sql);
+        $userLogins = array_map(function ($element) {
+            return new DateTime($element['dateAcces']);
+        }, $statement->fetchAll());
 
+        $metaUserStatCours = $em->getClassMetadata(UserStatCours::class);
+        $tableNameUserStatCours = $metaUserStatCours->getTableName();
+
+        $sql = "SELECT dateAcces AS dateAcces FROM $tableNameUserStatCours ORDER BY dateAcces";
+        $statement = $conn->executeQuery($sql);
+        $userStatCours = array_map(function ($element) {
+            return new DateTime($element['dateAcces']);
+        }, $statement->fetchAll());
+
+        $metaUserStatRessource = $em->getClassMetadata(UserStatRessource::class);
+        $tableNameUserStatRessource = $metaUserStatRessource->getTableName();
+
+        $sql = "SELECT dateAcces AS dateAcces FROM $tableNameUserStatRessource ORDER BY dateAcces";
+        $statement = $conn->executeQuery($sql);
+        $userStatRessource = array_map(function ($element) {
+            return new DateTime($element['dateAcces']);
+        }, $statement->fetchAll());
+
+        if ($userLogins){
+            foreach ($userLogins as $d){
+                if($d >= $startingDate){
+                    $date = $d->format('d/m');
+                    if(!array_key_exists($date, $logins)){
+                        $logins[$date] = 1;
+                    }else{
+                        $logins[$date]++;
+                    }
+                }
+
+            }
+        }
+
+        if ($userStatCours){
+            foreach ($userStatCours as $d){
+                if($d >= $startingDate){
+                    $date = $d->format('d/m');
+                    if(!array_key_exists($date, $coursAccess)){
+                        $coursAccess[$date] = 1;
+                    }else{
+                        $coursAccess[$date]++;
+                    }
+                }
+
+            }
+        }
+
+        if ($userStatRessource){
+            foreach ($userStatRessource as $d){
+                if($d >= $startingDate){
+                    $date = $d->format('d/m');
+                    if(!array_key_exists($date, $ressourcesAccess)){
+                        $ressourcesAccess[$date] = 1;
+                    }else{
+                        $ressourcesAccess[$date]++;
+                    }
+                }
+
+            }
+        }
 
         return $this->render('stats/frequentationSite.html.twig', [
             'logins' => $logins,
