@@ -31,7 +31,7 @@ class CoursController extends Controller
     /**
      * @Route("/courses", name="courses")
      */
-    public function coursesAction (Request $request)
+    public function coursesAction(Request $request)
     {
         $repository = $this->getDoctrine()->getRepository('AppBundle:Cours');
         $cours = $repository->findAll();
@@ -42,7 +42,7 @@ class CoursController extends Controller
     /**
      * @Route("/courses/disc/{id}", name="coursesForDisc")
      */
-    public function coursesByDiscAction (Request $request, $id)
+    public function coursesByDiscAction(Request $request, $id)
     {
         $repositoryD = $this->getDoctrine()->getRepository('AppBundle:Discipline');
         $disc = $repositoryD->find($id);
@@ -52,12 +52,12 @@ class CoursController extends Controller
 
         return $this->render('cours/one.html.twig', ['courses' => $courses]);
     }
-    
+
     /**
      *
      * @Route("/cours/{id}/mode/{mode}", name="oneCours")
      */
-    public function oneCoursAction (Request $request, $id, $mode)
+    public function oneCoursAction(Request $request, $id, $mode)
     {
         date_default_timezone_set('Europe/Paris');
         //ini_set('session.gc_maxlifetime', 21600);
@@ -66,7 +66,7 @@ class CoursController extends Controller
         $user = $this->getUser();
         $statutUser = null;
         $isAdmin = false;
-        if($user){
+        if ($user) {
             $statut = $user->getStatut();
             $isAdmin = $user->hasRole('ROLE_SUPER_ADMIN');
         }
@@ -77,13 +77,13 @@ class CoursController extends Controller
         /* @var $discipline Discipline */
         $discipline = $cours->getDiscipline();
 
-        if($discipline->getFreeAccess() === false && !$user){
+        if ($discipline->getFreeAccess() === false && !$user) {
             return $this->redirectToRoute('homepage');
         }
 
         $users = [];
         $usersInscrits = [];
-        if($user){
+        if ($user) {
             $repoUsers = $this->getDoctrine()->getRepository('AppBundle:User');
             $users = $repoUsers->findBy(array('enabled' => true));
             $usersInscrits = $repositoryC->findInscrits($cours);
@@ -94,25 +94,25 @@ class CoursController extends Controller
 
         $allcourses = $repositoryC->findBy(array('discipline' => $discipline));
         $courses = array();
-        if($user){
-            foreach($allcourses as $coursFiltre){
-                if($coursFiltre->getSession() == null || $isAdmin){
+        if ($user) {
+            foreach ($allcourses as $coursFiltre) {
+                if ($coursFiltre->getSession() == null || $isAdmin) {
                     array_push($courses, $coursFiltre);
-                }else{
+                } else {
                     $currentDate = new DateTime();
                     $sess = $coursFiltre->getSession();
-                    if($repoSess->userIsInscrit($user, $sess) &&
+                    if ($repoSess->userIsInscrit($user, $sess) &&
                         $currentDate >= $sess->getDateDebut() &&
-                        $currentDate <= $sess->getDateFin()){
+                        $currentDate <= $sess->getDateFin()) {
                         array_push($courses, $coursFiltre);
                     }
                 }
             }
-        }else{
-            if($discipline->getFreeAccess()){
+        } else {
+            if ($discipline->getFreeAccess()) {
                 /* @var $coursFiltre Cours */
-                foreach($allcourses as $coursFiltre){
-                    if($coursFiltre->getEnabled()){
+                foreach ($allcourses as $coursFiltre) {
+                    if ($coursFiltre->getEnabled()) {
                         array_push($courses, $coursFiltre);
                     }
                 }
@@ -122,44 +122,44 @@ class CoursController extends Controller
         $systemResas = $this->getDoctrine()->getRepository('AppBundle:SystemeResa')->findBy(array('isVisible' => true, 'cours' => $cours));
 
         $role = "";
-        if($user){
+        if ($user) {
             $cohortes = $this->getDoctrine()->getRepository('AppBundle:Cohorte')->findAll();
             $repoInscription_coh = $this->getDoctrine()->getRepository('AppBundle:Inscription_coh');
             $repoInscription_d = $this->getDoctrine()->getRepository('AppBundle:Inscription_d');
             $repoInscription_c = $this->getDoctrine()->getRepository('AppBundle:Inscription_c');
-            if($cohortes){
-                foreach($cohortes as $cohorte){
-                    if($cohorte->getDisciplines()->contains($discipline) || $cohorte->getCours()->contains($cours)){
+            if ($cohortes) {
+                foreach ($cohortes as $cohorte) {
+                    if ($cohorte->getDisciplines()->contains($discipline) || $cohorte->getCours()->contains($cours)) {
                         $inscrCoh = $repoInscription_coh->findOneBy(array('user' => $user, 'cohorte' => $cohorte));
-                        if($inscrCoh){
+                        if ($inscrCoh) {
                             $role = $inscrCoh->getRole()->getNom();
                             break;
                         }
                     }
                 }
             }
-            if($role == ""){
+            if ($role == "") {
                 $inscrDis = $repoInscription_d->findOneBy(array('user' => $user, 'discipline' => $discipline));
-                if($inscrDis) {
+                if ($inscrDis) {
                     $role = $inscrDis->getRole()->getNom();
                 }
             }
 
             $inscrC = $repoInscription_c->findOneBy(array('user' => $user, 'cours' => $cours));
-            if($inscrC) {
-                if($role == "" || $inscrC->getRole()->getNom() == "Referent") {
+            if ($inscrC) {
+                if ($role == "" || $inscrC->getRole()->getNom() == "Referent") {
                     $role = $inscrC->getRole()->getNom();
                 }
             }
             // on corrige le statut du user. Si c'est un enseignant, il ne doit pas être en etu. Si ce n'est pas un admin, il ne doit pas être admin
-            if( !($isAdmin || (($statut == 'Responsable' || $statut == 'Formateur') && $user->getConfirmedByAdmin())) ){
-                if($role == "Enseignant"){
+            if (!($isAdmin || (($statut == 'Responsable' || $statut == 'Formateur') && $user->getConfirmedByAdmin()))) {
+                if ($role == "Enseignant") {
                     $mode = 'ens';
-                }else{
+                } else {
                     $mode = 'etu';
                 }
             }
-            if($role == "Referent"){
+            if ($role == "Referent") {
                 $isReferent = true;
             }
         }
@@ -187,36 +187,36 @@ class CoursController extends Controller
 
         $h5pRessources = [];
 
-        for($i=0; $i<count($sections); $i++){
+        for ($i = 0; $i < count($sections); $i++) {
             $datas[$i]["section"] = $sections[$i];
 
             $zones = $repoZoneRessource->findBy(array('section' => $sections[$i]), array('position' => 'ASC'));
             $datas[$i]["zones"]["containers"] = $zones;
             $datas[$i]["zones"]["content"] = array();
             $datas[$i]["zones"]["type"] = array();
-            for($j=0; $j<count($zones); $j++){
+            for ($j = 0; $j < count($zones); $j++) {
                 $zone = $datas[$i]["zones"]["containers"][$j];
 
-                if($zone->getRessource() != null){
+                if ($zone->getRessource() != null) {
                     $ressource = $repoRessource->findOneBy(array('id' => $zone->getRessource()->getId()));
                     $ressType = $ressource->getType();
                     $datas[$i]["zones"]["type"][$j] = $ressType;
 
-                    if($ressType == "lien"){
+                    if ($ressType == "lien") {
                         $datas[$i]["zones"]["type"][$j] = "lien";
                         $datas[$i]["zones"]["content"][$j] = $ressource;
-                    }elseif($ressType == "forum"){
-                        if($user){
+                    } elseif ($ressType == "forum") {
+                        if ($user) {
                             $datas[$i]["zones"]["type"][$j] = "forum";
                             $datas[$i]["zones"]["content"][$j] = $ressource;
                         }
-                    }elseif($ressType == "chat"){
-                        if($user){
+                    } elseif ($ressType == "chat") {
+                        if ($user) {
                             $datas[$i]["zones"]["type"][$j] = "chat";
                             $datas[$i]["zones"]["content"][$j] = $ressource;
                         }
-                    }elseif($ressType == "devoir"){
-                        if($user){
+                    } elseif ($ressType == "devoir") {
+                        if ($user) {
                             $datas[$i]["zones"]["type"][$j] = "devoir";
 
                             $repositorySujet = $repoDevoirSujet->findBy(array('devoir' => $ressource), array('position' => 'ASC'));
@@ -227,46 +227,46 @@ class CoursController extends Controller
                             $datas[$i]["zones"]["sujet"][$j] = $repositorySujet;
                             $datas[$i]["zones"]["corrigeType"][$j] = "undefined";
 
-                            if($repositoryCorrigeType) {
+                            if ($repositoryCorrigeType) {
                                 $datas[$i]["zones"]["corrigeType"][$j] = $repositoryCorrigeType;
                             }
 
                             // on a pas besoin des copies du user si on est en mode admin, par contre en etu, oui
-                            if($mode == "admin"){
+                            if ($mode == "admin") {
 
-                            }elseif($mode == 'ens'){
+                            } elseif ($mode == 'ens') {
                                 // on compte le nombre de copies non corrigées
                                 $datas[$i]["zones"]["copiesDeposes"][$j] = 0;
                                 $datas[$i]["zones"]["corrigesDeposes"][$j] = 0;
 
                                 $copies = $repoCopie->findBy(array('devoir' => $ressource));
-                                for($u=0; $u<count($copies); $u++){
+                                for ($u = 0; $u < count($copies); $u++) {
                                     $copieFichier = $repoCopieFichier->findOneBy(array('copie' => $copies[$u]));
-                                    if($copieFichier){
+                                    if ($copieFichier) {
                                         $datas[$i]["zones"]["copiesDeposes"][$j]++;
                                         $corrigeFichier = $repoCorrige->findOneBy(array('copie' => $copies[$u]));
-                                        if($corrigeFichier){
+                                        if ($corrigeFichier) {
                                             $datas[$i]["zones"]["corrigesDeposes"][$j]++;
                                         }
                                     }
                                 }
-                            }else{
+                            } else {
                                 $datas[$i]["zones"]["copie"][$j] = "undefined";
                                 $datas[$i]["zones"]["corrige"][$j] = "undefined";
                                 $datas[$i]["zones"]["copieFichier"][$j] = "undefined";
                                 $datas[$i]["zones"]["corrigeFichier"][$j] = "undefined";
 
                                 $copie = $repoCopie->findOneBy(array('devoir' => $ressource, 'auteur' => $user));
-                                if($copie){
+                                if ($copie) {
                                     $datas[$i]["zones"]["copie"][$j] = $copie;
 
                                     $copieFichier = $repoCopieFichier->findOneBy(array('copie' => $copie));
-                                    if($copieFichier){
+                                    if ($copieFichier) {
                                         $datas[$i]["zones"]["copieFichier"][$j] = $copieFichier;
                                     }
 
                                     $corrige = $repoCorrige->findOneBy(array('copie' => $copie));
-                                    if($corrige){
+                                    if ($corrige) {
                                         $datas[$i]["zones"]["corrige"][$j] = $corrige;
                                         $corrigeFichier = $repoCorrigeFichier->findOneBy(array('corrige' => $corrige));
                                         $datas[$i]["zones"]["corrigeFichier"][$j] = $corrigeFichier;
@@ -274,26 +274,26 @@ class CoursController extends Controller
                                 }
                             }
                         }
-                    }elseif($ressType == "groupe") {
+                    } elseif ($ressType == "groupe") {
                         $repositoryGaL = $repoAssocGroupeLiens->findBy(array('groupe' => $ressource), array('position' => 'ASC'));
                         $datas[$i]["zones"]["groupe"][$j] = $ressource;
                         $datas[$i]["zones"]["content"][$j] = $repositoryGaL;
-                    }elseif($ressType == "podcast") {
+                    } elseif ($ressType == "podcast") {
                         $repositoryPodMp3 = $repoMp3Podcast->findBy(array('podcast' => $ressource), array('position' => 'ASC'));
                         $datas[$i]["zones"]["podcast"][$j] = $ressource;
                         $datas[$i]["zones"]["content"][$j] = $repositoryPodMp3;
-                    }elseif($ressType == "libre"){
-                            $datas[$i]["zones"]["content"][$j] = $ressource;
-                    }elseif($ressType == "h5p"){
+                    } elseif ($ressType == "libre") {
+                        $datas[$i]["zones"]["content"][$j] = $ressource;
+                    } elseif ($ressType == "h5p") {
                         $datas[$i]["zones"]["content"][$j] = $ressource;
                         array_push($h5pRessources, $ressource);
                         //$datas[$i]["zones"]["h5p"][$j] = $this->get('RessourceH5PService')->getRessourceContent($ressource);
-                    }else{
+                    } else {
                         // on ne trouve pas le type de la ressource
                         $datas[$i]["zones"]["type"][$j] = "unknown";
                         $datas[$i]["zones"]["content"][$j] = $zone->getDescription();
                     }
-                }else{
+                } else {
                     // Aucune ressource associée
                     $datas[$i]["zones"]["type"][$j] = "free";
                     $datas[$i]["zones"]["content"][$j] = $zone->getDescription();
@@ -313,16 +313,15 @@ class CoursController extends Controller
 
         $cGroupesEntity = $this->getDoctrine()->getRepository('AppBundle:GroupeLiens')->findBy(array('cours' => $cours));
         $cGroupes = array();
-        for($i=0; $i<count($cGroupesEntity); $i++){
-            $repositoryGaL = $repoAssocGroupeLiens->findBy(array('groupe' => $cGroupesEntity[$i]))
-            ;
+        for ($i = 0; $i < count($cGroupesEntity); $i++) {
+            $repositoryGaL = $repoAssocGroupeLiens->findBy(array('groupe' => $cGroupesEntity[$i]));
             $cGroupes[$i]['groupe'] = $cGroupesEntity[$i];
             $cGroupes[$i]['content'] = $repositoryGaL;
         }
 
         $cDevoirsEntity = $repoDevoir->findBy(array('cours' => $cours));
         $cDevoirs = array();
-        for($i=0; $i<count($cDevoirsEntity); $i++){
+        for ($i = 0; $i < count($cDevoirsEntity); $i++) {
             $repositorySujet = $repoDevoirSujet->findBy(array('devoir' => $cDevoirsEntity[$i]));
             $repositoryCorrigeType = $repoDevoirCorrigeType->findBy(array('devoir' => $cDevoirsEntity[$i]));
 
@@ -334,21 +333,21 @@ class CoursController extends Controller
         //Comme un accès aux documents du cours existe, on doit afficher l'info-bulle si certains n'ont pas été visités
         $docs = [];
         $nbNewDocs = 0;
-        if($user){
+        if ($user) {
             $docs = $this->getDoctrine()->getRepository('AppBundle:Document')->findByCours($cours, $user);
             $documents = array_merge($docs[0], $docs[1]);
 
             $repoStatsUsersDocs = $this->getDoctrine()->getRepository('AppBundle:StatsUsersDocs');
-            foreach($documents as $doc){
+            foreach ($documents as $doc) {
                 $stat = $repoStatsUsersDocs->findBy(array('user' => $user, 'document' => $doc));
-                if(!$stat){
+                if (!$stat) {
                     $nbNewDocs++;
                 }
             }
         }
 
         if ($h5p['H5PContent'] == true) {
-            if($mode == "admin"){
+            if ($mode == "admin") {
                 return $this->render('cours/oneAdmin.html.twig',
                     [
                         'cours' => $cours,
@@ -377,7 +376,7 @@ class CoursController extends Controller
                         'h5pIntegration' => $h5p['h5pIntegration'],
                         'systemResas' => $systemResas
                     ]);
-            }elseif($mode == "ens") {
+            } elseif ($mode == "ens") {
                 return $this->render('cours/one.html.twig', [
                     'cours' => $cours,
                     'zonesSections' => $datas,
@@ -394,7 +393,7 @@ class CoursController extends Controller
                     'h5pIntegration' => $h5p['h5pIntegration'],
                     'systemResas' => $systemResas
                 ]);
-            }else{
+            } else {
                 return $this->render('cours/one.html.twig', [
                     'cours' => $cours,
                     'zonesSections' => $datas,
@@ -412,8 +411,8 @@ class CoursController extends Controller
                     'systemResas' => $systemResas
                 ]);
             }
-        }else{
-            if($mode == "admin"){
+        } else {
+            if ($mode == "admin") {
                 return $this->render('cours/oneAdmin.html.twig',
                     [
                         'cours' => $cours,
@@ -440,7 +439,7 @@ class CoursController extends Controller
                         'h5piscontent' => false,
                         'systemResas' => $systemResas
                     ]);
-            }elseif($mode == "ens") {
+            } elseif ($mode == "ens") {
                 return $this->render('cours/one.html.twig', [
                     'cours' => $cours,
                     'zonesSections' => $datas,
@@ -455,7 +454,7 @@ class CoursController extends Controller
                     'h5piscontent' => false,
                     'systemResas' => $systemResas
                 ]);
-            }else{
+            } else {
                 return $this->render('cours/one.html.twig', [
                     'cours' => $cours,
                     'zonesSections' => $datas,
@@ -478,7 +477,7 @@ class CoursController extends Controller
     /**
      * @Route("/dupliqCours/{id}", name="dupliqCours")
      */
-    public function dupliqCoursAction (Request $request, $id)
+    public function dupliqCoursAction(Request $request, $id)
     {
         $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
         $repositoryC = $this->getDoctrine()->getRepository('AppBundle:Cours');
@@ -531,8 +530,7 @@ class CoursController extends Controller
                 'label' => 'Générer le nouveau cours',
                 'attr' => array('class' => 'btn btn-primary')
             ))
-            ->getForm()
-        ;
+            ->getForm();
 
 
         $form->handleRequest($request);
@@ -547,9 +545,9 @@ class CoursController extends Controller
             $cours->setDiscipline($form['discipline']->getData());
             $cours->setEnabled($form['visible']->getData());
 
-            if($form['imageFile']->getData()){
+            if ($form['imageFile']->getData()) {
                 $cours->setImageFile($form['imageFile']->getData());
-            }else{
+            } else {
                 $cours->setImageFilename($form['imageOrig']->getData());
             }
             $cours->upload();
@@ -557,7 +555,7 @@ class CoursController extends Controller
             $em->persist($cours);
 
             /* @var $sectionCopy Section */
-            foreach ($form['sections']->getData() as $sectionCopy){
+            foreach ($form['sections']->getData() as $sectionCopy) {
                 $section = new Section();
                 $section->setNom($sectionCopy->getNom());
                 $section->setPosition($sectionCopy->getPosition());
@@ -579,7 +577,7 @@ class CoursController extends Controller
      * @Route("/getNbZoneRess_ajax", name="getNbZoneRess_ajax")
      * @Method({"GET", "POST"})
      */
-    public function getNbZoneRessAjaxAction (Request $request)
+    public function getNbZoneRessAjaxAction(Request $request)
     {
         if ($request->isXMLHttpRequest()) {
             $em = $this->getDoctrine()->getEntityManager();
@@ -588,7 +586,7 @@ class CoursController extends Controller
             $ressource = $em->getRepository('AppBundle:Ressource')->findOneBy(array('id' => $id));
             $zones = $em->getRepository('AppBundle:ZoneRessource')->findBy(array('ressource' => $ressource));
 
-            return new JsonResponse(array('action' =>'get nb zone avec cette ressource', 'nb' => count($zones)));
+            return new JsonResponse(array('action' => 'get nb zone avec cette ressource', 'nb' => count($zones)));
         }
 
         return new JsonResponse('This is not ajax!', 400);
@@ -598,7 +596,7 @@ class CoursController extends Controller
      * @Route("/supprItem_ajax", name="supprItem_ajax")
      * @Method({"GET", "POST"})
      */
-    public function supprItemAjaxAction (Request $request)
+    public function supprItemAjaxAction(Request $request)
     {
         if ($request->isXMLHttpRequest()) {
             $em = $this->getDoctrine()->getEntityManager();
@@ -606,50 +604,51 @@ class CoursController extends Controller
             $type = $request->request->get('typeItem');
 
             $entityRessourceName = "";
-            if($type == "groupe"){
+            if ($type == "groupe") {
                 $entityRessourceName = "GroupeLiens";
-            }elseif($type == "devoir"){
+            } elseif ($type == "devoir") {
                 $entityRessourceName = "Devoir";
-            }elseif($type == "lien"){
+            } elseif ($type == "lien") {
                 $entityRessourceName = "Lien";
-            }elseif($type == "libre"){
+            } elseif ($type == "libre") {
                 $entityRessourceName = "RessourceLibre";
-            }elseif($type == "forum"){
+            } elseif ($type == "forum") {
                 $entityRessourceName = "Forum";
-            }elseif($type == "chat"){
+            } elseif ($type == "chat") {
                 $entityRessourceName = "Chat";
-            }elseif($type == "podcast"){
+            } elseif ($type == "podcast") {
                 $entityRessourceName = "Podcast";
-            }elseif($type == "h5p"){
+            } elseif ($type == "h5p") {
                 $entityRessourceName = "RessourceH5P";
             }
 
-            if($entityRessourceName == ""){
+            if ($entityRessourceName == "") {
                 return new JsonResponse(array(
                         'error' => true,
                         'entityRessourceName' => "non reconnu")
                 );
-            }else {
+            } else {
                 $ressource = $em->getRepository('AppBundle:' . $entityRessourceName)->findOneBy(array('id' => $id));
 
-                if($type == "podcast"){
+                if ($type == "podcast") {
                     $folderUpload = $this->getParameter('upload_directory');
                     $uploadSteps = $this->getParameter('upload_steps');
-                    $url = $uploadSteps.$folderUpload.$ressource->getCours()->getId().'/podcasts/'.$ressource->getId();
+                    $url = $uploadSteps . $folderUpload . $ressource->getCours()->getId() . '/podcasts/' . $ressource->getId();
                     $this->deleteDir($url);
                 }
 
                 $em->remove($ressource);
                 $em->flush();
-                return new JsonResponse(array('action' =>'delete Zone', 'id' => $ressource->getId()));
+                return new JsonResponse(array('action' => 'delete Zone', 'id' => $ressource->getId()));
             }
         }
 
         return new JsonResponse('This is not ajax!', 400);
     }
 
-    public function deleteDir($dirPath) {
-        if (! is_dir($dirPath)) {
+    public function deleteDir($dirPath)
+    {
+        if (!is_dir($dirPath)) {
             throw new InvalidArgumentException("$dirPath must be a directory");
         }
         if (substr($dirPath, strlen($dirPath) - 1, 1) != '/') {
@@ -670,19 +669,19 @@ class CoursController extends Controller
      * @Route("/checkDirForUploadFile_ajax", name="checkDirForUploadFile_ajax")
      * @Method({"GET", "POST"})
      */
-    public function checkDirForUploadFileAjax (Request $request)
+    public function checkDirForUploadFileAjax(Request $request)
     {
         if ($request->isXMLHttpRequest()) {
             $url = $request->request->get('url');
 
-            if(!is_dir($url)) {
+            if (!is_dir($url)) {
                 if (!mkdir($url, 0777, true)) {
-                    return new JsonResponse(array('error' =>'Echec de la création du dossier', 'url' => $url));
-                }else{
-                    return new JsonResponse(array('action' =>'Dossier créé', 'url' => $url));
+                    return new JsonResponse(array('error' => 'Echec de la création du dossier', 'url' => $url));
+                } else {
+                    return new JsonResponse(array('action' => 'Dossier créé', 'url' => $url));
                 }
-            }else{
-                return new JsonResponse(array('action' =>'Dossier existe déjà', 'url' => $url));
+            } else {
+                return new JsonResponse(array('action' => 'Dossier existe déjà', 'url' => $url));
             }
 
         }
@@ -693,7 +692,7 @@ class CoursController extends Controller
     /**
      * @Route("/changeActivationDocsCours_ajax", name="changeActivationDocsCours_ajax")
      */
-    public function changeActivationDocsCoursAjaxAction (Request $request)
+    public function changeActivationDocsCoursAjaxAction(Request $request)
     {
         if ($request->isXMLHttpRequest()) {
             $em = $this->getDoctrine()->getEntityManager();
@@ -707,7 +706,7 @@ class CoursController extends Controller
             $em->persist($cours);
             $em->flush();
 
-            return new JsonResponse(array('action' =>'change Visibility of documents', 'id' => $cours->getId(), 'isVisible' => $cours->getDocsActivated()));
+            return new JsonResponse(array('action' => 'change Visibility of documents', 'id' => $cours->getId(), 'isVisible' => $cours->getDocsActivated()));
         }
 
         return new JsonResponse('This is not ajax!', 400);
@@ -716,28 +715,33 @@ class CoursController extends Controller
     /**
      * @Route("/addUserStatRessource_ajax", name="addUserStatRessource_ajax")
      */
-    public function addUserStatRessourceAjaxAction (Request $request)
+    public function addUserStatRessourceAjaxAction(Request $request)
     {
         if ($request->isXMLHttpRequest()) {
             $em = $this->getDoctrine()->getEntityManager();
 
-            date_default_timezone_set('Europe/Paris');
-
-            $ressId = $request->request->get('ressId');
-            $ressource = $em->getRepository('AppBundle:Ressource')->findOneBy(array('id' => $ressId));
             $user = $this->getUser();
+            if (!$user->hasRole('ROLE_SUPER_ADMIN')) {
 
-            $stat = new UserStatRessource();
+                date_default_timezone_set('Europe/Paris');
 
-            $stat->setDateAcces(new DateTime());
-            $stat->setRessource($ressource);
-            $stat->setUser($user);
+                $ressId = $request->request->get('ressId');
+                $ressource = $em->getRepository('AppBundle:Ressource')->findOneBy(array('id' => $ressId));
 
-            $em->persist($stat);
+                $stat = new UserStatRessource();
 
-            $em->flush();
+                $stat->setDateAcces(new DateTime());
+                $stat->setRessource($ressource);
+                $stat->setUser($user);
 
-            return new JsonResponse(array('action' =>'add a user Stat for a ressource', '$ressId' => $ressource->getId(), 'user' => $user->getId()));
+                $em->persist($stat);
+
+                $em->flush();
+
+                return new JsonResponse(array('action' => 'add a user Stat for a ressource', '$ressId' => $ressource->getId(), 'user' => $user->getId()));
+            } else {
+                return new JsonResponse(array('action' => 'Admin : on ne fait rien'));
+            }
         }
 
         return new JsonResponse('This is not ajax!', 400);
@@ -746,37 +750,42 @@ class CoursController extends Controller
     /**
      * @Route("/addUserStatCours_ajax", name="addUserStatCours_ajax")
      */
-    public function addUserStatCoursAjaxAction (Request $request)
+    public function addUserStatCoursAjaxAction(Request $request)
     {
         if ($request->isXMLHttpRequest()) {
             $em = $this->getDoctrine()->getEntityManager();
 
-            date_default_timezone_set('Europe/Paris');
-
-            $coursId = $request->request->get('ressId');
-            $cours = $em->getRepository('AppBundle:Cours')->findOneBy(array('id' => $coursId));
             $user = $this->getUser();
+            if (!$user->hasRole('ROLE_SUPER_ADMIN')) {
 
-            $stat = new UserStatCours();
+                date_default_timezone_set('Europe/Paris');
 
-            $stat->setDateAcces(new DateTime());
-            $stat->setCours($cours);
-            $stat->setUser($user);
+                $coursId = $request->request->get('ressId');
+                $cours = $em->getRepository('AppBundle:Cours')->findOneBy(array('id' => $coursId));
 
-            $em->persist($stat);
+                $stat = new UserStatCours();
 
-            $em->flush();
+                $stat->setDateAcces(new DateTime());
+                $stat->setCours($cours);
+                $stat->setUser($user);
 
-            return new JsonResponse(array('action' =>'add a user Stat for a ressource', '$coursId' => $cours->getId(), 'user' => $user->getId()));
+                $em->persist($stat);
+
+                $em->flush();
+
+                return new JsonResponse(array('action' => 'add a user Stat for a ressource', '$coursId' => $cours->getId(), 'user' => $user->getId()));
+
+            } else {
+                return new JsonResponse(array('action' => 'Admin : on ne fait rien'));
+            }
         }
-
         return new JsonResponse('This is not ajax!', 400);
     }
 
     /**
      * @Route("/updateIntituleSharedDocsCours_ajax", name="updateIntituleSharedDocsCours_ajax")
      */
-    public function updateIntituleSharedDocsCoursAjaxAction (Request $request)
+    public function updateIntituleSharedDocsCoursAjaxAction(Request $request)
     {
         if ($request->isXMLHttpRequest()) {
             $em = $this->getDoctrine()->getEntityManager();
@@ -792,7 +801,7 @@ class CoursController extends Controller
 
             $em->flush();
 
-            return new JsonResponse(array('action' =>'update IntituleSharedDocs', '$coursId' => $cours->getId()));
+            return new JsonResponse(array('action' => 'update IntituleSharedDocs', '$coursId' => $cours->getId()));
         }
 
         return new JsonResponse('This is not ajax!', 400);
