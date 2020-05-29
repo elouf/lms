@@ -104,6 +104,8 @@ class StatistiquesController extends Controller
      */
     public function frequentationAction(Request $request)
     {
+        ini_set('memory_limit','-1');
+
         $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
 
         $em = $this->getDoctrine()->getEntityManager();
