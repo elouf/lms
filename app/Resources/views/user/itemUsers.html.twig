@@ -176,7 +176,10 @@
                     widgetOptions: {
                         output_delivery: 'd',
                         output_saveFileName: 'mytable.csv',
-                        zebra: ["even", "odd"]
+                        zebra: ["even", "odd"],
+                        filter_excludeFilter: {
+                            '*': 'range'
+                        }
                     }
                 })
                 .tablesorterPager({
@@ -191,7 +194,11 @@
                     widgets: ['zebra', 'filter', 'output'],
                     widgetOptions: {
                         output_delivery: 'd',
-                        output_saveFileName: 'mytable.csv'
+                        output_saveFileName: 'mytable.csv',
+                        filter_excludeFilter: {
+                            // zero-based column index
+                            '*': 'range'
+                        }
                     }
                 })
                 .tablesorterPager({
@@ -206,7 +213,11 @@
                     widgets: ['zebra', 'filter', 'output'],
                     widgetOptions: {
                         output_delivery: 'd',
-                        output_saveFileName: 'mytable.csv'
+                        output_saveFileName: 'mytable.csv',
+                        filter_excludeFilter: {
+                            // zero-based column index
+                            '*': 'range'
+                        }
                     }
                 })
                 .tablesorterPager({
@@ -220,7 +231,11 @@
                     widgets: ['zebra', 'filter', 'output'],
                     widgetOptions: {
                         output_delivery: 'd',
-                        output_saveFileName: 'mytable.csv'
+                        output_saveFileName: 'mytable.csv',
+                        filter_excludeFilter: {
+                            // zero-based column index
+                            '*': 'range'
+                        }
                     }
                 })
                 .tablesorterPager({

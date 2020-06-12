@@ -44,7 +44,10 @@
                         output_delivery: 'd',
                         output_saveFileName: 'mytable.csv',
                         filter_reset: 'button.reset',
-                        filter_formatter: {}
+                        filter_formatter: {},
+                        filter_excludeFilter: {
+                            '*': 'range'
+                        }
                     }
                 })
                 .tablesorterPager({

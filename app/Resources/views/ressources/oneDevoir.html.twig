@@ -38,7 +38,10 @@
                     widgets: ['zebra', 'filter', 'output'],
                     widgetOptions: {
                         output_delivery: 'd',
-                        output_saveFileName: 'mytable.csv'
+                        output_saveFileName: 'mytable.csv',
+                        filter_excludeFilter: {
+                            '*': 'range'
+                        }
                     }
                 })
                 .tablesorterPager({
