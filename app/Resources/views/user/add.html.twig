@@ -262,7 +262,7 @@
                 $('#form_matiereProfStag').parent().show();
                 $('#form_concours').parent().hide();
                 $('.alertTypeUserValidation, .alertFormateurEngagement').hide();
-                $('#form_validInscriptionFormateurEngagement input').prop('checked', false);
+                $('#form_validInscriptionFormateurEngagement [value=1]').prop('checked', true);
             }
 
             $(".etiq").draggable({revert: "valid"});
