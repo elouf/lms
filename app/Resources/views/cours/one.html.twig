@@ -930,19 +930,35 @@
                                                                     {% if val.zones.groupe[keyR].isVertical %}
                                                                         <div class="verticalGrLienElem">
                                                                     {% endif %}
-                                                                    <a class="btnLienGroupeRessource btn btn-xs {{ btnUserStatRessource }}"
-                                                                       style="background-color: {{ valG.categorieLien.couleur }};"
-                                                                       target="_blank"
-                                                                       href="{{ valG.lien.url }}"
-                                                                       data-statRessId="{{ val.zones.groupe[keyR].id }}"
-                                                                    >
-                                                                        {% if valG.lien.typeLien.faIcon is defined %}
-                                                                            <i class="fa {{ valG.lien.typeLien.faIcon }}"></i>
-                                                                        {% else %}
-                                                                            <i class="fa fa-external-link"></i>
-                                                                        {% endif %}
-                                                                        {{ valG.nom }}
-                                                                    </a>
+
+                                                                    {% if '.mp4' in valG.lien.url %}
+                                                                        <video style="max-width: 600px;" controls
+                                                                               preload="metadata"
+                                                                               poster="https://www.studit.fr/poster.png">
+                                                                            <source src="{{ valG.lien.url }}" type="video/mp4">
+                                                                            Votre navigateur ne supporte pas la balise "video".
+                                                                        </video>
+                                                                    {% elseif '.mp3' in valG.lien.url %}
+                                                                        <audio style="max-width: 600px;" controls>
+                                                                            <source src="{{ valG.lien.url }}" type="audio/mpeg">
+                                                                            Votre navigateur ne supporte pas la balise "audio".
+                                                                        </audio>
+                                                                    {% else %}
+                                                                        <a class="btnLienGroupeRessource btn btn-xs {{ btnUserStatRessource }}"
+                                                                           style="background-color: {{ valG.categorieLien.couleur }};"
+                                                                           target="_blank"
+                                                                           href="{{ valG.lien.url }}"
+                                                                           data-statRessId="{{ val.zones.groupe[keyR].id }}"
+                                                                        >
+                                                                            {% if valG.lien.typeLien.faIcon is defined %}
+                                                                                <i class="fa {{ valG.lien.typeLien.faIcon }}"></i>
+                                                                            {% else %}
+                                                                                <i class="fa fa-external-link"></i>
+                                                                            {% endif %}
+                                                                            {{ valG.nom }}
+                                                                        </a>
+                                                                    {% endif %}
+
                                                                     {% if val.zones.groupe[keyR].isVertical %}
                                                                         </div>
                                                                     {% endif %}
