@@ -31,6 +31,8 @@ parameters:
 #    grouped_mails_limit: 2
 
 services:
+    sonata.admin.exporter:
+        class: AppBundle\Exporter\Exporter
     calendarServ:
         class: AppBundle\Service\CalendarServ
         arguments: ['@doctrine.orm.entity_manager']

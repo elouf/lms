@@ -3,12 +3,40 @@ namespace AppBundle\Admin;
 
 use AppBundle\Entity\User;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
+use Sonata\AdminBundle\Admin\AdminInterface;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 
 class UserAdmin extends AbstractAdmin
 {
+    public function getExportFormats()
+    {
+        return ['xls'];
+    }
+    public function getExportFields()
+    {
+        return array(
+            'id' => 'id',
+            'Email' => 'email',
+            'Nom' => 'lastname',
+            'Prénom' => 'firstname',
+            'Actif' => 'enabled',
+            'Statut' => 'statut',
+            'Institut' => 'institut.nom',
+            'Date de création' => 'createdAt',
+            'Dernière connexion' => 'lastLogin',
+            'Téléphone' => 'phone',
+        );
+    }
+
+    public function getDataSourceIterator()
+    {
+        $datasourceit = parent::getDataSourceIterator();
+        $datasourceit->setDateTimeFormat('Y.m.d'); //change this to suit your needs
+        return $datasourceit;
+    }
+
     // EDIT and CREATE
     protected function configureFormFields(FormMapper $formMapper)
     {
