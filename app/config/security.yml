@@ -27,21 +27,21 @@ security:
             anonymous:  true
 
     access_control:
-        - { path: ^/login, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/myCourses, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/cours/, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/emailingSendAdminMail_ajax, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/inscription, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/registration, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/activation, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/faq, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/infosPratiques, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/concours, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/cookies, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/metierEnseignant, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/afadec, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/logout, role: ROLE_USER }
-        - { path: ^/admin/, role: ROLE_SUPER_ADMIN }
-        - { path: ^/, role: ROLE_USER }
+        - { path: ^/login, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        - { path: ^/myCourses, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        - { path: ^/cours/, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        - { path: ^/emailingSendAdminMail_ajax, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        - { path: ^/inscription, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        - { path: ^/registration, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        - { path: ^/activation, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        - { path: ^/faq, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        - { path: ^/infosPratiques, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        - { path: ^/concours, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        - { path: ^/cookies, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        - { path: ^/metierEnseignant, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        - { path: ^/afadec, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        - { path: ^/logout, role: ROLE_USER, requires_channel: https }
+        - { path: ^/admin/, role: ROLE_SUPER_ADMIN, requires_channel: https }
+        - { path: ^/, role: ROLE_USER, requires_channel: https }
