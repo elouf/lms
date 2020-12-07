@@ -186,7 +186,7 @@ class DefaultController extends Controller
 
                         $this->get('mailer')->send($message);
 
-                    } else if($utilisateur > 1) {
+                    } else if(count($utilisateur) > 1) {
                         $statut = 'doublon';
                     } else {
                         $statut = 'inexistant';
