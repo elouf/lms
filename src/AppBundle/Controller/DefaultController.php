@@ -148,15 +148,17 @@ class DefaultController extends Controller
                     }
 
                     //Statut (existe ou non dans la bdd)
-                    $statut=false;
+                    $statut = 'inexistant';
                     $id=null;
                     $mail=null;
 
                     //Si l'utilisateur existe
-                    if($utilisateur = $repository->findOneBy(['firstname' => $data[0], 'lastname' => $data[1]])) {
+                    $utilisateur = $repository->findBy(['firstname' => $data[0], 'lastname' => $data[1]]);
+
+                    if(count($utilisateur) == 1) {
 
                         //On récupère ses infos
-                        $statut = true;
+                        $statut = 'desactive';
                         $id = $utilisateur->getId();
                         $mail = $utilisateur->getEmail();
 
@@ -168,7 +170,7 @@ class DefaultController extends Controller
                         $message = \Swift_Message::newInstance()
                             ->setSubject('[AFADEC] Désactivation de votre compte')
                             ->setFrom('noreply@afadec.fr')
-                            ->setTo('enzo.cailleton2@gmail.com')
+                            ->setTo($utilisateur->getEmail())
                             ->setBody(
                                 $this->renderView(
                                     'user/desactivationCompteMail.html.twig',
@@ -182,8 +184,10 @@ class DefaultController extends Controller
 
                         $this->get('mailer')->send($message);
 
+                    } else if($utilisateur > 1) {
+                        $statut = 'doublon';
                     } else {
-                        $statue = false;
+                        $statut = 'inexistant';
                     }
 
                     array_push($user, $statut, $id, $mail);

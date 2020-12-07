@@ -69,9 +69,11 @@
                             <p>{{ user[0] }} {{ user[1] }}</p>
                         </div>
                         <div>
-                            {% if user[2] %}
+                            {% if user[2] == 'desactive' %}
                                 <p class="green">Utilisateur désactivé</p>
-                            {% else %}
+                            {% elseif user[2] == 'doublon' %}
+                                <p class="red">Doublon</p>
+                            {% elseif user[2] == 'inexistant' %}
                                 <p class="red">Utilisateur inexistant</p>
                             {% endif %}
                         </div>
