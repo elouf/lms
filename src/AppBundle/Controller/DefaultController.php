@@ -155,6 +155,8 @@ class DefaultController extends Controller
                     //Si l'utilisateur existe
                     $utilisateur = $repository->findBy(['firstname' => $data[0], 'lastname' => $data[1]]);
 
+                    dump($utilisateur);
+
                     if(count($utilisateur) == 1) {
 
                         //On récupère ses infos
