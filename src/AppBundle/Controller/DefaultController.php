@@ -9,6 +9,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Forms;
 
 class DefaultController extends Controller
 {
@@ -104,6 +106,116 @@ class DefaultController extends Controller
         ]);
     }
 
+    /**
+     * @Route("/desactivationGroupe", name="desactivationGroupe") methods={"GET", "POST"}
+     */
+    public function pageDesactivation(Request $request)
+    {
+
+        //Création du formulaire d'envoi
+        $form = $this->createFormBuilder()
+            ->setMethod('POST')
+            ->add('fichier', FileType::class, ['label' => 'Ajouter mon fichier'])
+            ->getForm()
+            ;
+
+        $users = [];
+
+        //Le formulaire a été envoyé
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+
+            //On récupère les infos du fichier
+            $fichier = $form->get('fichier')->getData();
+
+            //On récupère les users dans la bdd
+            $entityManager = $this->getDoctrine()->getManager();
+            $repository = $this->getDoctrine()->getRepository(User::class);
+
+            //On lit le fichier CSV
+            if (($handle = fopen($fichier, "r")) !== FALSE) {
+                //Pour chaque user du fichier
+                while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+
+                    //Ligne du tableau
+                    $user = [];
+
+                    //Prénom et nom
+                    $num = count($data);
+                    for ($c=0; $c < $num; $c++) {
+                        array_push($user, $data[$c]);
+                    }
+
+                    //Statut (existe ou non dans la bdd)
+                    $statut=false;
+                    $id=null;
+                    $mail=null;
+
+                    //Si l'utilisateur existe
+                    if($utilisateur = $repository->findOneBy(['firstname' => $data[0], 'lastname' => $data[1]])) {
+
+                        //On récupère ses infos
+                        $statut = true;
+                        $id = $utilisateur->getId();
+                        $mail = $utilisateur->getEmail();
+
+                        //On désactive son compte
+                        $utilisateur->setEnabled(0);
+                        $entityManager->flush();
+
+                        //On lui envoi un mail
+                        $message = \Swift_Message::newInstance()
+                            ->setSubject('[AFADEC] Désactivation de votre compte')
+                            ->setFrom('noreply@afadec.fr')
+                            ->setTo('enzo.cailleton2@gmail.com')
+                            ->setBody(
+                                $this->renderView(
+                                    'user/desactivationCompteMail.html.twig',
+                                    array(
+                                        'user' => $utilisateur
+                                    )
+                                ),
+                                'text/html'
+                            )
+                        ;
+
+                        $this->get('mailer')->send($message);
+
+                    } else {
+                        $statue = false;
+                    }
+
+                    array_push($user, $statut, $id, $mail);
+
+                    //Ajout de la ligne au tableau
+                    array_push($users, $user);
+
+                }
+                fclose($handle);
+            }
+
+            dump($users);
+
+        }
+
+        return $this->render('pagesFixes/desactivationGroupe.html.twig', [
+            'base_dir' => realpath($this->getParameter('kernel.root_dir') . '/..'),
+            'form' => $form->createView(),
+            'users' => $users
+        ]);
+    }
+
+    /**
+     * @Route("/traitementCSV", name="traitementCSV", methods={"GET"})
+     */
+    public function traitementCSV(Request $request, $users)
+    {
+        return $this->render('pagesFixes/traitementCSV.html.twig', [
+            'base_dir' => realpath($this->getParameter('kernel.root_dir') . '/..'),
+            'users' => $arrayMembre
+        ]);
+    }
 
     /**
      * @Route("/inscrGroupeResa_ajax", name="inscrGroupeResa_ajax")

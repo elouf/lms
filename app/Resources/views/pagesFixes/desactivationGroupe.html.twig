@@ -1,0 +1,94 @@
+{% extends 'base.html.twig' %}
+
+{% block pageHeader %}
+    <div class="page-header">
+        <div class="container">
+            <h2 class="color3">L’AFADEC</h2>
+            <ul class="breadcrumb">
+                <li class="color3">Ajoutez un fichier CSV</li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+
+{% block main %}
+
+    <style>
+        .liste-users {
+            max-width: 1000px;
+        }
+        .liste-users .row-user > div {
+            width: 25%;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        .row-user {
+            display: flex;
+            align-items: center;
+        }
+        .row-user.head {
+            font-weight: 800;
+        }
+        .row-user:nth-child(odd) {
+            background-color: #eee;
+        }
+        .row-user p {
+            padding: 3px 7px;
+            border-radius: 7px;
+        }
+        .row-user p.green {
+            background-color: #84d992;
+        }
+        .row-user p.red {
+            background-color: #ff8a82;
+        }
+    </style>
+
+    <div class="container mt-100 mb-40">
+
+        <h4>Suppression groupée d'utilisateurs</h4>
+
+        {% if users is empty %}
+            <p>Téléverser un fichier CSV contenant une liste de membres à supprimer</p>
+            {{ form_start(form) }}
+                {{ form_widget(form) }}
+                <input type="submit" value="Ajouter le fichier" />
+            {{ form_end(form) }}
+        {% else %}
+            <div class="liste-users">
+                <div class="row-user head">
+                    <div>Utilisateur</div>
+                    <div>Statut</div>
+                    <div>Identifiant</div>
+                    <div>Adresse mail</div>
+                </div>
+                <div>
+                {% for user in users %}
+                    <div class="row-user">
+                        <div>
+                            <p>{{ user[0] }} {{ user[1] }}</p>
+                        </div>
+                        <div>
+                            {% if user[2] %}
+                                <p class="green">Utilisateur désactivé</p>
+                            {% else %}
+                                <p class="red">Utilisateur inexistant</p>
+                            {% endif %}
+                        </div>
+                        {% if user[3] is defined %}
+                            <div><p>{{ user[3] }}</p></div>
+                        {% endif %}
+                        {% if user[4] is defined %}
+                            <div>{{ user[4] }}</div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                </div>
+            </div>
+
+            <a href="{{ path('desactivationGroupe') }}">Retour à la page précédente</a>
+
+        {% endif %}
+
+    </div>
+{% endblock %}
