@@ -16,6 +16,7 @@
     <style>
         .liste-users {
             max-width: 1000px;
+            margin-top: 50px;
         }
         .liste-users .row-user > div {
             width: 25%;
@@ -42,6 +43,15 @@
         .row-user p.red {
             background-color: #ff8a82;
         }
+
+        .bouton {
+            margin-top: 25px;
+            padding: 7px 25px;
+            border: 1px solid #333;
+            border-radius: 35px;
+            display: inline-block;
+        }
+
     </style>
 
     <div class="container mt-100 mb-40">
@@ -52,7 +62,7 @@
             <p>Téléverser un fichier CSV contenant une liste de membres à supprimer</p>
             {{ form_start(form) }}
                 {{ form_widget(form) }}
-                <input type="submit" value="Ajouter le fichier" />
+                <input class="bouton" type="submit" value="Désactiver les membres" />
             {{ form_end(form) }}
         {% else %}
             <div class="liste-users">
@@ -88,7 +98,7 @@
                 </div>
             </div>
 
-            <a href="{{ path('desactivationGroupe') }}">Retour à la page précédente</a>
+            <a class="bouton bouton-retour" href="{{ path('desactivationGroupe') }}">Retour à la page précédente</a>
 
         {% endif %}
 
