@@ -161,23 +161,23 @@ class DefaultController extends Controller
 
                         //On récupère ses infos
                         $statut = 'desactive';
-                        $id = $utilisateur->getId();
-                        $mail = $utilisateur->getEmail();
+                        $id = $utilisateur[0]->getId();
+                        $mail = $utilisateur[0]->getEmail();
 
                         //On désactive son compte
-                        $utilisateur->setEnabled(0);
+                        $utilisateur[0]->setEnabled(0);
                         $entityManager->flush();
 
                         //On lui envoi un mail
                         $message = \Swift_Message::newInstance()
                             ->setSubject('[AFADEC] Désactivation de votre compte')
                             ->setFrom('noreply@afadec.fr')
-                            ->setTo($utilisateur->getEmail())
+                            ->setTo($utilisateur[0]->getEmail())
                             ->setBody(
                                 $this->renderView(
                                     'user/desactivationCompteMail.html.twig',
                                     array(
-                                        'user' => $utilisateur
+                                        'user' => $utilisateur[0]
                                     )
                                 ),
                                 'text/html'
