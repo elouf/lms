@@ -1,4 +1,4 @@
-{#{% if hasReferentMinRights %}#}
+{% if hasReferentMinRights %}
 <div class="menuDiscCourses" style="display: block;">
     <div class="btnMenuDiscCourses">
         <i class="fa fa-bars"></i>
@@ -11,7 +11,7 @@
         {% endfor %}
     </div>
 </div>
-{#{% endif %}#}
+{% endif %}
 <div class="menuGoBackDiscs" style="display: block;">
     <a href="{{ path('myCourses') }}">
         <div class="btnGoBack">
