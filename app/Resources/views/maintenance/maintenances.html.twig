@@ -1,0 +1,8 @@
+{% extends 'base.html.twig' %}
+{% block main %}
+    <script>
+        jQuery(document).ready(function () {
+            window.location.href = '{{ app.request.getSchemeAndHttpHost() }}{{ fileDownload }}';
+        });
+    </script>
+{% endblock %}
