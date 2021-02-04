@@ -24,7 +24,7 @@ class ZoneRessource extends OrderedItem
 
     /**
      * @var Section
-     *
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @ORM\ManyToOne(targetEntity="Section")
      */
     private $section;
