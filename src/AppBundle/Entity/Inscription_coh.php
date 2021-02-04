@@ -18,7 +18,7 @@ class Inscription_coh extends Inscription
      * @var Cohorte
      *
      * @ORM\ManyToOne(targetEntity="Cohorte")
-     * @ORM\JoinColumn(name="cohorte_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="cohorte_id", referencedColumnName="id", onDelete="CASCADE")
      * @Serializer\Groups({"oneUser"})
      */
     protected $cohorte;

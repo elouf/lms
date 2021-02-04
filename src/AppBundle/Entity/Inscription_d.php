@@ -15,7 +15,7 @@ class Inscription_d extends Inscription
 
     /**
      * @var Discipline
-     *
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @ORM\ManyToOne(targetEntity="Discipline")
      */
     private $discipline;
