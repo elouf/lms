@@ -14,7 +14,7 @@ class Evt_discipline extends Evenement
 {
     /**
      * @var Discipline
-     *
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @ORM\ManyToOne(targetEntity="Discipline")
      */
     private $discipline;
