@@ -134,6 +134,11 @@ services:
         arguments: [~, AppBundle\Entity\Forum, ~]
         tags:
             - { name: sonata.admin,manager_type: orm, label: Forums, group: "Ressources" }
+    admin.devoir:
+        class: AppBundle\Admin\DevoirAdmin
+        arguments: [~, AppBundle\Entity\Devoir, ~]
+        tags:
+            - { name: sonata.admin,manager_type: orm, label: Devoirs, group: "Ressources" }
     admin.sujet:
         class: AppBundle\Admin\ForumSujetAdmin
         arguments: [~, AppBundle\Entity\ForumSujet, ~]
