@@ -24,7 +24,7 @@ class AssocGroupeLiens extends OrderedItem
 
     /**
      * @ORM\ManyToOne(targetEntity="Lien", inversedBy="assocGroupes")
-     * @ORM\JoinColumn(name="lien_id", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="lien_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $lien;
 
