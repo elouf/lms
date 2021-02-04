@@ -30,7 +30,7 @@ class AssocGroupeLiens extends OrderedItem
 
     /**
      * @ORM\ManyToOne(targetEntity="GroupeLiens", inversedBy="assocLiens")
-     * @ORM\JoinColumn(name="groupe_id", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="groupe_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $groupe;
 
