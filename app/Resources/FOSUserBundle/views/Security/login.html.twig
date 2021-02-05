@@ -7,7 +7,7 @@
             <img src="{{ asset('educomp/images/applynow.png') }}" class="img-responsive center-block hidden-xs" alt="">
             <div class="apply-info">
                 {% set datetimeStart = '2017-07-01' %}
-                {% set datetimeMaintenance = '2021-02-07' %}
+                {% set datetimeMaintenance = '2021-02-01' %}
                 {% if ( "now"|date('Y-m-d') >= datetimeStart|date('Y-m-d') or
                     app.environment=='dev' ) and
                     "now"|date('Y-m-d') >= datetimeMaintenance|date('Y-m-d')

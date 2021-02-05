@@ -67,6 +67,7 @@ class MaintenanceController extends Controller
             }
         }
         fclose($txt);
+        die();
         return $this->render("maintenance/maintenances.html.twig", ['fileDownload' => $containsDirLog]);
     }
 
@@ -109,7 +110,7 @@ class MaintenanceController extends Controller
             if (!$resInfo) {
                 //si il n'y as pas de ressource il faut supprimer le dossier et son contenu afin de faire un cleanup
                 fwrite($txt, "[" . date("Y-m-d H:i:s") . "] Suppression du dossier " . $localDir . "\n");
-                $this->rrmdir($localDir . "/" . $idRess);
+                $this->rrmdir($localDir);
             } else {
                 fwrite($txt, "[" . date("Y-m-d H:i:s") . "] Lecture du dossier " . $localDir . "\n");
                 foreach ($localDirContent as $res) {
@@ -148,8 +149,9 @@ class MaintenanceController extends Controller
                 if ($object != "." && $object != "..") {
                     if (is_dir($dir . DIRECTORY_SEPARATOR . $object) && !is_link($dir . "/" . $object))
                         $this->rrmdir($dir . DIRECTORY_SEPARATOR . $object);
-                    else
+                    else{
                         unlink($dir . DIRECTORY_SEPARATOR . $object);
+                    }
                 }
             }
             rmdir($dir);
@@ -174,6 +176,8 @@ class MaintenanceController extends Controller
                 return "Devoir";
             case "sujets":
                 return "DevoirSujet";
+            case "lien":
+                return "Lien";
             default:
                 return $resContent;
         }
