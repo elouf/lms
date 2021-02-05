@@ -104,14 +104,14 @@ class MaintenanceController extends Controller
         //récupère le contenu du dossier quoi qu'il arrive
         $localDirContent = scandir($localDir);
         //On connais le chemin donc on s'amuse un peux avec
-        if ($toCheck) {
+        if ($toCheck  && $resContent != "STOP") {
             $resInfo = $em->getRepository("AppBundle:$resContent")->findOneBy(['id' => $idRess]);
             if (!$resInfo) {
                 //si il n'y as pas de ressource il faut supprimer le dossier et son contenu afin de faire un cleanup
                 fwrite($txt, "[" . date("Y-m-d H:i:s") . "] Suppression du dossier " . $localDir . "\n");
                 $this->rrmdir($localDir);
             } else {
-                if($resContent != "Lien" && $resContent != "STOP"){
+                if($resContent != "Lien"){
                     //fwrite($txt, "[" . date("Y-m-d H:i:s") . "] Lecture du dossier " . $localDir . "\n");
                     foreach ($localDirContent as $res) {
                         if ($res != "." && $res != "..") {
