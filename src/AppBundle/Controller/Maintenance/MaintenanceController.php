@@ -104,38 +104,41 @@ class MaintenanceController extends Controller
         //récupère le contenu du dossier quoi qu'il arrive
         $localDirContent = scandir($localDir);
         //On connais le chemin donc on s'amuse un peux avec
-        if ($toCheck) {
-            $resInfo = $em->getRepository("AppBundle:$resContent")->findOneBy(['id' => $idRess]);
-            if (!$resInfo) {
-                //si il n'y as pas de ressource il faut supprimer le dossier et son contenu afin de faire un cleanup
-                fwrite($txt, "[" . date("Y-m-d H:i:s") . "] Suppression du dossier " . $localDir . "\n");
-                $this->rrmdir($localDir);
-            } else {
-                if($resContent != "Lien"){
-                    //fwrite($txt, "[" . date("Y-m-d H:i:s") . "] Lecture du dossier " . $localDir . "\n");
-                    foreach ($localDirContent as $res) {
-                        if ($res != "." && $res != "..") {
-                            if (is_dir($localDir . "/" . $res)) {
-                                $this->recursiveDirectory($txt, $localDir, $count + 1, $res, false, $idRess);
+        if($resContent != "DevoirCorrigeType" && $resContent != "DevoirSujet"){
+            if ($toCheck) {
+                $resInfo = $em->getRepository("AppBundle:$resContent")->findOneBy(['id' => $idRess]);
+                if (!$resInfo) {
+                    //si il n'y as pas de ressource il faut supprimer le dossier et son contenu afin de faire un cleanup
+                    fwrite($txt, "[" . date("Y-m-d H:i:s") . "] Suppression du dossier " . $localDir . "\n");
+                    $this->rrmdir($localDir);
+                } else {
+                    if($resContent != "Lien"){
+                        //fwrite($txt, "[" . date("Y-m-d H:i:s") . "] Lecture du dossier " . $localDir . "\n");
+                        foreach ($localDirContent as $res) {
+                            if ($res != "." && $res != "..") {
+                                if (is_dir($localDir . "/" . $res)) {
+                                    $this->recursiveDirectory($txt, $localDir, $count + 1, $res, false, $idRess);
+                                }
                             }
                         }
                     }
-                }
 
-            }
-        } else {
-            //On veux pas vérifier cette partie donc on continue dans le dossier suivant que l'on voudras continuer
-            foreach ($localDirContent as $res) {
-                // ignore les chemins supérieur
-                if ($res != "." && $res != "..") {
-                    if (is_dir($localDir . "/" . $res)) {
-                        //fwrite($txt, "[" . date("Y-m-d H:i:s") . "] Lecture du dossier " . $localDir . "\n");
-                        //on parcours les repertoire avec une variable en temporaire que l'on fait passé afin de connaitre
-                        $this->recursiveDirectory($txt, $localDir, $count + 1, $res, true, $idRess);
+                }
+            } else {
+                //On veux pas vérifier cette partie donc on continue dans le dossier suivant que l'on voudras continuer
+                foreach ($localDirContent as $res) {
+                    // ignore les chemins supérieur
+                    if ($res != "." && $res != "..") {
+                        if (is_dir($localDir . "/" . $res)) {
+                            //fwrite($txt, "[" . date("Y-m-d H:i:s") . "] Lecture du dossier " . $localDir . "\n");
+                            //on parcours les repertoire avec une variable en temporaire que l'on fait passé afin de connaitre
+                            $this->recursiveDirectory($txt, $localDir, $count + 1, $res, true, $idRess);
+                        }
                     }
                 }
             }
         }
+
     }
 
     /**
