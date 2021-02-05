@@ -1414,7 +1414,7 @@
 
                 // si le folder n'existe pas, on le créé
                 let url = steps + folderLocation + coursId + '/lien/' + lienId + '/';
-                console.log(url)
+                console.log("checkDirForUploadFile_ajax : "+url)
                 $.ajax({
                     type: 'POST',
                     url: "{{ path('checkDirForUploadFile_ajax') }}",
@@ -1448,7 +1448,7 @@
                     '</div>'
                 );
 
-                //console.log(steps + upload_srcSteps + upload_course + folderLocation)
+                console.log("upload destination : " + steps + upload_srcSteps + upload_course + folderLocation)
                 $('#itemUpload').fileupload({
                     url: steps + upload_srcSteps + upload_course + folderLocation,
                     dropZone: null,
