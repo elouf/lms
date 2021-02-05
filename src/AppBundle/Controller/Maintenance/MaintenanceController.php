@@ -155,11 +155,11 @@ class MaintenanceController extends Controller
                     if (is_dir($dir . DIRECTORY_SEPARATOR . $object) && !is_link($dir . "/" . $object)) {
                         $this->rrmdir($dir . DIRECTORY_SEPARATOR . $object);
                     }else{
-                        //unlink($dir . DIRECTORY_SEPARATOR . $object);
+                        unlink($dir . DIRECTORY_SEPARATOR . $object);
                     }
                 }
             }
-            //rmdir($dir);
+            rmdir($dir);
         }
     }
 
