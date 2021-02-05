@@ -146,9 +146,9 @@ class MaintenanceController extends Controller
             $objects = scandir($dir);
             foreach ($objects as $object) {
                 if ($object != "." && $object != "..") {
-                    if (is_dir($dir . DIRECTORY_SEPARATOR . $object) && !is_link($dir . "/" . $object))
+                    if (is_dir($dir . DIRECTORY_SEPARATOR . $object) && !is_link($dir . "/" . $object)) {
                         $this->rrmdir($dir . DIRECTORY_SEPARATOR . $object);
-                    else{
+                    }else{
                         //unlink($dir . DIRECTORY_SEPARATOR . $object);
                     }
                 }
