@@ -7,7 +7,11 @@
             <img src="{{ asset('educomp/images/applynow.png') }}" class="img-responsive center-block hidden-xs" alt="">
             <div class="apply-info">
                 {% set datetimeStart = '2017-07-01' %}
-                {% if "now"|date('Y-m-d') >= datetimeStart|date('Y-m-d') or app.environment=='dev' %}
+                {% set datetimeMaintenance = '2021-02-07' %}
+                {% if ( "now"|date('Y-m-d') >= datetimeStart|date('Y-m-d') or
+                    app.environment=='dev' ) and
+                    "now"|date('Y-m-d') >= datetimeMaintenance|date('Y-m-d')
+                %}
                     <h4 class="heading text-center">CONNECTEZ VOUS</h4>
                     {% if template == "afadec" %}
                         <p style="text-align: center">Pour les étudiants et les professeurs stagiaires de l'AFADEC</p>
@@ -24,16 +28,19 @@
                 {% else %}
                     <div class="row">
                         <div class="col-sm-12">
-                            <div class="icon-box-5">            <!-- ***** Icon Box Style 5 ***** -->
+                            <div class="icon-box-5">
                                 <div class="icon-box-icon">
                                     <i class="fa fa-rocket" aria-hidden="true"></i>
                                 </div>
                                 <div class="icon-box-content">
-                                    <h5 class="heading">S'INSCRIRE</h5>
+                                    <h5 class="heading">MAINTENANCE</h5>
+                                    <p>La plateforme de l’AFADEC ré-ouvre bientôt, une opération de maintenance est en cours jusqu'au 7 février 2021.</p>
+                                    <p>Merci pour votre compréhension.</p>
+                                    {#<h5 class="heading">S'INSCRIRE</h5>
                                     <p>La plateforme de l’AFADEC ouvre bientôt, inscrivez-vous dès maintenant pour être
                                         prévenu en priorité.</p>
                                     <a class="btn btn-primary btn-sm" href="{{ path('inscription') }}">Créer un
-                                        compte</a>
+                                        compte</a>#}
                                 </div>
                             </div>
                         </div>

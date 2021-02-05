@@ -308,6 +308,14 @@
             <p>En cas de problème ou de question : <a class="studitBlueFC" href="mailTo:contact.afadec@gmail.com">contact.afadec@gmail.com</a>
             </p>
         </div>
+        {% set datetimeMaintenance = '2021-02-07' %}
+        {% if "now"|date('Y-m-d') <= datetimeMaintenance|date('Y-m-d') %}
+            <div>
+                <h5 class="heading">MAINTENANCE</h5>
+                <p>La plateforme de l’AFADEC ré-ouvre bientôt, une opération de maintenance est en cours jusqu'au 7 février 2021.</p>
+                <p>Merci pour votre compréhension.</p>
+            </div>
+        {% else %}
 
         <div>
             <h4 class="heading">Renseigner <span class="color2">mes informations</span></h4>
@@ -398,6 +406,7 @@
                 </div>
             </div>
         </div>
+        {% endif %}
     </div>
 
 {% endblock %}
