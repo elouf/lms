@@ -111,14 +111,17 @@ class MaintenanceController extends Controller
                 fwrite($txt, "[" . date("Y-m-d H:i:s") . "] Suppression du dossier " . $localDir . "\n");
                 $this->rrmdir($localDir);
             } else {
-                fwrite($txt, "[" . date("Y-m-d H:i:s") . "] Lecture du dossier " . $localDir . "\n");
-                foreach ($localDirContent as $res) {
-                    if ($res != "." && $res != "..") {
-                        if (is_dir($localDir . "/" . $res)) {
-                            $this->recursiveDirectory($txt, $localDir, $count + 1, $res, false, $idRess);
+                if($resContent != "Lien"){
+                    fwrite($txt, "[" . date("Y-m-d H:i:s") . "] Lecture du dossier " . $localDir . "\n");
+                    foreach ($localDirContent as $res) {
+                        if ($res != "." && $res != "..") {
+                            if (is_dir($localDir . "/" . $res)) {
+                                $this->recursiveDirectory($txt, $localDir, $count + 1, $res, false, $idRess);
+                            }
                         }
                     }
                 }
+
             }
         } else {
             //On veux pas vérifier cette partie donc on continue dans le dossier suivant que l'on voudras continuer
@@ -178,7 +181,7 @@ class MaintenanceController extends Controller
             case "lien":
                 return "Lien";
             default:
-                return $resContent;
+                return null;
         }
     }
 }
