@@ -113,7 +113,7 @@ class MaintenanceController extends Controller
                     $this->rrmdir($localDir);
                 } else {
                     if($resContent != "Lien"){
-                        //fwrite($txt, "[" . date("Y-m-d H:i:s") . "] Lecture du dossier " . $localDir . "\n");
+                        fwrite($txt, "[" . date("Y-m-d H:i:s") . "] Lecture du dossier " . $localDir . "\n");
                         foreach ($localDirContent as $res) {
                             if ($res != "." && $res != "..") {
                                 if (is_dir($localDir . "/" . $res)) {
@@ -130,7 +130,7 @@ class MaintenanceController extends Controller
                     // ignore les chemins supérieur
                     if ($res != "." && $res != "..") {
                         if (is_dir($localDir . "/" . $res)) {
-                            //fwrite($txt, "[" . date("Y-m-d H:i:s") . "] Lecture du dossier " . $localDir . "\n");
+                            fwrite($txt, "[" . date("Y-m-d H:i:s") . "] Lecture du dossier " . $localDir . "\n");
                             //on parcours les repertoire avec une variable en temporaire que l'on fait passé afin de connaitre
                             $this->recursiveDirectory($txt, $localDir, $count + 1, $res, true, $idRess);
                         }
