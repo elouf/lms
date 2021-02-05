@@ -37,7 +37,7 @@ class MaintenanceController extends Controller
         $i = 0;
         foreach ($currentDirectory as $directory) {
             // on récupère seulement le dossier
-            if ($directory != "." && $directory != "..") {
+            if ($directory != "." && $directory != ".." && $directory != "files" && $directory != "docs") {
                 $dirContent = $rootDir . "/" . $directory;
                 //vérifie que c'est un dossier si oui on le récupère et on vérifie le contenu
                 if (is_dir($dirContent)) {
