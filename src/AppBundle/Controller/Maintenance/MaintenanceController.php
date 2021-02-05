@@ -111,7 +111,7 @@ class MaintenanceController extends Controller
                 fwrite($txt, "[" . date("Y-m-d H:i:s") . "] Suppression du dossier " . $localDir . "\n");
                 $this->rrmdir($localDir);
             } else {
-                if($resContent != "Lien"){
+                if($resContent != "Lien" && $resContent != "STOP"){
                     //fwrite($txt, "[" . date("Y-m-d H:i:s") . "] Lecture du dossier " . $localDir . "\n");
                     foreach ($localDirContent as $res) {
                         if ($res != "." && $res != "..") {
@@ -169,15 +169,15 @@ class MaintenanceController extends Controller
     {
         switch (strtolower($resContent)) {
             case "copies":
-                return "CopieFichier";
+                return "User";
             case "corriges":
-                return "CorrigeFichier";
+                return "User";
             case "corrigetypes":
-                return "DevoirCorrigeType";
+                return "STOP";
             case "devoir":
                 return "Devoir";
             case "sujets":
-                return "DevoirSujet";
+                return "STOP";
             case "lien":
                 return "Lien";
             case "podcasts":
