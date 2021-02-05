@@ -104,6 +104,7 @@ class MaintenanceController extends Controller
         //récupère le contenu du dossier quoi qu'il arrive
         $localDirContent = scandir($localDir);
         //On connais le chemin donc on s'amuse un peux avec
+        fwrite($txt, $resContent . "\n");
         if ($toCheck  && $resContent != "STOP") {
             $resInfo = $em->getRepository("AppBundle:$resContent")->findOneBy(['id' => $idRess]);
             if (!$resInfo) {
