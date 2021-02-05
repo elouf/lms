@@ -1448,9 +1448,9 @@
                     '</div>'
                 );
 
-                console.log(steps + upload_srcSteps + upload_course + folderLocation)
+                //console.log(steps + upload_srcSteps + upload_course + folderLocation)
                 $('#itemUpload').fileupload({
-                    url: steps + upload_srcSteps + upload_course + folderLocation,
+                    url: steps + folderLocation,
                     dropZone: null,
                     dataType: 'json',
                     add: function (e, data) {
