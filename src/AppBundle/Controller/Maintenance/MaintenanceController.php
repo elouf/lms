@@ -104,8 +104,7 @@ class MaintenanceController extends Controller
         //récupère le contenu du dossier quoi qu'il arrive
         $localDirContent = scandir($localDir);
         //On connais le chemin donc on s'amuse un peux avec
-        fwrite($txt, $resContent . "\n");
-        if ($toCheck  && $resContent != "STOP") {
+        if ($toCheck) {
             $resInfo = $em->getRepository("AppBundle:$resContent")->findOneBy(['id' => $idRess]);
             if (!$resInfo) {
                 //si il n'y as pas de ressource il faut supprimer le dossier et son contenu afin de faire un cleanup
@@ -174,11 +173,11 @@ class MaintenanceController extends Controller
             case "corriges":
                 return "User";
             case "corrigetypes":
-                return "STOP";
+                return "DevoirCorrigeType";
             case "devoir":
                 return "Devoir";
             case "sujets":
-                return "STOP";
+                return "DevoirSujet";
             case "lien":
                 return "Lien";
             case "podcasts":
