@@ -96,21 +96,20 @@ class LienController extends Controller
             $em = $this->getDoctrine()->getEntityManager();
             $itemId = $request->request->get('itemId');
             $type = $request->request->get('type');
-            $url = utf8_encode($request->request->get('url'));
+            $filenameUrl = $request->request->get('filenameUrl');
             $urlDest = $request->request->get('urlDest');
-            $currentUrl = $request->request->get('currentUrl');
             $unzipIfZip = $request->request->get('unzipIfZip') == 'true';
+            $filename = explode('upload/files/', $filenameUrl)[1];
+            $ext = pathinfo($filenameUrl, PATHINFO_EXTENSION);
 
-            $urlTab = explode('/web', $currentUrl);
             $urlDestTab = explode('var', $urlDest);
-            $dir = $urlTab[0].'/var'.$urlDestTab[1];
 
             $lien = $em->getRepository('AppBundle:Lien')->findOneBy(array('id' => $itemId));
 
-            $ext = pathinfo($url, PATHINFO_EXTENSION);
-            rename($url, $urlDest.'file.'.$ext);
+            rename('upload/files/'.$filename, $urlDest.'file.'.$ext);
 
-            if($unzipIfZip && ($type == 'application/zip' || $type == 'application/octet-stream' || $type == 'application/x-zip-compressed' || $type == 'application/zip-compressed' || $type == 'application/x-zip') ){
+            if($unzipIfZip && ($type == 'application/zip' || $type == 'application/octet-stream' ||
+                    $type == 'application/x-zip-compressed' || $type == 'application/zip-compressed' || $type == 'application/x-zip') ){
                 $zip = new ZipArchive;
                 $res = $zip->open($urlDest.'file.'.$ext);
                 if ($res === TRUE) {
@@ -120,20 +119,20 @@ class LienController extends Controller
                     $indexfounded = false;
                     if(file_exists($urlDest.'index.html')){
                         $indexfounded = true;
-                        $lien->setUrl($dir.'index.html');
+                        $lien->setUrl($urlDest.'index.html');
                     }else{
                         $filesInZip = scandir($urlDest);
                         foreach ($filesInZip as $key => $value) {
                             if (is_dir($urlDest . $value)) {
                                 if(file_exists($urlDest. $value.'/index.html')){
                                     $indexfounded = true;
-                                    $lien->setUrl($dir. $value.'/index.html');
+                                    $lien->setUrl($urlDest. $value.'/index.html');
                                     break;
                                 }
                             }
                         }
                         if(!$indexfounded){
-                            $lien->setUrl($dir.'file.'.$ext);
+                            $lien->setUrl($urlDest.'file.'.$ext);
                         }
                     }
                     if($indexfounded) {
@@ -146,11 +145,11 @@ class LienController extends Controller
                     );
                 }
             }else{
-                $lien->setUrl($urlTab[0].'/var'.$urlDestTab[1].'file.'.$ext);
+                $lien->setUrl($urlDest.'file.'.$ext);
             }
 
             $em->flush();
-            return new JsonResponse(array('action' =>'upload File', 'id' => $itemId, 'type' => $type, 'ext' => $ext, 'newLien' => $lien->getUrl(), 'dir' => $dir, '$urlDest' => $urlDest));
+            return new JsonResponse(array('action' =>'upload File', 'id' => $itemId, 'type' => $type, 'ext' => $ext, 'newLien' => $lien->getUrl(), '$urlDest' => $urlDest));
         }
 
         return new JsonResponse('This is not ajax!', 400);
