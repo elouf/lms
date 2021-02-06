@@ -49,7 +49,6 @@
             });
 
             var steps = $('[data-uploadSteps]').attr('data-uploadSteps');
-            var upload_srcSteps = $('[data-uploadSrcSteps]').attr('data-uploadSrcSteps');
             var folderLocation = $('[data-folderUpload]').attr('data-folderUpload');
 
             var idCours = $('[data-coursId]').attr('data-coursId');
@@ -57,8 +56,8 @@
 
             var userId = $('[data-userId]').attr('data-userId');
 
-            var url = steps + folderLocation + idCours + '/devoir/' + idDevoir + '/corriges/';
-            var urlCopie = steps + folderLocation + idCours + '/devoir/' + idDevoir + '/copies/';
+            var url = 'upload/' + idCours + '/devoir/' + idDevoir + '/corriges/';
+            var urlCopie = 'upload/' + idCours + '/devoir/' + idDevoir + '/copies/';
 
             /*$('.corrigeUpload').each(function(){
                 var etuId = $(this).closest('[data-userId]').attr('data-userId');
@@ -79,7 +78,7 @@
             });*/
 
             $('.corrigeUpload').fileupload({
-                url: steps + upload_srcSteps + folderLocation,
+                url: "/upload/index.php",
                 dropZone: null,
                 dataType: 'json',
                 add: function (e, data) {
@@ -122,9 +121,8 @@
                             data: {
                                 idDevoir: idDevoir,
                                 userId: userId,
-                                url: steps + folderLocation + myUrlTab[1],
                                 urlDest: destUrl,
-                                currentUrl: window.location.pathname,
+                                filenameUrl: myUrlTab[0],
                                 etuId: etuId
                             },
                             success: function (data) {
@@ -148,7 +146,7 @@
 
             // l'admin peut uploader une copie pour l'étudiant
             $('.copieUpload').fileupload({
-                url: steps + upload_srcSteps + folderLocation,
+                url: "/upload/index.php",
                 dropZone: null,
                 dataType: 'json',
                 add: function (e, data) {
@@ -190,9 +188,8 @@
                             data: {
                                 itemId: idDevoir,
                                 userId: etuId,
-                                url: steps + folderLocation + myUrlTab[1],
+                                filenameUrl: myUrlTab[0],
                                 urlDest: destUrl,
-                                currentUrl: window.location.pathname
                             },
                             success: function (data) {
                                 window.location.href = window.location.href;
@@ -346,7 +343,7 @@
             </div>
             <div class="col-sm-12 ml-20">
                 {% for key,val in sujets %}
-                    <a class="btn btn-sm btn-info mb-3" href="{{ val.url }}">{{ val.nom }}</a>
+                    <a class="btn btn-sm btn-info mb-3" href="{{ asset(val.url) }}">{{ val.nom }}</a>
                 {% endfor %}
             </div>
             <div class="col-sm-12">
@@ -356,7 +353,7 @@
             </div>
             <div class="col-sm-12 ml-20">
                 {% for key,val in corrigesType %}
-                    <a class="btn btn-sm btn-info mb-3" href="{{ val.url }}">{{ val.nom }}</a>
+                    <a class="btn btn-sm btn-info mb-3" href="{{ asset(val.url) }}">{{ val.nom }}</a>
                 {% endfor %}
             </div>
         </div>
@@ -395,7 +392,7 @@
                                             <span class="dateDepot">{{ val.copie.dateCreation|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}</span>
                                             <a class="btn btn-warning btn-sm selColor {% if not app.user.hasRole('ROLE_SUPER_ADMIN') %}btnDownCopie{% endif %}"
                                                target="_blank"
-                                               {% if not app.user.hasRole('ROLE_SUPER_ADMIN') %}data-{% endif %}href="{{ val.copieFichier.url }}"><i
+                                               {% if not app.user.hasRole('ROLE_SUPER_ADMIN') %}data-{% endif %}href="{{ asset(val.copieFichier.url) }}"><i
                                                         class="fa fa-external-link fa-2x"></i></a>
                                         {% else %}
                                             Pas de copie déposée
@@ -446,7 +443,7 @@
                                         {% if val.corrige != "undefined" %}
                                             {{ val.corrige.dateRendu|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}
                                             <a class="btn btn-success btn-sm selColor" target="_blank"
-                                               href="{{ val.corrigeFichier.url }}"><i
+                                               href="{{ asset(val.corrigeFichier.url) }}"><i
                                                         class="fa fa-external-link fa-2x"></i></a>
                                         {% endif %}
                                     </td>

@@ -177,18 +177,15 @@ class DocumentController extends Controller
             date_default_timezone_set('Europe/Paris');
 
             $discId = $request->request->get('discId');
-            $url = utf8_encode($request->request->get('url'));
             $urlDest = $request->request->get('urlDest');
-            $currentUrl = $request->request->get('currentUrl');
             $userId = $request->request->get('userId');
             $nom = $request->request->get('nom');
             $isImportant = $request->request->get('isImportant') == "true"? true : false;
             $description = $request->request->get('description');
             $users = $request->request->get('users');
-
-
-            $urlTab = explode('/web', $currentUrl);
-            $urlDestTab = explode('var', $urlDest);
+            $filenameUrl = $request->request->get('filenameUrl');
+            $filename = explode('upload/files/', $filenameUrl)[1];
+            $ext = pathinfo($filenameUrl, PATHINFO_EXTENSION);
 
             $repoDiscipline = $em->getRepository('AppBundle:Discipline');
             $repoUser = $em->getRepository('AppBundle:User');
@@ -201,11 +198,11 @@ class DocumentController extends Controller
             $doc->setDescription($description);
             $doc->setDateCrea(new DateTime());
 
-            $ext = pathinfo($url, PATHINFO_EXTENSION);
+            $ext = pathinfo($filenameUrl, PATHINFO_EXTENSION);
             $rand = rand(1, 999999);
-            rename($url, $urlDest.'file'.$rand.'.'.$ext);
+            rename('upload/files/'.$filename, $urlDest.'file'.$rand.'.'.$ext);
 
-            $doc->setUrl($urlTab[0].'/var'.$urlDestTab[1].'file'.$rand.'.'.$ext);
+            $doc->setUrl($urlDest.'file'.$rand.'.'.$ext);
             $em->persist($doc);
 
             // on créée les associations avec les users. Si ils sont tous concernés, c'est qu'on est dans le cas d'une assocDisc
@@ -305,17 +302,15 @@ class DocumentController extends Controller
             date_default_timezone_set('Europe/Paris');
 
             $coursId = $request->request->get('coursId');
-            $url = utf8_encode($request->request->get('url'));
             $urlDest = $request->request->get('urlDest');
-            $currentUrl = $request->request->get('currentUrl');
             $userId = $request->request->get('userId');
             $nom = $request->request->get('nom');
             $isImportant = $request->request->get('isImportant') == "true"? true : false;
             $description = $request->request->get('description');
             $users = $request->request->get('users');
-
-            $urlTab = explode('/web', $currentUrl);
-            $urlDestTab = explode('var', $urlDest);
+            $filenameUrl = $request->request->get('filenameUrl');
+            $filename = explode('upload/files/', $filenameUrl)[1];
+            $ext = pathinfo($filenameUrl, PATHINFO_EXTENSION);
 
             $repoCours = $em->getRepository('AppBundle:Cours');
             $repoUser = $em->getRepository('AppBundle:User');
@@ -328,11 +323,10 @@ class DocumentController extends Controller
             $doc->setDescription($description);
             $doc->setDateCrea(new DateTime());
 
-            $ext = pathinfo($url, PATHINFO_EXTENSION);
             $rand = rand(1, 999999);
-            rename($url, $urlDest.'file'.$rand.'.'.$ext);
+            rename('upload/files/'.$filename, $urlDest.'file'.$rand.'.'.$ext);
 
-            $doc->setUrl($urlTab[0].'/var'.$urlDestTab[1].'file'.$rand.'.'.$ext);
+            $doc->setUrl($urlDest.'file'.$rand.'.'.$ext);
             $em->persist($doc);
 
             // on créée les associations avec les users. Si ils sont tous concernés, c'est qu'on est dans le cas d'une assocCours

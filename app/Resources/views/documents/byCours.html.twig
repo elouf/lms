@@ -41,7 +41,7 @@
                 popup.show();
 
                 var folderLocation = $('[data-folderUpload]').attr('data-folderUpload');
-                var url = steps + folderLocation+'docs/cours/'+idCours+'/';
+                var url = 'upload/docs/cours/'+idCours+'/';
 
                 $.ajax({
                     type: 'POST',
@@ -58,7 +58,7 @@
                 });
 
                 $('#docUpload').fileupload({
-                    url: steps + upload_srcSteps + folderLocation,
+                    url: "/upload/index.php",
                     dropZone:null,
                     dataType: 'json',
                     add: function(e, data) {
@@ -87,9 +87,8 @@
                                 data: {
                                     coursId: idCours,
                                     userId: $('[data-userId]').attr('data-userId'),
-                                    url: steps + folderLocation + myUrlTab[1],
                                     urlDest: url,
-                                    currentUrl: window.location.pathname,
+                                    filenameUrl: myUrlTab[0],
                                     nom: $('[data-champname="nom"]').val(),
                                     isImportant: $('[data-champname="docIsImportant"]').prop('checked'),
                                     description: CKEDITOR.instances[$('[data-champName=description]').attr('id')].getData(),

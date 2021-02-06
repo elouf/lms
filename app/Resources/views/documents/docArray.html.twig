@@ -23,7 +23,7 @@
                             <i class="fa fa-star-o iconeNewTr" aria-hidden="true"></i>
                         </td>
                         <td>
-                            <a href="{{ val[0].url }}" target="_blank">{{ val[0].nom }}</a>
+                            <a href="{{ asset(val[0].url) }}" target="_blank">{{ val[0].nom }}</a>
                         </td>
                         <td>
                             <i class="fa fa-info-circle infoDocument" aria-hidden="true"></i>
@@ -37,7 +37,7 @@
                         </td>
                         <td data-text="{{ val[0].dateCrea|localizeddate('none', 'none', null, null, 'YMMddhhmm' ) }}">{{ val[0].dateCrea|localizeddate('none', 'none', null, null, 'd LLLL Y' ) }}</td>
                         <td>
-                            <a href="{{ val[0].url }}" class="btn btn-primary btn-xs btnDocOpen" download>Télécharger</a>
+                            <a href="{{ asset(val[0].url) }}" class="btn btn-primary btn-xs btnDocOpen" download>Télécharger</a>
                             {% if val[0].proprietaire and app.user.id == val[0].proprietaire.id
                             or app.user.hasRole('ROLE_SUPER_ADMIN')
                             or role == 'ens' %}

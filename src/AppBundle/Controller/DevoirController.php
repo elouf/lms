@@ -321,16 +321,13 @@ class DevoirController extends Controller
             $em = $this->getDoctrine()->getEntityManager();
             $typeItem = $request->request->get('typeItem');
             $itemId = $request->request->get('itemId');
-            $url = utf8_encode($request->request->get('url'));
+            $filenameUrl = $request->request->get('filenameUrl');
+            $filename = explode('upload/files/', $filenameUrl)[1];
             $urlDest = $request->request->get('urlDest');
-            $currentUrl = $request->request->get('currentUrl');
             $nom = $request->request->get('nom');
             $unzipIfZip = $request->request->get('unzipIfZip') == 'true';
             $type = $request->request->get('type');
-
-            $urlTab = explode('/web', $currentUrl);
-            $urlDestTab = explode('var', $urlDest);
-            $dir = $urlTab[0].'/var'.$urlDestTab[1];
+            $ext = pathinfo($filenameUrl, PATHINFO_EXTENSION);
 
             $devoir = $em->getRepository('AppBundle:Devoir')->findOneBy(array('id' => $itemId));
 
@@ -348,10 +345,8 @@ class DevoirController extends Controller
             $devoirF->setDevoir($devoir);
             $devoirF->setNom($nom);
 
-            $ext = pathinfo($url, PATHINFO_EXTENSION);
             $rand = rand(1, 999999);
-            rename($url, $urlDest.'file'.$rand.'.'.$ext);
-
+            rename('upload/files/'.$filename, $urlDest.'file'.$rand.'.'.$ext);
 
             if($unzipIfZip && ($type == 'application/zip' || $type == 'application/octet-stream' || $type == 'application/x-zip-compressed' || $type == 'application/zip-compressed' || $type == 'application/x-zip') ){
                 $zip = new ZipArchive;
@@ -363,20 +358,20 @@ class DevoirController extends Controller
                     $indexfounded = false;
                     if(file_exists($urlDest.'index.html')){
                         $indexfounded = true;
-                        $devoirF->setUrl($dir.'index.html');
+                        $devoirF->setUrl($urlDest.'index.html');
                     }else{
                         $filesInZip = scandir($urlDest);
                         foreach ($filesInZip as $key => $value) {
                             if (is_dir($urlDest . $value)) {
                                 if(file_exists($urlDest. $value.'/index.html')){
                                     $indexfounded = true;
-                                    $devoirF->setUrl($dir. $value.'/index.html');
+                                    $devoirF->setUrl($urlDest. $value.'/index.html');
                                     break;
                                 }
                             }
                         }
                         if(!$indexfounded){
-                            $devoirF->setUrl($dir.'file.'.$ext);
+                            $devoirF->setUrl($urlDest.'file.'.$ext);
                         }
                     }
                     if($indexfounded) {
@@ -389,7 +384,7 @@ class DevoirController extends Controller
                     );
                 }
             }else{
-                $devoirF->setUrl($urlTab[0].'/var'.$urlDestTab[1].'file'.$rand.'.'.$ext);
+                $devoirF->setUrl($urlDest.'file'.$rand.'.'.$ext);
             }
 
             $em->persist($devoirF);
@@ -413,10 +408,10 @@ class DevoirController extends Controller
 
             $itemId = $request->request->get('itemId');
             $userId = $request->request->get('userId');
-            $url = utf8_encode($request->request->get('url'));
             $urlDest = $request->request->get('urlDest');
-            $currentUrl = $request->request->get('currentUrl');
-            $ext = pathinfo($url, PATHINFO_EXTENSION);
+            $filenameUrl = $request->request->get('filenameUrl');
+            $myfilename = explode('upload/files/', $filenameUrl)[1];
+            $ext = pathinfo($filenameUrl, PATHINFO_EXTENSION);
 
             /* @var $devoir Devoir */
             $devoir = $em->getRepository('AppBundle:Devoir')->findOneBy(array('id' => $itemId));
@@ -430,15 +425,9 @@ class DevoirController extends Controller
             // on vérifie s'il y a déjà un fichier et on le supprime
             $copieF = $em->getRepository('AppBundle:CopieFichier')->findOneBy(array('copie' => $copie));
             if($copieF){
-                $urlTabOld = explode('/var', $copieF->getUrl());
-
                 $em->remove($copieF);
-
-                unlink('../var'.$urlTabOld[1]);
+                unlink($copieF->getUrl());
             }
-
-            $urlTab = explode('/web', $currentUrl);
-            $urlDestTab = explode('var', $urlDest);
 
             $curDate = new DateTime();
 
@@ -455,15 +444,15 @@ class DevoirController extends Controller
                 'ö'=>'o', 'ø'=>'o', 'ù'=>'u', 'ú'=>'u', 'û'=>'u', 'ý'=>'y', 'þ'=>'b', 'ÿ'=>'y', ' '=>'_' );
             $strUser = strtr($devoir->getCours()->getDiscipline()->getAccronyme().'_'.$user->getFirstname().'_'.$user->getLastname(), $unwanted_array );
             $filename = 'Copie_'.$strUser.$copie->getId().'.'.$ext;
-            rename($url, $urlDest.$filename);
+            rename('upload/files/'.$myfilename, $urlDest.$filename);
 
-            $copieFichier->setUrl($urlTab[0].'/var'.$urlDestTab[1].$filename);
+            $copieFichier->setUrl($urlDest.$filename);
 
             $em->persist($copieFichier);
             $em->persist($copie);
             $em->flush();
 
-            return new JsonResponse(array('action' =>'upload File', 'id' => $itemId, 'ext' => $ext, 'nom' => $nomDevoir, 'urlTab' => $urlTab, 'urlDestTab' => $urlDestTab));
+            return new JsonResponse(array('action' =>'upload File', 'id' => $itemId, 'ext' => $ext, 'nom' => $nomDevoir));
             //return new JsonResponse(array('action' =>'upload File', 'id' => $itemId, 'ext' => $ext, 'nom' => $nomDevoir, 'nouvelle copie ' => $copieFichier->getUrl(), '1' => $devoir->getCours()->getDiscipline()->getAccronyme(), 'user' => $user->getFirstname(), 'user2' => $user->getLastname(), 'filename' => $filename));
         }
 
@@ -484,9 +473,10 @@ class DevoirController extends Controller
             $idDevoir = $request->request->get('idDevoir');
             $userId = $request->request->get('userId');
             $etuId = $request->request->get('etuId');
-            $url = utf8_encode($request->request->get('url'));
             $urlDest = $request->request->get('urlDest');
-            $currentUrl = $request->request->get('currentUrl');
+            $filenameUrl = $request->request->get('filenameUrl');
+            $myfilename = explode('upload/files/', $filenameUrl)[1];
+
 
             /* @var $devoir Devoir */
             $devoir = $em->getRepository('AppBundle:Devoir')->findOneBy(array('id' => $idDevoir));
@@ -501,17 +491,11 @@ class DevoirController extends Controller
             if($checkCorrige){
                 $corrigeF = $em->getRepository('AppBundle:CorrigeFichier')->findOneBy(array('corrige' => $checkCorrige));
 
-                $urlTab = explode('/var', $corrigeF->getUrl());
-
                 $em->remove($corrigeF);
                 $em->remove($checkCorrige);
                 $em->flush();
-
-                unlink('../var'.$urlTab[1]);
+                unlink($corrigeF->getUrl());
             }
-
-            $urlTab = explode('/web', $currentUrl);
-            $urlDestTab = explode('var', $urlDest);
 
             $corrige = new Corrige();
             $corrige->setDateRendu(new DateTime());
@@ -524,11 +508,11 @@ class DevoirController extends Controller
             $corrigeFichier->setCorrige($corrige);
             $corrigeFichier->setNom("[Devoir ".$devoir->getNom()."] Corrige de ".$etu->getFirstName()." ".$etu->getLastName());
 
-            $ext = pathinfo($url, PATHINFO_EXTENSION);
+            $ext = pathinfo($filenameUrl, PATHINFO_EXTENSION);
             $rand = rand(1, 999999);
-            rename($url, $urlDest.'file'.$rand.'.'.$ext);
+            rename('upload/files/'.$myfilename, $urlDest.'file'.$rand.'.'.$ext);
 
-            $corrigeFichier->setUrl($urlTab[0].'/var'.$urlDestTab[1].'file'.$rand.'.'.$ext);
+            $corrigeFichier->setUrl($urlDest.'file'.$rand.'.'.$ext);
 
             $em->persist($corrigeFichier);
             $em->flush();

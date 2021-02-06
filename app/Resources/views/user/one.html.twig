@@ -951,7 +951,7 @@
                                     <td>
                                         <a href="{{ path('oneDevoirEns', {id:copie.copie.devoir.id}) }}">{{ copie.copie.devoir.cours.discipline.nom }}
                                             > {{ copie.copie.devoir.cours.nom }} > {{ copie.copie.devoir.nom }}</a></td>
-                                    <td><a target="_blank" href="{{ copie.fichier.url }}">Copie</a></td>
+                                    <td><a target="_blank" href="{{ asset(copie.fichier.url) }}">Copie</a></td>
                                     <td>{{ copie.copie.dateCreation|localizeddate('none', 'none', null, null, 'd LLLL Y à H:mm' ) }}</td>
                                     <td>{{ copie.copie.note }} / {{ copie.copie.devoir.bareme }}</td>
                                 </tr>

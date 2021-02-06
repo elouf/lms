@@ -144,27 +144,19 @@ class ZoneRessourceController extends Controller
 
                     if ($typeItem == "podcast") {
                         $folderOK = true;
-                        $folderUpload = $this->getParameter('upload_directory');
-                        $uploadSteps = $this->getParameter('upload_steps');
-                        $webUrl1 = $request->getUriForPath('');
-                        $webUrl2 = str_replace('/app_dev.php', '', $webUrl1);
-                        $webUrl = str_replace('/web', '', $webUrl2);
 
-                        $url_withVar = $uploadSteps.$folderUpload.$idCours.'/podcasts/'.$ressource->getId();
-                        $url_withVar_tab = explode('var/', $url_withVar);
-
-                        $url = $webUrl.'/var/'.$url_withVar_tab[1];
+                        $url = 'upload/'.$idCours.'/podcasts/'.$ressource->getId();
 
                         $sortie .= $url;
-                        if (!is_dir($url_withVar)) {
-                            if (!mkdir($url_withVar, 0777, true)) {
+                        if (!is_dir($url)) {
+                            if (!mkdir($url, 0777, true)) {
                                 $folderOK = false;
-                                $sortie .= 'error : Echec de la création du dossier. url : '.$url_withVar;
+                                $sortie .= 'error : Echec de la création du dossier. url : '.$url;
                             } else {
-                                $sortie .= 'Dossier créé. url : '.$url_withVar;
+                                $sortie .= 'Dossier créé. url : '.$url;
                             }
                         } else {
-                            $sortie .= 'Dossier existe déjà. url : '.$url_withVar;
+                            $sortie .= 'Dossier existe déjà. url : '.$url;
                         }
                         if($folderOK){
                             $manager = $this->get('assets.packages');
@@ -219,9 +211,9 @@ class ZoneRessourceController extends Controller
                             $xml_rss->appendChild( $xml_channel);
                             $xml->appendChild( $xml_rss );
 
-                            copy($this->get('kernel')->getRootDir().'/../..'.$manager->getUrl('images/podcast/'.$cours->getDiscipline()->getPodcastImgFilename()), $url_withVar.'/'.$cours->getDiscipline()->getPodcastImgFilename());
+                            copy('images/podcast/'.$cours->getDiscipline()->getPodcastImgFilename(), $url.'/'.$cours->getDiscipline()->getPodcastImgFilename());
 
-                            $xml->save($url_withVar."/podcast.rss");
+                            $xml->save($url."/podcast.rss");
                             $ressource->setRss($url."/podcast.rss");
                         }
 

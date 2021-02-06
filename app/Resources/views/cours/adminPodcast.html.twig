@@ -49,7 +49,7 @@
                             <div class="myBtn btnMove inlineBtn"><i class="fa fa-arrows-alt "></i></div>
                             <div class="nomAssoc inlineBtn">
                                 <a class="btnMp3PodcastRessource btn btn-xs" target="_blank"
-                                   href="{{ mp3.url }}">{{ mp3.nom }}</a>
+                                   href="{{ asset(mp3.url) }}">{{ mp3.nom }}</a>
                             </div>
                         </div>
                         <div class="col-xs-4 text-right noPadding">
@@ -58,7 +58,7 @@
                             </div>
                             {% if mp3.url and 'mp3' in mp3.url %}
                                 <div class="myBtn btnMp3AdminPlay inlineBtn">
-                                    <a href="{{ mp3.url }}" target="_blank"><i class="fa fa-music" aria-hidden="true"></i></a>
+                                    <a href="{{ asset(mp3.url) }}" target="_blank"><i class="fa fa-music" aria-hidden="true"></i></a>
                                 </div>
                             {% endif %}
                             <div class="myBtn btnMp3Visibility inlineBtn btnChangeVisibilityMp3InPocast">

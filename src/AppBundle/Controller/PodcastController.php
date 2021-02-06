@@ -302,28 +302,16 @@ class PodcastController extends Controller
         if ($request->isXMLHttpRequest()) {
             $em = $this->getDoctrine()->getEntityManager();
             $type = $request->request->get('type');
-            $url = utf8_encode($request->request->get('url'));
             $urlDest = $request->request->get('urlDest');
-            $currentUrl = $request->request->get('currentUrl');
+            $filenameUrl = $request->request->get('filenameUrl');
+            $filename = explode('upload/files/', $filenameUrl)[1];
+            $ext = pathinfo($filenameUrl, PATHINFO_EXTENSION);
 
-            $urlTab = explode('/web', $currentUrl);
-            $urlDestTab = explode('var', $urlDest);
-
-            $ext = pathinfo($url, PATHINFO_EXTENSION);
             $date = new \DateTime();
             $newName = 'podcast_afadec_'.$date->format('YmdHis');
-            rename($url, $urlDest.$newName.'.'.$ext);
+            rename('upload/files/'.$filename, $urlDest.$newName.'.'.$ext);
 
-            // lms/var...
-            $newurl = $urlTab[0].'/var'.$urlDestTab[1].$newName.'.'.$ext;
-
-            $webUrl1 = $request->getUriForPath('');
-            $webUrl2 = str_replace('/app_dev.php', '', $webUrl1);
-            $webUrl = str_replace('/web', '', $webUrl2);
-
-            $url_withVar_tab = explode('var/', $newurl);
-
-            $urlNew = $webUrl.'/var/'.$url_withVar_tab[1];
+            $urlNew = $urlDest.$newName.'.'.$ext;
 
             $em->flush();
             return new JsonResponse(array('action' =>'upload Mp3Podcast', 'type' => $type, 'ext' => $ext, 'newLien' => $urlNew));

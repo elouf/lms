@@ -878,7 +878,7 @@
             let urlMp3Dest = '';
             let podcastId = null;
             $('#mp3Upload').fileupload({
-                url: steps + upload_srcSteps + upload_course + folderLocation,
+                url: "/upload/index.php",
                 dropZone: null,
                 dataType: 'json',
                 add: function (e, data) {
@@ -902,13 +902,11 @@
                             dataType: "json",
                             data: {
                                 type: file.type,
-                                url: steps + folderLocation + myUrlTab[1],
-                                urlDest: urlMp3Dest,
-                                currentUrl: window.location.pathname
+                                filenameUrl: myUrlTab[0],
+                                urlDest: urlMp3Dest
                             },
                             success: function (data) {
                                 urlMp3 = data['newLien'];
-                                console.log(urlMp3)
                                 $('.btnAddNewMp3ToPodcast').show();
                             },
                             error: function () {
@@ -916,7 +914,6 @@
                             }
                         });
                     });
-
                 },
                 progressall: function (e, data) {
                     let progress = parseInt(data.loaded / data.total * 100, 10);
@@ -931,7 +928,7 @@
             function getUrlMP3dest(){
                 // si le folder n'existe pas, on le créé
                 let coursId = $('[data-coursId]').attr('data-coursId');
-                urlMp3Dest = steps + folderLocation + coursId + '/podcasts/' + podcastId + '/';
+                urlMp3Dest = 'upload/' + coursId + '/podcasts/' + podcastId + '/';
                 $.ajax({
                     type: 'POST',
                     url: "{{ path('checkDirForUploadFile_ajax') }}",
@@ -1592,7 +1589,7 @@
                 });
 
                 $('#itemUpload').fileupload({
-                    url: steps + upload_srcSteps + upload_course + folderLocation,
+                    url: "/upload/index.php",
                     dropZone: null,
                     dataType: 'json',
                     add: function (e, data) {
@@ -1615,11 +1612,11 @@
                                 async: false,
                                 dataType: "json",
                                 data: {
+                                    filenameUrl: myUrlTab[0],
                                     type: file.type,
                                     unzipIfZip: $('[data-champName=unzipUploaded]').prop('checked'),
                                     typeItem: typeItem,
                                     itemId: devoirId,
-                                    url: steps + folderLocation + myUrlTab[1],
                                     urlDest: url,
                                     currentUrl: window.location.pathname,
                                     nom: $('.modal .modal-body[data-contentModal=uploadFile] [data-champName=uploadedFileName]').val()
@@ -1638,7 +1635,6 @@
                                 }
                             });
                         });
-
                     },
                     progressall: function (e, data) {
                         let progress = parseInt(data.loaded / data.total * 100, 10);

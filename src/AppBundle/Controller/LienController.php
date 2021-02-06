@@ -102,8 +102,6 @@ class LienController extends Controller
             $filename = explode('upload/files/', $filenameUrl)[1];
             $ext = pathinfo($filenameUrl, PATHINFO_EXTENSION);
 
-            $urlDestTab = explode('var', $urlDest);
-
             $lien = $em->getRepository('AppBundle:Lien')->findOneBy(array('id' => $itemId));
 
             rename('upload/files/'.$filename, $urlDest.'file.'.$ext);
