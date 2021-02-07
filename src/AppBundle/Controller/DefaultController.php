@@ -35,6 +35,13 @@ class DefaultController extends Controller
             'total' => false
         ]);
     }
+    /**
+     * @Route("/lms/web/login", name="oldhomepage")
+     */
+    public function oldindexAction(Request $request)
+    {
+        return $this->redirect('homepage');
+    }
 
     /**
      * @Route("/faq", name="faq")
