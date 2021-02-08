@@ -42,6 +42,20 @@ class DefaultController extends Controller
     {
         return $this->redirect('homepage');
     }
+    /**
+     * @Route("/lms/web", name="oldhomepage")
+     */
+    public function old2indexAction(Request $request)
+    {
+        return $this->redirect('homepage');
+    }
+    /**
+     * @Route("/lms", name="oldhomepage")
+     */
+    public function old3indexAction(Request $request)
+    {
+        return $this->redirect('homepage');
+    }
 
     /**
      * @Route("/faq", name="faq")
