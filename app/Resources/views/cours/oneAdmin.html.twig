@@ -883,8 +883,8 @@
                 dataType: 'json',
                 add: function (e, data) {
                     let uploadErrors = [];
-                    if (data.files[0]['size'] > 256000000) {
-                        uploadErrors.push('Fichier trop volumineux : ne pas dépasser 256MO');
+                    if (data.files[0]['size'] > 512000000) {
+                        uploadErrors.push('Fichier trop volumineux : ne pas dépasser 512MO');
                     }
                     if (uploadErrors.length > 0) {
                         alert(uploadErrors.join("\n"));
@@ -1443,8 +1443,8 @@
                     dataType: 'json',
                     add: function (e, data) {
                         let uploadErrors = [];
-                        if (data.files[0]['size'] > 256000000) {
-                            uploadErrors.push('Fichier trop volumineux : ne pas dépasser 256MO');
+                        if (data.files[0]['size'] > 512000000) {
+                            uploadErrors.push('Fichier trop volumineux : ne pas dépasser 512MO');
                         }
                         if (uploadErrors.length > 0) {
                             alert(uploadErrors.join("\n"));
@@ -1594,8 +1594,8 @@
                     dataType: 'json',
                     add: function (e, data) {
                         let uploadErrors = [];
-                        if (data.files[0]['size'] > 256000000) {
-                            uploadErrors.push('Fichier trop volumineux : ne pas dépasser 256MO');
+                        if (data.files[0]['size'] > 512000000) {
+                            uploadErrors.push('Fichier trop volumineux : ne pas dépasser 512MO');
                         }
                         if (uploadErrors.length > 0) {
                             alert(uploadErrors.join("\n"));
