@@ -10,20 +10,22 @@
                 {% set datetimeMaintenance = '2021-02-01' %}
                 {% if ( "now"|date('Y-m-d') >= datetimeStart|date('Y-m-d') or
                     app.environment=='dev' ) and
-                    "now"|date('Y-m-d') >= datetimeMaintenance|date('Y-m-d')
-                %}
+                    "now"|date('Y-m-d') >= datetimeMaintenance|date('Y-m-d') %}
                     <h4 class="heading text-center">CONNECTEZ VOUS</h4>
                     {% if template == "afadec" %}
                         <p style="text-align: center">Pour les étudiants et les professeurs stagiaires de l'AFADEC</p>
+                    {% elseif template == "excellencePro" %}
+                        <p style="text-align: center">Connexion réservée aux animateurs de la formation</p>
                     {% endif %}
 
                     {% include "FOSUserBundle:Security:login_content.html.twig" %}
 
                     <a href="{{ path('fos_user_resetting_request') }}" style="margin-top: 15px;display: inline-block">Mot
                         de passe oublié ?</a>
-                    <div style="text-align: center; font-size: 20px;color: #aaa;margin: 10px;">OU</div>
-                    <a href="{{ path('inscription') }}" class="btn btn-primary">Créer un compte</a>
-
+                    {% if template != "excellencePro" %}
+                        <div style="text-align: center; font-size: 20px;color: #aaa;margin: 10px;">OU</div>
+                        <a href="{{ path('inscription') }}" class="btn btn-primary">Créer un compte</a>
+                    {% endif %}
 
                 {% else %}
                     <div class="row">
@@ -34,7 +36,8 @@
                                 </div>
                                 <div class="icon-box-content">
                                     <h5 class="heading">MAINTENANCE</h5>
-                                    <p>La plateforme de l’AFADEC ré-ouvre bientôt, une opération de maintenance est en cours jusqu'au 7 février 2021.</p>
+                                    <p>La plateforme de l’AFADEC ré-ouvre bientôt, une opération de maintenance est en
+                                        cours jusqu'au 7 février 2021.</p>
                                     <p>Merci pour votre compréhension.</p>
                                     {#<h5 class="heading">S'INSCRIRE</h5>
                                     <p>La plateforme de l’AFADEC ouvre bientôt, inscrivez-vous dès maintenant pour être

@@ -67,6 +67,7 @@
                         <th>Copie rendue</th>
                         <th>Date de dépôt</th>
                         <th>Correcteur associé</th>
+                        <th>Date association correcteur</th>
                         <th>Note</th>
                         <th class="filter-select">Institut</th>
                         <th class="filter-select">Activé</th>
@@ -83,9 +84,16 @@
                             <td>{{ copie.copie.dateCreation|localizeddate('none', 'none', 'fr', null, 'dd/MM/Y à H:mm' ) }}</td>
                             <td>
                                 {% if copie.copie.assocCorrecteur %}
-                                    Le {{ copie.copie.assocCorrecteur.createdAt|localizeddate('none', 'none', 'fr', null, 'dd/MM/Y à H:mm' ) }} par {{ copie.copie.assocCorrecteur.correcteur }}
+                                    {{ copie.copie.assocCorrecteur.correcteur }}
                                 {% else %}
                                     non
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if copie.copie.assocCorrecteur %}
+                                    {{ copie.copie.assocCorrecteur.createdAt|localizeddate('none', 'none', 'fr', null, 'dd/MM/Y à H:mm' ) }}
+                                {% else %}
+                                    -
                                 {% endif %}
                             </td>
                             <td>{{ copie.note }}</td>
