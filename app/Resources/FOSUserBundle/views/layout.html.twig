@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block pageHeader %}
-    <div class="page-header">
+    <div class="page-header forceRelative">
         <div class="container">
             {% if template == 'studit' %}
                 <h2 class="color3">Bienvenue sur la plateforme de STUDIT</h2>
@@ -15,6 +15,11 @@
                 </ul>
             {% endif %}
         </div>
+        {% if template == 'afadec' %}
+        <a class="devenirEnseignant" href="https://jedeviensenseignant.fr" target="_blank">
+            <i class="fa fa-graduation-cap" aria-hidden="true"></i> Devenir Enseignant
+        </a>
+        {% endif %}
     </div>
 {% endblock %}
 

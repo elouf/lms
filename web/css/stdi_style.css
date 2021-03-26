@@ -49,6 +49,26 @@ body {
     border-radius: 10px;
 }
 
+/* bouton flottant dans le header */
+.forceRelative{
+    position: relative;
+}
+.devenirEnseignant{
+    background-color: #e1a300;
+    color: #fff;
+    padding: 10px 15px;
+    position: absolute;
+    border-radius: 15px;
+    user-select: none;
+    cursor: pointer;
+    bottom: 5px;
+    left: 10px;
+    display: block;
+}
+.navbar-brand.logoPtf{
+    margin-left: 0 !important;
+}
+
 /* Confirmation des statuts spéciaux */
 .btnConfirmStatut {
     color: #0ca200;
@@ -1966,14 +1986,14 @@ ul.list-default > li.studitWhiteFC:before {
 
 @media screen and (max-width: 1200px) {
     [data-template="afadec"] .logoAbsolute {
-        left: -70px
+        left: -0px
     }
 }
 
 @media screen and (max-width: 1100px) {
     body:not([data-template="excellencePro"]) .logoAbsolute {
         width: 280px;
-        left: -20px
+        left: 0px
     }
 
     body[data-template="excellencePro"] .logoAbsolute {
@@ -1988,20 +2008,21 @@ ul.list-default > li.studitWhiteFC:before {
 }
 
 @media screen and (max-width: 992px) {
-    [data-template="afadec"] .logoAbsolute {
-        width: 160px;
-        left: -80px;
+    body:not([data-template="excellencePro"]) .logoAbsolute {
+        width: 80px;
         top: 25px;
     }
-
     body:not([data-template="excellencePro"]) .logoGrand {
         display: none !important;
     }
 
     body:not([data-template="excellencePro"]) .logoPetit {
-        display: block !important;
+        display: none !important;
     }
 
+    body:not([data-template="excellencePro"]) .logoToutPetit {
+        display: block !important;
+    }
     body[data-template="excellencePro"] .logoAbsolute {
         width: 230px;
         top: 20px;
@@ -2015,7 +2036,6 @@ ul.list-default > li.studitWhiteFC:before {
 @media screen and (max-width: 880px) {
     body:not([data-template="excellencePro"]) .logoAbsolute {
         width: 80px;
-        left: -10px;
         top: 25px;
     }
 
@@ -2068,9 +2088,18 @@ ul.list-default > li.studitWhiteFC:before {
         top: 9px;
         left: 20px;
     }
+    body:not([data-template="excellencePro"]) .logoAbsolute {
+        width: 240px;
+        top: 9px;
+        left: 0px;
+    }
+
 
     [data-template="excellencePro"] .logoPtf {
         width: 280px;
+    }
+    .devenirEnseignant{
+        display: none;
     }
 }
 @media screen and (max-width: 600px) {
