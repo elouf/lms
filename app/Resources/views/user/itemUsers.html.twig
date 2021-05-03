@@ -267,7 +267,8 @@
                         var idUser = $(this).closest('.userLine').attr('data-userId');
                         idUsers.push(idUser);
                     });
-                    inscrireUsers(typeItem, idUsers, "{{ item.id }}", $('.selectRole').val());
+                    var roleId = $(this).closest('.modeInscr').find('.selectRole').val();
+                    inscrireUsers(typeItem, idUsers, "{{ item.id }}", roleId);
                 });
             });
             $('.cancel').click(function () {
@@ -465,7 +466,8 @@
                     $('.mode').hide();
                     $('.modeInscr').show();
                     $('.valideInscr').unbind('click').click(function () {
-                        inscrireUsers(typeItem, [idUser], "{{ item.id }}", $('.selectRole').val());
+                        var roleId = $(this).closest('.modeInscr').find('.selectRole').val();
+                        inscrireUsers(typeItem, [idUser], "{{ item.id }}", roleId);
                     });
                 });
             }
