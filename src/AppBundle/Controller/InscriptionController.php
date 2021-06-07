@@ -97,7 +97,7 @@ class InscriptionController extends Controller
                 ->add('matiereEtu', ChoiceType::class, array(
                     'choices' => array(
                         'Anglais' => 'Anglais',
-                        'Education musicale et chant choral' => 'EducMusChantChoral',
+                        //'Education musicale et chant choral' => 'EducMusChantChoral',
                         'Espagnol' => 'Espagnol',
                         'Histoire-Géographie' => 'HG',
                         'Lettres modernes' => 'LettresModernes',
@@ -117,7 +117,8 @@ class InscriptionController extends Controller
                         'Documentation' => 'Documentation',
                         'Economie Gestion (CAPET)' => 'ECOCAPET',
                         'Economie Gestion (CAPLP)' => 'ECOCAPLP',
-                        'Education musicale et chant choral' => 'EducMusChantChoral',
+                        /*'Education musicale et chant choral' => 'EducMusChantChoral',
+                        'EMCC' => 'EMCC',*/
                         'EPS' => 'EPS',
                         'Espagnol' => 'Espagnol',
                         'Espagnol M2' => 'Interlangues',
@@ -154,6 +155,7 @@ class InscriptionController extends Controller
                         'Documentation' => 'Documentation',
                         'Economie Gestion (CAPET)' => 'ECOCAPET',
                         'Economie Gestion (CAPLP)' => 'ECOCAPLP',
+                        //'EMCC' => 'EMCC',
                         'EPS' => 'EPS',
                         'Espagnol' => 'Interlangues',
                         'Génies' => 'GENIE',
